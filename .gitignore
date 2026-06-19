@@ -1,0 +1,20 @@
+# === Third-party tools / downloads (large, not our source) ===
+tools/*
+!tools/entd_tool.py
+
+# === Raw extracted game data (copyrighted) and backups of game files ===
+extracted/
+backups/
+
+# === Large derived data dumps (regenerated from the game) ===
+work/*.sqlite
+
+# === OS / editor cruft ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.tmp
+*.swp
+.DS_Store
+.vscode/
+.idea/
