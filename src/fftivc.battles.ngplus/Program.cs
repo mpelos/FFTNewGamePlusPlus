@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using FF16Tools.Files.Save;
-
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
@@ -76,7 +74,7 @@ public class Program : IMod
         return _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
     }
 
-    /// <summary>Decode the live autosave and read the NG+ flag (byte 0x3F of a resume file).</summary>
+    /// <summary>Decode the live autosave (non-locking) and read the NG+ flag (byte 0x3F).</summary>
     private void DetectNgPlus()
     {
         try
@@ -84,12 +82,18 @@ public class Program : IMod
             string? path = FindAutosavePath();
             if (path is null) { Log("[ngdetect] autosave not found"); return; }
 
-            FaithSaveGameData sav = FaithSaveGameData.Open(path);
+            Dictionary<string, byte[]> files = SaveReader.Decode(path);
+
+            // Diagnostic: log every resume file's flag byte so we can see which is fresh/current.
+            foreach (var kv in files)
+                if (kv.Key.StartsWith("resume_", StringComparison.OrdinalIgnoreCase) && kv.Value.Length > NGPLUS_FLAG_OFFSET)
+                    Log($"[ngdetect] {kv.Key}: 0x3F={kv.Value[NGPLUS_FLAG_OFFSET]}");
+
             byte[]? resume = null;
             foreach (string name in ResumePreference)
-                if (sav.Files.TryGetValue(name, out resume) && resume.Length > NGPLUS_FLAG_OFFSET) break;
+                if (files.TryGetValue(name, out resume) && resume.Length > NGPLUS_FLAG_OFFSET) break;
                 else resume = null;
-            resume ??= sav.Files.Values.FirstOrDefault(b => b.Length > NGPLUS_FLAG_OFFSET);
+            resume ??= files.Values.FirstOrDefault(b => b.Length > NGPLUS_FLAG_OFFSET);
 
             if (resume is null) { Log("[ngdetect] no resume file"); return; }
             _isNgPlus = resume[NGPLUS_FLAG_OFFSET] != 0;

@@ -15,6 +15,7 @@
     <Content Include="ModConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="zlibdict.bin" />
   </ItemGroup>
 
   <ItemGroup>
