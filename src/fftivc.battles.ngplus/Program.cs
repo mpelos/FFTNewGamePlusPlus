@@ -108,32 +108,48 @@ public class Program : IMod
     // which left endgame stock stuck when loading a normal save after an NG+ one).
     private const int SHOP_UI_INDEX_MIN = 741;
     private const int SHOP_UI_INDEX_MAX = 743;
-    private enum ShopState { Unknown, EndgameApplied, VanillaRestored }
-    private ShopState _shopState = ShopState.Unknown;
     private DateTime _lastShopSync = DateTime.MinValue;
-    private readonly List<int> _patchedItemIds = new();
 
-    // DIAGNOSTIC (shop discovery): log each fftpack file index the first time it is read this
-    // session, so newly-read indices when entering a town / opening a shop reveal the store-data
-    // file. Set false to disable. globalIndex - 223 = line number in 0002_files.txt (if in 0002.pac).
-    private const bool DIAG_LOG_READS = true;
-    private readonly HashSet<int> _seenReadIndices = new();
+    // We write ShopAvailability DIRECTLY into the live ITEM_COMMON_DATA table instead of via the
+    // modloader's ApplyTablePatch. ApplyTablePatch tracks changes per (id, field) and re-applies them
+    // when the item table is (re)read; that tracking locks the FIRST value we set in a session, so a
+    // later "restore" never sticks (endgame stock stayed after switching NG+ -> normal). A direct write
+    // fully under our control, re-asserted every sync, sidesteps that entirely. We locate the table by
+    // the SAME signature the modloader uses (its literal item-0/1/2 bytes). Each entry is 0x0C bytes;
+    // ShopAvailability is the byte at +0x0A. We snapshot the pristine availability once (from the live
+    // table, before our first write, so it respects other mods) and restore to it in normal play.
+    private const string SIG_ITEM_TABLE = "00 00 00 80 00 00 00 00 00 00 00 00 00 01 01 80 01 01 00 00 64 00 01 00 00 02 03 80 02 01 00 00";
+    private const int ITEM_ENTRY_SIZE = 0x0C;
+    private const int ITEM_SHOPAVAIL_OFFSET = 0x0A;
+    private const byte AVAIL_BLANK = 0;          // never sold
+    private const byte AVAIL_CHAPTER1_START = 1; // buyable from the very start
+    private nint _itemTableBase;
+    private readonly byte[] _origAvail = new byte[ITEM_COUNT];
+    private bool _origCaptured;
 
-    // --- RAM SAVE DUMP DIAGNOSTIC (locate the live NG+ flag in g_WorkMem) ---
-    // Nenkai's RE notes: the live save data sits inside the 0x400440-byte g_WorkMem buffer. We resolve
-    // the g_WorkMem pointer via the documented ref `add rbx,[rip+g_WorkMem]; test r8,r8`, then dump the
-    // whole buffer to disk when a shop opens. Comparing a matched NG+ vs normal save (same story point)
-    // reveals the NG+ flag byte by diff (same method that found autosave 0x3F) -> reliable at-any-time
-    // detection that survives restart and needs no battle.
-    private const bool DIAG_DUMP_WORKMEM = true;
-    private const string SIG_WORKMEM = "48 03 1D ?? ?? ?? ?? 4D 85 C0";
-    private const long WORKMEM_SIZE = 0x400440;
-    private nint _workMemPtrAddr;          // address of the g_WorkMem pointer variable (module data)
-    private int _dumpSeq;
-    private DateTime _lastDump = DateTime.MinValue;
-
-    [DllImport("kernel32.dll")] private static extern bool ReadProcessMemory(nint hProcess, nint lpBaseAddress, byte[] lpBuffer, nint dwSize, out nint lpNumberOfBytesRead);
-    [DllImport("kernel32.dll")] private static extern nint GetCurrentProcess();
+    // NG+ DETECTION FOR SHOPS — LEVEL PROXY (found via Cheat Engine).
+    // There is NO reliable "is NG+" byte in RAM: every flag-shaped candidate we found was noise that
+    // did NOT reset when loading a normal save in the same session (the 0xD8D91C "flag" was a false
+    // positive — it reads 0 even in a fresh NG+ process). What IS reliable and refreshes on every
+    // save-load are the live gameplay globals (Gil is one, at module+0xD40110). So we detect NG+
+    // INDIRECTLY: NG+ carries the prior playthrough's levels, so Ramza's level is high while story
+    // progress is reset to chapter 1. A normal first playthrough has a low-level Ramza early; the only
+    // false positive is normal mid/late game, where shops already sell most things anyway -> harmless.
+    // NG+ proxy = Ramza's level in the live static globals (refreshes on save-load, so reliable at shop
+    // time, unlike the stale autosave). Found via a Byte scan on the NG+ world map (so the Units-screen
+    // int32 display buffers, which read 1 off that screen, don't match) plus 74->1->74 narrowing across
+    // save switches, yielding 5 static copies. Across 6 test saves (Ramza 74/1/55/64/55/74), module+
+    // 0x2C81D93 was correct 6/6, so we DECIDE on it alone. The other 4 are lazy mirrors that lag at the
+    // previous save's level (seen sticking at 37 and 1; which lag depends on load order) -> logged only
+    // as diagnostics so that IF a bug surfaces we already have the data to switch to a more robust rule
+    // (e.g. median of the copies that agree). SEE the memory note [[fft-tic-shop-ngplus]]: the strategy
+    // MUST change if 0x2C81D93 is ever observed wrong. The autosave 0x3F flag stays the source for
+    // BATTLE context (fresh at battle entry); only shops use this proxy. There is NO reliable raw "is
+    // NG+" RAM byte (every flag-shaped candidate was noise that failed to reset on a same-session load).
+    private const long RAMZA_LEVEL_RVA = 0x2C81D93;
+    private static readonly long[] RamzaLevelDiagRvas = { 0x11A7D2D, 0x2C81D93, 0x11AF25D, 0x2C821B5, 0x2C896E5 };
+    private const int NGPLUS_LEVEL_THRESHOLD = 20;
+    private nint _moduleBase;
 
     public unsafe void StartEx(IModLoaderV1 loaderApi, IModConfigV1 modConfigV1)
     {
@@ -155,6 +171,7 @@ public class Program : IMod
             : "IFFTOItemDataManager acquired -> NG+ endgame shops enabled.");
 
         nint baseAddr = Process.GetCurrentProcess().MainModule!.BaseAddress;
+        _moduleBase = baseAddr;
         _scanner.AddMainModuleScan(SIG_FILE_READ_REQUEST_OFFSET, result =>
         {
             if (!result.Found) { Log("ERROR: fileReadRequestOffset signature NOT found."); return; }
@@ -163,43 +180,13 @@ public class Program : IMod
             _entdReadHook = _hooks!.CreateHook<FileReadRequestOffsetDelegate>(FileReadRequestOffsetImpl, addr).Activate();
         });
 
-        if (DIAG_DUMP_WORKMEM)
-            _scanner.AddMainModuleScan(SIG_WORKMEM, r =>
-            {
-                if (!r.Found) { Log("[ramdump] g_WorkMem signature NOT found."); return; }
-                nint instr = baseAddr + r.Offset;
-                int rel32 = Marshal.ReadInt32(instr + 3);     // disp of `add rbx,[rip+disp]` (7-byte instr)
-                _workMemPtrAddr = instr + 7 + rel32;           // address of the g_WorkMem pointer variable
-                Log($"[ramdump] g_WorkMem ptr-var @ 0x{_workMemPtrAddr:X} (instr @ 0x{instr:X})");
-            });
-    }
-
-    /// <summary>Dump the whole g_WorkMem buffer to disk so NG+ vs normal can be diffed for the flag.</summary>
-    private void DumpWorkMem(string tag)
-    {
-        if (!DIAG_DUMP_WORKMEM || _workMemPtrAddr == 0) return;
-        if (_dumpSeq >= 8) return;                                   // cap disk usage
-        if ((DateTime.Now - _lastDump).TotalSeconds < 8) return;     // throttle
-        long workMemBase = Marshal.ReadInt64(_workMemPtrAddr);       // pointer var is committed module data
-        if (workMemBase <= 0x10000) { Log($"[ramdump] g_WorkMem not allocated yet (0x{workMemBase:X})"); return; }
-
-        var buf = new byte[WORKMEM_SIZE];
-        if (!ReadProcessMemory(GetCurrentProcess(), (nint)workMemBase, buf, (nint)WORKMEM_SIZE, out nint read) || read == 0)
+        // Locate the live ITEM_COMMON_DATA table for direct ShopAvailability writes (NG+ endgame shops).
+        _scanner.AddMainModuleScan(SIG_ITEM_TABLE, result =>
         {
-            Log($"[ramdump] ReadProcessMemory failed (base=0x{workMemBase:X}, read={read})");
-            return;
-        }
-        _lastDump = DateTime.Now;
-        int seq = ++_dumpSeq;
-        string dir = Path.Combine(_modLoader.GetDirectoryForModId(_modConfig.ModId), "ramdumps");
-        Directory.CreateDirectory(dir);
-        string path = Path.Combine(dir, $"workmem_{DateTime.Now:HHmmss}_{seq:D2}.bin");
-        try
-        {
-            File.WriteAllBytes(path, read == (nint)WORKMEM_SIZE ? buf : buf[..(int)read]);
-            Log($"[ramdump] #{seq} [{tag}] base=0x{workMemBase:X} size=0x{(long)read:X} -> {path}");
-        }
-        catch (Exception ex) { Log($"[ramdump] write failed: {ex.Message}"); }
+            if (!result.Found) { Log("ERROR: ITEM_COMMON_DATA signature NOT found -> NG+ shops disabled."); return; }
+            _itemTableBase = baseAddr + result.Offset;
+            Log($"Found ITEM_COMMON_DATA table @ 0x{_itemTableBase:X} -> NG+ endgame shops enabled.");
+        });
     }
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
@@ -208,20 +195,16 @@ public class Program : IMod
         // returns whatever status/byte-count the game expects. We only mutate the buffer afterwards.
         int ret = _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
 
-        // Diagnostic: first time we see each index, log it (size+offset help spot the small store table).
-        if (DIAG_LOG_READS && _seenReadIndices.Add(fileIndex))
-            Log($"[read-new] index={fileIndex} size=0x{size:X} off=0x{sectorOffset:X}");
-
-        // Sync shops on world-map/town entry (world_* 765-772) AND on every Outfitter open
-        // (menu_bk_shop* 741-743). The latter is the reliable per-open trigger that catches save
-        // switches within a session (where world_* are cached and don't re-fire).
+        // Sync shops on world-map/town entry (world_* 765-772) AND on Outfitter open (menu_bk_shop*
+        // 741-743). The world_* read fires when you enter a town — BEFORE the Outfitter builds its item
+        // list from the table — so the patch/restore lands in time for the shop you're about to open
+        // (the shop-UI read alone is too late: the list is already built, so a restore only shows up on
+        // the NEXT open). We can use world_* now because detection switched to the stable Ramza-level
+        // proxy (the old NG+ static flag bounced during the load transition, which is why world_* was
+        // dropped before). The shop-UI read stays as a catch-up for same-screen re-opens.
         if ((fileIndex >= WORLD_INDEX_MIN && fileIndex <= WORLD_INDEX_MAX) ||
             (fileIndex >= SHOP_UI_INDEX_MIN && fileIndex <= SHOP_UI_INDEX_MAX))
             SyncShops();
-
-        // RAM dump diagnostic: capture the live save buffer when the Outfitter opens (shop UI reads).
-        if (DIAG_DUMP_WORKMEM && fileIndex >= SHOP_UI_INDEX_MIN && fileIndex <= SHOP_UI_INDEX_MAX)
-            DumpWorkMem("shop-open");
 
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
@@ -306,50 +289,64 @@ public class Program : IMod
     /// </summary>
     private void SyncShops()
     {
-        if (_itemMgr is null) return;
+        if (_itemTableBase == 0 || _moduleBase == 0) return;
         if ((DateTime.Now - _lastShopSync).TotalSeconds < 0.5) return; // collapse read bursts only
         _lastShopSync = DateTime.Now;
 
-        DetectNgPlus();
-        if (_isNgPlus && _shopState != ShopState.EndgameApplied)
+        // Snapshot the pristine availability once, from the live table BEFORE our first write (so it
+        // reflects vanilla + any other mod's edits). Lazy, at first sync, when game data is initialized.
+        if (!_origCaptured)
         {
-            ApplyEndgameShops();
-            _shopState = ShopState.EndgameApplied;
+            for (int id = 0; id < ITEM_COUNT; id++)
+                _origAvail[id] = SafeReadByte(_itemTableBase + id * ITEM_ENTRY_SIZE + ITEM_SHOPAVAIL_OFFSET);
+            _origCaptured = true;
         }
-        else if (!_isNgPlus && _shopState != ShopState.VanillaRestored)
-        {
-            RestoreVanillaShops();
-            _shopState = ShopState.VanillaRestored;
-        }
+
+        // Decide on RAMZA_LEVEL_RVA alone (correct in all 6 test saves); log the other copies as
+        // diagnostics so a future bug report already carries the data to pick a better rule.
+        var dbg = new System.Text.StringBuilder();
+        foreach (long rva in RamzaLevelDiagRvas) dbg.Append($" 0x{rva:X}={ReadStaticByte(rva)}");
+        int raw = ReadStaticByte(RAMZA_LEVEL_RVA);
+        int lvl = raw is >= 1 and <= 99 ? raw : 0;
+        bool ng = lvl >= NGPLUS_LEVEL_THRESHOLD;
+
+        int changed = WriteShopAvailability(ng); // re-asserted every sync (idempotent: only writes diffs)
+        Log($"[nglevel]{dbg} -> lvl(0x{RAMZA_LEVEL_RVA:X})={lvl} NG+={ng} | shop writes={changed}");
     }
 
-    /// <summary>NG+: lower every normally-sold item's availability to Chapter1_Start (everything in stock now).</summary>
-    private void ApplyEndgameShops()
+    /// <summary>Write each sold item's ShopAvailability directly into the live ITEM_COMMON_DATA table:
+    /// Chapter1_Start (all in stock) in NG+, the captured original otherwise. Returns the number of bytes
+    /// actually changed. Direct write bypasses the modloader's ApplyTablePatch change-tracking (which
+    /// locked the first value and made a later restore impossible).</summary>
+    private int WriteShopAvailability(bool ng)
     {
-        _patchedItemIds.Clear();
+        int changed = 0;
         for (int id = 0; id < ITEM_COUNT; id++)
         {
-            ItemShopAvailability? avail = _itemMgr!.GetOriginalItem(id).ShopAvailability;
-            // Only items that are EVER sold (availability != Blank). Leave never-sold (0) items unsold.
-            if (avail is null || avail == ItemShopAvailability.Blank) continue;
-            _itemMgr.ApplyTablePatch(_modConfig.ModId, new Item { Id = id, ShopAvailability = ItemShopAvailability.Chapter1_Start });
-            _patchedItemIds.Add(id);
+            byte orig = _origAvail[id];
+            if (orig == AVAIL_BLANK) continue; // never sold -> leave untouched
+            byte target = ng ? AVAIL_CHAPTER1_START : orig;
+            nint addr = _itemTableBase + id * ITEM_ENTRY_SIZE + ITEM_SHOPAVAIL_OFFSET;
+            if (SafeReadByte(addr) != target)
+            {
+                try { Marshal.WriteByte(addr, target); changed++; } catch { /* ignore */ }
+            }
         }
-        Log($"[shops] NG+ -> endgame stock: {_patchedItemIds.Count} items unlocked from Chapter 1.");
+        return changed;
     }
 
-    /// <summary>Normal play: restore the original availability of every item we lowered.</summary>
-    private void RestoreVanillaShops()
+    /// <summary>Read one byte from a static module-relative address (the live game-state globals).</summary>
+    private int ReadStaticByte(long rva)
     {
-        int n = 0;
-        foreach (int id in _patchedItemIds)
-        {
-            ItemShopAvailability? orig = _itemMgr!.GetOriginalItem(id).ShopAvailability;
-            _itemMgr.ApplyTablePatch(_modConfig.ModId, new Item { Id = id, ShopAvailability = orig });
-            n++;
-        }
-        _patchedItemIds.Clear();
-        Log($"[shops] normal play -> restored vanilla availability for {n} items.");
+        try { return Marshal.ReadByte((nint)((long)_moduleBase + rva)); }
+        catch { return -1; }
+    }
+
+    /// <summary>Read one byte from an absolute address, 0 on failure.</summary>
+    private static byte SafeReadByte(nint addr)
+    {
+        try { return Marshal.ReadByte(addr); }
+        catch { return 0; }
     }
 
     /// <summary>Decode the live autosave (non-locking) and read the NG+ flag (byte 0x3F).</summary>
