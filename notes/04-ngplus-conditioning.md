@@ -340,3 +340,43 @@ it in the ENTD hook is race-free and reflects the current battle's game.
 Runtime detection (working build): in the fftpack ENTD hook, decode autoenhanced.png via
 FF16Tools.Files, read resume_enbtl_world.sav[0x3F] (fallback resume_enwm_main.sav) -> NG+ bool.
 NEVER hook CloseHandle (crashes the CLR/GC). Next: M3 = swap modded ENTD when NG+.
+
+---
+
+## ✅✅✅ NG+ DETECTION — FULLY SOLVED & VALIDATED IN-GAME (2026-06-20)
+
+End-to-end runtime NG+ detection WORKS. Confirmed live both ways:
+- NG+ save loaded -> NG+=True ; Normal save loaded -> NG+=False.
+
+### The solution (how the code mod detects NG+ at runtime)
+1. Hook the fftpack reader `fileReadRequestOffset` (modloader's published sig). It fires at battle
+   load, reading the whole ENTD file (index 224..227, size 0x14000) in one call.
+2. At that moment, read the live autosave `autoenhanced.png` and decode it with our OWN
+   `SaveReader` (NOT FF16Tools FaithSaveGameData — that LEAKS the file handle and makes the game's
+   autosave fail with "file used by another process"). SaveReader reads with FileShare.ReadWrite and
+   disposes immediately; ports PNG 'ffTo' chunk -> UMIF TOC -> XOR(0x0F3F80FE5F1FC4F3) + zlib(preset
+   dict embedded as zlibdict.bin).
+3. Read byte **0x3F of `resume_enwm_main.sav`**: ==1 -> New Game+, ==0 -> normal.
+
+### WHY resume_enwm_main.sav specifically
+The autosave holds MANY resume_* inner files; most are STALE (left over from earlier games in the
+session). `resume_enwm_main.sav` = the world-map state of the *currently loaded* game, so it is the
+freshest/authoritative one at battle-load time. Proof from the normal-load test: enwm_main=0
+(correct) while en00/en01/en02/enbtl were 1 (stale NG+ leftovers). `resume_enbtl_world` LAGS (still
+the previous battle at ENTD time) — do NOT use it. Flag offset 0x3F validated across 8 offline
+captures (4 NG+ / 4 normal) in both enwm_main and enbtl_world, plus live in both modes.
+
+### Timing
+At battle entry: game READs autoenhanced.png, WRITEs it (~0.3s later), then reads ENTD (~2s after
+write). So at ENTD time the autosave is fully flushed -> race-free read.
+
+### Hard-won gotchas (do NOT repeat)
+- NEVER hook CloseHandle (it's on the GC/runtime path -> CLR crash).
+- Do NOT use FaithSaveGameData.Open on the live save (leaks handle -> breaks game autosave).
+- The 0x8C4F offset was WRONG (game-content byte). The real flag is 0x3F.
+- In-RAM NG+ flag does not exist persistently (reallocates) -> read the save instead.
+
+### Status
+- Detection: DONE.  ENTD interception: DONE (single 0x14000 read).
+- REMAINING = Milestone 3: when NG+, overwrite the ENTD output buffer with our modded ENTD bytes
+  (embed battle_entd*_ent.bin as mod resources; memcpy in the hook). Else pass through vanilla.

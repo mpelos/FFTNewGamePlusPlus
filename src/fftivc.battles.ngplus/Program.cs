@@ -35,7 +35,9 @@ public class Program : IMod
 
     // NG+ flag in the autosave resume format: byte 0x3F == 1 -> New Game+, == 0 -> normal.
     private const int NGPLUS_FLAG_OFFSET = 0x3F;
-    private static readonly string[] ResumePreference = { "resume_enbtl_world.sav", "resume_enwm_main.sav" };
+    // resume_enwm_main.sav (world-map state of the LOADED game) is the freshest at battle-load time;
+    // resume_enbtl_world lags (still the previous battle). Prefer enwm_main.
+    private static readonly string[] ResumePreference = { "resume_enwm_main.sav", "resume_enbtl_world.sav" };
 
     private const string SIG_FILE_READ_REQUEST_OFFSET =
         "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 80 3D ?? ?? ?? ?? ?? 4C 89 CE";
