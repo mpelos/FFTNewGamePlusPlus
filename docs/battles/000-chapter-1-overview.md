@@ -34,7 +34,7 @@ Fort Zeakden      -> Ziekden Fortress
 | `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | ✅ Implemented (v1, entry 395) |
 | `007` | 8 | Lenalian Plateau | Milleuda falls; mage-heavy field + Time Mage | ✅ Implemented (v1, entry 399) |
 | `008` | 9 | Fovoham Windflats | Wiegraf duel; Judgment Blade spike | ✅ Implemented (v1, entry 400) |
-| `009` | 10 | Ziekden Fortress | Chapter finale; Argath boss + hostage | 🔎 Identified (entry 401) |
+| `009` | 10 | Ziekden Fortress | Chapter finale; Argath boss + hostage | ✅ Implemented (v1, entry 401) |
 
 ### ENTD entry map (Chapter 1) — solved 2026-06-20
 

@@ -1,15 +1,15 @@
 # 009 - Ziekden Fortress (Fort Zeakden)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 401) — Chapter 1 COMPLETE
 Chapter: 1 — **FINALE**
 Battle order: Battle 10 (after Fovoham Windflats); last battle of "The Meager"
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **401** (battle_entd4, local entry 17) — confirmed by composition matching
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Implemented via `tools/battle_patch.py ziekden`, which edits the embedded modded ENTD. The whole
+> file is swapped only in NG+, so the edit is automatically NG+-only — a first playthrough is
+> untouched. See `000-chapter-1-overview.md`.
 
 ## Original Battle
 
@@ -59,24 +59,38 @@ For New Game++ the identity must be: **a genuine boss fight against Argath and h
 escort on a divided snowfield, where the boss, the mages, and the gear-breaking Knights each
 demand an answer.** This is the only Chapter 1 fight that should out-tier everything before it.
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 401)
+
+Dumped from the embedded ENTD. The TIC encounter is slightly larger than the PSX walkthroughs
+say: **5 generic Knights**, not 3, plus the 2 Black Mages and the Argath boss.
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Argath (named/boss unit) + 3 Knight + 2 Black Mage, plus split player/ally slots.
-Confirm Argath's named-unit link (UnitId / charactercontrolid) — do NOT break the boss scripting.
-Confirm the two player deployment zones are preserved.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-LEAVE all scripted story/cutscene units (hostage scene) untouched.
+slot  cid    name  job          role                         action
+s0    0x07   7     76 Knight    Argath — BOSS                SCALE (boss, identity preserved)
+s1    0x08   8     8            Tietra — scripted hostage    LEAVE (lvl 254, disabled)
+s2    0x1c   28    28           scripted cutscene actor      LEAVE (lvl 254, disabled)
+s3    0x80   76    76 Knight    captain Knight               SCALE -> L102
+s4    0x80   255   76 Knight    Knight                       SCALE -> L101
+s5    0x80   255   76 Knight    Knight (anchor)              SCALE -> L100
+s6    0x80   255   76 Knight    Knight (anchor)              SCALE -> L100
+s7    0x80   255   76 Knight    Knight (anchor)              SCALE -> L100
+s8    0x04   4     4            Delita — ally guest          LEAVE (runtime guest-scaler -> 100)
+s9    0x81   255   80 BlackMage Black Mage                   SCALE -> L101
+s10   0x81   255   80 BlackMage Black Mage                   SCALE -> L101
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs: Knight 76, Black Mage 80 (shared with Dorter/Sand Rat). Argath is **not** a unique-job
+boss like Wiegraf — his Ziekden slot is a plain Knight (job 76); his boss identity is the named-unit
+link (cid 0x07 / name_id 7), which `set_slot` preserves, so the "Defeat Argath!" objective is intact.
 
-```text
-Argath boss job id     (TBD - verify; likely a named/special unit, handle with care)
-Knight job id          (TBD - verify; shares with Dorter/Sand Rat)
-Black Mage job id      (TBD - verify; shares with Dorter)
-```
+### Boss / guest-scaler interaction (important)
+
+Argath's slot reuses the **guest charId 0x07** (he was the player's ally earlier in Chapter 1). The
+code mod's always-on `ScaleGuestsAlways` clamps guest charIds to party level — which would have
+forced the boss to 100 and, worse, **broken a normal first playthrough** (vanilla boss Argath lvl 10
+→ 100, unwinnable). Fixed by scaling a guest slot **only when its job == charId** (true ally guests
+keep job 4/7; the Ziekden boss is re-jobbed to Knight 76). So the boss's designed level (103) stands
+and the finale is safe in both NG+ and normal play.
 
 ## New Game++ Design Goal
 
@@ -235,21 +249,44 @@ Preserve the two player deployment zones and Delita's ally placement.
 The map should read as a climactic assault: two fronts, gear under threat, mages raining AoE,
 and a durable boss waiting at the center.
 
+## Implemented (v1, entry 401)
+
+Applied with `python tools/battle_patch.py ziekden`; diff contained to local entry 17 (global 401),
+83 bytes. Faithful to the design, with one data-driven adjustment: the TIC encounter has **5 Knights**
+(not 3), so all five are scaled (captain L102, one L101, three anchors L100) rather than inventing a
+roster. Argath is the only +3 unit (L103); both Black Mages L101.
+
+```text
+s0  Argath BOSS  L103 jl8  sec Fundaments(5)  R Counter  S Atk-Boost  M +1  HeavyHelm/Armor/Bracers + Runeblade + Shield
+s3  Knight       L102 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
+s4  Knight       L101 jl8  (same kit)
+s5  Knight       L100 jl8  (same kit)
+s6  Knight       L100 jl8  (same kit)
+s7  Knight       L100 jl8  (same kit)
+s9  Black Mage   L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod
+s10 Black Mage   L101 jl8  (same kit)
+```
+
+**Deferred — Rend / equipment break:** the doc's signature "bring Safeguard" threat (Rend on 2 of the
+Knights) is NOT yet applied — it needs the verified Knight **Battle-Skill** secondary-skillset id,
+which isn't decoded yet. The Knights currently run no secondary command. This is the one safe-to-add
+flavor tweak left for Ziekden; everything else (scaling, boss, mages, identity, NG+-gating) is done.
+
 ## Implementation Checklist
 
-- [ ] Identify Ziekden `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Argath + 3 Knight + 2 Black Mage + split player/ally slots.
-- [ ] Confirm Argath's named-unit link and DO NOT break boss/cutscene scripting.
-- [ ] Confirm Knight Rend command id and Black Mage job/equipment.
-- [ ] Map shop-tier heavy armor / shield / robe / rod item IDs in `ItemData.xml`.
-- [ ] Set levels: Argath `103`; Render-Knight `102`/`101`; mages `101`; anchor Knight `100`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] Give Rend to only 2 Knights; give Argath Fundaments (no break) + a focus-fire reaction.
-- [ ] Equip per builds (all non-unique / shop-tier, including the boss).
-- [ ] Preserve both player zones and Delita; keep enemy positions per the plan.
-- [ ] Patch via the correct layer; keep the diff inside the Ziekden window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify boss link intact.
-- [ ] Install mod, test from a New Game+ save; confirm the kill-Argath objective still ends it.
+- [x] Identify Ziekden ENTD entry (401) on Windows data; fill "Local Data Confirmed".
+- [x] Dump original entry; verify Argath + Knights + 2 Black Mage + scripted/ally slots.
+- [x] Confirm Argath's named-unit link and DO NOT break boss/cutscene scripting (identity bytes kept).
+- [x] Confirm Black Mage job/equipment. (Knight Rend command id still TBD — see Deferred above.)
+- [x] Map shop-tier heavy armor / shield / robe / rod item IDs in `ItemData.xml`.
+- [x] Set levels: Argath `103`; captain Knight `102`; `101`; anchors `100`; mages `101`.
+- [x] Set JobLevel `8` on all active enemy slots.
+- [ ] Give Rend to 2 Knights (deferred — needs Battle-Skill skillset id). Argath has Fundaments + Counter. ✅
+- [x] Equip per builds (all non-unique / shop-tier, including the boss).
+- [x] Preserve scripted hostage/cutscene units (s1/s2 lvl 254) and Delita guest (s8).
+- [x] Patch the embedded ENTD (NG+-only by construction); diff inside entry 401 only.
+- [x] Re-dump and diff; confirm changes are small and intentional; boss identity link intact.
+- [ ] Install mod, test from a New Game+ save; confirm the kill-Argath objective still ends it (playtest).
 
 ## Test Questions
 

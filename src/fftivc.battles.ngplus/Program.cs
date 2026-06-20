@@ -50,6 +50,7 @@ public class Program : IMod
     private const int SLOT_SIZE = 0x28;
     private const int SLOT_CHARID = 0x00; // unit/character id (named chars low; generics 0x80+)
     private const int SLOT_LEVEL = 0x03;  // level (>99 = party level + value-100; 100 = party level)
+    private const int SLOT_JOB = 0x0A;    // main job id; ally guests keep job == charId (4/7)
     private const byte LEVEL_PARTY = 100;
 
     // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
@@ -57,8 +58,13 @@ public class Program : IMod
     // also dodges the join-timing problem: the level bakes into the save at the join cutscene, and
     // patching every ENTD read means we don't depend on detecting NG+ at that exact moment.
     // charId set (extend as later-chapter guests are added). 0x04=Delita, 0x07=Argath (Chapter 1).
-    // NOTE: Argath also appears as an ENEMY at Ziekden (end of Ch1); scaling him there only ever
-    // matches/eases the fight (party level vs his fixed level), never hardens it.
+    // CRITICAL: Argath (0x07) also appears as the ENEMY BOSS at Ziekden (end of Ch1), where his slot
+    // is re-jobbed to Knight (job 76). An ALLY guest always keeps job == charId (Delita job 4, Argath
+    // job 7) across every appearance in the ENTD; only the Ziekden boss breaks that. So we scale a
+    // guest slot ONLY when job == charId. This (a) lets the Ziekden boss keep his designed boss level
+    // instead of being clamped to party level, and (b) fixes a real bug: in NORMAL play the scaler
+    // would otherwise force vanilla boss-Argath (lvl 10) to 100, making the finale unwinnable on a
+    // first playthrough — the exact thing the mod promises never to do.
     private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07 };
 
     // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
@@ -224,7 +230,10 @@ public class Program : IMod
         int patched = 0;
         for (long off = 0; off + SLOT_SIZE <= size; off += SLOT_SIZE)
         {
-            if (GuestCharIds.Contains(p[off + SLOT_CHARID]) && p[off + SLOT_LEVEL] != LEVEL_PARTY)
+            // Only the genuine ally guest (job == charId). Skips the Ziekden boss (Argath re-jobbed
+            // to Knight), so his designed level stands and a normal playthrough's finale isn't broken.
+            if (GuestCharIds.Contains(p[off + SLOT_CHARID]) && p[off + SLOT_JOB] == p[off + SLOT_CHARID]
+                && p[off + SLOT_LEVEL] != LEVEL_PARTY)
             {
                 p[off + SLOT_LEVEL] = LEVEL_PARTY;
                 patched++;

@@ -2,7 +2,7 @@
   "ModId": "fftivc.battles.ngplus",
   "ModName": "New Game++",
   "ModAuthor": "mmpel",
-  "ModVersion": "0.0.2",
+  "ModVersion": "0.0.3",
   "ModDescription": "Reworks story battles for New Game+: enemies scale to your highest party level with new compositions (NG+ only), and guests always join at party level.",
   "ModDll": "fftivc.battles.ngplus.dll",
   "ModIcon": "",
