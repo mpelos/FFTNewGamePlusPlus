@@ -1,6 +1,10 @@
 # === Third-party tools / downloads (large, not our source) ===
 tools/*
 !tools/entd_tool.py
+!tools/guest_scan.py
+
+# === Unpacked game data (copyrighted, regenerated) ===
+work/modded_unpack/
 
 # === Raw extracted game data (copyrighted) and backups of game files ===
 extracted/
