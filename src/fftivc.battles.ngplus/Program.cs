@@ -17,7 +17,13 @@ namespace fftivc.battles.ngplus;
 /// normal), validated across 8 captures (4 NG+ / 4 normal) in both resume_enbtl_world.sav and
 /// resume_enwm_main.sav. At battle entry the game writes the autosave ~2s before reading the ENTD,
 /// so reading it in the ENTD hook is race-free and current.
-/// This build: read the autosave at ENTD time, log the NG+ verdict (validation before the swap).
+///
+/// Milestone 3: CONDITIONAL ENTD SWAP. When NG+ is detected, after the original read fills the
+/// buffer with vanilla bytes we overwrite it with our embedded modded ENTD (one file per fftpack
+/// index, embedded as entd\battle_entdN_ent.bin). In normal play we leave the vanilla bytes
+/// untouched -> a first playthrough is completely unaffected. This makes the mod self-contained:
+/// the data-only file-replacement mod (fftivc.battles.rescale) is no longer needed and MUST be
+/// disabled, otherwise it would replace the ENTD unconditionally even in normal play.
 /// </summary>
 public class Program : IMod
 {
@@ -32,6 +38,10 @@ public class Program : IMod
 
     private const int ENTD_INDEX_MIN = 224;
     private const int ENTD_INDEX_MAX = 227;
+
+    // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
+    // modded version of; an index with no entry passes through vanilla even in NG+.
+    private readonly Dictionary<int, byte[]> _moddedEntd = new();
 
     // NG+ flag in the autosave resume format: byte 0x3F == 1 -> New Game+, == 0 -> normal.
     private const int NGPLUS_FLAG_OFFSET = 0x3F;
@@ -52,9 +62,11 @@ public class Program : IMod
         _modLoader.GetController<IReloadedHooks>()?.TryGetTarget(out _hooks!);
         _modLoader.GetController<IStartupScanner>()?.TryGetTarget(out _scanner!);
 
-        Log("loading [detect NG+ from autosave @0x3F, log verdict]...");
+        Log("loading [M3: conditional ENTD swap in NG+]...");
         if (_hooks is null) { Log("ERROR: IReloadedHooks unavailable."); return; }
         if (_scanner is null) { Log("ERROR: IStartupScanner unavailable."); return; }
+
+        LoadModdedEntd();
 
         nint baseAddr = Process.GetCurrentProcess().MainModule!.BaseAddress;
         _scanner.AddMainModuleScan(SIG_FILE_READ_REQUEST_OFFSET, result =>
@@ -68,12 +80,59 @@ public class Program : IMod
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
     {
+        // Let the original read happen first: it fills outputPointer with the vanilla file bytes and
+        // returns whatever status/byte-count the game expects. We only mutate the buffer afterwards.
+        int ret = _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
+
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX)
         {
             DetectNgPlus();
-            Log($"[observe] ENTD read: index={fileIndex} size=0x{size:X} | NG+={_isNgPlus}");
+            bool haveMod = _moddedEntd.TryGetValue(fileIndex, out byte[]? modded);
+
+            // The game reads the whole ENTD file in one shot (sectorOffset 0, size == file length).
+            // Only swap when that holds and the modded file matches the requested size exactly.
+            bool fullRead = sectorOffset == 0 && haveMod && modded!.Length == size;
+
+            if (_isNgPlus && fullRead && outputPointer != null)
+            {
+                Marshal.Copy(modded!, 0, (IntPtr)outputPointer, modded!.Length);
+                Log($"[swap] ENTD index={fileIndex} -> MODDED ({modded.Length} bytes) [NG+]");
+            }
+            else
+            {
+                string why = !_isNgPlus ? "normal play"
+                           : !haveMod ? "no modded file"
+                           : !fullRead ? $"partial read (off=0x{sectorOffset:X} size=0x{size:X})"
+                           : "buffer null";
+                Log($"[pass] ENTD index={fileIndex} size=0x{size:X} -> vanilla ({why})");
+            }
         }
-        return _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
+        return ret;
+    }
+
+    /// <summary>Load every embedded modded ENTD (entd\battle_entdN_ent.bin) into the index map.</summary>
+    private void LoadModdedEntd()
+    {
+        var asm = typeof(Program).Assembly;
+        // Map each fftpack ENTD index to its filename.
+        var indexToName = new (int idx, string file)[]
+        {
+            (224, "battle_entd1_ent.bin"),
+            (225, "battle_entd2_ent.bin"),
+            (226, "battle_entd3_ent.bin"),
+            (227, "battle_entd4_ent.bin"),
+        };
+        foreach (var (idx, file) in indexToName)
+        {
+            string res = $"fftivc.battles.ngplus.entd.{file}";
+            using Stream? s = asm.GetManifestResourceStream(res);
+            if (s is null) continue;
+            using var ms = new MemoryStream();
+            s.CopyTo(ms);
+            _moddedEntd[idx] = ms.ToArray();
+            Log($"[init] loaded modded {file} (index {idx}, {_moddedEntd[idx].Length} bytes)");
+        }
+        if (_moddedEntd.Count == 0) Log("[init] WARNING: no modded ENTD embedded; will pass through vanilla.");
     }
 
     /// <summary>Decode the live autosave (non-locking) and read the NG+ flag (byte 0x3F).</summary>

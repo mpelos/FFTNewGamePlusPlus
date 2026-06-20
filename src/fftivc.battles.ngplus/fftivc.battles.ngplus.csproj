@@ -16,6 +16,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="zlibdict.bin" />
+    <EmbeddedResource Include="entd\*.bin" />
   </ItemGroup>
 
   <ItemGroup>
