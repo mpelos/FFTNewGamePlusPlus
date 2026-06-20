@@ -291,3 +291,52 @@ zlib inflate with 0x8000 preset dict (CompressDict). C# has System.IO.Compressio
 2. Scaffold Reloaded mod project (ModConfig ModDll, deps already present).
 3. Implement Hook A + Hook B + the decoder; embed our modded ENTD as a mod resource.
 4. Build, deploy, test in NG+ vs normal.
+
+---
+
+## Runtime hooking progress + walls (2026-06-19/20)
+
+WORKING (in-game, Reloaded code mod fftivc.battles.ngplus, net9, reuses modloader sigs):
+- Loads alongside modloader. Hooks fileReadRequestOffset @ runtime; the game reads the WHOLE
+  entd file in one call (index 227=entd4, byteOffset 0, size 0x14000) -> M3 swap = one memcpy.
+- Hooks CreateFileW (kernel32) safely. Observed save IO: saves do NOT go through
+  ResourceManager::OpenFileAndCache (only system/savedata/icon0.png does). The save data is read
+  via plain CreateFileW. On battle ENTRY the game OPENS autoenhanced.png for WRITE, then reads ENTD.
+
+WALLS:
+- CloseHandle hook => CRASH ("attempted to call a UnmanagedCallersOnly method from managed code",
+  GC.AddMemoryPressure). CloseHandle is on the GC/runtime hot path. NEVER hook it.
+- Reading the autosave at battle time races the autosave WRITE -> stale data.
+- The autosave resume format has NO cleanly-locatable fixed-offset NG+ flag with current data:
+  offline diff of resume_enbtl_world.sav (1 NG+ vs 1 normal capture) = 2543 byte diffs, dozens of
+  0/1 flips (NG+ carry-over swamps it), and 0x8C4F is NOT it (reads normal=1/NG+=0 there; likely
+  variable-length records so a fixed offset doesn't generalize). The MANUAL fftsave.bin flag
+  (0x08AFB) is clean ONLY because slots are fixed-size AND we had 7 samples to partition.
+
+NEXT OPTIONS for NG+ detection:
+A. Multi-capture autosave PARTITION (proven method): capture autosaves from ~3 NG+ + ~3 normal
+   saves at different points; partition resume_enbtl_world to isolate the mode-constant byte.
+   Then read autosave at the READ-open (continue) — no write race. Moderate effort, good odds.
+B. Hook the game's save-DECODE (Crypt, anchored by XOR key @ file 0x31749EC, or DeserializeSave)
+   via Ghidra; read flag from decoded buffer (manual format 0x08AFB). Cleanest, but heavy RE on
+   the Denuvo binary.
+C. Manual toggle: ship as data mod, player enables only for NG+. Zero detection. Ships now.
+
+---
+
+## ✅✅✅ AUTOSAVE NG+ FLAG FOUND via 3-vs-3 partition (2026-06-20)
+
+Captured 6 autosaves (3 NG+ + 3 normal at varied points) + reused 2 earlier = 8 samples.
+Partition of resume files (byte constant across all NG+, constant across all normal, differs):
+resume_enwm_main.sav narrowed to just 3 offsets, ALL NG+=1/normal=0.
+**NG+ flag in the autosave resume format = byte 0x3F == 1 (NG+) / 0 (normal).**
+(0x282 and 0x9607 are equivalent alternates.) Validated 100% across 8 captures in BOTH
+resume_enbtl_world.sav and resume_enwm_main.sav. (The earlier 0x8C4F was wrong — game-content byte.)
+
+Timing (with timestamps): at battle entry the game does READ autoenhanced.png, then WRITE (~0.3s),
+then ENTD read (~2s after write). So the autosave is fully written before the ENTD read -> reading
+it in the ENTD hook is race-free and reflects the current battle's game.
+
+Runtime detection (working build): in the fftpack ENTD hook, decode autoenhanced.png via
+FF16Tools.Files, read resume_enbtl_world.sav[0x3F] (fallback resume_enwm_main.sav) -> NG+ bool.
+NEVER hook CloseHandle (crashes the CLR/GC). Next: M3 = swap modded ENTD when NG+.

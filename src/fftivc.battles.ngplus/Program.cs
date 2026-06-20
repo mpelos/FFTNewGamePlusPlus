@@ -1,6 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+
+using FF16Tools.Files.Save;
 
 using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
@@ -11,10 +15,11 @@ namespace fftivc.battles.ngplus;
 
 /// <summary>
 /// New Game++ conditional code mod.
-/// SAFE build: only observes. (The CloseHandle hook from M2c crashed the CLR — CloseHandle is on
-/// the GC/runtime hot path, so we must never hook it.) Hooks here are limited to the fftpack
-/// reader (ENTD observe) and CreateFileW (save-file open observe). No autosave decoding (the
-/// autosave/resume format has no cleanly-locatable NG+ flag with the data we have).
+/// Detection SOLVED: the NG+ flag in the autosave resume format is byte 0x3F (==1 for NG+, ==0 for
+/// normal), validated across 8 captures (4 NG+ / 4 normal) in both resume_enbtl_world.sav and
+/// resume_enwm_main.sav. At battle entry the game writes the autosave ~2s before reading the ENTD,
+/// so reading it in the ENTD hook is race-free and current.
+/// This build: read the autosave at ENTD time, log the NG+ verdict (validation before the swap).
 /// </summary>
 public class Program : IMod
 {
@@ -27,19 +32,17 @@ public class Program : IMod
     private unsafe delegate int FileReadRequestOffsetDelegate(int fileIndex, long sectorOffset, long size, void* outputPointer);
     private IHook<FileReadRequestOffsetDelegate>? _entdReadHook;
 
-    private delegate nint CreateFileWDelegate(nint name, uint access, uint share, nint sa, uint disp, uint flags, nint tmpl);
-    private IHook<CreateFileWDelegate>? _createFileHook;
-
     private const int ENTD_INDEX_MIN = 224;
     private const int ENTD_INDEX_MAX = 227;
-    private const uint GENERIC_WRITE = 0x40000000;
-    private const uint GENERIC_READ = 0x80000000;
+
+    // NG+ flag in the autosave resume format: byte 0x3F == 1 -> New Game+, == 0 -> normal.
+    private const int NGPLUS_FLAG_OFFSET = 0x3F;
+    private static readonly string[] ResumePreference = { "resume_enbtl_world.sav", "resume_enwm_main.sav" };
 
     private const string SIG_FILE_READ_REQUEST_OFFSET =
         "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 80 3D ?? ?? ?? ?? ?? 4C 89 CE";
 
-    [DllImport("kernel32", CharSet = CharSet.Ansi)] private static extern nint GetModuleHandleA(string name);
-    [DllImport("kernel32", CharSet = CharSet.Ansi)] private static extern nint GetProcAddress(nint module, string name);
+    private volatile bool _isNgPlus;
 
     public unsafe void StartEx(IModLoaderV1 loaderApi, IModConfigV1 modConfigV1)
     {
@@ -49,7 +52,7 @@ public class Program : IMod
         _modLoader.GetController<IReloadedHooks>()?.TryGetTarget(out _hooks!);
         _modLoader.GetController<IStartupScanner>()?.TryGetTarget(out _scanner!);
 
-        Log("loading [SAFE observe build]...");
+        Log("loading [detect NG+ from autosave @0x3F, log verdict]...");
         if (_hooks is null) { Log("ERROR: IReloadedHooks unavailable."); return; }
         if (_scanner is null) { Log("ERROR: IStartupScanner unavailable."); return; }
 
@@ -61,38 +64,53 @@ public class Program : IMod
             Log($"Hooked fileReadRequestOffset @ 0x{addr:X}");
             _entdReadHook = _hooks!.CreateHook<FileReadRequestOffsetDelegate>(FileReadRequestOffsetImpl, addr).Activate();
         });
-
-        nint k32 = GetModuleHandleA("kernel32.dll");
-        nint createFileW = k32 != 0 ? GetProcAddress(k32, "CreateFileW") : 0;
-        if (createFileW != 0) { _createFileHook = _hooks.CreateHook<CreateFileWDelegate>(CreateFileWImpl, createFileW).Activate(); Log($"Hooked CreateFileW @ 0x{createFileW:X}"); }
-        else Log("ERROR: could not resolve CreateFileW.");
-    }
-
-    private nint CreateFileWImpl(nint name, uint access, uint share, nint sa, uint disp, uint flags, nint tmpl)
-    {
-        nint handle = _createFileHook!.OriginalFunction(name, access, share, sa, disp, flags, tmpl);
-        try
-        {
-            string? path = name != 0 ? Marshal.PtrToStringUni(name) : null;
-            if (path != null && path.Contains("enhanced.png", StringComparison.OrdinalIgnoreCase))
-            {
-                string mode = (access & GENERIC_WRITE) != 0 ? "WRITE" : (access & GENERIC_READ) != 0 ? "READ" : $"0x{access:X}";
-                Log($"[fileopen] {mode}: {path}");
-            }
-        }
-        catch { }
-        return handle;
     }
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
     {
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX)
-            Log($"[observe] ENTD read: index={fileIndex} byteOffset=0x{sectorOffset * 0x800:X} size=0x{size:X}");
-
+        {
+            DetectNgPlus();
+            Log($"[observe] ENTD read: index={fileIndex} size=0x{size:X} | NG+={_isNgPlus}");
+        }
         return _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
     }
 
-    private void Log(string msg) => _logger.WriteLine($"[{_modConfig.ModId}] {msg}");
+    /// <summary>Decode the live autosave and read the NG+ flag (byte 0x3F of a resume file).</summary>
+    private void DetectNgPlus()
+    {
+        try
+        {
+            string? path = FindAutosavePath();
+            if (path is null) { Log("[ngdetect] autosave not found"); return; }
+
+            FaithSaveGameData sav = FaithSaveGameData.Open(path);
+            byte[]? resume = null;
+            foreach (string name in ResumePreference)
+                if (sav.Files.TryGetValue(name, out resume) && resume.Length > NGPLUS_FLAG_OFFSET) break;
+                else resume = null;
+            resume ??= sav.Files.Values.FirstOrDefault(b => b.Length > NGPLUS_FLAG_OFFSET);
+
+            if (resume is null) { Log("[ngdetect] no resume file"); return; }
+            _isNgPlus = resume[NGPLUS_FLAG_OFFSET] != 0;
+        }
+        catch (Exception ex) { Log($"[ngdetect] error: {ex.Message}"); }
+    }
+
+    private static string? FindAutosavePath()
+    {
+        string docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string baseDir = Path.Combine(docs, "My Games", "FINAL FANTASY TACTICS - The Ivalice Chronicles", "Steam");
+        if (!Directory.Exists(baseDir)) return null;
+        foreach (string steamDir in Directory.GetDirectories(baseDir))
+        {
+            string p = Path.Combine(steamDir, "autoenhanced.png");
+            if (File.Exists(p)) return p;
+        }
+        return null;
+    }
+
+    private void Log(string msg) => _logger.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [{_modConfig.ModId}] {msg}");
 
     public void Suspend() { }
     public void Resume() { }
