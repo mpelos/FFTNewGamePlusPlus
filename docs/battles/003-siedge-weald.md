@@ -1,15 +1,17 @@
 # 003 - Siedge Weald (Sweegy Woods)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, level-scale) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 4 (after Mandalia Plain)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **384** (local entry 0, `battle_entd4_ent.bin`)
+Patcher: `tools/battle_patch.py sweegy`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Identified by exact roster (only all-monster + 2-guest Ch1 entry). NOTE: the OverrideEntryData
+> layer remaps the monster JOBS at runtime (97→170 Goblin, 98→171 Black Goblin, 100→172 Bomb,
+> 103→169 Red Panther) but leaves Level/JobLevel = -1, so the base `.bin` level/joblevel edits are
+> what scale the pack. Vanilla has 6 monsters (2 Goblin, 1 Black Goblin, 2 Bomb, 1 Red Panther);
+> we scale all six. Equipment/R-S-M untouched (monsters carry none).
 
 ## Original Battle
 

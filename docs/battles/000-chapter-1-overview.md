@@ -28,13 +28,29 @@ Fort Zeakden      -> Ziekden Fortress
 | (skip) | 1 | Orbonne Monastery | Scripted tutorial | Out of scope — see below |
 | `001` | 2 | Magick City of Gariland | First real fight; city street brawl | ✅ Implemented (final-shop v1) |
 | `002` | 3 | Mandalia Plain | First monster + escort a reckless guest | ✅ Implemented (v1, entry 389) |
-| `003` | 4 | Siedge Weald (Sweegy Woods) | Monster-pack woodland; Bombs | 📝 Designed |
-| `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | 📝 Designed |
-| `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | 📝 Designed |
-| `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | 📝 Designed |
-| `007` | 8 | Lenalian Plateau | Milleuda falls; mage-heavy field + Time Mage | 📝 Designed |
-| `008` | 9 | Fovoham Windflats | Wiegraf duel; Judgment Blade spike | 📝 Designed |
-| `009` | 10 | Ziekden Fortress | Chapter finale; Argath boss + hostage | 📝 Designed |
+| `003` | 4 | Siedge Weald (Sweegy Woods) | Monster-pack woodland; Bombs | ✅ Implemented (v1, entry 384) |
+| `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | 🔎 Identified (entry 385) |
+| `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | 🔎 Identified (entry 386) |
+| `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | 🔎 Identified (entry 395) |
+| `007` | 8 | Lenalian Plateau | Milleuda falls; mage-heavy field + Time Mage | 🔎 Identified (entry 399) |
+| `008` | 9 | Fovoham Windflats | Wiegraf duel; Judgment Blade spike | 🔎 Identified (entry 400) |
+| `009` | 10 | Ziekden Fortress | Chapter finale; Argath boss + hostage | 🔎 Identified (entry 401) |
+
+### ENTD entry map (Chapter 1) — solved 2026-06-20
+
+Entries identified by exact roster matching against each battle's original composition (job IDs
+decoded), then cross-checked against the OverrideEntryData layer; the code mod also logs the live
+ENTD entry from the save (`resume_enbtl_main.sav` u16 @ 0x16C) for in-game confirmation.
+
+```text
+388 Gariland (confirmed in-game)   389 Mandalia (confirmed in-game)
+384 Sweegy   385 Dorter   386 Sand Rat   395 Brigands' Den
+399 Lenalia  400 Fovoham  401 Ziekden
+```
+
+Monster job ids: Chocobo 94-96, Goblin 97-99, Bomb 100-102, Panther 103-105. The OverrideEntryData
+remaps Ch1 monster jobs at runtime (169=Red Panther, 170=Goblin, 171=Black Goblin, 172=Bomb,
+173=Chocobo) but leaves Level/JobLevel = -1, so editing the base `.bin` level/joblevel still scales them.
 | `010` | — | Chapter 1 Balance Review | Cross-battle curve + consistency audit | ✅ Done (all 10) |
 
 **Battle count corrected:** Chapter 1 "The Meager" has **10 story battles**, not 7. The
