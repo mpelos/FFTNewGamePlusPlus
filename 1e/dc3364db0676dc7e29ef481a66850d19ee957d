@@ -1,0 +1,86 @@
+docs/battles/017-tchigolith-fenlands.md
+  s_31923542400bb6::t_9a10f973932312 1-186
+docs/battles/008-fovoham-windflats.md
+  s_31923542400bb6::t_9ab53130109f79 1-264
+docs/battles/000-chapter-1-overview.md
+  s_31923542400bb6::t_bf0544a61bbd54 31
+  s_31923542400bb6::t_d5957b02bf1d5b 36
+  s_31923542400bb6::t_f7cc878f617a09 38
+  s_31923542400bb6::t_03cf44edc6b50a 1-30,45,54-110,114-123,127-164
+  s_31923542400bb6::t_da4fee5e40b1b6 35
+  s_31923542400bb6::t_d18c38ee6e8c5d 32
+  s_31923542400bb6::t_5e96b2ce883859 39
+  s_31923542400bb6::t_960c0bb964a50d 33
+  s_31923542400bb6::t_ae766f1d36a128 46-49
+  s_31923542400bb6::t_b1c99b724c2fa5 111-113,124-126
+  s_31923542400bb6::t_c7ba149ad07544 34,37,40-44,50-53
+docs/battles/005-sand-rat-sietch.md
+  s_31923542400bb6::t_4f595118356832 1-246
+docs/battles/006-brigands-den.md
+  s_31923542400bb6::t_7692659869f919 1-277
+docs/battles/007-lenalian-plateau.md
+  s_31923542400bb6::t_e8b177fbfdd088 1-285
+docs/battles/016-balias-tor.md
+  s_31923542400bb6::t_33e84c3ee8e089 1-224
+docs/battles/019-balias-swale.md
+  s_31923542400bb6::t_0e6f336408bdfe 1-227
+docs/battles/004-dorter-slums.md
+  s_31923542400bb6::t_342adb95d909d0 1-264
+docs/battles/009-ziekden-fortress.md
+  s_31923542400bb6::t_a0de65ce589b4c 1-5
+docs/battles/023-chapter-2-balance-review.md
+  s_31923542400bb6::t_b25ffd44f0fbe8 1-226
+docs/battles/013-araguay-woods.md
+  s_31923542400bb6::t_d7367bd371457a 1-178
+docs/battles/010-chapter-1-balance-review.md
+  s_31923542400bb6::t_9939dffc6deec0 1-2
+  s_31923542400bb6::t_e1bcae93f4f8c1 3-167
+docs/battles/021-lionel-castle-gate.md
+  s_31923542400bb6::t_980cf3c738a922 1-260
+docs/battles/002-mandalia-plain.md
+  s_31923542400bb6::t_fca37f0c8f6c6d 1-272
+docs/battles/003-siedge-weald.md
+  s_31923542400bb6::t_19608af089fc73 1-201
+docs/battles/015-zaland.md
+  s_31923542400bb6::t_77a730e32a2033 1-228
+docs/battles/022-lionel-castle-oratory.md
+  s_31923542400bb6::t_9c87ef327edb23 1-206
+docs/battles/011-chapter-2-overview.md
+  s_31923542400bb6::t_714dc77f98a9f0 41
+  s_31923542400bb6::t_222d6989b4dea1 36
+  s_31923542400bb6::t_0f750e9d4b21c3 37
+  s_31923542400bb6::t_2470c709a79b77 42
+  s_31923542400bb6::t_79038e6d8162db 43
+  s_31923542400bb6::t_2a92784e389159 39
+  s_31923542400bb6::t_963e9ec582fa8d 40
+  s_31923542400bb6::t_b0e477f7045a24 35
+  s_31923542400bb6::t_52b3c9c53702b8 38
+  s_31923542400bb6::t_238672ed3e3d08 1-33,46-157
+  s_31923542400bb6::t_72b8ce01df38d9 34
+  s_31923542400bb6::t_07a9c3170371e9 44
+  s_31923542400bb6::t_1871fc6fd5d23c 45
+docs/battles/020-golgollada-gallows.md
+  s_31923542400bb6::t_c39cd638066f24 1-259
+docs/battles/012-merchant-dorter.md
+  s_31923542400bb6::t_ef8f5da90d7b68 1-237
+docs/battles/014-zeirchele-falls.md
+  s_31923542400bb6::t_435d0118cddff4 1-232
+docs/battles/018-goug-lowtown.md
+  s_31923542400bb6::t_268d6ca7368528 1-236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "1edc3364db0676dc7e29ef481a66850d19ee957d",
+  "prompts": {},
+  "sessions": {
+    "s_31923542400bb6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bf301f0-182a-46aa-8613-8003a8abfd6e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
