@@ -1,15 +1,19 @@
 # 008 - Fovoham Windflats (Windmill Shed)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 9 (after Lenalian Plateau)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **400** (local entry 16, `battle_entd4_ent.bin`)
+Patcher: `tools/battle_patch.py fovoham`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Identified by exact roster. **Wiegraf = slot s1** (cid 0x20, name_id=32, **job 32 = his Holy
+> Knight class that carries Judgment Blade**). Vanilla slots: s1 Wiegraf, s2 Chocobo (monster,
+> OverrideEntryData remaps its job→173; level via .bin), s3 Knight, s4/s5 Monk (s0 guest Delita).
+> CRITICAL: Wiegraf's job (32) and skillset are LEFT UNTOUCHED so Judgment Blade survives — we
+> only scale his level (103) / JobLevel (8) and upgrade to durable non-unique gear with a BREAKABLE
+> sword (Runeblade) so Rend Weapon stays the counter. Knight L101, 2 Monks L101 (bare-handed),
+> Chocobo L100. set_slot preserves identity bytes (name_id/cid/unitid). 38 bytes, all in entry 400.
 
 ## Original Battle
 
