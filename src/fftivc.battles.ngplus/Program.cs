@@ -18,12 +18,14 @@ namespace fftivc.battles.ngplus;
 /// resume_enwm_main.sav. At battle entry the game writes the autosave ~2s before reading the ENTD,
 /// so reading it in the ENTD hook is race-free and current.
 ///
-/// Milestone 3: CONDITIONAL ENTD SWAP. When NG+ is detected, after the original read fills the
-/// buffer with vanilla bytes we overwrite it with our embedded modded ENTD (one file per fftpack
-/// index, embedded as entd\battle_entdN_ent.bin). In normal play we leave the vanilla bytes
-/// untouched -> a first playthrough is completely unaffected. This makes the mod self-contained:
-/// the data-only file-replacement mod (fftivc.battles.rescale) is no longer needed and MUST be
-/// disabled, otherwise it would replace the ENTD unconditionally even in normal play.
+/// Two layers, applied in the ENTD read hook:
+///  - Layer 1 (NG+ ONLY): swap the whole modded ENTD (enemies + composition + guests) from our
+///    embedded entd\battle_entdN_ent.bin. Normal play keeps vanilla enemies -> first playthrough
+///    unaffected. Makes the mod self-contained: the old data-only file-replacement mod
+///    (fftivc.battles.rescale) is superseded and MUST be disabled or it would replace ENTD always.
+///  - Layer 2 (ALWAYS): scale guests (named ally charIds) to party level whether NG+ or not. A
+///    guest at party level never hardens a first playthrough, and patching every ENTD read removes
+///    the dependency on detecting NG+ at the exact join cutscene (when the level bakes into the save).
 /// </summary>
 public class Program : IMod
 {
@@ -38,6 +40,22 @@ public class Program : IMod
 
     private const int ENTD_INDEX_MIN = 224;
     private const int ENTD_INDEX_MAX = 227;
+
+    // ENTD file layout: a flat grid of 16 slots/entry x 0x28 bytes, 128 entries -> 0x14000, no header.
+    private const long ENTD_FILE_SIZE = 0x14000;
+    private const int SLOT_SIZE = 0x28;
+    private const int SLOT_CHARID = 0x00; // unit/character id (named chars low; generics 0x80+)
+    private const int SLOT_LEVEL = 0x03;  // level (>99 = party level + value-100; 100 = party level)
+    private const byte LEVEL_PARTY = 100;
+
+    // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
+    // playthrough harder (the party is low level early, so the guest just matches the team). This
+    // also dodges the join-timing problem: the level bakes into the save at the join cutscene, and
+    // patching every ENTD read means we don't depend on detecting NG+ at that exact moment.
+    // charId set (extend as later-chapter guests are added). 0x04=Delita, 0x07=Argath (Chapter 1).
+    // NOTE: Argath also appears as an ENEMY at Ziekden (end of Ch1); scaling him there only ever
+    // matches/eases the fight (party level vs his fixed level), never hardens it.
+    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07 };
 
     // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
     // modded version of; an index with no entry passes through vanilla even in NG+.
@@ -84,16 +102,16 @@ public class Program : IMod
         // returns whatever status/byte-count the game expects. We only mutate the buffer afterwards.
         int ret = _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
 
-        if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX)
+        if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
             DetectNgPlus();
-            bool haveMod = _moddedEntd.TryGetValue(fileIndex, out byte[]? modded);
 
             // The game reads the whole ENTD file in one shot (sectorOffset 0, size == file length).
-            // Only swap when that holds and the modded file matches the requested size exactly.
-            bool fullRead = sectorOffset == 0 && haveMod && modded!.Length == size;
+            bool fullRead = sectorOffset == 0 && size == ENTD_FILE_SIZE;
+            bool haveMod = _moddedEntd.TryGetValue(fileIndex, out byte[]? modded);
 
-            if (_isNgPlus && fullRead && outputPointer != null)
+            // Layer 1 (NG+ only): swap the whole modded file (enemies + composition + guests).
+            if (_isNgPlus && fullRead && haveMod && modded!.Length == size)
             {
                 Marshal.Copy(modded!, 0, (IntPtr)outputPointer, modded!.Length);
                 Log($"[swap] ENTD index={fileIndex} -> MODDED ({modded.Length} bytes) [NG+]");
@@ -103,9 +121,13 @@ public class Program : IMod
                 string why = !_isNgPlus ? "normal play"
                            : !haveMod ? "no modded file"
                            : !fullRead ? $"partial read (off=0x{sectorOffset:X} size=0x{size:X})"
-                           : "buffer null";
-                Log($"[pass] ENTD index={fileIndex} size=0x{size:X} -> vanilla ({why})");
+                           : "size mismatch";
+                Log($"[pass] ENTD index={fileIndex} size=0x{size:X} -> vanilla enemies ({why})");
             }
+
+            // Layer 2 (ALWAYS): scale guests to party level, in NG+ and normal alike. Runs after the
+            // swap so it's a no-op on a modded file (guests already 100) and the fix on vanilla.
+            if (fullRead) ScaleGuestsAlways(outputPointer, size);
         }
         return ret;
     }
@@ -133,6 +155,25 @@ public class Program : IMod
             Log($"[init] loaded modded {file} (index {idx}, {_moddedEntd[idx].Length} bytes)");
         }
         if (_moddedEntd.Count == 0) Log("[init] WARNING: no modded ENTD embedded; will pass through vanilla.");
+    }
+
+    /// <summary>
+    /// Force every guest slot (charId in GuestCharIds) to party level (LEVEL_PARTY). The ENTD buffer
+    /// is a flat grid of 0x28-byte slots, so each slot-aligned offset's first byte is its charId.
+    /// </summary>
+    private unsafe void ScaleGuestsAlways(void* buffer, long size)
+    {
+        byte* p = (byte*)buffer;
+        int patched = 0;
+        for (long off = 0; off + SLOT_SIZE <= size; off += SLOT_SIZE)
+        {
+            if (GuestCharIds.Contains(p[off + SLOT_CHARID]) && p[off + SLOT_LEVEL] != LEVEL_PARTY)
+            {
+                p[off + SLOT_LEVEL] = LEVEL_PARTY;
+                patched++;
+            }
+        }
+        if (patched > 0) Log($"[guest] scaled {patched} guest slot(s) to party level");
     }
 
     /// <summary>Decode the live autosave (non-locking) and read the NG+ flag (byte 0x3F).</summary>
