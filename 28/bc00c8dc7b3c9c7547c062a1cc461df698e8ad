@@ -1,0 +1,45 @@
+docs/battles/034-riovanes-castle-keep.md
+  s_31923542400bb6::t_30d4e7b65c92d8 1-265
+docs/battles/033-riovanes-castle-gate.md
+  s_31923542400bb6::t_6e35a433c24b12 1-245
+docs/battles/035-riovanes-castle-roof.md
+  s_31923542400bb6::t_a47c12acfa9239 1-237
+docs/battles/036-chapter-3-balance-review.md
+  s_31923542400bb6::t_d5c1da19b329ab 1-235
+docs/battles/027-monastery-vaults-2nd.md
+  s_31923542400bb6::t_cfb33e1ffcae56 1-236
+docs/battles/029-monastery-vaults-1st.md
+  s_31923542400bb6::t_546c4d2bdb7f31 1-253
+docs/battles/028-monastery-vaults-3rd.md
+  s_31923542400bb6::t_029014ef95e4e2 1-261
+docs/battles/030-grogh-heights.md
+  s_31923542400bb6::t_46299a19209ccf 1-246
+docs/battles/025-mining-town-gollund.md
+  s_31923542400bb6::t_6e579dd19e6b45 1-236
+docs/battles/031-walled-city-yardrow.md
+  s_31923542400bb6::t_a495d2dc066e7a 1-238
+docs/battles/024-chapter-3-overview.md
+  s_31923542400bb6::t_0d9ce3e4d6a18f 52
+  s_31923542400bb6::t_920637d679a455 41-51
+  s_31923542400bb6::t_acf59d88f07030 1-40,53-169
+docs/battles/032-yuguewood.md
+  s_31923542400bb6::t_ca1ae4a29812fc 1-239
+docs/battles/026-lesalia-castle-postern.md
+  s_31923542400bb6::t_4e0a495f9158cd 1-246
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "28bc00c8dc7b3c9c7547c062a1cc461df698e8ad",
+  "prompts": {},
+  "sessions": {
+    "s_31923542400bb6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bf301f0-182a-46aa-8613-8003a8abfd6e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
