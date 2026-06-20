@@ -378,5 +378,35 @@ write). So at ENTD time the autosave is fully flushed -> race-free read.
 
 ### Status
 - Detection: DONE.  ENTD interception: DONE (single 0x14000 read).
-- REMAINING = Milestone 3: when NG+, overwrite the ENTD output buffer with our modded ENTD bytes
-  (embed battle_entd*_ent.bin as mod resources; memcpy in the hook). Else pass through vanilla.
+- Milestone 3 (conditional ENTD swap): **DONE & VALIDATED IN-GAME (2026-06-20).**
+
+## MILESTONE 3 — CONDITIONAL ENTD SWAP (DONE & VALIDATED 2026-06-20)
+
+The code mod is now self-contained: the modded `battle_entd4_ent.bin` is embedded as a resource
+(`src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin`, EmbeddedResource glob `entd\*.bin` ->
+manifest name `fftivc.battles.ngplus.entd.battle_entd4_ent.bin`) and applied at runtime ONLY in NG+.
+
+### How it works (FileReadRequestOffsetImpl)
+1. Call `OriginalFunction` FIRST -> fills the output buffer with the vanilla file bytes and returns
+   the status/byte-count the game expects. We only mutate the buffer afterwards, never the return.
+2. For ENTD indices 224-227: `DetectNgPlus()` (autosave 0x3F), then look up `_moddedEntd[fileIndex]`.
+3. Swap guard = `_isNgPlus && sectorOffset == 0 && haveMod && modded.Length == size && buffer != null`.
+   When true: `Marshal.Copy(modded, 0, (IntPtr)outputPointer, modded.Length)` -> log `[swap] ... MODDED [NG+]`.
+   Otherwise: leave vanilla -> log `[pass] ... vanilla (<reason>)`. Reasons: normal play / no modded
+   file / partial read / buffer null.
+4. `LoadModdedEntd()` at StartEx maps 224..227 -> battle_entd1..4_ent.bin, loading whichever embedded
+   resources exist (only entd4 ships today; others pass through vanilla automatically).
+
+### Index map (fftpack)
+224=entd1, 225=entd2, 226=entd3, 227=entd4. All ENTD files are 81920 bytes = 0x14000 (confirms the
+single full-file read; the swap guard checks modded.Length == size).
+
+### DEPLOYMENT — single-mod end state
+The old data-only mod `fftivc.battles.rescale` replaced entd4 UNCONDITIONALLY via the modloader, so
+its OriginalFunction would return modded bytes even in normal play, defeating the gate. It MUST be
+disabled in Reloaded-II. The code mod `fftivc.battles.ngplus` now owns everything (detection + data).
+=> Shipping = a single mod; players only need Reloaded-II + its deps.
+
+### Validation (in-game, both sides — PASSED)
+- NG+ save -> Gariland -> modded composition/guests; log `[swap] ENTD index=227 -> MODDED [NG+]`.
+- Normal save -> same battle -> vanilla; log `[pass] ENTD index=227 -> vanilla (normal play)`.
