@@ -27,7 +27,7 @@ Fort Zeakden      -> Ziekden Fortress
 |-----|--------|----------|---------------|---------------|
 | (skip) | 1 | Orbonne Monastery | Scripted tutorial | Out of scope — see below |
 | `001` | 2 | Magick City of Gariland | First real fight; city street brawl | ✅ Implemented (final-shop v1) |
-| `002` | 3 | Mandalia Plain | First monster + escort a reckless guest | 📝 Designed |
+| `002` | 3 | Mandalia Plain | First monster + escort a reckless guest | ✅ Implemented (v1, entry 389) |
 | `003` | 4 | Siedge Weald (Sweegy Woods) | Monster-pack woodland; Bombs | 📝 Designed |
 | `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | 📝 Designed |
 | `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | 📝 Designed |

@@ -1,15 +1,12 @@
 # 002 - Mandalia Plain
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 3 (after Gariland)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
-
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+ENTD: global entry **389**
+File: `battle_entd4_ent.bin` (local entry `5`)
+Patcher: `tools/battle_patch.py mandalia`
 
 ## Original Battle
 
@@ -58,19 +55,30 @@ on the fragile guest line — without turning the on-ramp into a wall.
 
 ## Local Data Confirmed
 
-```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm: which slots are the 3 Squires / Thief / Red Panther, and which are guest/player.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-```
+Entry `389` identified by: 2 guests present (Delita 0x04 + Argath 0x07 — Mandalia is where
+Argath joins; Gariland had only Delita), enemy composition Thief + 4 Squire + 1 monster at
+real low levels, sitting immediately after Gariland (388). Vanilla dump:
 
-Job IDs (carry over known, verify the rest in-game):
+| Slot | Role | charId | Level | MainJob | Notes |
+|------|------|--------|-------|---------|-------|
+| 0,1 | guests | 0x04 / 0x07 | — | — | Delita + Argath. Left untouched (runtime guest layer scales them). |
+| 2 | enemy | 0x80 | `2` | `83` | Thief. |
+| 3 | enemy | 0x80 | `1` | `74` | Squire. |
+| 4 | enemy | 0x80 | `1` | `74` | Squire. |
+| 5 | enemy | 0x80 | `1` | `74` | Squire. |
+| 6 | enemy | 0x80 | `1` | `74` | Squire (→ converted to Archer). |
+| 7 | enemy | 0x82 | `1` | `103` (monster) | Red Panther. |
+
+Vanilla had **4** Squire (not 3 as some walkthroughs list); one becomes the Archer, leaving
+3 Squire + Thief + Archer + Red Panther = the designed composition with no slot added.
+
+Job IDs:
 
 ```text
 74 = Squire           (confirmed)
 83 = Thief            (confirmed)
 77 = Archer           (confirmed)
-Red Panther job id    (TBD — verify; monster slot, no equipment)
+103 = Red Panther     (confirmed — monster slot 7, flags 0x20, no equipment)
 ```
 
 ## New Game++ Design Goal
@@ -233,20 +241,43 @@ Red Panther starts forward and central, free to lunge at the most exposed unit.
 The point: the open plain plus one archer plus a charging beast should force the player to
 actually escort Argath, not ignore him. No tile should be a safe corner.
 
+## Implemented Mapping (v1)
+
+Applied to the embedded NG+ ENTD (`tools/battle_patch.py mandalia`), entry 389. 52 bytes
+changed, all inside entry 389. Existing slots re-tuned in place (no slot added — Mandalia
+already had 6 enemy slots), so positions are kept vanilla.
+
+| Slot | Role | Job | Level | R / S / M | Gear (head/body/acc/RH/LH) |
+|------|------|-----|-------|-----------|----------------------------|
+| 3 | Leader | Squire (74) | 102 | Counter / Attack Boost / Move +1 | Headband / Power Garb / Bracers / Runeblade / — |
+| 4 | Soldier | Squire (74) | 100 | Counter / Attack Boost / Move +1 | Headband / Power Garb / Bracers / Icebrand / — |
+| 5 | Soldier | Squire (74) | 100 | Counter / Attack Boost / Move +1 | Headband / Power Garb / Bracers / Icebrand / — |
+| 2 | Skirmisher | Thief (83) | 101 | First Strike / Attack Boost / Move +2 | Thief's Cap / Black Garb / Germinas Boots / Air Knife / 2h |
+| 6 | Marksman | Archer (77) | 101 | Reflexes / Concentration / Move +1 | Thief's Cap / Black Garb / Bracers / Windslash Bow / 2h |
+| 7 | Beast | Red Panther (103) | 101 | monster defaults (untouched) | none (monster) |
+
+Notes / known risks:
+- Job conversion (s6 Squire→Archer) changed only `mainJob` (0x0A); `x08` left as vanilla
+  (it varies independently of job and is duplicated across slots, so it is not job/sprite/id
+  critical). If the Archer renders or behaves wrong in-game, set `x08`=3 as Gariland did.
+- Thief secondary left as none (v1, per design). Archer secondary = Fundaments (matches the
+  verified Gariland archer).
+- Positions kept vanilla; the open-field placement plan above is a future-tuning option.
+
 ## Implementation Checklist
 
-- [ ] Identify Mandalia `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 3 Squire + 1 Thief + 1 Red Panther + guest/player slots.
-- [ ] Confirm Red Panther job id and a legal monster build.
-- [ ] Verify Archer/Thief/Squire item IDs against `ItemData.xml`.
-- [ ] Set levels: leader `102`, Squires `100`, Thief/Archer/Panther `101`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] Add the Archer slot (clone a human template like Gariland's slot-6 method, then re-job).
-- [ ] Apply gear + R/S/M per builds above.
-- [ ] Set positions per the placement plan.
-- [ ] Patch via the correct layer; keep the diff inside the Mandalia window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional.
-- [ ] Install mod, test from a New Game+ save with both objective choices.
+- [x] Identify Mandalia ENTD entry → **389** (local 5, `battle_entd4_ent.bin`).
+- [x] Dump original entry; verified Thief + 4 Squire + Red Panther + 2 guests.
+- [x] Confirm Red Panther job id → **103** (monster, no equipment).
+- [x] Verify Archer/Thief/Squire item IDs (reused Gariland's in-game-validated IDs).
+- [x] Set levels: leader `102`, Squires `100`, Thief/Archer/Panther `101`.
+- [x] Set JobLevel `8` on all active enemy slots.
+- [x] Convert one Squire (s6) → Archer in place (no slot added; 6 already present).
+- [x] Apply gear + R/S/M per builds above.
+- [ ] Positions: kept vanilla (placement plan deferred to a tuning pass).
+- [x] Patch via the NG+ embedded ENTD; diff confirmed inside entry 389 only (52 bytes).
+- [x] Rebuild + deploy mod.
+- [ ] Test in-game from a New Game+ save with both objective choices.
 
 ## Test Questions
 
