@@ -9,6 +9,10 @@ using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
 
+using fftivc.utility.modloader.Interfaces.Tables;
+using fftivc.utility.modloader.Interfaces.Tables.Models;
+using fftivc.utility.modloader.Interfaces.Tables.Structures;
+
 namespace fftivc.battles.ngplus;
 
 /// <summary>
@@ -72,6 +76,24 @@ public class Program : IMod
 
     private volatile bool _isNgPlus;
 
+    // --- NG+ SHOPS ---
+    // The store inventory is two STATIC in-memory exe tables (parsed by the modloader): which shops
+    // sell each item (ITEM_SHOPS_DATA), and each item's ShopAvailability (ITEM_COMMON_DATA) = the
+    // story-progress milestone it unlocks at (1=Chapter1_Start .. 16=Chapter4_KillZalbag, 0=never).
+    // An item shows iff availability <= currentProgress AND its shop bit is set. In NG+ progress
+    // resets -> only availability=1 items show. Fix: in NG+, lower every normally-sold item's
+    // availability to Chapter1_Start so the full endgame stock is available immediately; restore
+    // originals in normal play. We patch via the modloader's IFFTOItemDataManager controller.
+    private IFFTOItemDataManager? _itemMgr;
+    private const int ITEM_COUNT = 256;
+    // world_* files (fftpack indices 765-772) load on world-map/town entry, BEFORE any shop opens.
+    private const int WORLD_INDEX_MIN = 765;
+    private const int WORLD_INDEX_MAX = 772;
+    private enum ShopState { Unknown, EndgameApplied, VanillaRestored }
+    private ShopState _shopState = ShopState.Unknown;
+    private DateTime _lastShopSync = DateTime.MinValue;
+    private readonly List<int> _patchedItemIds = new();
+
     // DIAGNOSTIC (shop discovery): log each fftpack file index the first time it is read this
     // session, so newly-read indices when entering a town / opening a shop reveal the store-data
     // file. Set false to disable. globalIndex - 223 = line number in 0002_files.txt (if in 0002.pac).
@@ -92,6 +114,11 @@ public class Program : IMod
 
         LoadModdedEntd();
 
+        _modLoader.GetController<IFFTOItemDataManager>()?.TryGetTarget(out _itemMgr!);
+        Log(_itemMgr is null
+            ? "WARNING: IFFTOItemDataManager unavailable -> NG+ shops disabled (update the modloader?)."
+            : "IFFTOItemDataManager acquired -> NG+ endgame shops enabled.");
+
         nint baseAddr = Process.GetCurrentProcess().MainModule!.BaseAddress;
         _scanner.AddMainModuleScan(SIG_FILE_READ_REQUEST_OFFSET, result =>
         {
@@ -111,6 +138,10 @@ public class Program : IMod
         // Diagnostic: first time we see each index, log it (size+offset help spot the small store table).
         if (DIAG_LOG_READS && _seenReadIndices.Add(fileIndex))
             Log($"[read-new] index={fileIndex} size=0x{size:X} off=0x{sectorOffset:X}");
+
+        // World-map/town entry reads world_* files (765-772) before any shop opens -> sync shops here.
+        if (fileIndex >= WORLD_INDEX_MIN && fileIndex <= WORLD_INDEX_MAX)
+            SyncShops();
 
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
@@ -184,6 +215,58 @@ public class Program : IMod
             }
         }
         if (patched > 0) Log($"[guest] scaled {patched} guest slot(s) to party level");
+    }
+
+    /// <summary>
+    /// Re-detect NG+ and bring the in-memory shop tables to the desired state: endgame stock in NG+,
+    /// vanilla otherwise. Throttled (the world_* burst triggers this several times) and idempotent.
+    /// </summary>
+    private void SyncShops()
+    {
+        if (_itemMgr is null) return;
+        if ((DateTime.Now - _lastShopSync).TotalSeconds < 2.0) return; // collapse the world_* read burst
+        _lastShopSync = DateTime.Now;
+
+        DetectNgPlus();
+        if (_isNgPlus && _shopState != ShopState.EndgameApplied)
+        {
+            ApplyEndgameShops();
+            _shopState = ShopState.EndgameApplied;
+        }
+        else if (!_isNgPlus && _shopState != ShopState.VanillaRestored)
+        {
+            RestoreVanillaShops();
+            _shopState = ShopState.VanillaRestored;
+        }
+    }
+
+    /// <summary>NG+: lower every normally-sold item's availability to Chapter1_Start (everything in stock now).</summary>
+    private void ApplyEndgameShops()
+    {
+        _patchedItemIds.Clear();
+        for (int id = 0; id < ITEM_COUNT; id++)
+        {
+            ItemShopAvailability? avail = _itemMgr!.GetOriginalItem(id).ShopAvailability;
+            // Only items that are EVER sold (availability != Blank). Leave never-sold (0) items unsold.
+            if (avail is null || avail == ItemShopAvailability.Blank) continue;
+            _itemMgr.ApplyTablePatch(_modConfig.ModId, new Item { Id = id, ShopAvailability = ItemShopAvailability.Chapter1_Start });
+            _patchedItemIds.Add(id);
+        }
+        Log($"[shops] NG+ -> endgame stock: {_patchedItemIds.Count} items unlocked from Chapter 1.");
+    }
+
+    /// <summary>Normal play: restore the original availability of every item we lowered.</summary>
+    private void RestoreVanillaShops()
+    {
+        int n = 0;
+        foreach (int id in _patchedItemIds)
+        {
+            ItemShopAvailability? orig = _itemMgr!.GetOriginalItem(id).ShopAvailability;
+            _itemMgr.ApplyTablePatch(_modConfig.ModId, new Item { Id = id, ShopAvailability = orig });
+            n++;
+        }
+        _patchedItemIds.Clear();
+        Log($"[shops] normal play -> restored vanilla availability for {n} items.");
     }
 
     /// <summary>Decode the live autosave (non-locking) and read the NG+ flag (byte 0x3F).</summary>
