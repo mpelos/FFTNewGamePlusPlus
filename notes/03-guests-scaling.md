@@ -242,6 +242,23 @@ This is why earlier edits "did nothing": the test save already had Delita at lev
 ### Corrected identities
 charId `0x01` = Ramza, `0x04` = Delita. (Use the fingerprint method, not charId guesses, to be sure.)
 
+## Chapter 1 guests scaled (mod v0.6.0)
+
+Reliable guest-vs-enemy rule discovered: **a special character in GUEST form has
+`MainJob (slot+0x0A) == charId (slot+0x02)`**; the same character as an ENEMY uses a generic
+combat job (e.g. Argath-enemy at Ziekden has job 0x4C, not 0x07). So filter guests by
+`charId not in {0,0xFF} AND MainJob == charId`.
+
+Chapter 1 human guests = **Delita (charId 0x04)** and **Argath/Algus (charId 0x07)**.
+Scaled ALL their guest-form appearances across entd4 entries 384-401 to level 100 (27 records;
+both fixed-level joins like e389 Argath L2, e392 Delita L1, and the 254/default appearances —
+robust against the save-cache-on-join behavior regardless of which entry is the true join).
+Argath-as-enemy (e401, job 0x4C) correctly excluded.
+
+NOT scaled: Ramza (0x01) — he is the player's main (uses save level), not a guest.
+TODO: Boco (Ch1 chocobo guest) not found as a named job==charId record in the ENTD — likely
+joins via event or as a generic monster; investigate if guest chocobo scaling is wanted.
+
 ## Sources
 - ENTD flags/team bits: FFHacktics wiki (Extra Battle Stats / ENTD).
   https://ffhacktics.com/wiki/Extra_Battle_Stats , https://ffhacktics.com/wiki/ENTD
