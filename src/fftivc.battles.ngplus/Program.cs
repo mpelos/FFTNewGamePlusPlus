@@ -119,6 +119,22 @@ public class Program : IMod
     private const bool DIAG_LOG_READS = true;
     private readonly HashSet<int> _seenReadIndices = new();
 
+    // --- RAM SAVE DUMP DIAGNOSTIC (locate the live NG+ flag in g_WorkMem) ---
+    // Nenkai's RE notes: the live save data sits inside the 0x400440-byte g_WorkMem buffer. We resolve
+    // the g_WorkMem pointer via the documented ref `add rbx,[rip+g_WorkMem]; test r8,r8`, then dump the
+    // whole buffer to disk when a shop opens. Comparing a matched NG+ vs normal save (same story point)
+    // reveals the NG+ flag byte by diff (same method that found autosave 0x3F) -> reliable at-any-time
+    // detection that survives restart and needs no battle.
+    private const bool DIAG_DUMP_WORKMEM = true;
+    private const string SIG_WORKMEM = "48 03 1D ?? ?? ?? ?? 4D 85 C0";
+    private const long WORKMEM_SIZE = 0x400440;
+    private nint _workMemPtrAddr;          // address of the g_WorkMem pointer variable (module data)
+    private int _dumpSeq;
+    private DateTime _lastDump = DateTime.MinValue;
+
+    [DllImport("kernel32.dll")] private static extern bool ReadProcessMemory(nint hProcess, nint lpBaseAddress, byte[] lpBuffer, nint dwSize, out nint lpNumberOfBytesRead);
+    [DllImport("kernel32.dll")] private static extern nint GetCurrentProcess();
+
     public unsafe void StartEx(IModLoaderV1 loaderApi, IModConfigV1 modConfigV1)
     {
         _modLoader = (IModLoader)loaderApi;
@@ -146,6 +162,44 @@ public class Program : IMod
             Log($"Hooked fileReadRequestOffset @ 0x{addr:X}");
             _entdReadHook = _hooks!.CreateHook<FileReadRequestOffsetDelegate>(FileReadRequestOffsetImpl, addr).Activate();
         });
+
+        if (DIAG_DUMP_WORKMEM)
+            _scanner.AddMainModuleScan(SIG_WORKMEM, r =>
+            {
+                if (!r.Found) { Log("[ramdump] g_WorkMem signature NOT found."); return; }
+                nint instr = baseAddr + r.Offset;
+                int rel32 = Marshal.ReadInt32(instr + 3);     // disp of `add rbx,[rip+disp]` (7-byte instr)
+                _workMemPtrAddr = instr + 7 + rel32;           // address of the g_WorkMem pointer variable
+                Log($"[ramdump] g_WorkMem ptr-var @ 0x{_workMemPtrAddr:X} (instr @ 0x{instr:X})");
+            });
+    }
+
+    /// <summary>Dump the whole g_WorkMem buffer to disk so NG+ vs normal can be diffed for the flag.</summary>
+    private void DumpWorkMem(string tag)
+    {
+        if (!DIAG_DUMP_WORKMEM || _workMemPtrAddr == 0) return;
+        if (_dumpSeq >= 8) return;                                   // cap disk usage
+        if ((DateTime.Now - _lastDump).TotalSeconds < 8) return;     // throttle
+        long workMemBase = Marshal.ReadInt64(_workMemPtrAddr);       // pointer var is committed module data
+        if (workMemBase <= 0x10000) { Log($"[ramdump] g_WorkMem not allocated yet (0x{workMemBase:X})"); return; }
+
+        var buf = new byte[WORKMEM_SIZE];
+        if (!ReadProcessMemory(GetCurrentProcess(), (nint)workMemBase, buf, (nint)WORKMEM_SIZE, out nint read) || read == 0)
+        {
+            Log($"[ramdump] ReadProcessMemory failed (base=0x{workMemBase:X}, read={read})");
+            return;
+        }
+        _lastDump = DateTime.Now;
+        int seq = ++_dumpSeq;
+        string dir = Path.Combine(_modLoader.GetDirectoryForModId(_modConfig.ModId), "ramdumps");
+        Directory.CreateDirectory(dir);
+        string path = Path.Combine(dir, $"workmem_{DateTime.Now:HHmmss}_{seq:D2}.bin");
+        try
+        {
+            File.WriteAllBytes(path, read == (nint)WORKMEM_SIZE ? buf : buf[..(int)read]);
+            Log($"[ramdump] #{seq} [{tag}] base=0x{workMemBase:X} size=0x{(long)read:X} -> {path}");
+        }
+        catch (Exception ex) { Log($"[ramdump] write failed: {ex.Message}"); }
     }
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
@@ -164,6 +218,10 @@ public class Program : IMod
         if ((fileIndex >= WORLD_INDEX_MIN && fileIndex <= WORLD_INDEX_MAX) ||
             (fileIndex >= SHOP_UI_INDEX_MIN && fileIndex <= SHOP_UI_INDEX_MAX))
             SyncShops();
+
+        // RAM dump diagnostic: capture the live save buffer when the Outfitter opens (shop UI reads).
+        if (DIAG_DUMP_WORKMEM && fileIndex >= SHOP_UI_INDEX_MIN && fileIndex <= SHOP_UI_INDEX_MAX)
+            DumpWorkMem("shop-open");
 
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
