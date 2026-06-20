@@ -25,7 +25,9 @@
     <PackageReference Include="Reloaded.Memory.SigScan.ReloadedII.Interfaces" Version="1.2.0" />
     <PackageReference Include="Reloaded.SharedLib.Hooks" Version="1.9.0" />
     <PackageReference Include="FF16Tools.Files" Version="1.4.1" />
-    <PackageReference Include="fftivc.utility.modloader.Interfaces" Version="1.6.1" ExcludeAssets="runtime" />
+    <!-- Must match the AssemblyVersion of the INSTALLED modloader (1.6.0.0); the modloader provides
+         this assembly at runtime (ExcludeAssets=runtime). Bump only if the installed modloader bumps. -->
+    <PackageReference Include="fftivc.utility.modloader.Interfaces" Version="1.6.0" ExcludeAssets="runtime" />
   </ItemGroup>
 
 </Project>
