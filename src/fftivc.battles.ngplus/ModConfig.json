@@ -1,9 +1,9 @@
 {
   "ModId": "fftivc.battles.ngplus",
-  "ModName": "New Game++ (NG+ conditional)",
+  "ModName": "New Game++",
   "ModAuthor": "mmpel",
-  "ModVersion": "0.0.1",
-  "ModDescription": "Applies New Game++ battle changes only when a New Game+ save is loaded. WIP code mod.",
+  "ModVersion": "0.0.2",
+  "ModDescription": "Reworks story battles for New Game+: enemies scale to your highest party level with new compositions (NG+ only), and guests always join at party level.",
   "ModDll": "fftivc.battles.ngplus.dll",
   "ModIcon": "",
   "ModR2RManagedDll32": "",
