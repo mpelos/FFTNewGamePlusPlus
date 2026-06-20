@@ -31,7 +31,7 @@ Fort Zeakden      -> Ziekden Fortress
 | `003` | 4 | Siedge Weald (Sweegy Woods) | Monster-pack woodland; Bombs | ✅ Implemented (v1, entry 384) |
 | `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | ✅ Implemented (v1, entry 385) |
 | `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | ✅ Implemented (v1, entry 386) |
-| `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | 🔎 Identified (entry 395) |
+| `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | ✅ Implemented (v1, entry 395) |
 | `007` | 8 | Lenalian Plateau | Milleuda falls; mage-heavy field + Time Mage | 🔎 Identified (entry 399) |
 | `008` | 9 | Fovoham Windflats | Wiegraf duel; Judgment Blade spike | 🔎 Identified (entry 400) |
 | `009` | 10 | Ziekden Fortress | Chapter finale; Argath boss + hostage | 🔎 Identified (entry 401) |

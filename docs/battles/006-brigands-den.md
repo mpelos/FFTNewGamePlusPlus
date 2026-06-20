@@ -1,15 +1,22 @@
 # 006 - Brigands' Den (Thieves Fort)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 7 (after Sand Rat Sietch)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **395** (local entry 11, `battle_entd4_ent.bin`)
+Patcher: `tools/battle_patch.py brigands`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Identified by exact adds (2 White Mage + 3 Thief) + the boss. **Milleuda = slot s2**
+> (name_id=75, unitid 0x85, Knight-class cid 0x81 — a NAMED unit; the other 5 slots are generics
+> name_id=255). The remaster folds the doc's "1 Knight" into Milleuda herself (6 units total).
+> `set_slot` only writes level/job/skills/equipment, NOT name_id/cid/unitid/flags, so Milleuda's
+> identity and the "Defeat Milleuda" objective are preserved. No OverrideEntryData on this entry.
+> Implemented: Milleuda L102 (Knight kept, Fundaments, Counter, Helm154/Armor182/Bracers/Runeblade/
+> Shield139); 2 White Mage L101 (s3,s4) with Mage Hat(167)/Robe(206)/Featherweave/Staff(64),
+> Reflexes; 3 Thief L100 (s5-s7) Gariland-validated build. Positions/rain kept vanilla. 60 bytes.
+> Deferred: a confirmed offensive-Thunder skillset for a White Mage (rain gimmick) — secondary
+> left 0 for v1.
 
 ## Original Battle
 
