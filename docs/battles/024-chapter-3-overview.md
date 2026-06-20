@@ -1,0 +1,169 @@
+# Chapter 3 — "The Valiant": New Game++ Design Overview
+
+Master plan for rescaling and redesigning every **Chapter 3** story battle of *FINAL FANTASY
+TACTICS - The Ivalice Chronicles* (Enhanced v1.5.0) for New Game++.
+
+Chapter 3 is the **dark turn**: the Church / Knights Templar are revealed as the true enemy,
+wielding the Zodiac Stones to call Lucavi, and the chapter ends in the harrowing Riovanes
+sequence. The scaling mechanic and the "preserve each fight's identity" philosophy still apply
+(see `000-chapter-1-overview.md` and `011-chapter-2-overview.md`), and the two Chapter 2 design
+goals continue — escalated one notch:
+
+```text
+1. JOB ESCALATION — keep adding/swapping enemy jobs to raise the challenge WITHOUT breaking each
+   battle's original strategy. Chapter 3 introduces its own marquee castes: the Knights Templar
+   (elite sword-skill bosses), enemy DRAGOONS, the NINJA (dual-wield / wall-climb / Throw), the
+   ORACLE/Orator utility caste, and the SECOND Lucavi demon (Velius). One new wrinkle per fight.
+2. RARE BOSS LOOT — important (boss) battles equip the boss with a RARE, non-buyable item, now a
+   TIER ABOVE Chapter 2 (better than the Ancient Sword / 108 Gems) — but still NOT best-in-slot.
+   The very best gear (Excalibur, Ragnarok, Chaos Blade, Masamune, Genji set, Save the Queen,
+   Ribbon, best robes/shields) remains reserved for CHAPTER 4.
+```
+
+## Story framing (why the difficulty rises again)
+
+After Lionel, Ramza chases the conspiracy into the heart of the Church. The Knights Templar —
+Wiegraf reborn as a Templar, Izlude, Vormav's circle — hunt the Zodiac Stones and Ramza's sister
+**Alma**. The chapter raids the **Orbonne Monastery Vaults**, crosses **Grog Hill** and **Yardow**,
+fights the undead of **Yuguo Woods**, and culminates at **Riovanes Castle**, where Wiegraf
+transforms into the Lucavi **Velius**, and **Elmdor's assassins** (Celia, Lettie) strike on the
+roof. Enemies are now elite: Templar knights with real sword skills, Ninjas, a second demon, and
+named assassins. Chapter 3 should feel clearly harder than Chapter 2 — more elite jobs, more
+bosses, and two no-resupply battle chains (the Vaults and Riovanes).
+
+## Chapter 3 battle list
+
+"Battle N" follows in-game/Game8 numbering. Doc numbers continue the flat sequence (Chapter 2
+ended at `023`; this overview is `024`, so Battle 22 = doc `025`, i.e. doc = battle + 3).
+
+| Doc | Battle | Location | Role in story | New element | Status |
+|-----|--------|----------|---------------|-------------|--------|
+| `025` | 22 | Mining Town of Gollund | Ambush; Orran/Olan support guest | enemy Orator; charm/steal denial band | ✅ Done |
+| `026` | 23 | Lesalia Castle Postern | **Zalmo** (Inquisitor) revives the wall; retreats | reviving boss + Flame-Shield/Thunder puzzle | ✅ Done |
+| `027` | 24 | Monastery Vaults — 2nd Level | Vault raid (chain 1/3); Chemist + **Dragoons** | enemy Dragoon (Hasted Jump); no-resupply chain | ✅ Done |
+| `028` | 25 | Monastery Vaults — 3rd Level | **Izlude** on high ground + casters | Templar debut + rare (Reflect Mail); elevation | ✅ Done |
+| `029` | 26 | Monastery Vaults — 1st Level | **Boss: Wiegraf** (Holy Knight; flees) | 5-doorway chokepoint + disarm; rare deferred to 034 | ✅ Done |
+| `030` | 27 | Grogh Heights | Rain + thunder; clustered line targets | breather; two-way rain-Thunder + line-AoE | ✅ Done |
+| `031` | 28 | Walled City of Yardrow | Protect Rapha; **Ninjas** scale walls; Marach boss | **Ninja** debut; vertical assassins + Summoner AoE | ✅ Done |
+| `032` | 29 | The Yuguewood | Undead woods; Seal Evil / Entice | undead + caster tempo (Time/Black Mage) | ✅ Done |
+| `033` | 30 | Riovanes Castle Gate | Assault (chain 1/3); pressure Marach | bridge + high-ground archers + Templar break; no-resupply | ✅ Done |
+| `034` | 31 | Riovanes Castle Keep | **Wiegraf solo duel → Belias/Velius** (Lucavi) | 2-phase spike; 2nd Lucavi + 4 adds; rares (Defender, Defense Ring) | ✅ Done |
+| `035` | 32 | Riovanes Castle Roof | **Elmdor** + assassins; protect Rapha | **Assassin** debut; flee-on-critical race; no loot (all flee) | ✅ Done |
+| `036` | — | Chapter 3 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
+
+## Carried-over rules (from Chapters 1–2)
+
+Still in force — see `000-chapter-1-overview.md` and `011-chapter-2-overview.md` for full text:
+
+```text
+- Scale to party: enemy Level = 100 + offset. Offsets stay small; bosses are the spikes.
+- Preserve each battle's identity (theme, archetypes, terrain, what it teaches).
+- Respect job equipment rules (mages wear robes, monsters wear nothing, etc.).
+- Keep the curve readable: at most ONE new meaningful demand per fight.
+- Document any rule exception per-battle (Time Mage control, equipment-break, boss self-heal,
+  boss mass-status, undead reraise, etc. — see the Ch2 design-exception log in `023`).
+```
+
+## NEW rule 1 — Job escalation (Chapter 3 castes)
+
+Chapter 3's roster turns elite. The goal remains **more challenge through variety**, never at the
+cost of the fight's original strategy.
+
+```text
+CHAPTER 3 CASTES TO DEPLOY (prefer the ones the chapter canonically introduces):
+- Knights Templar  : elite sword-skill users (Wiegraf, Izlude) — Holy/Dark sword arts; the
+                     bosses of the Vaults. Treat their sword skills like Ch2 Gaffgarion's Drain:
+                     strong, but with a telegraphed counter (disarm / spacing / element).
+- Dragoon (enemy)  : Jump from range/elevation (debuted on our side at Zaland, 015; now an enemy
+                     caste at the Vaults). Vertical pressure on back-line casters.
+- Ninja            : dual-wield, high Move/Jump, wall-climb, THROW — a fast assassin caste (Yardow).
+                     The marquee new job of the chapter.
+- Oracle / Orator  : status + utility (Yuguo). Constrained like all status (no hard lock spam).
+- Lucavi (Velius)  : the second demon — a multi-summon "army of one" boss (Riovanes Keep).
+- Assassins        : Celia / Lettie — named special units (Riovanes Roof).
+
+RULE: upgrade/swap at most 1–2 generic slots per fight to a more advanced/thematic job that
+INTENSIFIES the existing plan. The new job ADDS a wrinkle; it never forces a different plan.
+DO NOT stack multiple brand-new mechanics in one fight, or introduce hard lockdown
+(Stop/Don't Act/Petrify spam) on an endgame party.
+```
+
+A short **"Job escalation"** section in each battle doc states which slot(s) changed and confirms
+the original strategy still holds.
+
+## NEW rule 2 — Rare boss loot (the Chapter 3 tier)
+
+Chapter 2 bosses dropped the LOWEST tier of rares (Ancient Sword, 108 Gems). Chapter 3 bosses drop
+**better, mid-HIGH rares** — clearly an upgrade — but still **not best-in-slot**.
+
+```text
+CHAPTER 3 RARE-LOOT TIER (examples — verify exact ids/availability in ItemData.xml):
+  Weapons:   Defender (knight sword, above Ancient Sword/below Save the Queen), Platinum Sword,
+             a mid-HIGH katana (Kiyomori / Murasame / Heaven's Cloud — NOT Masamune), an elemental
+             gun (Blaze/Glacial/Blast), a rare bow above shop tier.
+  Armor:     Reflect Mail (auto-Reflect), Carabini/Platinum-tier armor, a Wizard/Light Robe
+             (above shop, below best robes).
+  Shields:   Aegis Shield (high magic-evade) or Kaiser Plate — NOT Escutcheon/Genji Shield.
+  Accessory: Defense Ring, Magic Ring, Sprint Shoes, Feather Boots, a Diamond Armlet, or a better
+             elemental-mitigation trinket than 108 Gems.
+  Headgear:  Golden Hairpin, Flash Hat, Twist Headband — NOT Ribbon.
+
+RESERVED FOR CHAPTER 4 (do NOT use in Ch3):
+  Excalibur, Ragnarok, Chaos Blade, Masamune, Save the Queen, Genji set (helm/armor/shield/gloves),
+  Escutcheon II / best shields, Ribbon, best robes (Robe of Lords / Maximillian-tier).
+
+SPECIAL — ELMDOR (Riovanes Roof, 035): canonically the source of the Genji set + Masamune, but
+those are BEST-tier and RESERVED for his CHAPTER 4 rematch (Limberry). At Riovanes he carries a
+mid-HIGH rare instead (e.g. a non-best katana); the iconic loot is deliberately deferred to Ch4.
+
+RULE OF THUMB: each boss battle's boss gets ONE rare highlight; generics stay shop-tier. The rare
+fits the boss's identity AND is a real in-fight threat or tempting steal — not just a trophy.
+```
+
+Each boss battle doc includes a **"Boss rare loot"** line naming the item, why it fits, and
+confirming it is mid-high (not reserved-for-Ch4).
+
+## Difficulty budget per battle (Chapter 3)
+
+Bands creep slightly above Chapter 2; bosses are the spikes. Generics `100–102`, sub-bosses
+`102–103`, bosses `103–104`, the Lucavi/major spike `104–105`.
+
+| Battle | Target feel | Level band | New wrinkle / boss loot |
+|--------|-------------|------------|--------------------------|
+| Gollund (22) | Ambush with a control guest | 100–102 | Orran/Olan crowd-control guest; tougher mercs |
+| Lesalia Postern (23) | Defend Alma; silence the healer | 100–103 | **Zalmo** Inquisitor heal/revive; protect Alma |
+| Vaults 2nd (24) | Vault raid, chain 1/3 | 100–102 | enemy **Dragoon** Jump; no resupply |
+| Vaults 3rd (25) | Izlude on high ground | sub-boss 103, adds 100–102 | **Izlude** Templar sub-boss + casters |
+| Vaults 1st (26) | **Wiegraf** Templar boss | boss 104, adds 100–102 | **boss + rare loot**; disarm his sword arts |
+| Grogh Heights (27) | Rain/thunder line puzzle | 100–102 | weather + line-AoE clustering |
+| Yardrow (28) | Protect Rapha vs Ninjas | 100–103 | **Ninja** debut; wall-climb assassins |
+| Yuguewood (29) | Undead woods | 100–102 | undead (reraise) + Oracle status |
+| Riovanes Gate (30) | Assault, chain 1/3 | 100–103 | Safeguard wall; no resupply |
+| Riovanes Keep (31) | **Wiegraf → Velius** | duel 104, Velius 105 | **2nd Lucavi + rare loot**; the chapter spike |
+| Riovanes Roof (32) | **Elmdor** + assassins | boss 104, adds 103–104 | assassins + **boss + rare loot**; protect Rapha |
+
+Two **no-resupply chains** to test back-to-back: the Vaults (24→25→26) and Riovanes (30→31→32).
+
+## Workflow per battle (same as Chapters 1–2)
+
+```text
+1. Read this overview + the battle doc.
+2. On Windows: identify the BattleId / ENTD entry (cross-ref SortieConfirm, EventId, Map,
+   scenario tables; sanity-check with FFTIvaliceEditor).
+3. Dump the entry; confirm the original roster matches the doc's "Original Battle".
+4. Apply the New Game++ composition: levels, JOB ESCALATION swaps, gear, RARE BOSS LOOT, skills,
+   placement.
+5. Patch via the right layer (.bin or OverrideEntryData); keep the diff inside the battle window.
+6. Copy into the mod, install to Reloaded-II, test from a New Game+ save.
+7. Record results back in the battle doc.
+```
+
+## Sources
+
+- Game8, "Chapter 3: The Valiant Walkthrough":
+  https://game8.co/games/Final-Fantasy-Tactics/archives/543256
+- Game8 per-battle walkthroughs (rosters) — linked in each battle doc (archives 553182–553192;
+  IDs are NON-sequential, verify each).
+- Local: `000-chapter-1-overview.md`, `011-chapter-2-overview.md` (carried rules),
+  `023-chapter-2-balance-review.md` (exception log + rare-loot ledger this chapter builds on).
+</content>
