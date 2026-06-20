@@ -30,7 +30,7 @@ Fort Zeakden      -> Ziekden Fortress
 | `002` | 3 | Mandalia Plain | First monster + escort a reckless guest | ✅ Implemented (v1, entry 389) |
 | `003` | 4 | Siedge Weald (Sweegy Woods) | Monster-pack woodland; Bombs | ✅ Implemented (v1, entry 384) |
 | `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | ✅ Implemented (v1, entry 385) |
-| `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | 🔎 Identified (entry 386) |
+| `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | ✅ Implemented (v1, entry 386) |
 | `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | 🔎 Identified (entry 395) |
 | `007` | 8 | Lenalian Plateau | Milleuda falls; mage-heavy field + Time Mage | 🔎 Identified (entry 399) |
 | `008` | 9 | Fovoham Windflats | Wiegraf duel; Judgment Blade spike | 🔎 Identified (entry 400) |

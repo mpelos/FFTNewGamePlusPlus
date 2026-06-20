@@ -1,15 +1,19 @@
 # 005 - Sand Rat Sietch (Sand Rat Cellar)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 6 (after Dorter Slums)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **386** (local entry 2, `battle_entd4_ent.bin`)
+Patcher: `tools/battle_patch.py sand_rat`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Identified by exact roster: 3 Knight + 1 Archer + 2 Monk. Vanilla slots: s2/s5/s6 Knight,
+> s3 Archer, s4/s7 Monk (s0/s1 guests). No OverrideEntryData on this entry — `.bin` edits apply.
+> Implemented: Knights captain L102 (s2) + L101 (s5) + L100 (s6) with Helm(154)/Armor(182)/
+> Bracers/Runeblade/Shield(139), Counter/Attack Boost/Move+1; Monks L101 (s4,s7) BARE-HANDED
+> (RH/LH left vanilla = Martial Arts) with Headband(163)/Power Garb(195)/Bracers, Counter/Atk
+> Boost/Move+1; Archer L100 (s3) Reflexes/Concentration/Windslash. Positions kept vanilla
+> (chokepoint layout + split player zones preserved). 58 bytes, all inside entry 386.
 
 ## Original Battle
 
