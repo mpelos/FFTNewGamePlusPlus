@@ -22,3 +22,9 @@ Desktop.ini
 .DS_Store
 .vscode/
 .idea/
+
+# Personal save dumps (copyright/private)
+work/*.png
+work/*.psol
+work/*.bin
+work/CompressDict.cs

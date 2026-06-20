@@ -93,3 +93,169 @@ Reloaded-II code mod and depends on `Reloaded.Memory.SigScan.ReloadedII` + Reloa
    address" (F5) on the flag, then enter a battle in NG+ — the code that reads the flag at battle
    setup is our hook candidate AND yields a byte-signature for the code mod (update-robust).
 3. Consider sig-scanning the flag's accessor instead of a hardcoded offset (survives game patches).
+
+---
+
+## ⚠️ FLAG HUNT — value-scan approach struggling (2026-06-19, later)
+
+The first "flag" `0x15873C642` (=6) was a FALSE POSITIVE: later read 0 in NG+ and 6 in a
+normal save — its value floats. Root cause: that whole `0x15873Cxxx` block is in a region CE
+labels as module (AllocationBase 0x140000000) but is **RWX and volatile** — likely a managed/
+reallocated heap mapped near the module, NOT clean static `.bss`.
+
+Redid the hunt with MATCHED-PROGRESS saves (new Normal save made at the same point as the NG+
+save: "1 Aries, defeat the band of thieves fled to Gariland") + a reload→Unchanged filter to
+kill volatile memory. Mode check discovered: **world-map Ramza sprite = BLUE in Normal, RED in
+NG+** (reliable visual mode indicator). Funnel reached 29 candidates, but the next
+NG+→Normal "Changed" returned 0 — and the user independently re-ran the whole alternating
+recipe 3× and hit 0 every time.
+
+User also noted a near-miss `0x15873C4D7` = 121 (NG+) / 123 (Normal) — REJECTED (same volatile
+block; values aren't a clean 0/nonzero flag).
+
+### Conclusion / hypothesis
+The NG+ state almost certainly lives in memory that is **re-allocated on every save load**, so a
+fixed-address value scan keeps contradicting itself → converges to 0. Flat value scanning is the
+wrong tool here.
+
+### Next strategies to try (in order)
+1. **Pointer scan** in CE: find a stable pointer chain (module-static base → … → flag) so the
+   address survives reallocation/restart. Verify the chain across a game restart.
+2. **Confirm region type first**: only trust a candidate if its address is in TRUE static memory
+   (low module offset, RW not RWX) AND survives a game restart. Don't trust anything in 0x15873Cxxx.
+3. **Alternative detection** if no static flag exists:
+   - Read NG+ status from the SAVE on load (hook save-load, read NG+ field), or
+   - Use the per-battle **EventId** (NG+ Gariland=237 vs normal=9) at battle setup — hunt the
+     EventId in memory during an actual battle (exact-value scan for 237 vs 9), then hook there.
+
+---
+
+## ❌ NO PERSISTENT NG+ FLAG IN RAM (2026-06-19, conclusion)
+
+After a rigorous redo (matched-progress saves: a fresh Normal save made at the SAME point as an
+NG+ save — both "1 Aries / defeat the thieves fled to Gariland"; Ramza sprite color = mode check:
+BLUE=normal, RED=NG+), plus the anti-volatile technique (reload-same-save → "Unchanged" to drop
+reallocating memory), ~10 attempts found **no stable byte that tracks NG+ vs normal**.
+
+- The earlier `0x1873C642` candidate was a FALSE POSITIVE: its value (6) drifted to 0 even within
+  NG+ and read 6 in a normal save on a later load → it lived in a reallocating/volatile region
+  (RWX, CE-labeled module but dynamic).
+- Root cause / user's insight: **the game makes no NG+ vs normal distinction during play**, so it
+  keeps no queryable "is NG+" global. NG+ ("Continuous") is just a carry-over START condition.
+
+### Implication
+Runtime gating via a memory flag is NOT viable (nothing reliable to read at world map / battle
+time). Any remaining distinction would be at the event/save-load routing level (e.g. Continuous
+timeline vs normal), which is NOT findable by value scanning — it would need code-level RE (Ghidra:
+find the save-load routine that picks Continuous vs normal flow / the EventId dispatch). Big effort,
+uncertain payoff.
+
+### Practical path forward (recommended)
+**Manual toggle:** ship as a data mod; player enables "New Game++" in Reloaded-II only when playing
+NG+, disables for a first playthrough. Zero code, ships now, standard for "harder NG+" mods.
+Optional cheap check first: diff a normal vs NG+ SAVE FILE on disk to see if NG+ is even marked
+there (would tell us whether a save-load hook is theoretically possible).
+
+### Confirmed negative with the rigorous method (2026-06-19, follow-up)
+Ran the full anti-volatile matched-pair method end to end (I drove CE; user swapped saves):
+snapshot on matched-Normal (1 Aries) → reload-same Normal "Unchanged" (anti-volatile) → matched-NG+
+"Changed" (40) → reload-same NG+ "Unchanged" (29) → matched-Normal "Changed" = **0**.
+Then the definitive live test: put all 29 survivors in the address list and toggled Normal↔NG+ —
+all 29 read IDENTICAL values in both modes (e.g. 129,45,7,119,170,3,73,72,57). None tracks mode.
+=> Definitively: no statically-addressable memory value distinguishes NG+ from normal. CONCLUSION
+STANDS: automatic runtime gating is not possible via value scanning. Go with the manual toggle.
+
+---
+
+## 🔄 USER'S IDEA: detect NG+ at save-load, set our OWN flag (2026-06-19)
+
+Since the game keeps no runtime NG+ flag, fabricate one: detect NG+ when a save is read, set a
+flag we control, read it in the ENTD hook.
+
+### Save format findings (.psol)
+- `fft_enhanced_b96bc3fb.psol` in `%LOCALAPPDATA%\SquareEnix\FINAL FANTASY TACTICS - The Ivalice Chronicles\`.
+  ONE file holds ALL slots. Magic `PSOL`, version `02 00 00 03`, size field at +0x10, count(9?) at +0x38.
+- It's a key-value DB: keys = 64-bit field-name HASHES rendered as 16-hex UTF-16 (entries start
+  ~0x2D18, stride 0x22). Index region (first ~0x30000) low-entropy/readable; value bodies high-entropy
+  (encrypted+hash-checked). Locked while game runs (close game to read). Copy: work/save_copy.psol.
+- FFXVI (same engine) save research (Nenkai): saves are "binary, no steam id check, encrypted & hash
+  checked." Engine has **SerializeSave / DeserializeSave with an `asXml` bool** → dumps NAMED fields as
+  XML. FFXVI sigs (ffxvi.exe 1.0.1): SerializeSave=sub_140796D58, DeserializeSave=sub_140796C94.
+  FF16Tools can unpack/pack + fix checksum (FFXVI .png saves; .psol/FFT not officially supported).
+
+### Concrete plan (de-risked by FFXVI research)
+1. Find FFT's SerializeSave/DeserializeSave signatures in fft_enhanced.exe (analogous to FFXVI; Ghidra).
+2. Use the `asXml` path to dump an NG+ save as XML → read field names → identify the NG+/Continuous
+   field + its value (THE de-hash shortcut).
+3. Code mod: hook DeserializeSave → read NG+ field at load → set our own flag.
+4. Hook the ENTD file read (build on modloader's FFTPackHooks/ResourceManagerHooks) → serve modded
+   ENTD if flag set, else vanilla. (Battle ENTD is read after a save is loaded, so flag is ready.)
+
+### Status / recommendation
+Path is OPEN and well-scoped, but it's a real code-mod project (Ghidra RE of save sigs + 2 hooks).
+Recommend: ship **manual toggle as v1** (usable now), pursue this **save-hook auto-detection as v2**.
+
+---
+
+## ✅✅ NG+ DETECTABLE FROM THE SAVE FILE (2026-06-19) — user's idea WORKS
+
+Offline-decoded the real saves and found a rock-solid NG+ flag. This proves the "detect NG+ at
+save-load, set our own flag" approach is viable.
+
+### Save files (real ones; NOT the .psol, which is config)
+- `%USERPROFILE%\OneDrive\Documentos\My Games\FINAL FANTASY TACTICS - The Ivalice Chronicles\Steam\<id>\`
+  - `enhanced.png`     = manual slots (inner file `fftsave.bin`, ~2 MB decompressed, all slots)
+  - `autoenhanced.png` = autosave / live current-game state (many `resume_*.sav` inner files)
+- Format = Faith/FF16 engine save: PNG -> `ffTo` chunk -> UMIF TOC -> per inner-file XOR + zlib.
+  - XOR key `0x0F3F80FE5F1FC4F3`; zlib uses a 0x8000 preset dict (Nenkai/FF16Tools CompressDict.cs).
+  - Fully reproduced offline in Python: `tools/fft_save_decode.py` (decode_png + manual_slots + is_ngplus).
+
+### THE NG+ FLAG
+In `fftsave.bin`, per manual slot (slots aligned so the `Arthur` roster marker is at slot+0x85C,
+slot stride 0x9CE4): **byte at slot offset `0x08AFB` == 1 for New Game+, 0 for normal.**
+(0x08CA7 / 0x08DFB / 0x0972C are identical alternates.) Found via a 2-vs-4 partition across the
+user's 6 saves (4 normal at different story points + 2 NG+): the {NG+ slots} group had 169 mode-
+constant offsets; these four are the clean 1/0 ones. Validated 100% across all 6 slots (user
+confirmed slot5=NG+ matched, slot4=normal matched).
+
+### Runtime delivery (next design step)
+Plan: code mod reads the **autosave** (autoenhanced.png, = current game) on disk, decodes it, reads
+the NG+ flag -> sets our own flag -> ENTD hook serves modded/vanilla. NEED: locate the NG+ flag
+offset in the autosave's `resume_*` format (different layout/size than manual `fftsave.bin`).
+=> Controlled capture: load NG+, play briefly to force an autosave, close, decode autoenhanced.png,
+diff vs a normal autosave to find the flag offset there. (Current autosave reads 0 = likely a stale
+normal-game state from making the matched-normal save.)
+
+### Strengthened: validated across all 7 used slots (2026-06-19)
+Re-enumerated slots by FIXED stride 0x9CE4 (not by the 'Arthur' marker, which is absent in saves
+where Argath/Arthur has left the party). fftsave.bin has 7 USED slots (indices 0-6; rest of the
+~50 stride positions are empty). User inventory = 3 NG+ + 3 cleared + 1 early-normal.
+Result: byte `0x08AFB` == 1 for slots {0,5,6} (the 3 NG+) and == 0 for {1,2,3,4} (the 4 normal).
+Slot 5 is an NG+ save WITHOUT an Arthur marker -> flag is independent of roster/progress. CONFIRMED.
+Refinement: `0x08AFB` and `0x0972C` are the robust flags; `0x08CA7`/`0x08DFB` were false alternates
+(0 in slot 5's NG+). Use **0x08AFB**.
+
+---
+
+## Runtime architecture finalized (2026-06-19): file-read hook, NOT DeserializeSave
+
+- Static RE of the engine save funcs is impractical: fft_enhanced.exe is OBFUSCATED (Denuvo-style;
+  sections named .xcode/.edata, .edata ~350MB). XOR key constant lives at file 0x31749EC (.edata);
+  UMIF/fftsave/resume_en/NewGame/Continuous strings present, but clean static disasm of DeserializeSave
+  is hard. So DON'T hook the game function.
+- Instead: hook **ReadFile (kernel32)** — when the game reads a save to load, decode bytes with our
+  decoder and read the NG+ flag, set our own flag. Denuvo-proof; modloader already does API hooks
+  (CreateProcessA). Then the ENTD file hook serves modded/vanilla per the flag.
+
+### NG+ flag offsets (final)
+- Manual save `fftsave.bin`, per slot: **0x08AFB** (and 0x0972C). 1=NG+, 0=normal.
+- Autosave resume `*_main`/`*_world` format = manual format + a 0x154 header => flag at **0x8C4F**.
+  (Confirmed: resume_en02_main.sav matched the manual flag's 33-byte context exactly, flag=1.)
+- Caveat: the autosave has many resume_* files; only the current-context ones hold the live value
+  (staleness). Hooking the READ at load time avoids picking the wrong stale file.
+
+### Open runtime questions (for the C# code mod)
+1. Does the game read saves via plain ReadFile, or its own IO layer? (modloader ResourceManagerHooks
+   suggests a custom layer — may need to hook there instead, reusing modloader's sig approach.)
+2. Manual-slot load: the read returns all slots (fftsave.bin) — need the chosen slot index, OR rely on
+   the post-load autosave write. Continue/NG+ play loads the autosave (single current game) = clean.
