@@ -1,0 +1,228 @@
+# 015 - Castled City of Zaland
+
+Status: designed (not yet implemented)
+Chapter: 2 — "The Manipulator and the Subservient"
+Battle order: Battle 14 (after Zeirchele Falls)
+Target version: Enhanced v1.5.0
+ENTD: global entry **TBD** — confirm on Windows game data
+File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+
+> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
+> the real game files. This doc is the design; the byte patch is applied on the Windows box.
+> See `011-chapter-2-overview.md`.
+
+## Original Battle
+
+Objective:
+
+```text
+Defeat all enemies!  — OR —  Protect Mustadio!
+(Choosing "We cannot stand by and watch!" grants +5 Bravery and makes Mustadio's death a Game Over.)
+```
+
+Player deployment:
+
+```text
+Up to 4 units, including Ramza.
+Guest: Mustadio joins and fights AGGRESSIVELY on his own (no player control) — he charges in
+  and can die if unsupported. On the protect path, his death ends the run.
+```
+
+Original enemy composition:
+
+```text
+2x Knight
+2x Archer
+2x Black Mage
+(no named leader)
+```
+
+Public walkthrough details:
+
+```text
+Recommended level: ~14 (3/5 stars).
+Castle map with HIGH WALLS — a Jump stat of 4+ scales them efficiently; otherwise units take a
+  long way around. Verticality is central.
+Black Mages and Archers are the priority threats; the Knights anchor.
+Mustadio acts independently and recklessly — the standard play is to immediately Protect/Shell
+  him and screen his charge. Dragoons' Jump helps reach elevated enemies.
+```
+
+Design reading:
+
+Zaland fuses two earlier lessons: it is **Mandalia's reckless-guest escort** (Mustadio charges
+like Argath did) staged on **a vertical, Dorter-style combined-arms map** (Knights + Archers +
+Black Mages, high walls, Jump matters). The challenge is to keep a headstrong ally alive while
+fighting up and around castle walls against ranged and magic threats. It teaches buff-the-guest
+(Protect/Shell), priority targeting (mages/archers), and using elevation/Jump.
+
+For New Game++ the identity must stay: **a vertical castle fight where the player screens a
+reckless guest (Mustadio) and out-positions a combined-arms squad on the walls — buffs, target
+priority, and verticality are the whole puzzle.**
+
+## Local Data Confirmed
+
+```text
+TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
+Confirm slots: 2 Knight + 2 Archer + 2 Black Mage, plus the player and MUSTADIO guest slots.
+DO NOT touch Mustadio's guest/reckless scripting or the protect-path Game-Over condition.
+Confirm the high-wall elevation tiles and Jump requirements stay intact.
+Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+```
+
+Job IDs (carry over known, verify the rest in-game):
+
+```text
+77 = Archer            (confirmed)
+Knight job id          (TBD - verify)
+Black Mage job id      (TBD - verify)
+Dragoon / Lancer job id (TBD - verify; added below — FIRST use of this job in the mod)
+```
+
+## Job Escalation (Chapter 2 rule)
+
+```text
+CHANGE: swap ONE Knight -> a Dragoon (Lancer) with Jump (keep the count at 6).
+WHY: the map is literally about high walls and Jump. An enemy Dragoon can LEAP over walls to
+  strike the backline or the reckless Mustadio from elevation — a new vertical threat that the
+  Knights (slow, ground-bound) can't pose. It deepens the exact challenge (verticality + escort)
+  rather than changing it. Single new wrinkle; thematically perfect for a walled castle.
+WHAT IS NOT CHANGED: the remaining Knight + 2 Archers + 2 Black Mages keep the combined-arms
+  identity; the strategy ("buff Mustadio, kill mages/archers, manage elevation") still holds —
+  now with a leaping threat the player must also screen against.
+```
+
+## Boss rare loot
+
+```text
+None. No named boss here — no rare item (per the Chapter 2 overview). Generics stay shop-tier.
+```
+
+## Proposed Composition (New Game++ Zaland v1)
+
+Keep the combined-arms squad, swapping one Knight for a Dragoon (6 enemies). Archers/mages and
+the Dragoon at `101`; the Knight and one Archer at `100`–`101`.
+
+| Slot | Role | Job | Level | Purpose |
+|------|------|-----|-------|---------|
+| n | Anchor | Knight | `101` | Ground wall; contests the approach and the gate. |
+| n | Skyfall (NEW) | Dragoon | `101` | Jumps walls to strike Mustadio / the backline — the vertical wrinkle. |
+| n | Wall Archer | Archer | `101` | Elevated ranged pressure from the high walls. |
+| n | Archer | Archer | `100` | Second bow; covers the long way around. |
+| n | Black Mage | Black Mage | `101` | AoE threat #1 — punishes a clumped escort. |
+| n | Black Mage | Black Mage | `101` | AoE threat #2 — the priority kill, per the walkthrough. |
+
+Reasoning:
+
+The faithful move is to **scale the combined-arms squad, keep the escort + verticality, and add
+one leaping threat**. The Dragoon is the perfect Chapter-2 escalation for a high-wall castle:
+it punishes a player who tucks Mustadio behind a wall, because Jump ignores the wall. Two Black
+Mages keep AoE the priority; the elevated Archer keeps the vertical ranged identity. The single
+Knight anchors the ground. The reckless guest plus a unit that can reach over cover makes
+"screen Mustadio" a real, active job.
+
+## Builds (final-shop quality; castle garrison flavor)
+
+Item/skill IDs from the loader tables (verify against the installed copy before patching):
+
+```text
+C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
+C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
+C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+```
+
+### Knight Anchor (Lv 101)
+
+```text
+Job: Knight (id TBD)   JobLevel: 8   Secondary: none (NO Break)
+Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
+Head/Body: shop heavy helm + heavy armor (ids TBD)
+Accessory: Bracers (218)   Right hand: Runeblade (30)   Left hand: shop shield (id TBD)
+```
+
+Role: the ground wall at the gate/approach.
+
+### Dragoon (Lv 101) — NEW (job swap)
+
+```text
+Job: Dragoon / Lancer (id TBD)   JobLevel: 8   Secondary: none (innate Jump command)
+Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +2 (487) or Jump +
+  (id TBD) — emphasize reach
+Head: shop helm (id TBD)   Body: shop light/medium armor (id TBD)
+Accessory: Germinas Boots (210) or a Jump/Move accessory (id TBD)
+Right hand: a strong shop spear (id TBD)   Left hand: none / two-hand marker (254)
+```
+
+Role: the vertical threat. Jumps over the high walls to land on Mustadio or the backline. Give
+it reach (Move/Jump) so the player can't simply hide the guest behind cover.
+
+### Archer x2 (Lv 101 / 100)
+
+```text
+Job: Archer (77)   JobLevel: 8   Secondary: none
+Reaction: Reflexes (449)   Support: Concentration (469)   Movement: Movement +1 (486)
+Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
+Right hand: Windslash Bow (87)   Left hand: none / two-hand marker (254)
+```
+
+Role: elevated harassment over the walls; punishes the long way around.
+
+### Black Mage x2 (Lv 101)
+
+```text
+Job: Black Mage (id TBD)   JobLevel: 8   Secondary: none
+Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
+Head: cloth/mage hat (id TBD)   Body: shop robe (id TBD)
+Accessory: Featherweave Cloak (234)   Right hand: shop magic-boost rod (id TBD)   Left: none (255)
+```
+
+Role: the priority threat — AoE that punishes a clumped escort, exactly as the walkthrough warns.
+
+## Positioning Plan
+
+```text
+Knight starts at the gate / main ground approach.
+Dragoon starts on or near a high wall with a clear Jump arc toward Mustadio's likely charge lane.
+Both Archers start on the high walls with wide sightlines.
+Both Black Mages start behind the wall line / at mid-height, able to AoE the approach and the
+  guest's reckless path.
+Preserve Mustadio's guest start and the wall/Jump terrain; do NOT alter his scripting.
+```
+
+The map should reward verticality for BOTH sides: the player wants Jump/elevation to reach the
+mages and archers, while the enemy Dragoon uses the same walls to dive at the reckless guest.
+
+## Implementation Checklist
+
+- [ ] Identify Zaland `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
+- [ ] Dump original entry; verify 2 Knight + 2 Archer + 2 Black Mage + player + Mustadio slots.
+- [ ] Confirm Knight / Black Mage / Dragoon job IDs and legal equipment (Dragoon = spear + Jump).
+- [ ] Swap one Knight -> Dragoon (re-job a Knight slot); give it reach (Move/Jump).
+- [ ] Set levels: Knight + Dragoon + wall Archer + both Black Mages `101`; second Archer `100`.
+- [ ] Set JobLevel `8` on all active enemy slots; Knight has NO Break.
+- [ ] Do NOT touch Mustadio's guest/reckless/Game-Over scripting; preserve wall terrain.
+- [ ] Patch via the correct layer; keep the diff inside the Zaland window only.
+- [ ] Re-dump and diff; confirm changes are small and intentional.
+- [ ] Install mod, test BOTH objective choices (clear vs protect Mustadio) from a New Game+ save.
+
+## Test Questions
+
+- Does the enemy Dragoon meaningfully punish hiding Mustadio behind walls (Jump ignores cover)?
+- Is protecting reckless Mustadio tense but achievable with Protect/Shell + screening?
+- Are the two Black Mages still the priority threat at scale?
+- Does verticality matter for the player too (is Jump/elevation rewarded for reaching the casters)?
+- Does it read as a vertical castle rescue blending Mandalia's escort with Dorter's combined arms?
+- Is it a fair step up from Zeirchele but below the Gaffgarion/Cúchulainn bosses, per the curve?
+
+## Sources
+
+- Game8, "Castled City of Zaland Walkthrough (Battle 14)": roster (2 Knight, 2 Archer, 2 Black
+  Mage), objective "Defeat all / Protect Mustadio", deploy 4, recommended level ~14, high-wall
+  castle terrain (Jump 4+), Mustadio reckless guest + protect-path Game Over, Black Mages/Archers
+  as priority threats.
+  https://game8.co/games/Final-Fantasy-Tactics/archives/553175
+- Final Fantasy Wiki, "Zaland Fort City" / "Mustadio": story context (rescue from bounty hunters).
+  https://finalfantasy.fandom.com/wiki/Mustadio_Bunansa
+- Local: `docs/battles/011-chapter-2-overview.md` (job-escalation rule), `002-mandalia-plain.md`
+  (reckless-guest escort), `004-dorter-slums.md` (combined-arms verticality).
+</content>

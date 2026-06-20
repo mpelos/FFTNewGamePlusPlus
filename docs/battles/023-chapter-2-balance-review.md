@@ -1,0 +1,226 @@
+# 023 - Chapter 2 Balance Review
+
+A cross-battle audit of all **11** Chapter 2 New Game++ designs (`012`–`022`). It checks the
+difficulty curve, verifies consistency of level bands / gear / job-skill IDs, logs the deliberate
+design exceptions, and adds two Chapter-2-specific ledgers the project introduced this chapter:
+the **job-escalation ledger** and the **rare-boss-loot ledger**. Then it flags open risks and
+gives a recommended playtest order. This is a paper review — every finding must be re-validated
+in-game once each battle is patched on the Windows data.
+
+## The central balancing insight (carried from Chapter 1)
+
+Enemies are still scaled `Level = 100 + offset`, so **the level offset is not the main difficulty
+lever**. Difficulty comes from composition, terrain, and mechanics. Chapter 2 adds two new levers
+on top of those, per the chapter goals:
+
+```text
+5. Job escalation — a new/advanced enemy job per fight that INTENSIFIES the existing strategy.
+6. Boss identity — real named bosses (Gaffgarion x2, Cúchulainn) as the spikes, each with a
+   distinct puzzle (disarm the Drain / spread + Holy the demon), and rare non-buyable drops.
+```
+
+The curve is carried by **composition + terrain + mechanics + the new job each fight + the bosses**
+— with level offsets (100–104) as fine tuning only.
+
+## Difficulty curve (all 11 battles, as designed)
+
+| # | Battle | Doc | Enemies | New demand / job escalation | Terrain | Tier |
+|---|--------|-----|---------|------------------------------|---------|------|
+| 11 | Merchant Dorter | `012` | 7 (2 Archer + 2 Black Mage + 2 Thief + **+1 Knight anchor**) | harder Dorter rematch; charm-Thieves | rooftops | ▃ moderate |
+| 12 | Araguay Woods | `013` | 7 (5 Goblin + 1 Black Goblin + **+1 Red Panther**) | escort Boco through a fast monster pack | woods | ▃ moderate |
+| 13 | Zeirchele Falls | `014` | Gaffgarion (turncoat) + 5 Knights (**swap 1 Knight→Archer**) | protect Ovelia; **betrayal turn**; Agrias joins | falls | ▅ hard |
+| 14 | Zaland | `015` | 6 (2 Knight + 2 Archer + 2 Black Mage; **swap 1 Knight→Dragoon**) | save Mustadio (mandatory); **Dragoon** vertical | castle city | ▅ hard |
+| 15 | Balias Tor | `016` | 6 (2 **Summoner** + 2 Knight + 2 Archer) | **Summoner debut**: race the summon | hill | ▆ harder |
+| 16 | Tchigolith Fenlands | `017` | 7 (2 Ghoul + 2 Skeleton + Bonesnatch + Malboro + Floating Eye) | **undead** (reraise) + poison/sleep bog + mass-status | swamp | ▆ harder |
+| 17 | Goug Lowtown | `018` | 6 (2 Summoner + 2 Archer + **swap 1 Thief→Time Mage**) | 2nd Summoner fight + **tempo** (Haste the casters) | urban | ▆ harder |
+| 18 | Balias Swale | `019` | 6 (1 Knight + 2 Archer + 2 Black Mage + **+1 Geomancer**) | protect Agrias; split-team in **rain-Thunder** | wet valley | ▆ harder |
+| 19 | Golgollada Gallows | `020` | **Gaffgarion sub-boss** + 3 Knight + 2 Archer + 2 Time Mage | **Dark Knight Drain**: disarm puzzle; no-guest split | gallows | ▇ very hard |
+| 20 | Lionel Castle Gate | `021` | **Gaffgarion boss (dies)** + 3 Knight + 2 Archer + 1 Summoner | **boss + rare loot**; two-phase; disarm Ancient Sword | castle gate | ▇ very hard |
+| 21 | Lionel Castle Oratory | `022` | **Cúchulainn** (lone Lucavi demon) | **demon finale**: mass-status + **Holy weakness**; rare loot | small arena | █ finale |
+
+Reading: the front third (11–14) escalates the *generic* roster one job at a time (Knight anchor →
+beast → betrayal/Archer → Dragoon) while reintroducing protect-the-VIP. The middle (15–18)
+introduces the chapter's marquee *castes* — Summoners, the undead, tempo Time-Mages, the Geomancer
+— each a new tactical caste, not just a bigger number. The back third (19–21) is the **boss
+escalation**, and it deliberately avoids repetition even though Gaffgarion appears twice:
+
+```text
+Golgollada Gallows : Gaffgarion SUB-boss, self-heal Drain, RETREATS   (disarm him; hold the split)
+Lionel Gate        : Gaffgarion BOSS, two-phase siege, DIES + rare    (steal the Ancient Sword)
+Lionel Oratory     : Cúchulainn, lone Lucavi DEMON                     (spread + cleanse + HOLY)
+```
+
+### Curve verdict
+
+```text
+PASS (on paper). Monotonic in "number of distinct demands," the right axis for a scale-to-party
+mod. Chapter 2 sits clearly above Chapter 1: it opens around Ch1's mid-tier (Merchant Dorter ≈
+Siedge Weald) and climbs to a demon capstone harder than any Ch1 boss. The two Gaffgarion fights
+are distinguished by role (retreat sub-boss vs two-phase death-boss with rare loot), so the repeat
+boss does not feel like a re-run on paper. Watch-items below for the boss-dense back third.
+```
+
+## Level bands & boss policy
+
+```text
+Generic enemies: 100-102 (most 100-101; anchors/captains 102).
+Sub-boss:  Gaffgarion @ Gallows 103 (+3).
+Bosses:    Gaffgarion @ Lionel Gate 103 (+3, dies)  |  Cúchulainn 104 (+4, chapter capstone).
+Gaffgarion also appears as the Zeirchele turncoat (014) — there a scripted betrayal, not a
+  free-standing spike. No generic exceeds +2; only Gaffgarion (+3) and Cúchulainn (+4) go higher.
+
+Boss-loot policy (Chapter 2): named bosses that DIE carry ONE rare, non-buyable item — but
+MID-TIER, never best-in-slot. The best gear (Excalibur, Ragnarok, Chaos Blade, Masamune, Genji,
+Save the Queen, Ribbon, best robes) is reserved for Chapter 4. A boss that only RETREATS (Gallows)
+carries no rare (nothing to drop yet) — its rare is paid out where it dies (the Gate).
+```
+
+## Design-exception log
+
+Chapter-wide rules are deliberately broken in specific fights because the original battles are
+built around those mechanics. Each is constrained to stay fair at NG+ scale:
+
+| Exception | Where | Why | Guardrail |
+|-----------|-------|-----|-----------|
+| Time Mage control | Goug (`018`), Gallows (`020`) | Original fights field Time Mages; tempo is the point | Haste/Slow/Float only — **no** Stop/Immobilize/Don't Move/Don't Act. One Time Mage everywhere EXCEPT the Gallows, where TWO are canonical and exist to keep Gaffgarion fast (he, not they, is the headline) |
+| Charm (Steal Heart) | Merchant Dorter (`012`), Goug (`018`) | Thieves canonically charm | Charm only; the player's charm-immune/all-male counter stays valid; not on more than one Thief per fight |
+| Equipment break (Rend) | Balias Tor (`016`), Gallows (`020`), Lionel Gate (`021`) | Order Knights carry canonical Rend; Safeguard is telegraphed | Rend on at most 2 Knights/fight; shop-tier breakable gear only; Safeguard remains the answer |
+| Boss self-heal (Drain) | Gallows (`020`), Lionel Gate (`021`) | Gaffgarion's Shadowblade IS his identity | Kept WEAPON-tied so Steal/Rend Weapon is the fair, telegraphed off-switch |
+| Boss mass-status (Nightmare) | Oratory (`022`) | Cúchulainn's Lucavi kit | ONE source (the boss), telegraphed; counters are spread-out + Immobilize + Remedy/Esuna + Holy burst; not instant |
+| Monster mass-status (Bad Breath) | Tchigolith (`017`) | Malboro is canonical to the bog | ONE disruptor only; no second mass-status monster added |
+| Undead reraise + heal-weakness | Tchigolith (`017`) | The undead caste IS the fight | Preserved as mechanic AND counterplay (Phoenix Down / Holy permakills); not stripped, not multiplied |
+
+Hard control (Stop/Don't Act/Petrify spam) remains banned everywhere; break stays limited to the
+three Order fights above.
+
+## Job-escalation ledger (NEW rule 1)
+
+Every fight states which slot(s) changed job and confirms the original strategy survived:
+
+```text
+Merchant Dorter (012) : ADD +1 Knight anchor              -> rooftop control still the read
+Araguay Woods   (013) : ADD +1 Red Panther                -> escort Boco still the read (faster threat)
+Zeirchele Falls (014) : SWAP 1 Knight -> Archer            -> protect Ovelia still the read (ranged threat)
+Zaland          (015) : SWAP 1 Knight -> DRAGOON (debut)   -> save Mustadio still the read (vertical Jump)
+Balias Tor      (016) : SUMMONER debut (built-in)          -> race the summon (the new caste IS it)
+Tchigolith      (017) : UNDEAD + Malboro + Eye (built-in)  -> bog/undead puzzle (the caste IS it)
+Goug Lowtown    (018) : SWAP 1 Thief -> TIME MAGE (tempo)  -> race the summon, faster clock
+Balias Swale    (019) : ADD +1 GEOMANCER (debut)           -> protect Agrias, split, rain-Thunder
+Golgollada      (020) : GAFFGARION Dark Knight sub-boss     -> disarm the Drain (boss IS the wrinkle)
+Lionel Gate     (021) : GAFFGARION boss + two-phase         -> disarm + hold the gate (boss IS it)
+Lionel Oratory  (022) : CÚCHULAINN Lucavi demon            -> spread + Holy (the demon IS it)
+
+New jobs/castes first seen in Chapter 2: Dragoon (015), Summoner (016), the undead trio +
+Malboro + Floating Eye (017), enemy Time-Mage-as-tempo (018, the Ch1 Lenalian job now used
+offensively), Geomancer (019), Gaffgarion as a committed Dark Knight boss (020/021), and the
+first Lucavi demon (022). At most one new wrinkle per fight — the rule held.
+```
+
+## Rare-boss-loot ledger (NEW rule 2)
+
+```text
+Lionel Gate (021)   : Gaffgarion -> ANCIENT SWORD (Knight Sword; lowest tier, non-buyable).
+                      Doubles as the Steal/Rend target AND the reward. MID-TIER (far below Save
+                      the Queen/Excalibur/Ragnarok/Chaos Blade — all Ch4-reserved). First rare drop.
+Lionel Oratory (022): Cúchulainn -> 108 GEMS (accessory, elemental damage reduction; non-buyable).
+                      A demon's trinket; tempting steal. MID-TIER (below Ribbon/Genji/best robes —
+                      Ch4-reserved). Second rare drop. Fallback to a guaranteed reward if the
+                      Lucavi monster slot can't carry/drop equipment.
+
+Non-boss fights and the RETREAT-only Gallows (020) carry NO rare items — generics stay shop-tier,
+keeping the two real drops impactful. No Chapter-4-reserved best item appears anywhere in Ch2.
+```
+
+## Consistency audit
+
+### Job IDs
+
+```text
+Confirmed & reused identically: Archer 77, Thief 83 (and Squire 74 / Chemist 75 where present).
+TBD (verify on Windows, used by name): Knight, Black Mage, Summoner, Time Mage, Geomancer,
+  Dragoon, Dark Knight (Gaffgarion), the monsters (Goblin, Black Goblin, Red Panther, Ghoul,
+  Skeleton, Bonesnatch, Malboro, Floating Eye), and Cúchulainn (Lucavi).
+Boss scripting to preserve: Gaffgarion betrayal (014), retreat threshold (020), death + drop (021);
+  Cúchulainn transform/solo (022); Ovelia/Agrias/Mustadio guest/escort flags (014/015/018/019).
+```
+
+### Equipment & skill IDs
+
+```text
+Reused without conflict (same as Chapter 1): Thief's Cap 168, Black Garb 198, Bracers 218,
+  Germinas Boots 210, Featherweave Cloak 234, Runeblade 30, Icebrand 29, Windslash Bow 87,
+  Air Knife 9. Skills: Counter 442, Attack Boost 465, Movement +1 486, Movement +2 487,
+  Concentration 469, Reflexes 449, First Strike 453.
+NEW Ch2 items to map in ItemData.xml (verify non-buyable + mid-tier): ANCIENT SWORD (021),
+  108 GEMS (022). Confirm neither is purchasable and both sit below the Ch4-reserved tier.
+Mage/Knight shop gear and summon/Time/Geomancy skillsets referenced by tier, left TBD until
+  mapped — consistent across 012-022. No conflicts found on paper.
+```
+
+### Level bands & boss kits
+
+```text
+Consistent. Generics 100-102; Gaffgarion 103 at both free-standing appearances (sub-boss retreat
+vs death-boss), differentiated by role and the Gate's rare drop; Cúchulainn 104 as the lone
+capstone. Summons kept MID-TIER with intact charge times in all three summoner fights (016/018/021).
+```
+
+## Open risks / watch-items for playtest
+
+1. **Boss-dense back third** (`020`–`022`): three heavy fights in a row, Gaffgarion twice. Verify
+   the Gallows (retreat/disarm) and the Gate (two-phase/death/rare) feel distinct, not a re-run.
+2. **Disarm dependency** (`020`, `021`): both Gaffgarion fights assume the player can disarm
+   (Thief Steal Weapon / Knight Rend / Mustadio Arm Shot). Confirm an NG+ party reliably has one;
+   if not, Drain becomes a slog — consider a telegraph/hint rather than lowering his HP.
+3. **Cúchulainn solo scaling** (`022`): tune HP so Holy is decisive but the kill isn't trivial,
+   and Nightmare is survivable with spacing/cleansing — the hardest single number to get right.
+4. **No-resupply Gate→Oratory** (`021`→`022`): verify resource discipline is tense, not punishing;
+   the Gate fight shouldn't force item-starvation into Cúchulainn.
+5. **Summoner race-ability** (`016`, `018`, `021`): confirm charge times keep summons interruptible;
+   a Haste'd Summoner (Goug) must still be race-able, not effectively instant.
+6. **Two Time Mages at the Gallows** (`020`): verify Haste-on-Gaffgarion + Slow-on-player is
+   pressure, not a lock; drop to one if oppressive.
+7. **Protect-VIP survivability** (`014` Ovelia, `015` Mustadio mandatory, `019` Agrias): confirm
+   escort AI survives a scaled enemy long enough for the player to relieve it.
+8. **Vertical/terrain jobs on scaled maps** (`015` Dragoon Jump, `019` Geomancer terrain): verify
+   they actually function on the real map geometry.
+9. **Rare-slot feasibility on the Lucavi** (`022`): if Cúchulainn can't hold/drop 108 Gems, use the
+   guaranteed-reward fallback (already documented in the battle doc).
+10. **Boss-scripting integrity** (highest-risk patches): Gaffgarion's betrayal (`014`), retreat
+    threshold (`020`), and death + Ancient-Sword drop (`021`); Cúchulainn's transform/solo (`022`).
+    Diff-check and test every objective/retreat/death trigger.
+
+## Recommended implementation & playtest order
+
+Implement in story order so the curve can be felt as a player would:
+
+```text
+012 Merchant Dorter -> 013 Araguay Woods -> 014 Zeirchele Falls -> 015 Zaland ->
+016 Balias Tor -> 017 Tchigolith Fenlands -> 018 Goug Lowtown -> 019 Balias Swale ->
+020 Golgollada Gallows -> 021 Lionel Castle Gate -> 022 Lionel Castle Oratory
+```
+
+For each: dump the real entry, fill the doc's "Local Data Confirmed", apply levels + job-escalation
+swaps + gear + rare boss loot + skills, patch, diff-check inside the battle window only, then test
+from a New Game+ save and record results back in the doc. Test the Gate→Oratory pair back-to-back
+(no resupply) to validate the resource curve.
+
+## Status
+
+```text
+Design phase: COMPLETE for all 11 Chapter 2 battles (012-022 designed; none patched yet).
+Consistency: audited; exceptions logged; job-escalation and rare-loot ledgers added.
+Curve: passes on paper; clearly above Chapter 1, capping at the Cúchulainn finale; risk items
+  above to confirm in-game (boss-dense back third + the solo-demon tuning are the key watches).
+Job escalation: one new wrinkle per fight held across all 11; new castes introduced cleanly.
+Boss-loot: two mid-tier rares (Ancient Sword, 108 Gems); no Ch4-reserved best gear leaked.
+Next: data-layer patching + playtest in order; then Chapter 3 (new overview to follow).
+```
+
+## Sources
+
+- Local design docs: `011-chapter-2-overview.md`, `012-merchant-dorter.md` … `022-lionel-castle-oratory.md`.
+- Original-battle rosters cross-referenced from Game8 Chapter 2 battle walkthroughs (see each
+  battle doc's Sources section).
+- `010-chapter-1-balance-review.md` (the review template + the boss-loot escalation seed).
+</content>
