@@ -259,3 +259,35 @@ Refinement: `0x08AFB` and `0x0972C` are the robust flags; `0x08CA7`/`0x08DFB` we
    suggests a custom layer — may need to hook there instead, reusing modloader's sig approach.)
 2. Manual-slot load: the read returns all slots (fftsave.bin) — need the chosen slot index, OR rely on
    the post-load autosave write. Continue/NG+ play loads the autosave (single current game) = clean.
+
+---
+
+## ✅ COMPLETE BUILD PLAN (2026-06-19) — Denuvo-free, reuses modloader's published sigs
+
+The Nenkai modloader is open-source and already locates these functions by signature. We reuse the
+SAME signatures (no Ghidra / Denuvo RE needed by us).
+
+### Hook B — conditional ENTD (the application side)
+Hook the fftpack reader `fileReadRequestOffset(int fileIndex, long sectorOffset, long size, void* out)`.
+- Sig (from FFTPackHooks.cs): `48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 80 3D ?? ?? ?? ?? ?? 4C 89 CE`
+- byteOffset = sectorOffset * 0x800.
+- ENTD fileIndexes (fftpack.txt): 224=battle_entd1_ent.bin, 225=entd2, 226=entd3, **227=entd4**.
+- Impl: if fileIndex in 224..227 AND our NG+ flag set -> memcpy our modded ENTD[byteOffset..+size]
+  into `out`, return 0 (handled). Else call OriginalFunction (vanilla / or modloader's modpack).
+
+### Hook A — NG+ detection
+Hook `faith::Resource::ResourceManager::OpenFileAndCache(void* a1, FileResult* a2)`.
+- Sig (from ResourceManagerHooks.cs): `48 8B C4 48 89 58 ?? 48 89 68 ?? 48 89 70 ?? 48 89 78 ?? 41 56 48 83 EC ?? 33 ED 48 8B F2`
+- FileResult->PathPtr = filename. When a save (enhanced.png / autoenhanced.png) is opened, read+decode
+  it with our decoder, read NG+ flag, cache it. (Or simpler: re-read autosave on demand in Hook B.)
+- Flag offsets: manual fftsave.bin slot+0x08AFB ; autosave resume main/world slot+0x8C4F. 1=NG+,0=normal.
+
+### Decoder port to C#
+Port tools/fft_save_decode.py: PNG 'ffTo' chunk -> UMIF TOC -> per-file XOR(0x0F3F80FE5F1FC4F3) +
+zlib inflate with 0x8000 preset dict (CompressDict). C# has System.IO.Compression / can ship the dict.
+
+### Remaining build tasks
+1. Install .NET SDK 8 (to compile the Reloaded C# mod DLL). [needs user]
+2. Scaffold Reloaded mod project (ModConfig ModDll, deps already present).
+3. Implement Hook A + Hook B + the decoder; embed our modded ENTD as a mod resource.
+4. Build, deploy, test in NG+ vs normal.

@@ -29,3 +29,7 @@ work/*.png
 work/*.psol
 work/*.bin
 work/CompressDict.cs
+
+# .NET build artifacts
+src/**/bin/
+src/**/obj/
