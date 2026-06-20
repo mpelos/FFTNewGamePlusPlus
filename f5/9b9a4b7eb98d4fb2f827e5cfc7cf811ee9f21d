@@ -1,0 +1,65 @@
+docs/battles/040-finnath-creek.md
+  s_31923542400bb6::t_47856a2bf2047f 1-219
+docs/battles/051-mullonde-exterior.md
+  s_31923542400bb6::t_ae103f3af755f3 1-250
+docs/battles/043-fort-besselat-wall.md
+  s_31923542400bb6::t_6d67e22cf0d835 1-275
+docs/battles/056-necrohol-of-mullonde.md
+  s_31923542400bb6::t_59bce176dcb195 1-258
+docs/battles/058-airship-graveyard.md
+  s_31923542400bb6::t_7d165beef659f9 1-290
+docs/battles/039-bervenia.md
+  s_31923542400bb6::t_905b2c7008bfb2 1-263
+docs/battles/055-monastery-vaults-fifth-level.md
+  s_31923542400bb6::t_c4a2a15c2d3eaa 1-269
+docs/battles/053-mullonde-sanctuary.md
+  s_31923542400bb6::t_3c856236e86636 1-257
+docs/battles/057-lost-halidom.md
+  s_31923542400bb6::t_16acc13cb964a1 1-280
+docs/battles/044-fort-besselat-sluice.md
+  s_31923542400bb6::t_f1ab681f4dd558 1-252
+docs/battles/050-eagrose-castle.md
+  s_31923542400bb6::t_30be6167e0fc7a 1-258
+docs/battles/048-limberry-keep.md
+  s_31923542400bb6::t_44308edd8f0ed4 1-244
+docs/battles/041-outlying-church.md
+  s_31923542400bb6::t_0500d5be121a93 1-257
+docs/battles/052-mullonde-nave.md
+  s_31923542400bb6::t_b3e573a9ceece5 1-258
+docs/battles/059-chapter-4-balance-review.md
+  s_31923542400bb6::t_a8da1fe339e1db 1-333
+docs/battles/042-bed-desert.md
+  s_31923542400bb6::t_a160c68cfb7d1f 1-270
+docs/battles/037-chapter-4-overview.md
+  s_31923542400bb6::t_b661ea34c34fab 1-43,66-153,155-200
+  s_31923542400bb6::t_9d22a08ff4f968 44-65
+  s_31923542400bb6::t_d618174b698afd 154
+docs/battles/049-limberry-undercroft.md
+  s_31923542400bb6::t_827329fbf488d8 1-247
+docs/battles/046-poeskas-lake.md
+  s_31923542400bb6::t_e2f823397790ef 1-248
+docs/battles/038-dugeura-pass.md
+  s_31923542400bb6::t_ae19eed5d1c04e 1-252
+docs/battles/047-limberry-gate.md
+  s_31923542400bb6::t_fe67736bfea319 1-232
+docs/battles/054-monastery-vaults-fourth-level.md
+  s_31923542400bb6::t_e03b03bb605602 1-242
+docs/battles/045-mount-germinas.md
+  s_31923542400bb6::t_52bb95782dd505 1-231
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "f59b9a4b7eb98d4fb2f827e5cfc7cf811ee9f21d",
+  "prompts": {},
+  "sessions": {
+    "s_31923542400bb6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0bf301f0-182a-46aa-8613-8003a8abfd6e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
