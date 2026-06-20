@@ -97,6 +97,11 @@ public class Program : IMod
     // world_* files (fftpack indices 765-772) load on world-map/town entry, BEFORE any shop opens.
     private const int WORLD_INDEX_MIN = 765;
     private const int WORLD_INDEX_MAX = 772;
+    // menu_bk_shop / shop2 / shop3 (741-743) are read EVERY time the Outfitter opens -> the reliable
+    // per-open trigger (world_* files get cached within a session and don't re-fire on save switch,
+    // which left endgame stock stuck when loading a normal save after an NG+ one).
+    private const int SHOP_UI_INDEX_MIN = 741;
+    private const int SHOP_UI_INDEX_MAX = 743;
     private enum ShopState { Unknown, EndgameApplied, VanillaRestored }
     private ShopState _shopState = ShopState.Unknown;
     private DateTime _lastShopSync = DateTime.MinValue;
@@ -147,8 +152,11 @@ public class Program : IMod
         if (DIAG_LOG_READS && _seenReadIndices.Add(fileIndex))
             Log($"[read-new] index={fileIndex} size=0x{size:X} off=0x{sectorOffset:X}");
 
-        // World-map/town entry reads world_* files (765-772) before any shop opens -> sync shops here.
-        if (fileIndex >= WORLD_INDEX_MIN && fileIndex <= WORLD_INDEX_MAX)
+        // Sync shops on world-map/town entry (world_* 765-772) AND on every Outfitter open
+        // (menu_bk_shop* 741-743). The latter is the reliable per-open trigger that catches save
+        // switches within a session (where world_* are cached and don't re-fire).
+        if ((fileIndex >= WORLD_INDEX_MIN && fileIndex <= WORLD_INDEX_MAX) ||
+            (fileIndex >= SHOP_UI_INDEX_MIN && fileIndex <= SHOP_UI_INDEX_MAX))
             SyncShops();
 
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
@@ -232,7 +240,7 @@ public class Program : IMod
     private void SyncShops()
     {
         if (_itemMgr is null) return;
-        if ((DateTime.Now - _lastShopSync).TotalSeconds < 2.0) return; // collapse the world_* read burst
+        if ((DateTime.Now - _lastShopSync).TotalSeconds < 0.5) return; // collapse read bursts only
         _lastShopSync = DateTime.Now;
 
         DetectNgPlus();
