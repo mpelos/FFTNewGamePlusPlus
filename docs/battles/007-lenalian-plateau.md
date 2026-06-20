@@ -1,15 +1,19 @@
 # 007 - Lenalian Plateau (Lenalia Plateau)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 8 (after Brigands' Den)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **399** (local entry 15, `battle_entd4_ent.bin`)
+Patcher: `tools/battle_patch.py lenalian`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Identified by exact roster (the only entry with a Time Mage). **Milleuda = slot s1**
+> (name_id=75, same boss as Brigands' 395 — identity preserved by set_slot). Vanilla slots:
+> s1 Milleuda, s2/s6 Knight, s3/s5 Black Mage, s4 Time Mage (s0 = guest Delita only; Argath has
+> left). No OverrideEntryData. Implemented: Milleuda L102 (boss kit); Knights s2 L101 / s6 L100;
+> Black Mages s3,s5 L101 (robe/rod); Time Mage s4 L101 with **JobLevel CAPPED at 4** so it stays
+> on early-tier Time magic (Haste/Slow) and does NOT get hard lockdown (Stop/Immobilize) per the
+> doc's control limit — verify in-game it never casts Stop; lower further if it does. 60 bytes.
 
 ## Original Battle
 
