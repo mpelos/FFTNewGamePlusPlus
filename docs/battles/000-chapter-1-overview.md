@@ -29,7 +29,7 @@ Fort Zeakden      -> Ziekden Fortress
 | `001` | 2 | Magick City of Gariland | First real fight; city street brawl | ✅ Implemented (final-shop v1) |
 | `002` | 3 | Mandalia Plain | First monster + escort a reckless guest | ✅ Implemented (v1, entry 389) |
 | `003` | 4 | Siedge Weald (Sweegy Woods) | Monster-pack woodland; Bombs | ✅ Implemented (v1, entry 384) |
-| `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | 🔎 Identified (entry 385) |
+| `004` | 5 | Dorter Slums | First difficulty spike; rooftop ranged+magic | ✅ Implemented (v1, entry 385) |
 | `005` | 6 | Sand Rat Sietch | Cramped corridors; split-team melee attrition | 🔎 Identified (entry 386) |
 | `006` | 7 | Brigands' Den | Milleuda boss; rainy thieves + healers | 🔎 Identified (entry 395) |
 | `007` | 8 | Lenalian Plateau | Milleuda falls; mage-heavy field + Time Mage | 🔎 Identified (entry 399) |

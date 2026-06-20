@@ -1,15 +1,21 @@
 # 004 - Dorter Slums (Dorter Trade City)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1) — NG+ only, awaiting playtest
 Chapter: 1
 Battle order: Battle 5 (after Siedge Weald)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **385** (local entry 1, `battle_entd4_ent.bin`)
+Patcher: `tools/battle_patch.py dorter`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `000-chapter-1-overview.md`.
+> Identified by exact roster: 1 Knight + 3 Archer + 2 Black Mage (the only such low-level entry).
+> Vanilla slots: s3 Knight, s4-s6 Archer, s7-s8 Black Mage (s0/s1 guest slots, s2 a story slot —
+> all left untouched). No OverrideEntryData on this entry, so the `.bin` edits apply directly.
+> Implemented mapping (gear = strongest SHOP-tier per category, no treasure/Unknown20 loot):
+> - s3 Knight L102: Counter/Attack Boost/Move+1; Helm(154)/Armor(182)/Bracers(218)/Runeblade(30)/Shield(139)
+> - s4,s5 Archer L101 + s6 Archer L100: Reflexes/Concentration/Move+1; Thief's Cap/Black Garb/Bracers/Windslash Bow
+> - s7,s8 Black Mage L101: Reflexes/Move+1; Mage Hat(167)/Robe(206)/Featherweave(234)/Rod(56). Support
+>   left vanilla (no confirmed MA-boost support id yet — revisit if the mages underperform).
+> Positions kept vanilla (already the rooftop layout). 60 bytes changed, all inside entry 385.
 
 ## Original Battle
 
