@@ -67,6 +67,14 @@ public class Program : IMod
 
     // NG+ flag in the autosave resume format: byte 0x3F == 1 -> New Game+, == 0 -> normal.
     private const int NGPLUS_FLAG_OFFSET = 0x3F;
+    // The current battle's ENTD GLOBAL entry number is stored as a u16 at 0x16C in the battle-state
+    // resume files (resume_enbtl_main/attack/fturn.sav). Verified offline: 388=Gariland, 389=Mandalia.
+    // Logging this at battle entry maps each story battle -> its ENTD entry with zero guesswork.
+    private const int BATTLE_ENTRY_ID_OFFSET = 0x16C;
+    private static readonly string[] BattleIdResumeFiles =
+        { "resume_enbtl_main.sav", "resume_enbtl_attack.sav", "resume_enbtl_fturn.sav" };
+    // Diagnostic: log the battle ENTD entry id read from the save. Set false once Ch1 is mapped.
+    private const bool DIAG_LOG_BATTLE_ID = true;
     // resume_enwm_main.sav (world-map state of the LOADED game) is the freshest at battle-load time;
     // resume_enbtl_world lags (still the previous battle). Prefer enwm_main.
     private static readonly string[] ResumePreference = { "resume_enwm_main.sav", "resume_enbtl_world.sav" };
@@ -283,6 +291,16 @@ public class Program : IMod
             foreach (var kv in files)
                 if (kv.Key.StartsWith("resume_", StringComparison.OrdinalIgnoreCase) && kv.Value.Length > NGPLUS_FLAG_OFFSET)
                     Log($"[ngdetect] {kv.Key}: 0x3F={kv.Value[NGPLUS_FLAG_OFFSET]}");
+
+            // Diagnostic: log the current battle's ENTD entry id (u16 @ 0x16C) so we can map each
+            // story battle to its ENTD entry just by entering it in-game.
+            if (DIAG_LOG_BATTLE_ID)
+                foreach (string name in BattleIdResumeFiles)
+                    if (files.TryGetValue(name, out byte[]? b) && b.Length > BATTLE_ENTRY_ID_OFFSET + 1)
+                    {
+                        int entry = b[BATTLE_ENTRY_ID_OFFSET] | (b[BATTLE_ENTRY_ID_OFFSET + 1] << 8);
+                        Log($"[battle-id] {name}: ENTD entry = {entry}");
+                    }
 
             byte[]? resume = null;
             foreach (string name in ResumePreference)
