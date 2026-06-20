@@ -72,6 +72,12 @@ public class Program : IMod
 
     private volatile bool _isNgPlus;
 
+    // DIAGNOSTIC (shop discovery): log each fftpack file index the first time it is read this
+    // session, so newly-read indices when entering a town / opening a shop reveal the store-data
+    // file. Set false to disable. globalIndex - 223 = line number in 0002_files.txt (if in 0002.pac).
+    private const bool DIAG_LOG_READS = true;
+    private readonly HashSet<int> _seenReadIndices = new();
+
     public unsafe void StartEx(IModLoaderV1 loaderApi, IModConfigV1 modConfigV1)
     {
         _modLoader = (IModLoader)loaderApi;
@@ -101,6 +107,10 @@ public class Program : IMod
         // Let the original read happen first: it fills outputPointer with the vanilla file bytes and
         // returns whatever status/byte-count the game expects. We only mutate the buffer afterwards.
         int ret = _entdReadHook!.OriginalFunction(fileIndex, sectorOffset, size, outputPointer);
+
+        // Diagnostic: first time we see each index, log it (size+offset help spot the small store table).
+        if (DIAG_LOG_READS && _seenReadIndices.Add(fileIndex))
+            Log($"[read-new] index={fileIndex} size=0x{size:X} off=0x{sectorOffset:X}");
 
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
