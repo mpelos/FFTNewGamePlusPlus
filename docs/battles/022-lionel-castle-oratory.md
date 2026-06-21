@@ -1,11 +1,11 @@
 # 022 - Lionel Castle Oratory — Cúchulainn (Lionel Castle Keep)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 425) — CHAPTER 2 COMPLETE (rare loot deferred to reward table)
 Chapter: 2 — "The Manipulator and the Subservient" (CHAPTER FINALE)
 Battle order: Battle 21 (after Lionel Castle Gate)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **425** (battle_entd4, local entry 41) — confirmed: sole demon, job 60 (Gigas/Demon)
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
@@ -63,24 +63,28 @@ For New Game++ the identity must stay: **a lone Lucavi demon that mass-disables 
 one-shots the disabled, beaten by spacing, status-cleansing, lockdown, and HOLY burst — a
 spike-but-fair chapter capstone, not a numbers wall.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 425)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slot: Cúchulainn is the SOLE enemy unit, plus the player's deployment.
-CRITICAL: preserve Cúchulainn's HOLY WEAKNESS and his canonical dark/drain ABSORB (do NOT strip
-  them — the "bring Holy, don't bring dark" puzzle is the fight).
-PRESERVE his NIGHTMARE mass-status (Doom/Sleep) and run-up execute pattern — telegraphed, single
-  source; this is the one sanctioned mass-status boss of the chapter.
-Confirm the small-arena geometry (spread-out counterplay depends on it).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot   cid    flags  job              role                       action
+s0-s7  0x28/  0x80   40 / 2           Cardinal Draclau + guards  LEAVE (lvl 254 cutscene actors)
+       0x02                           + Ramza placeholder
+s8     0x82   0x40   94 Chocobo       disabled                   LEAVE (lvl 254)
+s9     0x3c   0x20   60 Gigas/Demon   Cúchulainn (SOLE enemy)    SCALE -> L104 (level only)
 ```
 
-Job/monster IDs (verify all in-game):
+Cúchulainn is **job 60 (Gigas/Demon)** — a monster that equips Unarmed only, so scaling is
+**level only** (104, the chapter's top band). Nothing else is touched, so his full canonical kit —
+Nightmare (mass Doom/Sleep) + run-up execute, Holy weakness, dark/poison absorb, Blood Suck — and
+his JobLevel 8 are preserved intact. The Cardinal/guards/Ramza/chocobo are disabled cutscene
+placeholders (the Cardinal transforms into the demon via scripting), all left at lvl 254.
 
-```text
-Cúchulainn job/monster id   (TBD - verify; Lucavi demon — FIRST demon in the mod)
-```
+### Rare loot (108 Gems) — deferred to a reward-table pass
+
+Cúchulainn's job (60) is **Unarmed — it has no equipment slot**, so 108 Gems cannot be set on his
+ENTD slot. A guaranteed drop/treasure lives in a separate reward table (not the ENTD), which this
+`.bin` patcher does not touch. The rare loot is therefore deferred to a future reward-table pass;
+the boss scaling and all his mechanics are fully implemented.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -164,19 +168,24 @@ No minions, no reinforcements: the whole field is the player vs the demon.
 The Oratory should say: "a single demon, but it fights like an army — spread out, cleanse the
 nightmares, pin it down, and bring the Light."
 
+## Implemented (v1, entry 425)
+
+Applied with `python tools/battle_patch.py cuchulainn`; diff contained to local entry 41 (global
+425), **1 byte** (level 25 → 104). Level-only scaling preserves the entire demon kit.
+
 ## Implementation Checklist
 
-- [ ] Identify Oratory/Keep `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Cúchulainn is the SOLE enemy + player deployment slots.
-- [ ] Confirm Cúchulainn's monster id; PRESERVE Holy weakness + dark-absorb + Nightmare + run-up.
-- [ ] Set Level `104`; keep canonical innate skillset / JobLevel / Brave.
-- [ ] Assign 108 Gems as his rare drop/steal (verify slot); else as a guaranteed reward.
-- [ ] Keep ONE mass-status source (the boss); do NOT add minions or a second disruptor.
-- [ ] Confirm the small-arena geometry is intact (spread-out counterplay).
-- [ ] Patch via the correct layer; keep the diff inside the Oratory window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify weakness/absorb/status.
-- [ ] Install mod, test from a New Game+ save (arriving from the Gate with NO resupply); confirm
-      Holy is decisive, Nightmare is survivable with spacing/cleansing, and the rare drops.
+- [x] Identify Oratory/Keep ENTD entry (425); fill "Local Data Confirmed".
+- [x] Dump original entry; verify Cúchulainn is the SOLE active enemy (s9) + disabled cutscene actors.
+- [x] Confirm demon job (60); Holy weakness + dark-absorb + Nightmare + run-up preserved (level-only edit).
+- [x] Set Level `104`; canonical innate skillset / JobLevel 8 / Brave kept.
+- [ ] Assign 108 Gems — DEFERRED: Unarmed monster has no gear slot; needs the reward table (not ENTD).
+- [x] One mass-status source (the boss); no minions/second disruptor added.
+- [x] Small-arena geometry untouched (terrain not in ENTD slot data).
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 425 only.
+- [x] Re-dump and diff; change is minimal (level only); kit intact.
+- [ ] Playtest from a NG+ save (arriving from the Gate, no resupply); confirm Holy is decisive and
+      Nightmare is survivable with spacing/cleansing.
 
 ## Test Questions
 
