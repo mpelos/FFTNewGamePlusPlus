@@ -1,11 +1,22 @@
 # 040 - Finnath Creek (Finath River)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 444) — pool-curation only; level-scaling needs in-game verify
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 35 (after Bervenia)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **444** (local entry 60, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py finath`
+
+Implemented (entry 444, vanilla-dump verified) — a 12-slot RANDOM POOL (all level 0xFE, runtime-driven):
+vanilla = 6 yellow Chocobo (94, s0-5) + 4 Red Chocobo (96, s6-9) + 1 Black Chocobo (95, s10) + 1 Pig (121, s11).
+- Converted **s4,s5 yellow → Black Chocobo (95), jl8** — the vanilla pool had only ONE black, so a
+  random draw often lacked the Choco-Meteor threat; biasing the pool guarantees ranged-nuke pressure.
+  Safe under either reading of the 0xFE slots (changes what a slot becomes, not the spawn count; no level edit).
+- Pig (s11) + Entice-recruit/poach flag preserved; yellow healers + red chip untouched. No boss/no rare.
+
+> ⚠️ Verify in-game: this randomized battle's LEVEL scaling is runtime/OverrideEntryData-driven, so the
+> .bin level edits used for fixed battles likely don't apply. If the flock spawns under-levelled, move
+> the Ch4 levels (Black 102 / yellow+red 101 / Pig 100) to the OverrideEntryData layer.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
