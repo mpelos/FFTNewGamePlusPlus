@@ -1,11 +1,18 @@
 # 044 - Fort Besselat Sluice Gate (Bethla Garrison Sluice)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 450)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 39 (after the Fort Besselat Wall, S or N)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **450** (local entry 66, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py besselat_sluice`
+
+Implemented (entry 450, vanilla-dump verified) — slots: s0,s1 Archer; s2,s3,s6,s7 Knight; s4,s5 Black Mage:
+- s4 Black Mage L102 — AoE on high ground (priority); Mage Hat/shop Robe/Featherweave/shop Rod.
+- s5 Black Mage→**Time Mage** L102 — Slows the lever-runner; **jl4** (Haste/Slow/Float only); shop Staff.
+- s2,s3 Knight L102, s6,s7 Knight L101 — gate wall; Heavy gear/Runeblade/shop Shield; Rend innate.
+- s0 Archer L102, s1 Archer L101 — lane chip (Windslash, two-hand).
+- Lever objective + tiles (scripting) untouched; no boss/no rare; low Ch4 band. Selectable map treasure (other layer) untouched.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
