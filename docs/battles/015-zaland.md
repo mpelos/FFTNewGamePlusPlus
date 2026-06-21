@@ -1,15 +1,15 @@
 # 015 - Castled City of Zaland
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 407) — Knight→Dragoon escalation done inline; Mustadio auto-scaled
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 14 (after Zeirchele Falls)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **407** (battle_entd4, local entry 23) — confirmed by sequence + composition
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py zaland`, plus a Program.cs change adding Mustadio (cid
+> 0x22) to the runtime guest-scaler. NG+-only enemy edits; the guest-scaler runs always. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -60,24 +60,32 @@ For New Game++ the identity must stay: **a vertical castle fight where the playe
 reckless guest (Mustadio) and out-positions a combined-arms squad on the walls — buffs, target
 priority, and verticality are the whole puzzle.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 407)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 2 Knight + 2 Archer + 2 Black Mage, plus the player and MUSTADIO guest slots.
-DO NOT touch Mustadio's guest/reckless scripting or the protect-path Game-Over condition.
-Confirm the high-wall elevation tiles and Jump requirements stay intact.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    name  flags  job        role                       action
+s0    0x22   34    0x91   34         Mustadio (reckless guest)  AUTO-SCALED (GuestCharIds, not here)
+s1    0x80   255   0x80   76 Knight  ground anchor              SCALE -> L101
+s2    0x80   255   0x80   80 BMage   priority AoE               SCALE -> L101
+s3    0x80   255   0x80   80 BMage   priority AoE               SCALE -> L101
+s4    0x80   255   0x80   76 Knight  -> DRAGOON (escalation)    SCALE -> L101, re-job 87
+s5    0x81   255   0x40   77 Archer  wall archer                SCALE -> L101
+s6    0x81   255   0x40   77 Archer  archer                     SCALE -> L100
+s7    0x34   52    0x49   52         recurring story unit       LEAVE (lvl 254)
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs: Knight 76, Black Mage 80, Archer 77, **Dragoon/Lancer 87** (first use in the mod). The
+escalation Dragoon carries **Partisan (102)** — the strongest pre-Chapter-4 SHOP-tier spear (Holy
+Lance/Dragon Whisker are Unknown20/reserved).
 
-```text
-77 = Archer            (confirmed)
-Knight job id          (TBD - verify)
-Black Mage job id      (TBD - verify)
-Dragoon / Lancer job id (TBD - verify; added below — FIRST use of this job in the mod)
-```
+### Mustadio (guest) — auto-scaled, not patched here
+
+Mustadio (cid 0x22) has **job 34 == cid**, exactly the Delita/Argath guest pattern, so he was added
+to `GuestCharIds` in Program.cs. The runtime guest-scaler (always-on, job==cid guarded) keeps him at
+party level on every ENTD read, so the reckless guest can survive his own charge and the protect-path
+Game Over — without touching his slot or scripting here. (This also covers Goug Lowtown, Battle 17,
+where Mustadio is again a guest.) Unlike Boco (generic monster cid 0x82, unusable by the scaler),
+Mustadio's unique cid makes the scaler the clean, correct fix.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -192,18 +200,32 @@ Preserve Mustadio's guest start and the wall/Jump terrain; do NOT alter his scri
 The map should reward verticality for BOTH sides: the player wants Jump/elevation to reach the
 mages and archers, while the enemy Dragoon uses the same walls to dive at the reckless guest.
 
+## Implemented (v1, entry 407)
+
+Applied with `python tools/battle_patch.py zaland`; diff contained to local entry 23 (global 407),
+63 bytes. The Chapter-2 escalation was a **job SWAP** (s4 Knight → Dragoon/Lancer), done inline.
+
+```text
+s1  Knight   L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
+s4  Dragoon  L101 jl8  R Counter  S Atk-Boost  M +2  heavy kit + Germinas + Partisan (Jump over walls)
+s2  BMage    L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod
+s3  BMage    L101 jl8  (same kit)
+s5  Archer   L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s6  Archer   L100 jl8  (same kit)
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Zaland `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 2 Knight + 2 Archer + 2 Black Mage + player + Mustadio slots.
-- [ ] Confirm Knight / Black Mage / Dragoon job IDs and legal equipment (Dragoon = spear + Jump).
-- [ ] Swap one Knight -> Dragoon (re-job a Knight slot); give it reach (Move/Jump).
-- [ ] Set levels: Knight + Dragoon + wall Archer + both Black Mages `101`; second Archer `100`.
-- [ ] Set JobLevel `8` on all active enemy slots; Knight has NO Break.
-- [ ] Do NOT touch Mustadio's guest/reckless/Game-Over scripting; preserve wall terrain.
-- [ ] Patch via the correct layer; keep the diff inside the Zaland window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional.
-- [ ] Install mod, test BOTH objective choices (clear vs protect Mustadio) from a New Game+ save.
+- [x] Identify Zaland ENTD entry (407); fill "Local Data Confirmed".
+- [x] Dump original entry; verify 2 Knight + 2 Archer + 2 Black Mage + Mustadio slot.
+- [x] Confirm Knight / Black Mage / Dragoon job IDs and legal equipment (Dragoon = Partisan spear).
+- [x] Swap one Knight -> Dragoon (re-job s4); give it reach (Move +2).
+- [x] Set levels: Knight + Dragoon + wall Archer + both Black Mages `101`; second Archer `100`.
+- [x] Set JobLevel `8` on all scaled enemy slots; Knight has no secondary.
+- [x] Mustadio handled via the runtime guest-scaler (cid 0x22 added to GuestCharIds); slot untouched.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 407 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest BOTH objectives (clear vs protect Mustadio) from a NG+ save; confirm Mustadio scales.
 
 ## Test Questions
 
