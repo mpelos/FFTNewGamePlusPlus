@@ -1,11 +1,25 @@
 # 033 - Riovanes Castle Gate
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 431)
 Chapter: 3 — "The Valiant"
 Battle order: Battle 30 (after The Yuguewood) — **Riovanes chain 1 of 3**
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **431** (local entry 47, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py riovanes_gate`
+
+Implemented composition (entry 431, vanilla-dump verified) — TIC has **4 Knights** (one more than
+the walkthrough's 3), so after the Templar swap there are 3 Knights + 1 Templar:
+- s1 **Marach** (job 26 Netherseer — enemy BOSS, survives/recruitable): L103 + durability gear
+  (Mage Hat/shop Robe/Bracers — naked); job/jobLevel/secondary/weapon/survive scripting preserved. NO rare.
+- s5 Knight→**Knights Templar** (job 38, the Izlude caste) L102 — Mighty-Sword ranged breaks; Heavy
+  Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Counter/Atk Boost/Mv+1.
+- s6,s7,s8 Knight L101 — Heavy Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Rend innate; Counter/Atk Boost/Mv+1.
+- s2,s3,s4 Archer L102/L101/L100 (s2 = high anchor) — Thief's Cap/Black Garb/Bracers/Windslash (two-hand); Reflexes/Concentration/Mv+1.
+- s0 = Rapha placeholder (level 0xFE) — left untouched.
+
+> ⚠️ Verify in-game: job 38 (Knights Templar) is applied to a generic sprite (s5) — Izlude's job on a
+> generic slot. Confirm it renders and uses Mighty Sword correctly; if not, fall back to a Knight with
+> heavy break gear.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
