@@ -1,11 +1,31 @@
 # 047 - Limberry Castle Gate
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 454)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 42 (Limberry chain 1 of 3 — NO resupply between 42→43→44)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **454** (local 70, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 454)
+
+```text
+DATA (verified from entd4 dump):
+  slot 0 = Celia  (job 45 Assassin, name_id 45)  eq=254 (fixed boss gear, no equip slots)
+  slot 1 = Lettie (job 46 Assassin, name_id 46)  eq=254
+  slots 2-5 = Reaver (job 150 monster, lvl 254 runtime, eq=255)  -- the 4 demon escort
+  Confirmed by story position: between Poeskas (453) and the Elmdor chain (455).
+
+CHANGE (faithful, minimal): re-stage the flee-race at endgame intensity by LEVEL only.
+  Celia/Lettie = 104 (boss-tier chain opener)   4 Reavers = 103
+  - eq=254 on the assassins => no gear to set, and there is NO rare here (flee-on-critical = no drop;
+    the Masamune/Genji reckoning is Elmdor's, at the Keep 048).
+  - The flee-on-critical end trigger, teleport mobility, status kit (Charm/Stone/Stop/Toad) and Ultima
+    all live in the unit/AI data and scripting tail -- preserved untouched (only the level byte changed).
+  - jl left as-is on the named assassins: their ability set is fixed and bumping jl risks their kit.
+  These are the same assassins as Riovanes Roof (433), delivered one tier higher (103 -> 104).
+  Buried map treasure (Gaia Gear, Black Robe, Hermes Shoes) left as-is.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
