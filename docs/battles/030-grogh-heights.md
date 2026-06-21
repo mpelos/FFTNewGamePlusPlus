@@ -1,11 +1,19 @@
 # 030 - Grogh Heights (Grog Hill)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 426)
 Chapter: 3 — "The Valiant"
 Battle order: Battle 27 (after the Monastery Vaults chain)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **426** (local entry 42, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py grogh`
+
+Implemented composition (entry 426, vanilla-dump verified) — kept LIGHT (breather):
+- s0 Squire→**Black Mage** L101 (NEW rain-Thunder caster) — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1.
+- s2 Squire L100 — Headband/Power Garb/Bracers/Icebrand; Counter/Atk Boost/Mv+1.
+- s1,s3 Chemist L101/L100 — Mage Hat/Black Garb/Bracers/Mythril Gun (two-hand); Auto-Potion/Throw Items/Mv+1.
+- s4 Archer L101 — Thief's Cap/Black Garb/Bracers/Windslash (two-hand); Reflexes/Concentration/Mv+1.
+- s5 Thief L100 — Thief's Cap/Black Garb/Germinas/Air Knife; First Strike/Atk Boost/Mv+2 (Steal innate).
+- s6 (Orran placeholder), s7, s8 = inactive (level 0xFE) — left untouched. No boss → no rare. Modest levels preserve the curve dip.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
