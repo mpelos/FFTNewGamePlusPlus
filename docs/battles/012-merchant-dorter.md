@@ -1,15 +1,15 @@
 # 012 - Merchant City of Dorter (Chapter 2)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 403) — Knight job-escalation deferred (see below)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 11 (Chapter 2 opener)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **403** (battle_entd4, local entry 19) — confirmed by composition matching
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py merchant_dorter`. The whole ENTD is swapped only in NG+,
+> so the edit is automatically NG+-only — a first playthrough is untouched. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -57,24 +57,27 @@ Chapter 1 — coordinated, multi-threat, and punishing of a careless formation.
 For New Game++ the identity must stay: **a coordinated urban ambush where elevation, AoE magic,
 and charm all pressure the player's formation at once — a finesse fight, not a brawl.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 403)
+
+Dumped from the embedded ENTD; roster matches the doc exactly (2 Archer + 2 Black Mage + 2 Thief).
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 2 Archer + 2 Black Mage + 2 Thief, plus player slots and the Gaffgarion/Agrias
-  ally slots (do NOT alter the allies).
-Confirm the elevation tiles the Archers sit on and the urban map flags.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    name  job          role                         action
+s0    0x24   36    36           Gaffgarion — scripted ally   LEAVE (lvl 254, story unit)
+s1    0x80   255   83 Thief     enemy Thief                  SCALE -> L100
+s2    0x17   23    23           Agrias — scripted ally       LEAVE (lvl 254, flags 0x89 ally)
+s3    0x34   52    52           named story unit             LEAVE (lvl 254)
+s4    0x81   255   77 Archer    enemy Archer (elevated)      SCALE -> L101
+s5    0x81   255   77 Archer    enemy Archer (elevated)      SCALE -> L100
+s6    0x80   255   83 Thief     enemy Thief                  SCALE -> L100
+s7    0x80   255   80 BlackMage enemy Black Mage             SCALE -> L101
+s8    0x80   255   80 BlackMage enemy Black Mage             SCALE -> L101
 ```
 
-Job IDs (carry over known, verify the rest in-game):
-
-```text
-77 = Archer            (confirmed)
-83 = Thief             (confirmed)
-Black Mage job id      (TBD - verify; shares with Ch1 Dorter/Ziekden)
-Knight job id          (TBD - verify; added below)
-```
+Job IDs: Archer 77, Thief 83, Black Mage 80 (all confirmed; shared with Ch1). **Steal Heart (charm)
+is innate to the Thief job command at JobLevel 8** — no secondary skillset is needed to deliver the
+fight's signature charm threat. The Gaffgarion/Agrias/story slots are all lvl 254 in the base ENTD
+(enabled by story scripting) and are left untouched.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -200,19 +203,39 @@ Do NOT alter the Gaffgarion/Agrias ally placements.
 The map should read: "a wall up front, archers above, mages lobbing AoE, and charm-thieves
 circling" — a formation puzzle, the Chapter 2 escalation of Dorter's high-ground lesson.
 
+## Implemented (v1, entry 403)
+
+Applied with `python tools/battle_patch.py merchant_dorter`; diff contained to local entry 19
+(global 403), 58 bytes.
+
+```text
+s4  Archer     L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s5  Archer     L100 jl8  (same kit)
+s7  Black Mage L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod
+s8  Black Mage L101 jl8  (same kit)
+s1  Thief      L100 jl8  R First Strike  S Atk-Boost  M +2  Thief's Cap / Black Garb / Germinas + Air Knife
+s6  Thief      L100 jl8  (same kit)  — Steal Heart innate to the Thief job
+```
+
+**Deferred — the Knight job-escalation (a 7th unit).** The doc's single Chapter-2 wrinkle is to
+ADD a Knight frontline wall. That means inserting a new unit into an empty slot (s9+), which needs
+a verified, walkable map position — every Chapter 1 battle only re-tuned existing slots, so adding a
+unit is a new, untested operation best done with an in-game playtest. The 6-unit finesse identity
+(elevation + AoE + charm) is fully delivered; the Knight add is batched for the playtest pass.
+
 ## Implementation Checklist
 
-- [ ] Identify Merchant Dorter `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 2 Archer + 2 Black Mage + 2 Thief + player + ally slots.
-- [ ] Confirm Knight + Black Mage job IDs and legal equipment.
-- [ ] Add the Knight slot (clone a human template, then re-job — see Gariland slot-add method).
-- [ ] Set levels: Knight + Archers(1) + both Black Mages `101`; Archer(2) + both Thieves `100`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] Keep Steal Heart on the two Thieves only; Knight has NO Break.
-- [ ] Equip per builds; preserve the elevation positions and the allies.
-- [ ] Patch via the correct layer; keep the diff inside the Merchant Dorter window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional.
-- [ ] Install mod, test from a New Game+ save; verify the Knight changes the approach.
+- [x] Identify Merchant Dorter ENTD entry (403) on Windows data; fill "Local Data Confirmed".
+- [x] Dump original entry; verify 2 Archer + 2 Black Mage + 2 Thief + ally slots.
+- [x] Confirm Black Mage / Archer / Thief job IDs and legal equipment.
+- [ ] Add the Knight slot (deferred — needs a verified map position; do during playtest).
+- [x] Set levels: Archer(1) + both Black Mages `101`; Archer(2) + both Thieves `100`.
+- [x] Set JobLevel `8` on all active enemy slots.
+- [x] Keep Steal Heart on the two Thieves (innate to the Thief job at jl8).
+- [x] Equip per builds; preserve the elevation positions and the allies.
+- [x] Patch the embedded ENTD (NG+-only by construction); diff inside entry 403 only.
+- [x] Re-dump and diff; confirm changes are small and intentional.
+- [ ] Install mod, test from a New Game+ save; then add the Knight wrinkle (playtest).
 
 ## Test Questions
 
