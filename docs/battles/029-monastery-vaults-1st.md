@@ -1,11 +1,20 @@
 # 029 - Monastery Vaults, 1st Level — Wiegraf (Orbonne Monastery)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 424)
 Chapter: 3 — "The Valiant"
 Battle order: Battle 26 (after Vaults 3rd Level) — **Vaults chain 3 of 3 (finale)**
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **424** (local entry 40, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py vaults_1st`
+
+Implemented composition (entry 424, vanilla-dump verified):
+- s0 Wiegraf (job 40 White/Holy Knight; Holy Sword innate) — L104/jl8; Heavy Helm/Heavy Armor/
+  Bracers/Runeblade (strong NON-rare sword keeps Holy Sword weapon-tied/disarmable)/shop Shield;
+  job/secondary/reaction-support-movement/FLEE scripting preserved. NO rare (flees; rare is at 034).
+- s1,s2 Knight L101 — Heavy Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Rend innate; Counter/Atk Boost/Mv+1.
+- s4 Black Mage L101 — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1.
+- s3,s5 Archer L101/L100 — Thief's Cap/Black Garb/Bracers/Windslash Bow (two-hand); Reflexes/Concentration/Mv+1.
+- s6,s7 = inactive placeholders (level 0xFE) — left untouched.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
