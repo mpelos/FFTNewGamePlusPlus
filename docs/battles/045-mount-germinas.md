@@ -1,11 +1,17 @@
 # 045 - Mount Germinas (Germinas Peak)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 452)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 40 (after Bethla Sluice)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **452** (local entry 68, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py germinas`
+
+Implemented (entry 452, vanilla-dump verified) — slots: s0 Ninja, s1,s2 Thief, s3,s4,s5 Archer:
+- s0 Ninja L103 (apex) + s1 Thief→**Ninja** L102 — dual Ninja Longblades; Thief's Cap/Black Garb/Germinas; First Strike/Atk Boost/Mv+2.
+- s2 Thief L101 — Air Knife; Steal harass; First Strike/Atk Boost/Mv+2.
+- s3 Archer L102, s4,s5 Archer L101 — Thief's Cap/Black Garb/Bracers/Windslash (two-hand); Reflexes/Concentration/Mv+1.
+- No boss/no rare; in-band levels (terrain rates it 4/5★). Plateau geometry + buried Invisibility Cloak (other layer) untouched.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
