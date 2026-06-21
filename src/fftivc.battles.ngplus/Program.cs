@@ -588,15 +588,24 @@ public class Program : IMod
                 if (kv.Key.StartsWith("resume_", StringComparison.OrdinalIgnoreCase) && kv.Value.Length > NGPLUS_FLAG_OFFSET)
                     Log($"[ngdetect] {kv.Key}: 0x3F={kv.Value[NGPLUS_FLAG_OFFSET]}");
 
-            // Diagnostic: log the current battle's ENTD entry id (u16 @ 0x16C) so we can map each
-            // story battle to its ENTD entry just by entering it in-game.
+            // Diagnostic: log the ENTD entry id (u16 @ 0x16C) from EVERY resume file. The enbtl_* files
+            // LAG (they show the PREVIOUS battle); resume_enwm_main.sav is the fresh world-map state.
+            // Logging all of them lets us pick the current battle's TRUE entry by comparison — needed for
+            // template/procedural battles (e.g. Vaults 4th) whose enbtl read is a stale shared value.
             if (DIAG_LOG_BATTLE_ID)
-                foreach (string name in BattleIdResumeFiles)
-                    if (files.TryGetValue(name, out byte[]? b) && b.Length > BATTLE_ENTRY_ID_OFFSET + 1)
+            {
+                foreach (var kv in files)
+                    if (kv.Key.StartsWith("resume_", StringComparison.OrdinalIgnoreCase)
+                        && kv.Value.Length > BATTLE_ENTRY_ID_OFFSET + 1)
                     {
-                        int entry = b[BATTLE_ENTRY_ID_OFFSET] | (b[BATTLE_ENTRY_ID_OFFSET + 1] << 8);
-                        Log($"[battle-id] {name}: ENTD entry = {entry}");
+                        int entry = kv.Value[BATTLE_ENTRY_ID_OFFSET] | (kv.Value[BATTLE_ENTRY_ID_OFFSET + 1] << 8);
+                        Log($"[battle-id] {kv.Key}: ENTD entry = {entry}");
                     }
+                // Hex window around 0x16C of the fresh world-map state — to spot a map/area id when the
+                // entry itself is a shared template (the discriminator that picks the OverrideEntryData row).
+                if (files.TryGetValue("resume_enwm_main.sav", out var wm) && wm.Length >= 0x180)
+                    Log($"[battle-win] enwm_main 0x150-0x17F = {BitConverter.ToString(wm, 0x150, 0x30)}");
+            }
 
             byte[]? resume = null;
             foreach (string name in ResumePreference)
