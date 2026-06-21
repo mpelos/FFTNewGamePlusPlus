@@ -265,6 +265,21 @@ public class Program : IMod
         [7]  = (new ushort[]{184,199,206,212},new ushort[]{242,242,244,252}),// Riovanes Keep: Armor + SIG Rubber Suit + Robe/Shoes
         [5]  = (new ushort[]{224,235,9,15},  new ushort[]{252,253,242,242}), // Riovanes Roof: Armlet + SIG Invisibility Cloak + Knife/NinjaBlade
     };
+
+    // --- Chapter-4 endgame capstone relics (map Move-Find layer) ---
+    // Two Tier-S swords that are otherwise UNOBTAINABLE go on the final maps' hidden treasure tiles.
+    // Their bosses can't carry them (Barich is a gunner; Ultima/Lucavi have eq=255), so the reward
+    // rides the map layer instead of the ENTD. Map ids cross-verified against FFHacktics/CavesOfNarshe
+    // (Mandalia=85 matches our anchor, so TIC's map numbering == the documented FFT numbering).
+    // Unlike MapTreasureNgPlus (positional, full 4-slot arrays for maps known to have 4 tiles), these
+    // inject the relic into the FIRST REAL tile (first slot whose vanilla rare/common is non-zero) and
+    // leave everything else pristine -> no phantom-tile risk even though the tile count is unknown.
+    private static readonly Dictionary<int, ushort> MapRelicNgPlus = new()
+    {
+        [54] = 32, // Lost Sacred Precincts (Lost Halidom, entry 439): Materia Blade
+        [55] = 36, // Graveyard of Airships (Ultima, entry 441): Ragnarok
+    };
+
     // Captured vanilla rare+common per target map (lazy, before our first write) -> restore in normal play.
     private readonly Dictionary<int, (ushort[] rare, ushort[] common)> _mapOrig = new();
     private bool _mapOrigCaptured;
@@ -489,7 +504,7 @@ public class Program : IMod
         // Snapshot pristine rare+common per target map once, from the live table BEFORE our first write.
         if (!_mapOrigCaptured)
         {
-            foreach (int mapId in MapTreasureNgPlus.Keys)
+            foreach (int mapId in MapTreasureNgPlus.Keys.Concat(MapRelicNgPlus.Keys).Distinct())
             {
                 var rare = new ushort[4];
                 var common = new ushort[4];
@@ -528,6 +543,22 @@ public class Program : IMod
                 if (SafeReadU16(itemBase + MAP_COMMON_OFFSET) != wantCommon)
                 { try { Marshal.WriteInt16(itemBase + MAP_COMMON_OFFSET, (short)wantCommon); changed++; } catch { } }
             }
+        }
+
+        // Endgame capstone relics: inject ONE Tier-S sword into each final map's first REAL Move-Find
+        // tile (first slot with a non-zero vanilla rare/common), preserving its common and all other
+        // tiles. In NG+ the slot's rare becomes the relic; otherwise it's restored to the captured value.
+        foreach (var (mapId, relic) in MapRelicNgPlus)
+        {
+            if (!_mapOrig.TryGetValue(mapId, out var orig)) continue;
+            int slot = -1;
+            for (int i = 0; i < 4; i++)
+                if (orig.rare[i] != 0 || orig.common[i] != 0) { slot = i; break; }
+            if (slot < 0) continue; // map exposes no real treasure tile -> nothing to ride on
+            nint relicBase = _mapTableBase + mapId * MAP_ENTRY_SIZE + slot * MAP_ITEM_SIZE;
+            ushort wantRelic = ng ? relic : orig.rare[slot];
+            if (SafeReadU16(relicBase + MAP_RARE_OFFSET) != wantRelic)
+            { try { Marshal.WriteInt16(relicBase + MAP_RARE_OFFSET, (short)wantRelic); changed++; } catch { } }
         }
         return changed;
     }

@@ -35,8 +35,8 @@ enemies as the real roster.
 
 - Loffrey (436, Vaults 5th) → **Escutcheon (143)** in the lh/shield slot (legal for Divine Knight) ✅
 - Cletienne (438) → **Robe of Lords (207)** in the body slot (legal for Sorcerer) ✅
-- Lost Halidom (439) → **Materia Blade (32)** via map Move-Find relic (Barich is a gunner, can't wield it) — TODO (needs map id)
-- Ultima (441, eq255) → **Ragnarok (36)** via the map Move-Find reward layer — TODO (needs map id)
+- Lost Halidom (439) → **Materia Blade (32)** via map Move-Find relic on **map 54** (Lost Sacred Precincts; Barich is a gunner, can't wield it) ✅
+- Ultima (441, eq255) → **Ragnarok (36)** via map Move-Find relic on **map 55** (Graveyard of Airships) ✅
 - Vaults 4th (435) generics → scaled to endgame (lv102); no signature drop (no boss) ✅
 
 ## Status
@@ -44,5 +44,7 @@ enemies as the real roster.
 1. ✅ All 6 entd4 entries (435/436/438/439/440/441) implemented via `tools/battle_patch.py`
    (vaults_4th/vaults_5th/capitoline/lost_halidom/airship_hashmal/airship_ultima) → build succeeds.
    Phase 1/2 are scripted Lucavi — transform/win-condition bytes preserved (level-only edits).
-2. ⏳ Place Materia Blade (Lost Halidom) + Ragnarok (Ultima) via the MAP Move-Find layer — needs each
-   map's map id captured in-game.
+2. ✅ Materia Blade (map 54) + Ragnarok (map 55) placed via the MAP Move-Find layer (MapRelicNgPlus in
+   Program.cs). Map ids found by research, not in-game capture: cross-verified on FFHacktics +
+   CavesOfNarshe, and confirmed by our own anchor (Mandalia=85 matches both, so TIC map numbering ==
+   documented FFT numbering). Injected into each map's first real treasure tile (no phantom-tile risk).
