@@ -1,11 +1,20 @@
 # 042 - Beddha Sandwaste (Bed Desert)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 447)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 37 (after Outlying Church)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **447** (local entry 63, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py bed_desert`
+
+Implemented (entry 447, vanilla-dump verified):
+- s0 **Barich** (job 43 Machinist, BOSS, dies → rare pays) — L104/jl8; Tier-A rare = **Glacial Gun (74)**,
+  already his equipped weapon (steal-bait = disarm + reward); job/secondary/head/body/acc/win-on-death preserved.
+- s1,s2 Knight L102 — Heavy gear/Runeblade/shop Shield; Rend innate (cap 2); Counter/Atk Boost/Mv+1.
+- s3 Black Mage L102 — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1.
+- s4,s5 Archer L102/L101 — Thief's Cap/Black Garb/Bracers/Windslash (two-hand); Reflexes/Concentration/Mv+1.
+- s6,s7 = job-43 Barich-clone scripting placeholders (jl0) — left untouched. NO Hydra. Only Barich at band 104.
+- Barich recurs at Lost Halidom (057) as a Tier-S dragon fight — no double-best (gun paid here only).
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
