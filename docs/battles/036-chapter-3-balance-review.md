@@ -132,6 +132,41 @@ Ch4-reserved best gear. Generics stay shop-tier. Two rares land in the marquee K
 forms), per the overview's "two notable foes" allowance.
 ```
 
+## Move-Find treasure rewards (NG+ post-game upgrade)
+
+Same NG+-only treasure system as Chapters 1–2 (`010`, `023`), escalated one tier. Chapter 3 is where
+treasures begin handing out **mid-high non-buyable "ótimos itens"** — clearly above Ch2's early
+non-buyables (Invisibility Cloak/perfume/Elixir tier), but still never the final-game best.
+
+```text
+TIER (user-confirmed 2026-06-21):
+- BASELINE (all 11 battles): rare slot -> best BUYABLE item per original category; commons -> X-Potion
+  / Remedy / Hi-Ether. Post-game floor, same as Ch1/Ch2.
+- HIGHLIGHT (6 deserving battles): ONE mid-high NON-buyable item. Ch3 pool = Ninja Gear 197, Rubber
+  Suit 199, Kaiser/Venetian Shield 141/142, Grand Helm 156, Yoichi Bow 90, Faerie Harp 94, Hairband/
+  Barrette 169/170, plus the carried-over Invisibility Cloak 235 / perfumes 236-239.
+- RESERVED FOR CH4 (never in Ch3): rl90+ ultimate weapons (Excalibur/Masamune/Chaos Blade/etc.), Genji
+  set, Maximillian, best robes (Lordly Robe), best shields (Escutcheon/Genji Shield), Ribbon, Perseus Bow.
+```
+
+| Battle | Map | Tier | Highlight (non-buyable) |
+|--------|-----|------|--------------------------|
+| Gollund (22) | 27 | baseline | — |
+| Lesalia Postern (23) | 2 | **highlight** | **Ninja Gear** (defend Alma vs Zalmo) |
+| Vaults 2nd (24) | 58 | baseline | — |
+| Vaults 3rd (25) | 59 | **highlight** | **Kaiser Shield** (Izlude; + Reflect Mail boss loot) |
+| Vaults 1st (26) | 57 | baseline | — (Wiegraf flees; loot deferred to Keep) |
+| Grogh Heights (27) | 81 | baseline | — |
+| Yardrow (28) | 25 | **highlight** | **Septième Sens** perfume (protect Rapha; she can wear it) |
+| Yuguewood (29) | 79 | baseline | — |
+| Riovanes Gate (30) | 6 | **highlight** | **Grand Helm** (the assault) |
+| Riovanes Keep (31) | 7 | **highlight** | **Rubber Suit** (chapter spike; + Defender/Defense Ring boss loot) |
+| Riovanes Roof (32) | 5 | **highlight** | **Invisibility Cloak** (Elmdor's assassins) |
+
+Implemented in the same `MAP_TRAP_FORMATION_DATA` direct-write subsystem (`MapTreasureNgPlus`); boss
+rares above live in the ENTD and are applied during each battle's implementation. See memory note
+[[fft-tic-rewards-ngplus]].
+
 ## Consistency audit
 
 ### Job IDs
