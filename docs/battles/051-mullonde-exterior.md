@@ -1,11 +1,28 @@
 # 051 - Mullonde Cathedral Exterior (Murond Holy Place)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 460)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 46 (Mullonde chain 1 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **460** (local 76, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 460)
+
+```text
+DATA (exact roster match, all generic casters spr128/name255):
+  slot 0 = White Mage (job 79, rh=64 staff)   -> the HIDDEN rooftop heal + Raise-multi sustain engine.
+  slot 1 = Summoner   (job 82, rh=57 Dragon Rod) -> AoE; the rod is the stealable reward (rh KEPT).
+  slots 2,3 = Geomancer (job 86; were naked)  -> terrain elemental.
+  slots 4,5 = Orator   (job 84, rh=72 gun)    -> soft status (one-disruptor cap).
+
+CHANGE (faithful, no boss / no rare): scale to the chain-opener band + arm the bare casters + jl8.
+  White Mage = 103 (priority kill), rest = 102. jl8 on all (the White Mage was jl5 -> jl8 so its
+  Cure/Raise tier is real -- the sustain IS the fight). Armed each with Mage Hat (167) + Luminous/shop
+  Robe (206) + Featherweave Cloak (234); Geomancers given a shop Rod (56); White Mage staff (64),
+  Summoner Dragon Rod (57), Orator guns (72) all KEPT. Verticality / hidden-roof start / split
+  deployment live in the map + unit tail and are untouched. Buried Elixir + Dragon Rod steal left as-is.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
