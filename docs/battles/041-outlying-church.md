@@ -1,11 +1,23 @@
 # 041 - Outlying Church (Zeltennia Church)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 445)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 36 (after Finnath Creek)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **445** (local entry 61, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py outlying_church`
+
+Implemented (entry 445, vanilla-dump verified):
+- s1 **Zalmo** (job 16 Celebrant/Inquisitor, BOSS, dies → deferred Ch3 rare pays) — L104/jl8;
+  Tier-A rare = **Light Robe = Luminous Robe (206)** as body (top robe below the Tier-S Lordly Robe;
+  upgrades his vanilla White Robe 204; steal-bait). Job/secondary/head/acc/rod/holy-sustain +
+  win-on-death scripting preserved. Holy+soft only, no hard lock.
+- s2,s3 Mystic L102 — soft status (Oracle-equiv); Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1.
+- s4,s5 Knight L102, s6 Knight L101 — height-guarding screen; Heavy gear/Runeblade/shop Shield; Rend innate.
+- s0 = inactive guest placeholder (level 0xFE) — left untouched. Angel Ring + buried map rares (other layer) untouched.
+
+> Note: TIC has no distinct "Light Robe" item; the top robe below the reserved Lordly Robe (207) is
+> Luminous Robe (206), used here. It's also the generic shop robe, so Zalmo's "rare" is a modest steal.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
