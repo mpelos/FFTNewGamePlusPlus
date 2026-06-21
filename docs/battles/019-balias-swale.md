@@ -1,15 +1,14 @@
 # 019 - Balias Swale (Bariaus Valley)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 413) — Geomancer add deferred; Agrias auto-scaled
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 18 (after Goug Lowtown)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **413** (battle_entd4, local entry 29) — confirmed by composition + Agrias guest
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py balias_swale`, plus a Program.cs change adding Agrias (cid
+> 0x1e) to the runtime guest-scaler. NG+-only enemy edits. See `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -59,24 +58,30 @@ For New Game++ the identity must stay: **a rainy split-team rush to save an isol
 Agrias from a ranged firing line whose Thunder the weather amplifies — distance and tempo are the
 whole fight.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 413)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 1 Knight + 2 Archer + 2 Black Mage, plus the player's split teams and AGRIAS's slot.
-DO NOT touch Agrias's protected-guest scripting or the split-team deployment zones.
-Confirm the RAIN flag stays (Thunder amplification is part of the design).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    flags  job        role                       action
+s0    0x1e   0x50   30 (==cid) Agrias (Save-Agrias VIP)   AUTO-SCALED (GuestCharIds, not here)
+s1    0x80   0x80   76 Knight  frontline body             SCALE -> L101
+s2    0x81   0x40   77 Archer  far-end ranged             SCALE -> L101
+s3    0x81   0x40   77 Archer  far-end ranged             SCALE -> L100
+s4    0x80   0x80   76 Knight  frontline body             SCALE -> L100
+s5    0x80   0x80   80 BMage   rain-Thunder (primary)     SCALE -> L101
+s6    0x80   0x80   80 BMage   rain-Thunder (primary)     SCALE -> L101
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs: Knight 76, Archer 77, Black Mage 80, Agrias's Holy-Knight job 30. (TIC has 2 Knights vs the
+walkthrough's 1.) The Knights run job 76 at jl8, so they carry Battle Skill (Rend) innately — a minor
+extra over this doc's "no break" preference, not suppressible without changing the job; non-blocking.
 
-```text
-77 = Archer            (confirmed)
-Knight job id          (TBD - verify)
-Black Mage job id      (TBD - verify)
-Geomancer job id       (TBD - verify; added below — FIRST use of this job in the mod)
-```
+### Agrias (VIP) — auto-scaled, not patched here
+
+Agrias (**cid 0x1e, job 30 == cid**) is the "Save Agrias!" objective unit — isolated, outnumbered,
+and her death FAILS the battle; she joins permanently right after. She was added to `GuestCharIds`
+in Program.cs, so the runtime guest-scaler keeps her at party level (job==cid guarded) and the
+rescue is viable in NG+. Her slot is not touched here, only auto-scaled at read time. The RAIN flag
+and split-team zones are map/terrain data (not in the ENTD slots), so they are untouched.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -191,18 +196,35 @@ Preserve the split-team zones, Agrias's protected slot, and the RAIN flag.
 The valley should say: "your VIP is stranded under a rain-charged firing line — split up, close
 fast, and use the weather before it's used on you."
 
+## Implemented (v1, entry 413)
+
+Applied with `python tools/battle_patch.py balias_swale`; diff contained to local entry 29 (global
+413), 62 bytes. Knights L101/L100, Archers L101/L100, Black Mages L101; JobLevel 8 on all.
+
+```text
+s1  Knight   L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
+s4  Knight   L100 jl8  (same kit)
+s2  Archer   L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s3  Archer   L100 jl8  (same kit)
+s5  BMage    L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod  (rain-Thunder)
+s6  BMage    L101 jl8  (same kit)
+```
+
+**Deferred — Geomancer escalation (slot-add).** The doc's wrinkle adds a Geomancer (first use of the
+job), which needs a verified map position; batched for the playtest pass.
+
 ## Implementation Checklist
 
-- [ ] Identify Balias Swale `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 1 Knight + 2 Archer + 2 Black Mage + player split teams + Agrias.
-- [ ] Confirm Knight / Black Mage / Geomancer job IDs and legal equipment.
-- [ ] Add the Geomancer slot (clone a human template, then re-job).
-- [ ] Set levels: Knight + lead Archer + both Black Mages + Geomancer `101`; second Archer `100`.
-- [ ] Set JobLevel `8` on all active enemy slots; Knight has NO Break; lean Black Mages into Thunder.
-- [ ] Do NOT touch Agrias's protect scripting, the split zones, or the RAIN flag.
-- [ ] Patch via the correct layer; keep the diff inside the Balias Swale window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify Agrias + rain intact.
-- [ ] Install mod, test from a New Game+ save; confirm the save-Agrias objective and split work.
+- [x] Identify Balias Swale ENTD entry (413); fill "Local Data Confirmed".
+- [x] Dump original entry; verify Knights + Archers + Black Mages + Agrias.
+- [x] Confirm Knight / Black Mage / Archer job IDs and legal equipment.
+- [ ] Add the Geomancer slot (deferred — needs a verified map position; do during playtest).
+- [x] Set levels: Knights `101`/`100`; Archers `101`/`100`; both Black Mages `101`.
+- [x] Set JobLevel `8` on all scaled slots; Black Mages lean on Thunder (rain-amplified).
+- [x] Agrias auto-scaled via GuestCharIds (cid 0x1e); slot/scripting and RAIN/split terrain untouched.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 413 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; confirm Save-Agrias + split work; verify Agrias scales.
 
 ## Test Questions
 

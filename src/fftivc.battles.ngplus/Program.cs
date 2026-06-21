@@ -59,7 +59,10 @@ public class Program : IMod
     // patching every ENTD read means we don't depend on detecting NG+ at that exact moment.
     // charId set (extend as later-chapter guests are added). 0x04=Delita, 0x07=Argath (Chapter 1);
     // 0x22=Mustadio (Chapter 2 — reckless guest at Zaland/Goug; uncontrolled, charges in, and his
-    // death is a Game Over on the protect path, so he MUST keep pace with the party).
+    // death is a Game Over on the protect path, so he MUST keep pace with the party);
+    // 0x1e=Agrias (Chapter 2 — the "Save Agrias!" VIP at Balias Swale, isolated/outnumbered, whose
+    // death FAILS the battle + recruit; she becomes a permanent party member right after, so she must
+    // be at party level to survive the rescue).
     // CRITICAL: Argath (0x07) also appears as the ENEMY BOSS at Ziekden (end of Ch1), where his slot
     // is re-jobbed to Knight (job 76). An ALLY guest always keeps job == charId (Delita job 4, Argath
     // job 7, Mustadio job 34 == 0x22) across every appearance in the ENTD; only the Ziekden boss
@@ -67,7 +70,7 @@ public class Program : IMod
     // keep his designed boss level instead of being clamped to party level, and (b) fixes a real bug:
     // in NORMAL play the scaler would otherwise force vanilla boss-Argath (lvl 10) to 100, making the
     // finale unwinnable on a first playthrough — the exact thing the mod promises never to do.
-    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22 };
+    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22, 0x1e };
 
     // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
     // modded version of; an index with no entry passes through vanilla even in NG+.
