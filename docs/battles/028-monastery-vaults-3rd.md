@@ -1,11 +1,19 @@
 # 028 - Monastery Vaults, 3rd Level — Izlude (Orbonne Monastery)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 423)
 Chapter: 3 — "The Valiant"
 Battle order: Battle 25 (after Vaults 2nd Level) — **Vaults chain 2 of 3**
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **423** (local entry 39, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py vaults_3rd`
+
+Implemented composition (entry 423, vanilla-dump verified):
+- s0 Izlude (job 38 Knights-Templar special, sec 52 Mighty Sword) — L103/jl8; rare **Mirror Mail
+  (184 = TIC's "Reflect Mail", auto-Reflect)** as body; Bracers + Runeblade; job/sec/kit/shield/head
+  preserved (decapitation-target identity + the "defeat Izlude ends fight" scripting untouched).
+- s1,s2 Knight L101 — Heavy Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Rend innate; Counter/Atk Boost/Mv+1.
+- s3 Summoner L101 — Mage Hat/shop Robe/Featherweave/shop Rod (Rod is job-82-legal); Reflexes/Atk Boost/Mv+1.
+- s4,s5 Archer L101/L100 — Thief's Cap/Black Garb/Bracers/Windslash Bow (two-hand); Reflexes/Concentration/Mv+1.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
