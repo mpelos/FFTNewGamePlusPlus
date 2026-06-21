@@ -1,15 +1,14 @@
 # 013 - Araguay Woods
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 404) — Red Panther add + Boco scaling deferred (see below)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 12 (after Merchant City of Dorter)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **404** (battle_entd4, local entry 20) — confirmed by composition matching
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py araguay`. NG+-only by construction (whole ENTD swapped
+> only in NG+). See `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -57,23 +56,35 @@ For New Game++ the identity must stay: **a goblin swarm in the woods that the pl
 while shielding a fragile, mandatory-survival ally — Ice rewards preparation, the trees deny
 easy kiting, and Boco's safety is the real objective.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 404)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 5 Goblin + 1 Black Goblin, plus the player slots and BOCO's ally slot.
-DO NOT touch Boco's slot or the rescue/Game-Over scripting — only the enemy pack is edited.
-Monsters use NO equipment; levers are Level, JobLevel, Brave/Faith, innate skill tier.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    name  flags  job             role                       action
+s0    0x82   118   0x30   94 Chocobo      Boco — rescuable ally      LEAVE (see Boco note)
+s1    0x82   255   0x20   98 Gobbledeguck Black-Goblin-tier melee    SCALE -> L101
+s2    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
+s3    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
+s4    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
+s5    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
+s6    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
+s7    0x17   23    0x89   (named)         story unit                 LEAVE (lvl 254)
+s8    0x34   52    0x49   (named)         story unit                 LEAVE (lvl 254)
 ```
 
-Job/monster IDs (verify all in-game):
+Monster job IDs: Goblin 97, Gobbledeguck (Black-Goblin tier) 98, Chocobo 94 (shared with Siedge
+Weald / Mandalia). All-monster fight — Level + JobLevel are the only levers (no gear, no R-S-M),
+exactly like Ch1 Siedge Weald. Boco is distinguished by name_id 118 + flags 0x30 (the goblins are
+flags 0x20).
 
-```text
-Goblin job id          (TBD - verify; shares with Siedge Weald)
-Black Goblin job id    (TBD - verify; shares with Siedge Weald)
-Red Panther job id     (TBD - verify; added below; shares with Mandalia)
-```
+### Boco note (playtest item #1)
+
+Boco sits at **lvl 10**. Against an NG+ party (~99) the goblins are now lvl 100–101, so a lvl-10
+Boco would very likely die on turn 1 — making the OPTIONAL **"Save Chocobo!"** path non-viable. The
+mandatory **"Defeat all enemies!"** path is unaffected, so the battle is still completable. The doc
+says do not touch Boco's slot/scripting, and Boco's exact team/scripting behavior (flags 0x30) needs
+in-game observation, so Boco is **intentionally left at lvl 10 for now**. The probable fix —
+scaling Boco to party level (100) for this entry only — is held until the playtest confirms how
+Boco's team and Game-Over scripting respond. **Do this check first when playtesting Araguay.**
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -142,18 +153,27 @@ Preserve Boco's start position and the player deployment zone; do NOT alter the 
 If the player rescues Boco, every approach lane should feel like a race to intercept; if not,
 it's a manageable swarm. The woods plus a spread pack keep the player from trivially kiting.
 
+## Implemented (v1, entry 404)
+
+Applied with `python tools/battle_patch.py araguay`; diff contained to local entry 20 (global 404),
+12 bytes. Black-Goblin tier (s1) → L101; five Goblins (s2–s6) → L100; JobLevel 8 on all six.
+Boco (s0) and the story units (s7/s8) untouched.
+
+**Deferred — Red Panther escalation (slot-add):** the doc's single wrinkle adds a 7th monster (a
+fast poison beast with a lane to Boco). That requires inserting a unit at a verified map position,
+batched for the playtest pass (same policy as the Merchant Dorter Knight add).
+
 ## Implementation Checklist
 
-- [ ] Identify Araguay `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 5 Goblin + 1 Black Goblin + player + Boco slots.
-- [ ] Confirm Goblin / Black Goblin / Red Panther monster job IDs.
-- [ ] Add the Red Panther slot (clone a monster template, then re-type); do NOT touch Boco.
-- [ ] Set levels: Goblins `100`; Black Goblin + Red Panther `101`.
-- [ ] Set JobLevel `8` and aggressive Brave on all monsters; no equipment.
-- [ ] Keep the pack spread; give the Red Panther a lane toward Boco.
-- [ ] Patch via the correct layer; keep the diff inside the Araguay window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify Boco scripting intact.
-- [ ] Install mod, test BOTH objective choices (clear vs rescue) from a New Game+ save.
+- [x] Identify Araguay ENTD entry (404) on Windows data; fill "Local Data Confirmed".
+- [x] Dump original entry; verify 5 Goblin + 1 Black-Goblin tier + Boco + story slots.
+- [x] Confirm Goblin / Black-Goblin / Chocobo monster job IDs.
+- [ ] Add the Red Panther slot (deferred — needs a verified map position; do during playtest).
+- [x] Set levels: Goblins `100`; Black-Goblin tier `101`.
+- [x] Set JobLevel `8` on all scaled monsters; no equipment.
+- [x] Patch the embedded ENTD (NG+-only by construction); diff inside entry 404 only.
+- [x] Re-dump and diff; confirm changes are small and intentional; Boco slot untouched.
+- [ ] Playtest BOTH objectives (clear vs rescue) from a NG+ save; resolve the Boco-level question first.
 
 ## Test Questions
 

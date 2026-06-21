@@ -32,7 +32,7 @@ Chapter 1 (doc `001` = Battle 2, so the offset is the same established pattern: 
 | Doc | Battle | Location | Role in story | New element | Status |
 |-----|--------|----------|---------------|-------------|--------|
 | `012` | 11 | Merchant City of Dorter | Mercenary work; "kill them all" | revisit Dorter, tougher mix | ✅ Implemented (v1, entry 403; Knight add deferred) |
-| `013` | 12 | Araguay Woods | Rescue Boco the chocobo vs Goblins | escort + monster pack | 📝 Designed |
+| `013` | 12 | Araguay Woods | Rescue Boco the chocobo vs Goblins | escort + monster pack | ✅ Implemented (v1, entry 404; Panther add + Boco scaling deferred) |
 | `014` | 13 | Zeirchele Falls | Protect Ovelia; **Gaffgarion betrays** | Agrias ally; Gaffgarion turns | 📝 Designed |
 | `015` | 14 | Castled City of Zaland | Save Mustadio from bounty hunters | ranged/urban + Dragoon (vertical) | 📝 Designed |
 | `016` | 15 | Balias Tor | Defeat enemy **Summoners** + support | **Summoner** (new job) | 📝 Designed |
