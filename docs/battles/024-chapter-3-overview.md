@@ -51,7 +51,25 @@ ended at `023`; this overview is `024`, so Battle 22 = doc `025`, i.e. doc = bat
 | `035` | 32 | Riovanes Castle Roof | **Elmdor** + assassins; protect Rapha | **Assassin** debut; flee-on-critical race; no loot (all flee) | ✅ Done |
 | `036` | — | Chapter 3 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
 
-## Deduced ENTD entries (offline roster-match — confirm in-game before/after patch)
+## ENTD entries — ✅ ALL CONFIRMED & IMPLEMENTED (entry-by-entry vanilla-dump verified)
+
+All 11 Chapter 3 battles (22–32) are implemented in `tools/battle_patch.py` (functions: gollund,
+lesalia, vaults_2nd/3rd/1st, grogh, yardrow, yuguewood, riovanes_gate/keep/roof) and each patch's
+diff was confirmed contained to its intended entry. The roster of every entry was dumped and matched
+in-game-data before patching, upgrading the MED rows below to confirmed:
+- **430 Yuguewood**: active casters are enemy-variant **job 66 = Black Mage** (equips Rod), **job 68 =
+  Time Mage** (equips Staff) — distinct from player-generic 80/81; undead Ghoul/Ghast/Revenant
+  (112/113/114) sit at level 0xFE (verify they scale; may be OverrideEntryData-driven).
+- **432 Riovanes Keep**: s0 Wiegraf(40) duel + s5 Belias(60) Lucavi + s6-8 Archaeodaemon(153)×3
+  (TIC has 3 adds, not 4); lvl-1 slots are transform-scripting placeholders.
+- **433 Riovanes Roof**: s3 Elmdor(27 Ark Knight) + s4 Celia(45)/s5 Lettie(46) Assassins + s0 Rapha
+  (41 Skyseer, guest); lvl-5 slots (s1 Rapha-clone, s2 Netherseer) are scripting placeholders.
+- **Guest vs enemy in ENTD**: the unit's control bytes `raw_tail[0:2] == 00 84` mark a GUEST/ally
+  (validated: Orran 417, Alma 420, Rapha 428/433); enemies use other control bytes (e.g. 03/04 9x).
+  Rapha's sprite/charId differs per battle (25 at Yardrow, 41 at Roof) and the Roof has an enemy
+  clone sharing her sprite → scale that Rapha by DIRECT ENTD level, not the runtime scaler.
+
+## (historical) Deduced ENTD entries (offline roster-match — confirm in-game before/after patch)
 
 Identified by matching each battle's documented roster (units/job/level) against the dumped vanilla
 ENTD (`extracted/.../battle_entd4_ent.bin`), cross-checked by **named-unit recurrence** (Wiegraf =
