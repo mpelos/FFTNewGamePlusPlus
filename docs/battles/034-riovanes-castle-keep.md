@@ -1,11 +1,24 @@
 # 034 - Riovanes Castle Keep — Wiegraf → Belias (Velius)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 432)
 Chapter: 3 — "The Valiant" — **CHAPTER SPIKE**
 Battle order: Battle 31 (after Riovanes Castle Gate) — **Riovanes chain 2 of 3**
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **432** (local entry 48, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py riovanes_keep`
+
+Implemented composition (entry 432, vanilla-dump verified):
+- s0 **Wiegraf** (Phase-1 solo-duel boss, job 40 Holy Knight) — L104 + **Defender (33)** as his
+  equipped weapon (his rare; Steal-Weapon target in the duel). Job/secondary/jobLevel/other gear/
+  solo-duel lock + transform trigger preserved; no skillset change → no new hard lock (duel stays fair).
+- s5 **Belias/Velius** (Phase-2 Lucavi, job 60) — L105 (chapter top) only; demon kit + transform/spawn preserved.
+- s6,s7,s8 **Archaeodaemon** (job 153) L103/L103/L102 — level only (demon adds; TIC has 3, not the
+  walkthrough's 4).
+- s1-s4 (lvl-1 placeholder Knights) + s9-s11 (lvl-1 placeholder Wiegraf) = transform-scripting
+  artifacts — left untouched.
+
+> ⚠️ Defense Ring (Belias's intended rare) is NOT set in the ENTD: a Lucavi demon has no equip slots
+> (eq = 255). It must be delivered as a **reward-layer guaranteed reward** — TODO outside this patch.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
