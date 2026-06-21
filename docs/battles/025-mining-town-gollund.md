@@ -1,11 +1,11 @@
 # 025 - Mining Town of Gollund (Goland Coal City)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 417) — NG+ only; pending playtest
 Chapter: 3 — "The Valiant"
 Battle order: Battle 22 (Chapter 3 opener)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **417** (entd4 local 33) — deduced offline (roster: Orran guest + 3 Thief + 2 Chemist + 1 Orator), see 024
+File: embedded `battle_entd4_ent.bin` via `tools/battle_patch.py gollund`. Orran (cid 0x15) added to runtime GuestCharIds (party-level scaling; fail-on-death VIP).
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
