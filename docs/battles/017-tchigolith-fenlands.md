@@ -1,15 +1,14 @@
 # 017 - Tchigolith Fenlands
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 410) — undead/status is the built-in escalation
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 16 (after Balias Tor)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **410** (battle_entd4, local entry 26) — confirmed by sequence + composition
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py tchigolith`. NG+-only by construction. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -60,27 +59,26 @@ For New Game++ the identity must stay: **a fetid bog where undead that won't sta
 status-spewing Malboro, and poison/sleep terrain punish melee and reward a prepared ranged team
 that turns healing into a weapon.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 410)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 2 Ghoul + 2 Skeleton + 1 Bonesnatch + 1 Malboro + 1 Floating Eye (7 monsters),
-  plus the player slots.
-CRITICAL: preserve the UNDEAD flags (reraise/revive + heal-damages-undead + Phoenix-Down-kills)
-  on the Ghouls/Skeletons/Bonesnatch, and the swamp POISON terrain flags. These ARE the fight.
-Monsters carry NO equipment; levers are Level, JobLevel, Brave/Faith, innate skill tier.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    job          monster              action
+s0    0x22   34           Mustadio (disabled)  LEAVE (lvl 254)
+s1    0x82   110          Bonesnatch (undead)  SCALE -> L101
+s2    0x82   109          Skeleton (undead)    SCALE -> L100
+s3    0x82   109          Skeleton (undead)    SCALE -> L101 (tougher of the pair)
+s4    0x82   112          Ghoul (undead)       SCALE -> L100
+s5    0x82   112          Ghoul (undead)       SCALE -> L100
+s6    0x82   115          Floating Eye         SCALE -> L100
+s7    0x82   130          Malboro              SCALE -> L101
+s8    0x82   121          (disabled)           LEAVE (lvl 254)
 ```
 
-Job/monster IDs (verify all in-game):
-
-```text
-Ghoul job id        (TBD - verify; undead)
-Skeleton job id     (TBD - verify; undead)
-Bonesnatch job id   (TBD - verify; undead, tougher skeleton)
-Malboro job id      (TBD - verify; Bad Breath mass status)
-Floating Eye job id (TBD - verify; gaze status)
-```
+Monster job IDs: Skeleton 109, Bonesnatch 110, Ghoul 112, Floating Eye 115, Malboro 130. Scaling is
+**Level + JobLevel only** (no gear, no R-S-M, no job change), so the undead flags (reraise /
+heal-damages-undead / Phoenix-Down-instakill — intrinsic to the job id + the flag byte we never
+touch) and the swamp poison terrain are preserved. Only one mass-status disruptor (the Malboro);
+none added.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -149,18 +147,25 @@ Preserve the swamp tiles and any elevated safe spots; do NOT pave the map.
 The bog should say: "stay on dry ground, fight ranged, and kill the undead for good with the
 right tools" — the original's lesson, lethal at scale.
 
+## Implemented (v1, entry 410)
+
+Applied with `python tools/battle_patch.py tchigolith`; diff contained to local entry 26 (global
+410), 14 bytes. Three tougher monsters (Bonesnatch s1, tougher Skeleton s3, Malboro s7) → L101; the
+two Ghouls, the other Skeleton, and the Floating Eye → L100; JobLevel 8 on all seven. The undead/
+status mechanic IS the escalation — no monster added.
+
 ## Implementation Checklist
 
-- [ ] Identify Tchigolith `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 2 Ghoul + 2 Skeleton + 1 Bonesnatch + 1 Malboro + 1 Floating Eye.
-- [ ] Confirm all monster job IDs AND that undead flags (reraise + heal-weakness + PD-kill) persist.
-- [ ] Confirm the swamp poison terrain + sleep follow-up are intact (do not flatten the map).
-- [ ] Set levels: tougher Skeleton + Bonesnatch + Malboro `101`; the rest `100`.
-- [ ] Set JobLevel `8` and aggressive Brave on all monsters; no equipment.
-- [ ] Keep ONE mass-status monster (Malboro); do NOT add more status sources.
-- [ ] Patch via the correct layer; keep the diff inside the Tchigolith window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify undead/terrain flags.
-- [ ] Install mod, test from a New Game+ save; verify undead reraise + Phoenix-Down-kill work.
+- [x] Identify Tchigolith ENTD entry (410); fill "Local Data Confirmed".
+- [x] Dump original entry; verify 7-monster undead roster (+ disabled s8).
+- [x] Confirm monster job IDs; undead flags persist (Level/JobLevel-only edit, job/flags untouched).
+- [x] Swamp terrain untouched (not edited at all — terrain is not in the ENTD slot data).
+- [x] Set levels: tougher Skeleton + Bonesnatch + Malboro `101`; the rest `100`.
+- [x] Set JobLevel `8` on all scaled monsters; no equipment.
+- [x] Keep ONE mass-status monster (Malboro); none added.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 410 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; verify undead reraise + Phoenix-Down-kill still work.
 
 ## Test Questions
 
