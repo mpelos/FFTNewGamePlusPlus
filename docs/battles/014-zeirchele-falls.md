@@ -1,15 +1,14 @@
 # 014 - Zeirchele Falls (Zirekile Falls)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 13 (after Araguay Woods)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **405** (battle_entd4, local entry 21) — confirmed by sequence + composition
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py zeirchele`. NG+-only by construction. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -61,23 +60,32 @@ For New Game++ the identity must stay: **a tense VIP-defense on a riverbank wher
 gear-dependent Dark Knight and his Knight escort drive at Princess Ovelia — protect her, exploit
 the strip-his-gear counter, and lean on Agrias.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 405)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Gaffgarion (named/boss unit) + 5 Knight, plus the player, Agrias, and OVELIA slots.
-DO NOT touch Ovelia's protected-VIP scripting, Agrias's ally slot, or Gaffgarion's
-  ally-then-betray + auto-retreat scripting. Only the enemy Knight pack (and one job swap) is edited.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    name  flags  job        role                          action
+s0    0x05   5     0x80   5          Gaffgarion (betrayer, ENEMY)  SCALE -> L103 (job/sec kept)
+s1    0x0c   12    0x51   12         Ovelia (VIP ally, lv5)        LEAVE
+s2    0x80   255   0x80   76 Knight  reinforcement (lvl 254)       LEAVE (spawn scripting)
+s3    0x80   255   0x80   76 Knight  reinforcement (lvl 254)       LEAVE (spawn scripting)
+s4    0x80   255   0x80   76 Knight  escort wall (lead)            SCALE -> L101
+s5    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L101
+s6    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L100
+s7    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L100
+s8    0x80   255   0x80   76 Knight  -> ARCHER (escalation swap)   SCALE -> L101, re-job 77
+s9    0x17   23    0x88   23         Agrias (ally, lvl 254)        LEAVE
+s10   0x34   52    0x49   52         named story unit (lvl 254)    LEAVE
 ```
 
-Job IDs (verify all in-game):
+Gaffgarion is on the **enemy team** (flags 0x80) in the base ENTD; his ally→betray phase is pure
+scripting. Scaling him is therefore safe regardless of the exact named-unit mapping, and `set_slot`
+preserves his identity bytes. **Job 5 = his dark-sword skillset (Drain/Shadowblade)** and his
+secondary are KEPT, so his skills and the betray/auto-retreat link (event-keyed on unit id, not
+level/gear) stay intact. His Runeblade is non-unique and STRIPPABLE — the canonical counter survives.
 
-```text
-Gaffgarion boss job id (TBD - verify; named Dark Knight; handle the betray/retreat link with care)
-Knight job id          (TBD - verify; shares with other Ch2 battles)
-Archer job id = 77     (confirmed; added below)
-```
+PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit), and decide whether the
+lvl-254 reinforcement Knights (s2/s3) should be scaled too (left untouched to avoid disturbing their
+spawn scripting).
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -193,19 +201,34 @@ The map should read: "a draining traitor and a Knight wall drive across the brid
 princess, with an archer drawing a bead on her from afar." Screen Ovelia, strip the traitor,
 hold the crossing.
 
+## Implemented (v1, entry 405)
+
+Applied with `python tools/battle_patch.py zeirchele`; diff contained to local entry 21 (global 405),
+65 bytes. Unlike Merchant Dorter / Araguay, the Chapter-2 escalation here was a **job SWAP** (Knight
+→ Archer on s8), so it was done inline — no slot-add deferral needed.
+
+```text
+s0  Gaffgarion  L103 jl8  (job 5 + secondary KEPT)  R Counter  S Atk-Boost  M +1  heavy kit + Runeblade(strippable) + Shield
+s4  Knight      L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
+s5  Knight      L101 jl8  (same kit)
+s6  Knight      L100 jl8  (same kit)
+s7  Knight      L100 jl8  (same kit)
+s8  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Zeirchele `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Gaffgarion + 5 Knight + player + Agrias + Ovelia slots.
-- [ ] Confirm Gaffgarion's named-unit + betray/auto-retreat link; DO NOT break it.
-- [ ] Keep Gaffgarion's sword skills WEAPON-dependent and his gear strippable + non-unique.
-- [ ] Swap one Knight -> Archer (re-job a Knight slot); confirm Archer build.
-- [ ] Set levels: Gaffgarion `103`; lead Knights + Archer `101`; the other two Knights `100`.
-- [ ] Set JobLevel `8` on all active enemy slots; Knights have NO Break.
-- [ ] Do NOT touch Ovelia/Agrias/ally scripting; preserve positions.
-- [ ] Patch via the correct layer; keep the diff inside the Zeirchele window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify all named links intact.
-- [ ] Install mod, test from a New Game+ save; confirm Ovelia-protect + Gaffgarion-retreat work.
+- [x] Identify Zeirchele ENTD entry (405); fill "Local Data Confirmed".
+- [x] Dump original entry; verify Gaffgarion + 5 Knight + Agrias + Ovelia slots.
+- [x] Preserve Gaffgarion's job/secondary + identity (betray/auto-retreat link untouched).
+- [x] Keep his gear strippable + non-unique (Runeblade).
+- [x] Swap one Knight -> Archer (re-job s8); Archer build applied.
+- [x] Set levels: Gaffgarion `103`; lead Knights + Archer `101`; other two Knights `100`.
+- [x] Set JobLevel `8` on all scaled enemy slots; Knights have no secondary.
+- [x] Do NOT touch Ovelia/Agrias/reinforcement/story slots.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 405 only.
+- [x] Re-dump and diff; changes small and intentional; named links intact.
+- [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; decide on s2/s3.
 
 ## Test Questions
 
