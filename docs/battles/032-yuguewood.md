@@ -1,11 +1,26 @@
 # 032 - The Yuguewood (Yuguo Woods)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 430)
 Chapter: 3 — "The Valiant"
 Battle order: Battle 29 (after Walled City of Yardrow)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **430** (local entry 46, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py yuguewood`
+
+Implemented composition (entry 430, vanilla-dump verified). Roster match confirms the entry
+(enemy-variant mage job ids: **66 = Black Mage** (equips Rod), **68 = Time Mage** (equips Staff) —
+distinct from the player-generic 80/81):
+- s1,s3 Black Mage (66) L101/L100 — Mage Hat/shop Robe/Featherweave/shop Rod; jl8; Reflexes/Atk Boost/Mv+1.
+- s2,s4 Time Mage (68) L101 — Mage Hat/shop Robe/Featherweave/shop **Staff**; **jl CAPPED to 4**
+  (Haste/Slow/Float only — no Stop/Immobilize); Reflexes/Mv+1.
+- s5 Ghoul (112) L100, s6 Ghast (113) L100, s7 Revenant (114) L101 — level+jl only (monsters, no gear);
+  undead reraise/heal-weakness/Seal-Evil/Entice flags + swamp terrain untouched.
+- s0 = Rapha placeholder (level 0xFE) — left untouched. No boss → no rare.
+
+> ⚠️ Verify in-game: the undead sit at level 0xFE in the base .bin (the norm for undead game-wide).
+> We scale their .bin level per the tchigolith (410) precedent, but if the enhanced edition's
+> OverrideEntryData drives undead levels for this entry, that layer wins — confirm the undead actually
+> scale (if not, move their levels to the override layer).
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
