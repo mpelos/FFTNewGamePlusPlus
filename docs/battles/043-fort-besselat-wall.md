@@ -1,11 +1,19 @@
 # 043 - Fort Besselat: South / North Wall (Bethla Garrison)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entries 448 South / 449 North)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 38 (A = South Wall / B = North Wall — the player picks ONE)
 Target version: Enhanced v1.5.0
-ENTD: global entries **TBD** (two entries — South and North) — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entries **448** (South) / **449** (North) — `battle_entd4_ent.bin` (local 64/65)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py besselat_wall`
+
+Implemented (both entries, vanilla-dump verified):
+- **South 448** (melee/stealth): s0,s1 Knight L102 + s2 Knight L101 (Heavy gear/Runeblade/Shield, Rend
+  innate); s3 Archer L102, s4 Archer L101 (Windslash); s5 Ninja L102 (dual Longblade); s6 Thief L101 (Air Knife).
+- **North 449** (ranged/AoE): s0 Archer L102, s3 Archer L101; s1 Dragoon L102, s2 Dragoon L101
+  (Partisan/heavy, Jump innate — TIC has 2 Dragoons vs walkthrough's 1); s4 Summoner L102 (priority,
+  charge intact); s5 Monk L102 (bare-fist, Power Garb/Bracers).
+- No boss / no rare; low Ch4 band (101-102). Map treasure (other layer) untouched.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
