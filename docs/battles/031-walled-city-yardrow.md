@@ -1,11 +1,23 @@
 # 031 - Walled City of Yardrow (Yardow)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 428)
 Chapter: 3 — "The Valiant"
 Battle order: Battle 28 (after Grogh Heights)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **428** (local entry 44, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py yardrow`
++ `Program.cs` GuestCharIds += `0x19` (Rapha runtime level-scaling)
+
+Implemented composition (entry 428, vanilla-dump verified):
+- s0 **Rapha** (job 25 Skyseer — PROTECTED GUEST, control bytes `00 84` like Alma/Orran; lose-on-death):
+  NOT patched in ENTD; runtime level-scaled (charId 0x19 added to GuestCharIds). Her vanilla evasion
+  gear (White Robe 204 + Elven Cloak 232 + Musk Pole) suffices — keeps her alive vs scaled enemies.
+- s1 **Marach** (job 26 Netherseer — enemy BOSS, survives/recruitable): L103 + durability gear
+  (Mage Hat/shop Robe/Bracers — he was naked); job/jobLevel(unchanged, no hard-lock unlock)/secondary/
+  weapon/survive scripting preserved. NO rare (survives).
+- s2,s4,s6 **Ninja** L102/L101/L101 (NEW caste) — dual-wield (two Ninja Longblades 14, innate Two
+  Swords); Thief's Cap/Black Garb/Germinas; First Strike/Atk Boost/Mv+2 (wall-climb vantage + Throw innate).
+- s3,s5 Summoner L101 — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.

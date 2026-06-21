@@ -74,7 +74,10 @@ public class Program : IMod
     // keep pace with the party. Backline caster, job==charId guard holds: sprite/job both 21).
     // 0x30=Alma (Chapter 3 — guest at Lesalia Postern providing the Aegis buff; scaled so the buff is
     // useful and she survives the wall. job==charId guard holds: sprite/job both 48).
-    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22, 0x1e, 0x15, 0x30 };
+    // 0x19=Rapha (Chapter 3 — the protected NPC guest at Yardow; LOSE-on-death, so she must keep pace
+    // with the party or she's one-shot and the fight is unwinnable. She already carries evasion gear
+    // (White Robe + Elven Cloak), so level-scaling alone suffices. job==charId guard holds: sprite/job both 25).
+    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19 };
 
     // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
     // modded version of; an index with no entry passes through vanilla even in NG+.
