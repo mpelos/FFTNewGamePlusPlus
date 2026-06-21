@@ -1,15 +1,14 @@
 # 021 - Lionel Castle Gate
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 415) — Gaffgarion boss + first rare boss loot (Blood Sword)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 20 (after Golgollada Gallows)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **415** (battle_entd4, local entry 31) — confirmed by composition + cid 0x11 (Gaffgarion)
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py lionel_gate`. NG+-only by construction. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -65,28 +64,33 @@ For New Game++ the identity must stay: **an isolated duel with a self-healing Da
 by stealing/breaking his Ancient Sword, while the rest of the party holds a besieged gate — and
 the Ancient Sword is the rare prize for finishing him.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 415)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Gaffgarion + 3 Knight + 2 Archer + 1 Summoner, plus the player's split (Ramza-solo
-  vs gate-defense) deployment.
-CRITICAL: preserve the TWO-PHASE structure (Ramza split off + the LEVER that opens the gate).
-Keep Gaffgarion's Shadowblade tied to his ANCIENT SWORD so steal/break shuts off his sustain AND
-  yields the rare drop.
-Gaffgarion DIES here — his rare item (Ancient Sword) is stealable/droppable (contrast the Gallows,
-  020, where he carried a non-rare blade and retreated).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    flags  job          role                        action
+s0    0x11   0x80   17 Fell Kn.  Gaffgarion (BOSS, dies)     SCALE -> L103 (job/sec kept) + Blood Sword
+s1    0x80   0x80   77 Archer    gate-siege ranged           SCALE -> L101
+s2    0x80   0x80   77 Archer    gate-siege ranged           SCALE -> L100
+s3    0x81   0x40   76 Knight    gate siege (Rend)           SCALE -> L101
+s4    0x81   0x40   76 Knight    gate siege (Rend)           SCALE -> L101
+s5    0x81   0x40   76 Knight    gate siege                  SCALE -> L101
+s6    0x80   0x80   82 Summoner  AoE shelling the defenders  SCALE -> L101
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs: Knight 76, Archer 77, Summoner 82; Gaffgarion's enemy job is **17 (Fell Knight)** — equips
+Helmet/Armor/Shield/Sword (verified in JobData), so his heavy kit is legal. His **job 17 + secondary
+are PRESERVED**, keeping Shadowblade/Drain and his death scripting intact.
 
-```text
-77 = Archer            (confirmed)
-Knight job id          (TBD - verify)
-Summoner job id        (TBD - verify; from Balias Tor 016)
-Dark Knight job id     (TBD - verify; Gaffgarion — from Zeirchele 014 / Gallows 020)
-```
+### Rare boss loot — Blood Sword (23), not "Ancient Sword"
+
+The doc designed "Ancient Sword" as a lowest-tier Knight Sword, but in TIC **all KnightSword-category
+items (Defender/Save the Queen/Excalibur/Ragnarok/Chaos Blade) are Unknown20 = the Chapter-4-reserved
+best gear**, and item 25 "Ancient Sword" is a plain buyable Sword. So Gaffgarion's rare loot is the
+**Blood Sword (23)** — the overview's named Chapter-2 rare-loot weapon, and a perfect fit: an HP-drain
+blade that IS his Shadowblade sustain in item form, so **Steal Weapon both ends his self-heal and
+claims the prize**. It's two-handed (lh 254) to maximize the drain and emphasize the disarm puzzle.
+The ENTD has no separate "drop" field — equipping it makes it the steal target (and what he wields).
+Two-phase structure (Ramza split / lever / gate) is map+event scripting, not ENTD slot data — untouched.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -219,19 +223,34 @@ Preserve Gaffgarion's boss/death scripting (he dies here; Ancient Sword drops/st
 The gate should say: "Ramza, take the Dark Knight's sword or lose the duel — everyone else, hold
 the line and pull the lever — and claim the Ancient Sword when he falls."
 
+## Implemented (v1, entry 415)
+
+Applied with `python tools/battle_patch.py lionel_gate`; diff contained to local entry 31 (global
+415), 71 bytes.
+
+```text
+s0  Gaffgarion  L103 jl8  (job 17 + secondary KEPT)  R Counter  S Atk-Boost  M +1  heavy kit + BLOOD SWORD (two-handed) + Bracers
+s3  Knight      L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield  (Rend innate)
+s4  Knight      L101 jl8  (same kit)
+s5  Knight      L101 jl8  (same kit)
+s1  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s2  Archer      L100 jl8  (same kit)
+s6  Summoner    L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Lionel Gate `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Gaffgarion + 3 Knight + 2 Archer + 1 Summoner + split deployment.
-- [ ] Confirm Dark Knight / Knight / Summoner job IDs; keep Shadowblade tied to the Ancient Sword.
-- [ ] Set the ANCIENT SWORD as Gaffgarion's equipped weapon AND rare steal/drop (mid-tier verify).
-- [ ] Put Rend on TWO of the three Knights; shop-tier breakable gear only; summons MID-TIER.
-- [ ] Set levels: Gaffgarion `103`; Knights + Summoner + one Archer `101`; second Archer `100`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] PRESERVE the two-phase structure: Ramza split, the LEVER, and Gaffgarion's death scripting.
-- [ ] Patch via the correct layer; keep the diff inside the Lionel Gate window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify split + drop + death.
-- [ ] Install mod, test from a New Game+ save; confirm disarm shuts off Drain and Ancient Sword drops.
+- [x] Identify Lionel Gate ENTD entry (415); fill "Local Data Confirmed".
+- [x] Dump original entry; verify Gaffgarion + 3 Knight + 2 Archer + 1 Summoner.
+- [x] Confirm job IDs; keep Shadowblade tied to his weapon (Blood Sword, the steal target).
+- [x] Set the BLOOD SWORD as Gaffgarion's equipped weapon (rare steal target; see loot note).
+- [x] Knights carry Rend innately (Battle Skill at jl8); shop-tier breakable gear.
+- [x] Set levels: Gaffgarion `103`; Knights + Summoner + one Archer `101`; second Archer `100`.
+- [x] Set JobLevel `8` on all scaled slots.
+- [x] PRESERVE Gaffgarion's job/secondary -> Drain + death scripting; two-phase/lever is event data (untouched).
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 415 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; confirm Steal Weapon (Blood Sword) shuts off Drain and he dies/drops it.
 
 ## Test Questions
 

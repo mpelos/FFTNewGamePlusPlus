@@ -40,7 +40,7 @@ Chapter 1 (doc `001` = Battle 2, so the offset is the same established pattern: 
 | `018` | 17 | Goug Lowtown | Summoners; Mustadio guest | Summoner + Time-Mage tempo | ✅ Implemented (v1, entry 411; Thief→Time Mage inline) |
 | `019` | 18 | Balias Swale | Split-team; rain-boosted Thunder | split + weather + Geomancer | ✅ Implemented (v1, entry 413; Geomancer add deferred; Agrias auto-scaled) |
 | `020` | 19 | Golgollada Gallows | **Gaffgarion** as a major threat | Dark Knight sub-boss (Drain/disarm) | ✅ Implemented (v1, entry 414; Gaffgarion sub-boss L103) |
-| `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + rare loot (Ancient Sword) | 📝 Designed |
+| `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + rare loot (Blood Sword) | ✅ Implemented (v1, entry 415; first rare boss loot) |
 | `022` | 21 | Lionel Castle Oratory | **Cúchulainn**, first Lucavi demon | demon boss + rare loot (108 Gems) | 📝 Designed |
 | `023` | — | Chapter 2 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done (all 11) |
 
