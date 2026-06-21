@@ -1,11 +1,36 @@
 # 049 - Limberry Castle Undercroft
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 457) — see reward + verify notes below
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 44 (Limberry chain 3 of 3 — NO resupply across 42→43→44; the capstone)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **457** (local 73, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 457)
+
+```text
+DATA (verified from entd4 dump + JobData InnateStatus/MonsterGraphic):
+  slot 1 = Zalera (job 62 "Float", name n62, lvl 44 jl8, eq=255 Lucavi no-equip)  -> the boss.
+  slots 2,3 = job 61 (InnateStatus Undead, gfx0 humanoid)                          -> 2 undead Knights.
+  slots 4,5,6,8,9 = jobs 109/110/111 (Undead, gfx6)                -> Skeleton/Bonesnatch/Skeletal Fiend.
+  slot 7 = job 42 / name 0x2a, tail "00.." (guest), eq=(153,206,213,34,136) = Save the Queen + AEGIS
+           SHIELD (136) + Luminous Robe -> MELIADOUL, the guest who JOINS after this battle. (Strong
+           Undercroft signal: she recruits right after.) Left untouched -> her gear reaches the player.
+  slot 0 = Elmdor (job 27, name 0x1b, lvl 43 jl8) BUT eq=255 (no gear, unlike his fully-equipped Keep
+           appearance at 456). Most likely a scripted/cameo unit, not a lootable combatant. LEFT
+           UNTOUCHED (preserve scripting). >>> VERIFY IN-GAME whether this Elmdor is an active enemy;
+           if he fights, a follow-up will scale him to ~104.
+
+CHANGE (faithful, minimal): LEVEL only on the active foes.
+  Zalera = 105 (the lone Lucavi spike)   2 undead Knights = 103   skeleton family = 103
+  Win-cond ("Defeat Zalera"), Zalera's mass-status kit, and every UNDEAD/reraise innate preserved.
+
+REWARD NOTE (Tier-A AEGIS SHIELD): Zalera is eq=255 (no equip slots) -> the shield CANNOT be equipped
+  on him via ENTD (same limitation as the Belias Defense Ring). It is already delivered via Meliadoul's
+  join gear (slot 7 carries an Aegis Shield). For a guaranteed boss-drop copy, the map Move-Find reward
+  layer is the clean path -> flagged as a reward-layer follow-up. No fake equip placed on the boss.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
