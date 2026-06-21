@@ -148,7 +148,24 @@ public class Program : IMod
     // NG+" RAM byte (every flag-shaped candidate was noise that failed to reset on a same-session load).
     private const long RAMZA_LEVEL_RVA = 0x2C81D93;
     private static readonly long[] RamzaLevelDiagRvas = { 0x11A7D2D, 0x2C81D93, 0x11AF25D, 0x2C821B5, 0x2C896E5 };
-    private const int NGPLUS_LEVEL_THRESHOLD = 20;
+
+    // Live currentStoryProgress (1..16, the ItemShopAvailability milestone scale; 0=prologue,
+    // 1=Chapter1_Start, ... 16=Chapter4_KillZalbag = end of Cap 4). Found by reverse-engineering the
+    // manual save (slot+0x87F0 reads 16 at end-game, 1 at Cap1) then a known-value CE scan (Cap1=1,
+    // Cap4=16). Two static copies track identically: 0xD4021C sits next to the reliable Gil global
+    // (0xD40110) in the global game-state block -> PRIMARY; 0x2C8A470 is in the 0x2C8xxxx unit region,
+    // the same neighbourhood as the LAGGY Ramza-level mirrors -> diagnostic only. Both logged; switch
+    // the primary if it is ever observed to lag (mirrors the level strategy). NOTE: the adjacent byte
+    // 0x2C81D94 is Ramza's JOB, not progress (an early red herring) -> do not use it.
+    private const long STORY_PROGRESS_RVA = 0xD4021C;
+    private static readonly long[] StoryProgressDiagRvas = { 0xD4021C, 0x2C8A470 };
+
+    // Per-progress NG+ level threshold (user's rule): the Cap 1 threshold = the minimum level to finish
+    // the game normally (~30), rising linearly to 45 at end-game (progress 16). A normal playthrough's
+    // level never crosses it (level and progress climb together); NG+'s carried-over level (55+) always
+    // does. threshold(p) = FLOOR + (p-1)*(TOP-FLOOR)/15. See [[fft-tic-shop-ngplus]].
+    private const int NGPLUS_THRESHOLD_FLOOR = 30; // progress 1 (Chapter1_Start)
+    private const int NGPLUS_THRESHOLD_TOP = 45;   // progress 16 (Chapter4_KillZalbag)
     private nint _moduleBase;
 
     public unsafe void StartEx(IModLoaderV1 loaderApi, IModConfigV1 modConfigV1)
@@ -302,16 +319,24 @@ public class Program : IMod
             _origCaptured = true;
         }
 
-        // Decide on RAMZA_LEVEL_RVA alone (correct in all 6 test saves); log the other copies as
+        // NG+ = Ramza's level is abnormally high for the current story progress (per-progress threshold).
+        // Decide on the primary copies (RAMZA_LEVEL_RVA + STORY_PROGRESS_RVA); log all copies as
         // diagnostics so a future bug report already carries the data to pick a better rule.
         var dbg = new System.Text.StringBuilder();
-        foreach (long rva in RamzaLevelDiagRvas) dbg.Append($" 0x{rva:X}={ReadStaticByte(rva)}");
-        int raw = ReadStaticByte(RAMZA_LEVEL_RVA);
-        int lvl = raw is >= 1 and <= 99 ? raw : 0;
-        bool ng = lvl >= NGPLUS_LEVEL_THRESHOLD;
+        foreach (long rva in RamzaLevelDiagRvas) dbg.Append($" lvl@0x{rva:X}={ReadStaticByte(rva)}");
+        foreach (long rva in StoryProgressDiagRvas) dbg.Append($" prog@0x{rva:X}={ReadStaticByte(rva)}");
+
+        int rawLvl = ReadStaticByte(RAMZA_LEVEL_RVA);
+        int lvl = rawLvl is >= 1 and <= 99 ? rawLvl : 0;
+        int rawProg = ReadStaticByte(STORY_PROGRESS_RVA);
+        // Clamp to the valid milestone range. 0 = prologue -> treat as 1 (same low threshold). Garbage
+        // (read failure / out of range) -> 16, the highest threshold, so we never wrongly flag NG+.
+        int prog = rawProg switch { >= 1 and <= 16 => rawProg, 0 => 1, _ => 16 };
+        int threshold = NgThreshold(prog);
+        bool ng = lvl >= threshold;
 
         int changed = WriteShopAvailability(ng); // re-asserted every sync (idempotent: only writes diffs)
-        Log($"[nglevel]{dbg} -> lvl(0x{RAMZA_LEVEL_RVA:X})={lvl} NG+={ng} | shop writes={changed}");
+        Log($"[nglevel]{dbg} -> lvl={lvl} prog={prog} threshold={threshold} NG+={ng} | shop writes={changed}");
     }
 
     /// <summary>Write each sold item's ShopAvailability directly into the live ITEM_COMMON_DATA table:
@@ -340,6 +365,14 @@ public class Program : IMod
     {
         try { return Marshal.ReadByte((nint)((long)_moduleBase + rva)); }
         catch { return -1; }
+    }
+
+    /// <summary>NG+ level threshold for a story progress (1..16): FLOOR at progress 1, rising linearly
+    /// to TOP at progress 16. NG+ when Ramza's level is >= this.</summary>
+    private static int NgThreshold(int progress)
+    {
+        int p = Math.Clamp(progress, 1, 16);
+        return NGPLUS_THRESHOLD_FLOOR + (p - 1) * (NGPLUS_THRESHOLD_TOP - NGPLUS_THRESHOLD_FLOOR) / 15;
     }
 
     /// <summary>Read one byte from an absolute address, 0 on failure.</summary>
