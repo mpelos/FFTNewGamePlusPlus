@@ -1,15 +1,14 @@
 # 020 - Golgollada Gallows
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 414) — Gaffgarion sub-boss is the built-in escalation
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 19 (after Balias Swale)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **414** (battle_entd4, local entry 30) — confirmed by composition (3K/2A/2TM + boss)
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py golgollada`. NG+-only by construction. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -63,26 +62,26 @@ For New Game++ the identity must stay: **a no-guest split-deployment trap where 
 Dark Knight must be disarmed (not out-damaged) while his Knights screen and Time Mages keep him
 fast — denial over brute force.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 414)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Gaffgarion + 3 Knight + 2 Archer + 2 Time Mage, plus the player's split teams.
-DO NOT touch Gaffgarion's RETREAT scripting (he must withdraw at his HP threshold, not die — his
-  death + rare drop are reserved for Lionel Gate, 021).
-Keep Gaffgarion's Shadowblade/Drain tied to his WEAPON so the disarm counter stays valid.
-Confirm the split deployment zones (Team A near Gaffgarion).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    flags  job        role                       action
+s0    0x11   0x80   17         Gaffgarion (SUB-BOSS)      SCALE -> L103 (job/sec kept)
+s1    0x81   0x40   77 Archer  ranged                     SCALE -> L101
+s2    0x80   0x80   76 Knight  screen (Rend)              SCALE -> L101
+s3    0x80   0x80   76 Knight  screen (Rend)              SCALE -> L101
+s4    0x80   0x80   76 Knight  body                       SCALE -> L101
+s5    0x81   0x40   77 Archer  ranged                     SCALE -> L100
+s6    0x81   0x40   81 TMage   tempo (Haste/Slow)         SCALE -> L101 (jl4)
+s7    0x81   0x40   81 TMage   tempo (Haste/Slow)         SCALE -> L101 (jl4)
 ```
 
-Job IDs (carry over known, verify the rest in-game):
-
-```text
-77 = Archer            (confirmed)
-Knight job id          (TBD - verify)
-Time Mage job id       (TBD - verify; from Lenalian/Goug)
-Dark Knight job id     (TBD - verify; Gaffgarion — from Zeirchele 014)
-```
+Job IDs: Knight 76, Archer 77, Time Mage 81; Gaffgarion's enemy-version job is **17** (cid 0x11 —
+his committed-enemy incarnation here and at Lionel Gate; distinct from his early-Chapter ally
+entry). Gaffgarion's **job 17 + secondary are PRESERVED**, so his Shadowblade/Drain sustain and his
+RETREAT-at-threshold scripting (he must not die here) stay intact; his Runeblade is strong but
+non-rare and STRIPPABLE so the disarm counter (Rend / Steal Weapon) shuts off his sustain. No rare
+loot here (reserved for Lionel Gate). Both Time Mages jl-capped to 4 (Haste/Slow, no hard lock).
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -219,20 +218,36 @@ Preserve the split deployment zones and Gaffgarion's RETREAT scripting.
 The Gallows should say: "you're trapped with a self-healing Dark Knight — take his sword or lose
 the war of attrition — and do it before the Time Mages keep him swinging all day."
 
+## Implemented (v1, entry 414)
+
+Applied with `python tools/battle_patch.py golgollada`; diff contained to local entry 30 (global
+414), 77 bytes.
+
+```text
+s0  Gaffgarion  L103 jl8  (job 17 + secondary KEPT)  R Counter  S Atk-Boost  M +1  heavy kit + Runeblade(strippable) + Shield
+s2  Knight      L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield  (Rend innate)
+s3  Knight      L101 jl8  (same kit)
+s4  Knight      L101 jl8  (same kit)
+s1  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s5  Archer      L100 jl8  (same kit)
+s6  Time Mage   L101 jl4  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod  (Haste/Slow)
+s7  Time Mage   L101 jl4  (same kit)
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Golgollada `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Gaffgarion + 3 Knight + 2 Archer + 2 Time Mage + split player zones.
-- [ ] Confirm Dark Knight / Knight / Time Mage job IDs; keep Shadowblade WEAPON-tied (disarmable).
-- [ ] Give Gaffgarion a strong NON-RARE dark blade (no rare drop here — reserved for Lionel Gate).
-- [ ] Constrain BOTH Time Mages to Haste/Slow (no hard lock).
-- [ ] Put Rend on TWO of the three Knights; shop-tier breakable gear only.
-- [ ] Set levels: Gaffgarion `103`; Knights + Time Mages + one Archer `101`; second Archer `100`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] PRESERVE Gaffgarion's RETREAT threshold scripting (he must NOT die here).
-- [ ] Patch via the correct layer; keep the diff inside the Golgollada window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify retreat + Drain intact.
-- [ ] Install mod, test from a New Game+ save; confirm disarm shuts off his sustain and he retreats.
+- [x] Identify Golgollada ENTD entry (414); fill "Local Data Confirmed".
+- [x] Dump original entry; verify Gaffgarion + 3 Knight + 2 Archer + 2 Time Mage.
+- [x] Confirm job IDs; keep Shadowblade WEAPON-tied (Runeblade, strippable).
+- [x] Give Gaffgarion a strong NON-RARE dark blade (no rare drop here).
+- [x] Both Time Mages jl-capped to 4 (Haste/Slow, no hard lock).
+- [x] Knights carry Rend innately (Battle Skill at jl8); shop-tier breakable gear.
+- [x] Set levels: Gaffgarion `103`; Knights + Time Mages + one Archer `101`; second Archer `100`.
+- [x] Set JobLevel `8` (Time Mages jl4).
+- [x] PRESERVE Gaffgarion's job/secondary -> retreat + Drain scripting intact.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 414 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; confirm disarm shuts off sustain and he retreats (no death/drop).
 
 ## Test Questions
 
