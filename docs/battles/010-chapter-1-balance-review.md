@@ -138,6 +138,42 @@ each with a focus-fire reaction and a signature threat (Judgment Blade / presenc
    (`007`), Wiegraf's auto-retreat at low HP (`008`), Argath + the Tietra hostage sequence
    (`009`). Highest-risk patches; diff-check and test objective/retreat triggers.
 
+## Chapter 1 Move-Find treasure rewards (NG+ post-game upgrade)
+
+Separate from the **boss-held gear** policy above (which stays flat/non-unique in Ch1), the hidden
+**Move-Find Items** — the treasure tiles you uncover by moving over them, each map's "battle
+rewards" — were vanilla low-tier (Dagger, Leather Helm, Potion…), worthless to anyone who has
+finished the game. In **New Game+ only** they are upgraded so a post-game playthrough is rewarded,
+while a normal first playthrough keeps the vanilla treasures untouched.
+
+```text
+RULE (user-confirmed): keep each treasure's ORIGINAL category/theme; upgrade the rare slot to the
+STRONGEST item in that category whose availability is NOT Unknown20/Blank (endgame-reserved best
+gear stays reserved) and whose id < 256 (excludes the special bonus items). Bump the consolation
+consumable to a post-game tier (basic potions -> X-Potion, single-status cures -> Remedy, Ether ->
+Hi-Ether; Phoenix Down / Remedy / X-Potion / Elixir kept).
+```
+
+Implemented by direct in-memory writes to `MAP_TRAP_FORMATION_DATA` (NOT ApplyTablePatch, which
+can't restore on an NG+→normal save switch), gated on the same NG+ level proxy as the shops. Maps
+with no treasures (Gariland) and Siedge Weald (all-monster, map handled elsewhere) are unaffected.
+
+| Battle | Map | Rare-slot upgrades (category preserved) |
+|--------|-----|------------------------------------------|
+| Mandalia | 85 | Dagger→**Air Knife**, Broadsword→**Runeblade**, Rod→**Wizard's Rod**, Oak Staff→**Golden Staff** |
+| Sweegy | 74 | Bowgun→**Gastrophetes**, Escutcheon→**Crystal Shield**, Leather Helm→**Circlet**, Leather Cap→**Thief's Cap** |
+| Dorter | 32 | Leather Armor→**Mirror Mail**, Clothing→**Black Garb**, Mythril Knife→**Air Knife**, Longsword→**Runeblade** |
+| Sand Rat | 34 | Bronze Helm→**Circlet**, Plumed Hat→**Thief's Cap**, Linen Cuirass→**Mirror Mail**, Leather Clothing→**Black Garb** |
+| Fovoham | 72 | Mythril Sword→**Runeblade**, Battle Axe→**Slasher**, Knightslayer→**Gastrophetes**, Silver Bow→**Artemis Bow** |
+| Lenalian | 77 | Buckler→**Crystal Shield**, Iron Helm→**Circlet**, Red Hood→**Thief's Cap**, Bronze Armor→**Mirror Mail** |
+| Brigands | 91 | Flame Rod→**Wizard's Rod**, Ice Rod→**Wizard's Rod**, White Staff→**Golden Staff**, Longbow→**Artemis Bow** |
+| Ziekden | 49 | Bronze Shield→**Crystal Shield**, Chainmail→**Mirror Mail**, Ringmail→**Black Garb**, Silken Robe→**Luminous Robe** |
+
+All upgrade targets are Chapter3/Chapter4-tier (e.g. Crystal/Mirror Mail = `Chapter4_Bethla`,
+Thief's Cap = `Chapter4_KillElmdor`) — strong post-game gear, but never the Unknown20 best-in-slot
+reserved for the endgame. Confirm in play that the treasures read correctly from a NG+ save and
+stay vanilla on a normal save (the `[mapitems]` log line reports NG+ state + write count).
+
 ## Recommended implementation & playtest order
 
 Implement in story order so the curve can be felt as a player would:

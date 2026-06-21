@@ -173,6 +173,51 @@ public class Program : IMod
     private const int NGPLUS_THRESHOLD_TOP = 45;   // progress 16 (Chapter4_KillZalbag)
     private nint _moduleBase;
 
+    // --- NG+ MAP TREASURES (Move-Find Items = "battle rewards") ---
+    // Each map has up to 4 hidden treasure tiles (MAP_TRAP_FORMATION_DATA, 0x18 bytes/map, 128 maps).
+    // Per item (6 bytes): XY(1) TrapFlags(1) RareItemId(u16 @+2) CommonItemId(u16 @+4). The hardcoded
+    // in-memory table is the same one the modloader's MapTrapData.xml overwrites. In NG+ we upgrade
+    // each Chapter-1 treasure to the strongest NON-reserved item in its ORIGINAL category (endgame-best
+    // gear stays reserved for later), and bump the consolation consumable to a post-game tier; in normal
+    // play we restore the captured vanilla values so a first playthrough is untouched. We DIRECT-WRITE
+    // the live table (NOT the modloader's ApplyTablePatch, which locks the first value per field and so
+    // can't restore on an NG+->normal save switch — the exact problem the shops hit). Detection reuses
+    // the same NG+ level proxy as the shops (fresh on every save-load); see [[fft-tic-shop-ngplus]].
+    // Signature anchors at the START of map 85's entry (Mandalia, r1/r19/r51/r59) and runs through maps
+    // 86-87; XY+flags bytes are wildcarded (volatile / not needed), rare+common u16s are the literal
+    // fingerprint. tableBase = matchAddr - 85*0x18.
+    private const string SIG_MAP_TRAP_TABLE =
+        "?? ?? 01 00 F0 00 ?? ?? 13 00 F1 00 ?? ?? 33 00 F6 00 ?? ?? 3B 00 F7 00 " + // map 85 Mandalia
+        "?? ?? 1C 00 F3 00 ?? ?? 38 00 FC 00 ?? ?? 40 00 F9 00 ?? ?? 57 00 FD 00 " + // map 86
+        "?? ?? 63 00 FA 00 ?? ?? 6C 00 FD 00 ?? ?? 7D 00 F0 00 ?? ?? 7E 00 F1 00";   // map 87
+    private const int MAP_SIG_ANCHOR_MAPID = 85;
+    private const int MAP_ENTRY_SIZE = 0x18;     // 24 bytes per map
+    private const int MAP_ITEM_SIZE = 6;         // XY + flags + rare(u16) + common(u16)
+    private const int MAP_RARE_OFFSET = 2;       // u16 within an item
+    private const int MAP_COMMON_OFFSET = 4;     // u16 within an item
+    private nint _mapTableBase;
+    private DateTime _lastMapSync = DateTime.MinValue;
+
+    // Per Chapter-1 map: the NG+ targets. rare[i] = upgraded equipment (best non-reserved in the slot's
+    // original category); common[i] = post-game consumable. Index 0..3 maps to item tiles 1..4. All 8
+    // maps have exactly 4 full treasure tiles, so every slot here is real (no phantom-tile risk). The
+    // upgrade table was generated from ItemData.xml (strongest item per category with availability not
+    // Unknown20/Blank and id<256) — see docs/battles/010 for the per-battle reward rationale.
+    private static readonly Dictionary<int, (ushort[] rare, ushort[] common)> MapTreasureNgPlus = new()
+    {
+        [85] = (new ushort[]{9,30,56,64},    new ushort[]{242,242,252,252}), // Mandalia: Knife/Sword/Rod/Staff
+        [74] = (new ushort[]{82,139,153,168},new ushort[]{252,253,242,242}), // Sweegy: Crossbow/Shield/Helmet/Hat
+        [32] = (new ushort[]{184,198,9,30},  new ushort[]{252,252,252,253}), // Dorter: Armor/Clothing/Knife/Sword
+        [34] = (new ushort[]{153,168,184,198},new ushort[]{242,242,252,252}),// Sand Rat: Helmet/Hat/Armor/Clothing
+        [72] = (new ushort[]{30,50,82,89},   new ushort[]{252,252,252,253}), // Fovoham: Sword/Axe/Crossbow/Bow
+        [77] = (new ushort[]{139,153,168,184},new ushort[]{242,242,252,252}),// Lenalian: Shield/Helmet/Hat/Armor
+        [91] = (new ushort[]{56,56,64,89},   new ushort[]{252,252,252,253}), // Brigands: Rod/Rod/Staff/Bow
+        [49] = (new ushort[]{139,184,198,206},new ushort[]{242,242,252,252}),// Ziekden: Shield/Armor/Clothing/Robe
+    };
+    // Captured vanilla rare+common per target map (lazy, before our first write) -> restore in normal play.
+    private readonly Dictionary<int, (ushort[] rare, ushort[] common)> _mapOrig = new();
+    private bool _mapOrigCaptured;
+
     public unsafe void StartEx(IModLoaderV1 loaderApi, IModConfigV1 modConfigV1)
     {
         _modLoader = (IModLoader)loaderApi;
@@ -209,6 +254,14 @@ public class Program : IMod
             _itemTableBase = baseAddr + result.Offset;
             Log($"Found ITEM_COMMON_DATA table @ 0x{_itemTableBase:X} -> NG+ endgame shops enabled.");
         });
+
+        // Locate the live MAP_TRAP_FORMATION_DATA table for direct treasure writes (NG+ map rewards).
+        _scanner.AddMainModuleScan(SIG_MAP_TRAP_TABLE, result =>
+        {
+            if (!result.Found) { Log("ERROR: MAP_TRAP_FORMATION_DATA signature NOT found -> NG+ map rewards disabled."); return; }
+            _mapTableBase = baseAddr + result.Offset - MAP_SIG_ANCHOR_MAPID * MAP_ENTRY_SIZE;
+            Log($"Found MAP_TRAP_FORMATION_DATA table @ 0x{_mapTableBase:X} -> NG+ map rewards enabled.");
+        });
     }
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
@@ -226,11 +279,15 @@ public class Program : IMod
         // dropped before). The shop-UI read stays as a catch-up for same-screen re-opens.
         if ((fileIndex >= WORLD_INDEX_MIN && fileIndex <= WORLD_INDEX_MAX) ||
             (fileIndex >= SHOP_UI_INDEX_MIN && fileIndex <= SHOP_UI_INDEX_MAX))
+        {
             SyncShops();
+            SyncMapItems(); // world-map entry lands the treasure patch before the next battle's map loads
+        }
 
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
             DetectNgPlus();
+            SyncMapItems(); // re-assert treasures at battle entry (covers a direct battle load w/o world map)
 
             // The game reads the whole ENTD file in one shot (sectorOffset 0, size == file length).
             bool fullRead = sectorOffset == 0 && size == ENTD_FILE_SIZE;
@@ -363,6 +420,81 @@ public class Program : IMod
             }
         }
         return changed;
+    }
+
+    /// <summary>
+    /// Bring the live MAP_TRAP_FORMATION_DATA table to the desired state: upgraded Chapter-1 treasures
+    /// in NG+, captured vanilla otherwise. Same shape as SyncShops (throttled, idempotent direct write).
+    /// </summary>
+    private void SyncMapItems()
+    {
+        if (_mapTableBase == 0 || _moduleBase == 0) return;
+        if ((DateTime.Now - _lastMapSync).TotalSeconds < 0.5) return; // collapse read bursts
+        _lastMapSync = DateTime.Now;
+
+        // Snapshot pristine rare+common per target map once, from the live table BEFORE our first write.
+        if (!_mapOrigCaptured)
+        {
+            foreach (int mapId in MapTreasureNgPlus.Keys)
+            {
+                var rare = new ushort[4];
+                var common = new ushort[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    nint itemBase = _mapTableBase + mapId * MAP_ENTRY_SIZE + i * MAP_ITEM_SIZE;
+                    rare[i] = SafeReadU16(itemBase + MAP_RARE_OFFSET);
+                    common[i] = SafeReadU16(itemBase + MAP_COMMON_OFFSET);
+                }
+                _mapOrig[mapId] = (rare, common);
+            }
+            _mapOrigCaptured = true;
+        }
+
+        bool ng = ComputeNgPlusProxy(out int lvl, out int prog, out int threshold);
+        int changed = WriteMapTreasures(ng);
+        Log($"[mapitems] lvl={lvl} prog={prog} threshold={threshold} NG+={ng} | treasure writes={changed}");
+    }
+
+    /// <summary>Write each target map's rare+common ids: upgraded in NG+, captured original otherwise.
+    /// Returns the number of u16 fields actually changed (idempotent: only writes diffs). Leaves XY and
+    /// TrapFlags bytes untouched, so treasure tile positions/traps are preserved.</summary>
+    private int WriteMapTreasures(bool ng)
+    {
+        int changed = 0;
+        foreach (var (mapId, target) in MapTreasureNgPlus)
+        {
+            if (!_mapOrig.TryGetValue(mapId, out var orig)) continue;
+            for (int i = 0; i < 4; i++)
+            {
+                nint itemBase = _mapTableBase + mapId * MAP_ENTRY_SIZE + i * MAP_ITEM_SIZE;
+                ushort wantRare = ng ? target.rare[i] : orig.rare[i];
+                ushort wantCommon = ng ? target.common[i] : orig.common[i];
+                if (SafeReadU16(itemBase + MAP_RARE_OFFSET) != wantRare)
+                { try { Marshal.WriteInt16(itemBase + MAP_RARE_OFFSET, (short)wantRare); changed++; } catch { } }
+                if (SafeReadU16(itemBase + MAP_COMMON_OFFSET) != wantCommon)
+                { try { Marshal.WriteInt16(itemBase + MAP_COMMON_OFFSET, (short)wantCommon); changed++; } catch { } }
+            }
+        }
+        return changed;
+    }
+
+    /// <summary>NG+ decision via the level-vs-progress proxy (same rule the shops use; fresh on every
+    /// save-load, unlike the autosave flag). NG+ when Ramza's level exceeds the per-progress threshold.</summary>
+    private bool ComputeNgPlusProxy(out int lvl, out int prog, out int threshold)
+    {
+        int rawLvl = ReadStaticByte(RAMZA_LEVEL_RVA);
+        lvl = rawLvl is >= 1 and <= 99 ? rawLvl : 0;
+        int rawProg = ReadStaticByte(STORY_PROGRESS_RVA);
+        prog = rawProg switch { >= 1 and <= 16 => rawProg, 0 => 1, _ => 16 };
+        threshold = NgThreshold(prog);
+        return lvl >= threshold;
+    }
+
+    /// <summary>Read a little-endian u16 from an absolute address, 0 on failure.</summary>
+    private static ushort SafeReadU16(nint addr)
+    {
+        try { return (ushort)Marshal.ReadInt16(addr); }
+        catch { return 0; }
     }
 
     /// <summary>Read one byte from a static module-relative address (the live game-state globals).</summary>
