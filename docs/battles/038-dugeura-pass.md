@@ -1,11 +1,18 @@
 # 038 - Dugeura Pass (Doguola Pass)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 442)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 33 (Chapter 4 opener)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **442** (local entry 58, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py dugeura`
+
+Implemented composition (entry 442, vanilla-dump verified) — roster matched [76,77,80,80,87,87]:
+- s0 Knight L101 — Heavy Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Counter/Atk Boost/Mv+1.
+- s1,s3 Black Mage L102 — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1 (AoE priority).
+- s2 Archer→**Time Mage** L102 — Mage Hat/shop Robe/Featherweave/shop Staff; **jl4** (Haste/Slow/Float only); Reflexes/Mv+1.
+- s4,s5 Dragoon L102/L101 — Heavy Helm/Heavy Armor/Germinas/Partisan/shop Shield; Jump innate; Reflexes/Atk Boost/Mv+1.
+- No boss → no rare; bottom-of-band levels (opener, not a spike).
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
