@@ -227,6 +227,22 @@ public class Program : IMod
         [63] = (new ushort[]{222,139,153,168},new ushort[]{244,252,252,253}),// Golgollada: SIG Cursed Ring + Shield/Helmet/Hat
         [12] = (new ushort[]{184,198,206,212},new ushort[]{245,242,244,252}),// Lionel Gate: Armor/Clothing/Robe/Shoes + SIG Elixir (common)
         [13] = (new ushort[]{219,224,238,45},new ushort[]{242,242,244,252}), // Lionel Oratory: Ring/Armlet + SIG Septieme Sens + Katana
+        // --- Chapter 3 --- baseline = best buyable per category; deserving battles add ONE MID-HIGH
+        // non-buyable "otimo" highlight (a tier above Ch2's early non-buyables): Ninja Gear 197, Kaiser
+        // Shield 141, Septieme Sens 238, Grand Helm 156, Rubber Suit 199, Invisibility Cloak 235. Final-
+        // game best (rl90+ weapons, Genji set, Maximillian, best robes/shields, Ribbon) stays Ch4. Boss
+        // rares (Reflect Mail, Defender, Defense Ring) live in the ENTD, applied per battle. See docs/036.
+        [27] = (new ushort[]{64,69,103,153}, new ushort[]{253,252,242,242}), // Gollund: Staff/Flail/Polearm/Helmet
+        [2]  = (new ushort[]{197,224,15,30}, new ushort[]{244,252,253,252}), // Lesalia Postern: SIG Ninja Gear + Armlet/NinjaBlade/Sword
+        [58] = (new ushort[]{45,82,89,113},  new ushort[]{242,242,244,252}), // Vaults 2nd: Katana/Crossbow/Bow/Pole
+        [59] = (new ushort[]{118,141,139,168},new ushort[]{253,252,242,242}),// Vaults 3rd: Bag + SIG Kaiser Shield + Shield/Hat
+        [57] = (new ushort[]{212,218,219,224},new ushort[]{244,252,253,252}),// Vaults 1st: Shoes/Armguard/Ring/Armlet (Wiegraf loot deferred)
+        [81] = (new ushort[]{9,15,30,45},    new ushort[]{242,242,244,252}), // Grogh Heights: Knife/NinjaBlade/Sword/Katana
+        [25] = (new ushort[]{50,69,72,238},  new ushort[]{253,252,242,242}), // Yardrow: Axe/Flail/Gun + SIG Septieme Sens (Rapha)
+        [79] = (new ushort[]{97,103,113,120},new ushort[]{244,252,253,252}), // Yuguewood: Book/Polearm/Pole/Cloth
+        [6]  = (new ushort[]{124,139,156,168},new ushort[]{242,242,244,252}),// Riovanes Gate: Throwing/Shield + SIG Grand Helm + Hat
+        [7]  = (new ushort[]{184,199,206,212},new ushort[]{242,242,244,252}),// Riovanes Keep: Armor + SIG Rubber Suit + Robe/Shoes
+        [5]  = (new ushort[]{224,235,9,15},  new ushort[]{252,253,242,242}), // Riovanes Roof: Armlet + SIG Invisibility Cloak + Knife/NinjaBlade
     };
     // Captured vanilla rare+common per target map (lazy, before our first write) -> restore in normal play.
     private readonly Dictionary<int, (ushort[] rare, ushort[] common)> _mapOrig = new();
