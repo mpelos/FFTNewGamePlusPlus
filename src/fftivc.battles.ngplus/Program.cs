@@ -72,7 +72,9 @@ public class Program : IMod
     // finale unwinnable on a first playthrough — the exact thing the mod promises never to do.
     // 0x15=Orran (Chapter 3 — the protected astrologer guest at Gollund; fail-on-death, so he must
     // keep pace with the party. Backline caster, job==charId guard holds: sprite/job both 21).
-    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22, 0x1e, 0x15 };
+    // 0x30=Alma (Chapter 3 — guest at Lesalia Postern providing the Aegis buff; scaled so the buff is
+    // useful and she survives the wall. job==charId guard holds: sprite/job both 48).
+    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22, 0x1e, 0x15, 0x30 };
 
     // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
     // modded version of; an index with no entry passes through vanilla even in NG+.

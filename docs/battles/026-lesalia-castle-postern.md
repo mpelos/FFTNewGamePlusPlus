@@ -1,10 +1,10 @@
 # 026 - Lesalia Castle Postern (Lesalia Imperial Capital — Postern Gate)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 420) — NG+ only; pending playtest
 Chapter: 3 — "The Valiant"
 Battle order: Battle 23 (after Mining Town of Gollund)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
+ENTD: global entry **420** (entd4 local 36) — Zalmo boss + 3 Knight + 2 Monk + Alma guest; see 024
 File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
