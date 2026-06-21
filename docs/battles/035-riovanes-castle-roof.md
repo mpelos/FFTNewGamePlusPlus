@@ -1,11 +1,24 @@
 # 035 - Riovanes Castle Roof — Elmdor & the Assassins
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 433)
 Chapter: 3 — "The Valiant" — **CHAPTER FINALE**
 Battle order: Battle 32 (after Riovanes Castle Keep) — **Riovanes chain 3 of 3 (close)**
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **433** (local entry 49, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py riovanes_roof`
+
+Implemented composition (entry 433, vanilla-dump verified) — LEVEL-ONLY (race fight, all flee):
+- s0 **Rapha** (job 41 Skyseer — PROTECTED GUEST, control `00 84`): L100 via **direct ENTD level**
+  (NOT the runtime scaler — her sprite 41 collides with the enemy clone s1, so a direct edit touches
+  only her slot). Evasion gear (Elven Cloak/White Robe) preserved → survives the race.
+- s3 **Elmdor** (job 27 Ark Knight) L104 — level only; flees, no loot.
+- s4 **Celia** (job 45 Assassin) L103 — level only; flees, no loot.
+- s5 **Lettie** (job 46 Assassin) L103 — level only; flees, no loot.
+- s1 (job-41 lvl-5 Rapha clone) + s2 (job-18 lvl-5 Netherseer/Marach-class) = scripting placeholders — untouched.
+
+No skillset/jobLevel change on the enemies → no new hard lock (status stays vanilla-resistable, the
+flee-on-critical trigger + protect-Rapha fail condition + 4-unit cap preserved). NO rare:
+Elmdor's Masamune/Genji are his Chapter-4 Limberry loot.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
