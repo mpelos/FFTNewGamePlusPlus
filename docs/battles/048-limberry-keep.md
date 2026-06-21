@@ -1,11 +1,33 @@
 # 048 - Limberry Castle Keep
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 456)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 43 (Limberry chain 2 of 3 — NO resupply between 42→43→44)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **456** (local 72, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 456)
+
+```text
+DATA (verified from entd4 dump). Entry 455 ([27,27,45,46], all lvl/eq 254) is an event/cutscene
+formation; the PLAYABLE Keep battle is entry 456:
+  slot 0 = Elmdor (job 27 Ark Knight, name 0x1b)  eq=(155, 183, 216, 46, 140)
+           -> ALREADY equipped with MASAMUNE (rh=46) + GENJI ARMOR (body=183). The long-deferred
+              Tier-A loot is PRESENT in vanilla; Shirahadori parry + Vampire drain + Draw Out are in
+              his unit/AI data. (head=155, acc=216, lh=140 shield kept as-is.)
+  slot 1 = Celia  (job 45 Assassin)  eq=254 (fixed)
+  slot 2 = Lettie (job 46 Assassin)  eq=254
+  slots 3,4 = job 154, name-linked to Celia/Lettie -> their ULTIMA-DEMON transform forms (eq=0).
+
+CHANGE (faithful, minimal): LEVEL only.
+  Elmdor = 104 (Tier-A boss)   Celia/Lettie = 104   their Ultima-Demon forms = 105
+  - NO gear edit: Masamune + Genji Armor are already equipped. Per the tiering this stays Genji ARMOR
+    (not the full Genji set) => Tier-A, not Tier-S. Elmdor's death pays the reward as in vanilla.
+  - Win-cond ("Defeat Elmdore"), Shirahadori parry, Vampire drain, and the assassin demon-transform
+    scripting are all preserved (only the level byte changed on each slot).
+  Buried map treasure (Muramasa, Vampire Cape, Icebrand, Spellbinder) left as-is.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
