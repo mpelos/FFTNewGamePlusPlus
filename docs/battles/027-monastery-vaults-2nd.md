@@ -1,10 +1,10 @@
 # 027 - Monastery Vaults, 2nd Level (Orbonne Monastery — Underground Vault)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 422) — NG+ only; pending playtest
 Chapter: 3 — "The Valiant"
 Battle order: Battle 24 (after Lesalia Castle Postern) — **Vaults chain 1 of 3**
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
+ENTD: global entry **422** (entd4 local 38) — Nightblade special + 3 Dragoon + 2 Time Mage + 1 Chemist; see 024
 File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
