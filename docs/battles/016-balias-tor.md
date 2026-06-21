@@ -1,15 +1,14 @@
 # 016 - Balias Tor (Bariaus Hill)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 409) — Summoner job is the built-in escalation
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 15 (after Castled City of Zaland)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **409** (battle_entd4, local entry 25) — confirmed by sequence + composition
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py balias_tor`. NG+-only by construction. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -57,23 +56,27 @@ For New Game++ the identity must stay: **a three-flank hill where slow-but-devas
 must be raced down before they cast, while break-Knights and Archers screen them — priority and
 tempo are the whole fight.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 409)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 2 Summoner + 2 Knight + 2 Archer, plus the player slots.
-Confirm the left/center/right group positions on the hill.
-Keep Summoner charge times intact (the race-the-cast counterplay depends on them NOT being instant).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    name  flags  job          role                   action
+s0    0x22   34    0x89   34           Mustadio (disabled)    LEAVE (lvl 254)
+s1    0x34   52    0x49   52           story unit (disabled)  LEAVE (lvl 254)
+s2    0x80   255   0x80   76 Knight    break-wall             SCALE -> L101
+s3    0x80   255   0x80   77 Archer    ranged support         SCALE -> L101
+s4    0x80   255   0x80   77 Archer    ranged support         SCALE -> L100
+s5    0x81   255   0x40   82 Summoner  priority AoE caster     SCALE -> L101
+s6    0x81   255   0x40   82 Summoner  priority AoE caster     SCALE -> L101
+s7    0x80   255   0x80   76 Knight    break-wall             SCALE -> L101
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs: **Summoner 82** (first use in the mod), Knight 76, Archer 77. Summon is innate to job 82 at
+jl8; the Knights' Rend comes innately from their Battle Skill command at jl8 (the sanctioned break
+exception, as at Ziekden) — no secondary skillset needed for either.
 
-```text
-77 = Archer            (confirmed)
-Summoner job id        (TBD - verify; FIRST use of this job in the mod)
-Knight job id          (TBD - verify)
-```
+PLAYTEST: the "mid-tier summons only" guideline can't be enforced through ENTD level/joblevel (no
+ability-id control there), and jl8 is kept for caster-stat consistency with the mod's other casters.
+If best-tier summons show up and over-spike the curve, cap the Summoners' level/joblevel.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -187,18 +190,31 @@ This recreates the original's left/center/right split: the player must pick a fl
 The hill should force a choice: commit to one Summoner and race its charge while the other winds
 up and the center harasses — the original's priority-and-tempo puzzle, at scale.
 
+## Implemented (v1, entry 409)
+
+Applied with `python tools/battle_patch.py balias_tor`; diff contained to local entry 25 (global 409),
+62 bytes. The Summoner job IS the escalation — no extra job swap.
+
+```text
+s5  Summoner  L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod
+s6  Summoner  L101 jl8  (same kit)
+s2  Knight    L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield  (Rend innate)
+s7  Knight    L101 jl8  (same kit)
+s3  Archer    L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s4  Archer    L100 jl8  (same kit)
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Balias Tor `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 2 Summoner + 2 Knight + 2 Archer + player slots.
-- [ ] Confirm Summoner job id + a MID-TIER summon list (no best summons) and intact charge times.
-- [ ] Confirm Knight Rend command id; keep break on both Knights, shop-tier breakable gear.
-- [ ] Set levels: both Summoners + both Knights + one Archer `101`; second Archer `100`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] Preserve the left/center/right hill positions (Summoners flanked, screened by Knights).
-- [ ] Patch via the correct layer; keep the diff inside the Balias Tor window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional.
-- [ ] Install mod, test from a New Game+ save; verify summons are scary but race-able.
+- [x] Identify Balias Tor ENTD entry (409); fill "Local Data Confirmed".
+- [x] Dump original entry; verify 2 Summoner + 2 Knight + 2 Archer.
+- [x] Confirm Summoner job id (82); Summon innate at jl8. (Summon-tier control = playtest item.)
+- [x] Knights keep Rend innately (Battle Skill at jl8); shop-tier breakable gear.
+- [x] Set levels: both Summoners + both Knights + one Archer `101`; second Archer `100`.
+- [x] Set JobLevel `8` on all scaled enemy slots.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 409 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; verify summons are scary but race-able; check summon tier.
 
 ## Test Questions
 
