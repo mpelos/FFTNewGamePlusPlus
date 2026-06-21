@@ -1,11 +1,35 @@
 # 046 - Lake Poescas (Poeskas Lake)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 453)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 41 (after Mount Germinas)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **453** (local 69, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 453)
+
+```text
+DATA REALITY (verified from entd4 dump + JobData.xml):
+  Entry 453 sits exactly between Germinas (452) and the Limberry assassin chain (454 Celia/Lettie,
+  455 Elmdor) -> confirmed Poeskas by story position. Every slot is a MONSTER undead (eq=254, no
+  equip slots) -- NOT human Archer/Mystic/Summoner as Game8 loosely describes.
+    slots 0,3 = job 70/71  "Float, Undead" floaters
+    slots 1,2 = job 63     "Float, Undead" floaters
+    slots 4,5 = job 114    Revenant family (InnateStatus: Undead)  -- the reraising bodies
+  All six are innately UNDEAD -> the reraise permakill war is intact at the data level.
+
+CHANGE (faithful, minimal): SCALE the band to the endgame curve (101-103) -- nothing else.
+  slot 4 Revenant = 103 (anchor)   slot 5 Revenant = 102
+  slots 0,3 floaters = 102          slots 1,2 floaters = 101
+  Monsters: LEVEL only set; job / undead innates / (empty) equipment / scripting all untouched.
+
+WHY no "swap Archer -> Mystic" escalation: the doc's planned escalation assumed human jobs. The
+  actual roster is all-monster, so there are no humans to escalate and changing a monster's job would
+  break its undead/reraise innate. The 5* identity (reraise permakill puzzle vs a mixed undead band)
+  is already in the data; the only NG+ need is to bring it to the endgame level band. No boss, no rare
+  (per Ch4 overview tiering); buried treasure + Phoenix Down spoils left as map loot.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
