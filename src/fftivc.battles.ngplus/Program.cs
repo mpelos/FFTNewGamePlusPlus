@@ -102,6 +102,13 @@ public class Program : IMod
 
     private volatile bool _isNgPlus;
 
+    // TEST TOGGLE — set true to force the battle ENTD swap (Layer 1) ON for EVERY save, so the NG+
+    // battle reworks can be verified on a normal (non-NG+) Chapter-4 save without grinding a full NG+
+    // run. Affects ONLY the battle swap (shops/map rewards keep their own level-proxy detection).
+    // The [battle-id] diagnostic still logs normally, so endgame entries can be captured either way.
+    // MUST be false for any real release.
+    private const bool DEBUG_FORCE_NGPLUS = false;
+
     // --- NG+ SHOPS ---
     // The store inventory is two STATIC in-memory exe tables (parsed by the modloader): which shops
     // sell each item (ITEM_SHOPS_DATA), and each item's ShopAvailability (ITEM_COMMON_DATA) = the
@@ -190,14 +197,21 @@ public class Program : IMod
     // the live table (NOT the modloader's ApplyTablePatch, which locks the first value per field and so
     // can't restore on an NG+->normal save switch — the exact problem the shops hit). Detection reuses
     // the same NG+ level proxy as the shops (fresh on every save-load); see [[fft-tic-shop-ngplus]].
-    // Signature anchors at the START of map 85's entry (Mandalia, r1/r19/r51/r59) and runs through maps
-    // 86-87; XY+flags bytes are wildcarded (volatile / not needed), rare+common u16s are the literal
-    // fingerprint. tableBase = matchAddr - 85*0x18.
+    // Signature anchors on the first CONCRETE bytes of map 85's entry — item0's rare+common ids
+    // (Mandalia, r1/r19/r51/r59). It MUST NOT start with a wildcard: a leading "??" makes Reloaded's
+    // sig-scanner skip its fast first-byte search and either scan the whole module byte-by-byte or
+    // throw on the scan thread, hanging mod init so the Reloaded launcher times out ("Failed to obtain
+    // port") and the game is killed at launch (the exact crash this caused). The two working scans
+    // (file-read, item-table) both start concrete; this one now does too. The pattern begins +2 into
+    // map 85's entry (skipping the volatile XY+flags byte pair), so tableBase subtracts that offset:
+    // tableBase = matchAddr - MAP_SIG_ANCHOR_BYTE_OFFSET - 85*0x18. Interior "??" pairs (later items'
+    // XY+flags) are fine — only the LEADING byte must be concrete.
     private const string SIG_MAP_TRAP_TABLE =
-        "?? ?? 01 00 F0 00 ?? ?? 13 00 F1 00 ?? ?? 33 00 F6 00 ?? ?? 3B 00 F7 00 " + // map 85 Mandalia
+        "01 00 F0 00 ?? ?? 13 00 F1 00 ?? ?? 33 00 F6 00 ?? ?? 3B 00 F7 00 " + // map 85 Mandalia (from item0 rare id)
         "?? ?? 1C 00 F3 00 ?? ?? 38 00 FC 00 ?? ?? 40 00 F9 00 ?? ?? 57 00 FD 00 " + // map 86
         "?? ?? 63 00 FA 00 ?? ?? 6C 00 FD 00 ?? ?? 7D 00 F0 00 ?? ?? 7E 00 F1 00";   // map 87
     private const int MAP_SIG_ANCHOR_MAPID = 85;
+    private const int MAP_SIG_ANCHOR_BYTE_OFFSET = 2; // pattern starts at item0's rare u16, +2 into the entry
     private const int MAP_ENTRY_SIZE = 0x18;     // 24 bytes per map
     private const int MAP_ITEM_SIZE = 6;         // XY + flags + rare(u16) + common(u16)
     private const int MAP_RARE_OFFSET = 2;       // u16 within an item
@@ -264,6 +278,8 @@ public class Program : IMod
         _modLoader.GetController<IStartupScanner>()?.TryGetTarget(out _scanner!);
 
         Log("loading [M3: conditional ENTD swap in NG+]...");
+        if (DEBUG_FORCE_NGPLUS)
+            Log("WARNING: DEBUG_FORCE_NGPLUS=true -> battle swap FORCED ON for ALL saves (TEST BUILD; set false for release).");
         if (_hooks is null) { Log("ERROR: IReloadedHooks unavailable."); return; }
         if (_scanner is null) { Log("ERROR: IStartupScanner unavailable."); return; }
 
@@ -296,7 +312,7 @@ public class Program : IMod
         _scanner.AddMainModuleScan(SIG_MAP_TRAP_TABLE, result =>
         {
             if (!result.Found) { Log("ERROR: MAP_TRAP_FORMATION_DATA signature NOT found -> NG+ map rewards disabled."); return; }
-            _mapTableBase = baseAddr + result.Offset - MAP_SIG_ANCHOR_MAPID * MAP_ENTRY_SIZE;
+            _mapTableBase = baseAddr + result.Offset - MAP_SIG_ANCHOR_BYTE_OFFSET - MAP_SIG_ANCHOR_MAPID * MAP_ENTRY_SIZE;
             Log($"Found MAP_TRAP_FORMATION_DATA table @ 0x{_mapTableBase:X} -> NG+ map rewards enabled.");
         });
     }
@@ -324,6 +340,7 @@ public class Program : IMod
         if (fileIndex >= ENTD_INDEX_MIN && fileIndex <= ENTD_INDEX_MAX && outputPointer != null)
         {
             DetectNgPlus();
+            if (DEBUG_FORCE_NGPLUS) _isNgPlus = true; // TEST: force the battle swap on any save
             SyncMapItems(); // re-assert treasures at battle entry (covers a direct battle load w/o world map)
 
             // The game reads the whole ENTD file in one shot (sectorOffset 0, size == file length).
