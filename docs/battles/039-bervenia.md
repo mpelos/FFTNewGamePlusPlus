@@ -1,11 +1,20 @@
 # 039 - Free City of Bervenia
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 443)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 34 (after Dugeura Pass)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **443** (local entry 59, `battle_entd4_ent.bin`)
+File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py bervenia`
+
+Implemented composition (entry 443, vanilla-dump verified):
+- s0 **Meliadoul** (job 47 Divine Knight, BOSS, dies → rare pays) — L104/jl8 (full Mighty Sword break);
+  **Save the Queen (34)** as her equipped KnightSword (Tier-A rare/steal-bait, upgrades her vanilla
+  Defender 33); job/secondary/helm/armor/acc/shield/win-on-death scripting preserved. No hard lock added.
+- s1,s4 Summoner L102 — Mage Hat/shop Robe/Featherweave/shop Rod; intact charge times; Reflexes/Atk Boost/Mv+1.
+- s2,s3 Archer L102/L101 — Thief's Cap/Black Garb/Bracers/Windslash (two-hand); Reflexes/Concentration/Mv+1.
+- s5 Ninja L102 — dual-wield Ninja Longblades; Thief's Cap/Black Garb/Germinas; First Strike/Atk Boost/Mv+2.
+- Only Meliadoul at the boss band (104); adds 101-102.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
