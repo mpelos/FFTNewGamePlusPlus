@@ -1,11 +1,31 @@
 # 052 - Mullonde Cathedral Nave (Murond Holy Place)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 461) — TIER-S unlock (Chaos Blade)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 47 (Mullonde chain 2 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **461** (local 77, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 461)
+
+```text
+DATA (story order 459 Eagrose -> 460 Exterior -> 461 Nave; three named bosses, NO generics):
+  slot 0 = Folmarv   (name 36, job 36 Divine-Knight-class; eq head154/body182/acc232/rh30/lh139 shield).
+  slot 1 = Loffrey   (name 37, job 37 Divine-Knight-class; rh=29 Icebrand, lh=138 shield).
+  slot 2 = Cletienne (name 39, job 39 Sorcerer; rh=57 rod, no shield).
+  slot 3 = job 39 clone (name255, lvl 65, eq=0) -> scripting/summon placeholder (left untouched).
+
+CHANGE: scale to the human-boss band + jl8 (full kit, incl. the equip-break). Folmarv 105 (leader),
+  Loffrey & Cletienne 104.
+  *** TIER-S UNLOCK ***: Folmarv's rh set to CHAOS BLADE (37). It is a KnightSword, so it BOTH powers
+  his Divine Sword / Unyielding-Blade equip-break AND is the steal/drop reward -- delivered on the named
+  kill target. Folmarv has real equip slots (unlike the Lucavi), so this works directly via ENTD.
+  Loffrey & Cletienne RETREAT when one boss falls -> NO drop here; their Tier-S items pay where they
+  DIE later (Loffrey -> Robe of Lords at Vaults 5th 055; Cletienne -> Materia Blade at Necrohol 056).
+  Their gear is KEPT as-is. Win-on-one-falls + equip-break (Folmarv+Loffrey) + caster pressure preserved
+  (only level/jl + Folmarv's blade changed; reactions/scripting untouched). Buried Elixir left as-is.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
