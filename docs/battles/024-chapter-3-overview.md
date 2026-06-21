@@ -51,6 +51,31 @@ ended at `023`; this overview is `024`, so Battle 22 = doc `025`, i.e. doc = bat
 | `035` | 32 | Riovanes Castle Roof | **Elmdor** + assassins; protect Rapha | **Assassin** debut; flee-on-critical race; no loot (all flee) | ✅ Done |
 | `036` | — | Chapter 3 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
 
+## Deduced ENTD entries (offline roster-match — confirm in-game before/after patch)
+
+Identified by matching each battle's documented roster (units/job/level) against the dumped vanilla
+ENTD (`extracted/.../battle_entd4_ent.bin`), cross-checked by **named-unit recurrence** (Wiegraf =
+job 40 at both Vaults-1st and Keep; Marach = the 25/26 named pair at Yardrow and Gate) and
+**story-order monotonicity** (entries rise with battle number — a strong consistency signal). Job ids
+verified against a known Ch2 entry (403 Merchant Dorter). The `[battle-id]` runtime log still confirms
+each on entry; treat MEDIUM rows as verify-before-patch.
+
+| Battle | Doc | ENTD entry | Confidence | Roster signature matched |
+|--------|-----|-----------|------------|--------------------------|
+| Gollund (22) | 025 | **417** | HIGH | named(Orran) + 2 Chemist + 3 Thief + 1 Orator |
+| Lesalia Postern (23) | 026 | **420** | HIGH | 2 named(Zalmo+Alma) + 3 Knight + 2 Monk |
+| Vaults 2nd (24) | 027 | **422** | HIGH | named + 1 Chemist + 2 Time Mage + 3 Dragoon |
+| Vaults 3rd (25) | 028 | **423** | HIGH | named(Izlude) + 2 Knight + 2 Archer + 1 Summoner |
+| Vaults 1st (26) | 029 | **424** | HIGH | named(Wiegraf=40) + 4 Knight + 2 Archer + 1 Black Mage |
+| Grogh Heights (27) | 030 | **426** | MED-HIGH | 2 Squire + 2 Chemist + Archer + Thief (+extras) |
+| Yardrow (28) | 031 | **428** | HIGH | 2 named(Marach+Rapha) + 2 Summoner + 3 Ninja |
+| Yuguewood (29) | 032 | **430** | HIGH | undead trio Ghoul/Ghast/Revenant + 4 casters |
+| Riovanes Gate (30) | 033 | **431** | HIGH | 2 named(Marach) + 4 Knight + 3 Archer |
+| Riovanes Keep (31) | 034 | **432** | MEDIUM | Wiegraf(40) + monster 60 (Belias) + 3× Archaeodaemon(153) |
+| Riovanes Roof (32) | 035 | **433** | MEDIUM | 6 named/special (Elmdor + Celia/Lettie assassins + Rapha) |
+
+(Entries 418/419/421/425/427/429 in the gaps are Ch2 Cúchulainn=425 and cutscene/sub-event ENTDs.)
+
 ## Carried-over rules (from Chapters 1–2)
 
 Still in force — see `000-chapter-1-overview.md` and `011-chapter-2-overview.md` for full text:
