@@ -1,11 +1,31 @@
 # 053 - Mullonde Cathedral Sanctuary (Murond Holy Place)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 462) — TIER-S (Ribbon)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 48 (Mullonde chain 3 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **462** (local 78, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 462)
+
+```text
+DATA (story order 459->460->461->462; verified from dump):
+  slot 0 = Folmarv (name 36, eq=255, lvl 254) -> INACTIVE cutscene placeholder (left untouched).
+  slot 1 = Zalbaag (name 51, job 51 Ark-Knight-class; jl8; eq head154/body182/acc210/rh30 Runeblade/
+           lh139 shield) -> the ACTIVE vampire boss + Tier-S carrier. Has real equip slots.
+  slots 2,3 = Archaeodaemon (job 153, undead) -> reraise + HP-drain screen.
+  slot 4 = Ultima Demon (job 154) -> telegraphed Ultima pressure (optional target).
+  slot 5 = job 51 clone (name255, eq=255, lvl 254) -> scripting placeholder (left untouched).
+  NOTE: TIC names Zalbaag's undead boss form name_id 51 (not the standard low-range id); confirmed by
+  the active Ark-Knight+Runeblade profile + the demon screen + win="Defeat Zalbaag".
+
+CHANGE: scale + Tier-S reward. Zalbaag 105, accessory set to RIBBON (171) = the Tier-S steal/drop on
+  the named kill target (he DIES as the win condition -> guaranteed). Kept his Runeblade (the equip-break
+  weapon) + vampirism/undead flags + scripting (only level + acc changed). Archaeodaemons & Ultima Demon
+  103. Win-on-Zalbaag-falls, vampirism (sole source), Runeblade break, and undead reraise all preserved.
+  No buried treasure (vanilla) -> Gil + Elixir spoils unchanged.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
