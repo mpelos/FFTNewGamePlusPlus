@@ -213,6 +213,20 @@ public class Program : IMod
         [77] = (new ushort[]{139,153,168,184},new ushort[]{242,242,252,252}),// Lenalian: Shield/Helmet/Hat/Armor
         [91] = (new ushort[]{56,56,64,89},   new ushort[]{252,252,252,253}), // Brigands: Rod/Rod/Staff/Bow
         [49] = (new ushort[]{139,184,198,206},new ushort[]{242,242,252,252}),// Ziekden: Shield/Armor/Clothing/Robe
+        // --- Chapter 2 --- baseline = best non-reserved per category; deserving battles add ONE early
+        // NON-buyable signature rare (Unknown20 but low-tier, never endgame): Invisibility Cloak 235,
+        // Chantage 236, Cursed Ring 222, Septieme Sens 238, Elixir 245. See docs/battles/023.
+        [31] = (new ushort[]{89,124,139,153},new ushort[]{242,242,244,252}), // Merchant Dorter: Bow/Throwing/Shield/Helmet
+        [80] = (new ushort[]{168,184,198,212},new ushort[]{252,253,242,242}),// Araguay: Hat/Armor/Clothing/Shoes
+        [83] = (new ushort[]{235,9,30,56},   new ushort[]{244,252,252,253}), // Zeirchele: SIG Invisibility Cloak + Knife/Sword/Rod
+        [35] = (new ushort[]{64,113,139,153},new ushort[]{245,242,244,252}), // Zaland: Staff/Pole/Shield/Helmet + SIG Elixir (common)
+        [84] = (new ushort[]{168,184,198,218},new ushort[]{252,253,242,242}),// Balias Tor: Hat/Armor/Clothing/Armguard
+        [78] = (new ushort[]{45,45,50,72},   new ushort[]{244,252,252,253}), // Tchigolith: Katana/Katana/Axe/Gun
+        [40] = (new ushort[]{82,89,93,97},   new ushort[]{242,242,244,252}), // Goug Lowtown: Crossbow/Bow/Instrument/Book
+        [87] = (new ushort[]{103,113,127,236},new ushort[]{252,253,242,242}),// Balias Swale: Polearm/Pole/Bomb + SIG Chantage
+        [63] = (new ushort[]{222,139,153,168},new ushort[]{244,252,252,253}),// Golgollada: SIG Cursed Ring + Shield/Helmet/Hat
+        [12] = (new ushort[]{184,198,206,212},new ushort[]{245,242,244,252}),// Lionel Gate: Armor/Clothing/Robe/Shoes + SIG Elixir (common)
+        [13] = (new ushort[]{219,224,238,45},new ushort[]{242,242,244,252}), // Lionel Oratory: Ring/Armlet + SIG Septieme Sens + Katana
     };
     // Captured vanilla rare+common per target map (lazy, before our first write) -> restore in normal play.
     private readonly Dictionary<int, (ushort[] rare, ushort[] common)> _mapOrig = new();

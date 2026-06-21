@@ -131,6 +131,44 @@ Non-boss fights and the RETREAT-only Gallows (020) carry NO rare items — gener
 keeping the two real drops impactful. No Chapter-4-reserved best item appears anywhere in Ch2.
 ```
 
+## Move-Find treasure rewards (NG+ post-game upgrade)
+
+Separate from the boss-held loot above (which lives in the ENTD), each map's hidden **Move-Find
+Items** ("battle rewards") are upgraded for post-game players, **NG+ only** (a first playthrough
+keeps vanilla treasures). Chapter 2 escalates over the Chapter-1 reward pass (see `010`): the same
+post-game baseline PLUS the chapter where **non-buyable rares start appearing in treasures** — but
+only the *early/initial* unbuyable tier, never endgame.
+
+```text
+TWO-TIER DESIGN (user-confirmed 2026-06-21):
+- BASELINE (all 11 battles): rare slot -> strongest item in its ORIGINAL category whose availability
+  is not Unknown20/Blank and id<256 (post-game gear, never the endgame-reserved best). Commons ->
+  X-Potion / Remedy / Hi-Ether (Phoenix Down kept). Same rule as Chapter 1.
+- SIGNATURE (only the battles that "deserve a good item" = boss / recruit / climax): ONE early
+  NON-buyable rare added as the highlight. The "early non-buyable" pool = the lowest-reqlv Unknown20
+  items (rl5-14), which are special/unique but NOT endgame: Invisibility Cloak 235, Cursed Ring 222,
+  the Perfumes 236-239, Elixir 245. Endgame Unknown20 (rl90+ weapons, Genji set, Maximillian, best
+  robes, Ribbon, best shields/bows) stays reserved for Chapter 4.
+```
+
+| Battle | Map | Tier | Highlight (non-buyable) + why |
+|--------|-----|------|-------------------------------|
+| Merchant Dorter | 31 | baseline | — (Bow/Throwing/Shield/Helmet → best non-reserved) |
+| Araguay Woods | 80 | baseline | — (Hat/Armor/Clothing/Shoes) |
+| Zeirchele Falls | 83 | **signature** | **Invisibility Cloak** — Gaffgarion's ambush/betrayal |
+| Zaland | 35 | **signature** | **Elixir** (common slot) — Mustadio recruit |
+| Balias Tor | 84 | baseline | — (Hat/Armor/Clothing/Armguard) |
+| Tchigolith Fenlands | 78 | baseline | — (Katana/Katana/Axe/Gun) |
+| Goug Lowtown | 40 | baseline | — (Crossbow/Bow/Instrument/Book) |
+| Balias Swale | 87 | **signature** | **Chantage** (auto-Reraise perfume) — "Save Agrias!"; she can wear it |
+| Golgollada Gallows | 63 | **signature** | **Cursed Ring** — Gaffgarion the Dark Knight |
+| Lionel Castle Gate | 12 | **signature** | **Elixir** (common slot) — Gaffgarion boss duel |
+| Lionel Castle Oratory | 13 | **signature** | **Septième Sens** (perfume) — Cúchulainn, chapter climax |
+
+Implemented in the same NG+-conditional `MAP_TRAP_FORMATION_DATA` direct-write subsystem as the
+Chapter-1 rewards (Program.cs `MapTreasureNgPlus`). Confirm in play via the `[mapitems]` log line.
+See memory note [[fft-tic-rewards-ngplus]].
+
 ## Consistency audit
 
 ### Job IDs
