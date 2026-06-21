@@ -1,11 +1,39 @@
 # 050 - Eagrose Castle (Igros Castle)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 459) — see Rend-cap caveat
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 45 (after the Limberry chain)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **459** (local 75, entd4)
+File: `battle_entd4_ent.bin`
+
+## Implemented (v1, entry 459)
+
+```text
+IDENTIFICATION: entry 459 is the only one in the band with 5 generic Knights (job 76) = Phase-1 stair-
+  wall. slot7 job 69 is a LUCAVI -> entry 470 (the multi-Lucavi battle) shows job 69 with name_id==job_id
+  exactly like Velius(60)/Zalera(62), so job 69 = Adramelk. Roster:
+    slot 0 = GUEST (tail 00 84), name 8, job 8, real gear -> story ally.
+    slot 1 = Dycedarg (name 9, job 9; eq incl. Defender rh=33 + Aegis Shield lh=136) -> Phase-1 boss.
+    slots 2-6 = 5 Knights (job 76; were near-naked, only a sword) -> the upper-stair wall.
+    slot 7 = Adramelk (name 69, job 69, eq=255 Lucavi no-equip) -> Phase-2 transform spike.
+    slots 8,9 = job 8, eq=0, lvl 254 -> scripting placeholders (left untouched).
+
+CHANGE:
+  Dycedarg = 104, head set to GRAND HELM (156) = the Tier-A steal/poach reward (he has equip slots;
+    kept his Aegis Shield + Defender). 5 Knights = 103, armed (Heavy Helm/Armor + Bracers + shield,
+    their sword kept) jl8. Adramelk = 105 (eq255, level only). Win-cond + 2-phase transform preserved.
+  GUEST (slot 0): SPRITE COLLISION -> charId 8 also appears as enemy/placeholder clones at slots 8,9
+    (job8==charId8), so the runtime GuestCharIds scaler can't be used (Rapha-Roof precedent, 433).
+    Scaled by DIRECT ENTD level (103); gear + guest tail preserved. Program.cs NOT modified.
+
+CAVEAT (Rend/Break <=2-source cap): Knight (job 76) has Arts of War as its primary command, which can't
+  be removed via ENTD without changing the job (and losing the knight-wall identity). All 5 kept as
+  Knights; the <=2-Rend cap is left as a SOFT/AI item to verify in-game (enemy Knight AI does not
+  coordinate a 5-source break-lock, and the player has Safeguard/Steal answers). If testing shows a
+  break-lock, a follow-up will re-job 3 of the 5 to a non-break bruiser or edit the ability layer.
+Buried map treasure (Blood Sword, Healing Staff, Featherweave Cloak, Thief's Cap) left as-is.
+```
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
