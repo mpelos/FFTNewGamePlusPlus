@@ -37,7 +37,7 @@ Chapter 1 (doc `001` = Battle 2, so the offset is the same established pattern: 
 | `015` | 14 | Castled City of Zaland | Save Mustadio from bounty hunters | ranged/urban + Dragoon (vertical) | ✅ Implemented (v1, entry 407; Knight→Dragoon inline; Mustadio auto-scaled) |
 | `016` | 15 | Balias Tor | Defeat enemy **Summoners** + support | **Summoner** (new job) | ✅ Implemented (v1, entry 409; Summoner = built-in escalation) |
 | `017` | 16 | Tchigolith Fenlands | Swamp; **undead / dark** enemies | undead + swamp terrain | ✅ Implemented (v1, entry 410; undead = built-in escalation) |
-| `018` | 17 | Goug Lowtown | Summoners; Mustadio guest | Summoner + Time-Mage tempo | 📝 Designed |
+| `018` | 17 | Goug Lowtown | Summoners; Mustadio guest | Summoner + Time-Mage tempo | ✅ Implemented (v1, entry 411; Thief→Time Mage inline) |
 | `019` | 18 | Balias Swale | Split-team; rain-boosted Thunder | split + weather + Geomancer | 📝 Designed |
 | `020` | 19 | Golgollada Gallows | **Gaffgarion** as a major threat | Dark Knight sub-boss (Drain/disarm) | 📝 Designed |
 | `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + rare loot (Ancient Sword) | 📝 Designed |

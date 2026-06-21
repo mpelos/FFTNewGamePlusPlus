@@ -1,15 +1,14 @@
 # 018 - Goug Lowtown (Goug Machine City)
 
-Status: designed (not yet implemented)
+Status: ✅ implemented (v1, entry 411) — Thief→Time Mage escalation done inline
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 17 (after Tchigolith Fenlands)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: global entry **411** (battle_entd4, local entry 27) — confirmed by composition (2nd Summoner fight)
+File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `011-chapter-2-overview.md`.
+> Implemented via `tools/battle_patch.py goug`. NG+-only by construction. See
+> `011-chapter-2-overview.md`.
 
 ## Original Battle
 
@@ -58,24 +57,34 @@ must add a new twist so this isn't a re-run of Balias Tor.
 For New Game++ the identity must stay: **an urban race to silence the Summoners while fast,
 charming Thieves harass the approach — now under tempo pressure, so the summon clock runs faster.**
 
-## Local Data Confirmed
+## Local Data Confirmed (entry 411)
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 2 Summoner + 2 Archer + 2 Thief, plus the player and MUSTADIO guest slots.
-DO NOT touch Mustadio's guest scripting (his death is intentionally NOT a Game Over).
-Keep Summoner charge times intact (the race-the-cast counter depends on them).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+slot  cid    flags  job          role                        action
+s0    0x16   0x91   22 (==cid)   ally guest (NOT Mustadio)   LEAVE (see note)
+s1    0x23   0x80   35           disabled named (lvl 254)    LEAVE
+s2    0x80   0x80   83 Thief     -> TIME MAGE (escalation)   SCALE -> L101, re-job 81 (jl4)
+s3    0x80   0x80   83 Thief     charm harasser              SCALE -> L100
+s4    0x80   0x80   83 Thief     disabled (lvl 254)          LEAVE
+s5    0x81   0x40   77 Archer    ranged                      SCALE -> L101
+s6    0x81   0x40   77 Archer    ranged                      SCALE -> L100
+s7    0x80   0x80   82 Summoner  priority AoE                SCALE -> L101
+s8    0x80   0x80   82 Summoner  priority AoE                SCALE -> L101
+s9    0x80   0x80   83 Thief     charm harasser              SCALE -> L100
+s10   0x80   0x80   83 Thief     anomalous lvl-1/jl-0        LEAVE (likely special/scripted)
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs: Summoner 82, Archer 77, Thief 83, Time Mage 81. **TIC differs from the walkthrough:** 4
+active Thieves (not 2), plus an anomalous lvl-1 thief (s10) left untouched. The escalation Time Mage
+is **JobLevel-capped to 4** (Lenalian precedent) to bias toward Haste/Slow and keep Stop/Immobilize
+off. Steal Heart stays innate on the remaining Thieves (job 83 at jl8).
 
-```text
-77 = Archer            (confirmed)
-83 = Thief             (confirmed)
-Summoner job id        (TBD - verify; from Balias Tor)
-Time Mage job id       (TBD - verify; from Lenalian — added below)
-```
+### Goug ally guest (cid 0x16) — left at vanilla level
+
+The guest here is **cid 0x16 (job 22 == cid, flags 0x91 = ally)** — NOT Mustadio (cid 0x22), who is a
+party member by now. Its identity is unconfirmed, so unlike Mustadio at Zaland it was NOT added to
+GuestCharIds; it stays at lvl 12. Its death is explicitly NOT a Game Over here, so a weak guest is
+non-blocking. PLAYTEST: confirm who it is and, if it's a beneficial ally, add cid 0x16 to GuestCharIds.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -199,18 +208,33 @@ Preserve Mustadio's guest start; do NOT alter his (non-Game-Over) scripting.
 The city should make reaching the Summoners a gauntlet — and the Time Mage's Haste means the
 player has fewer turns to do it. Tempo is the new pressure.
 
+## Implemented (v1, entry 411)
+
+Applied with `python tools/battle_patch.py goug`; diff contained to local entry 27 (global 411),
+70 bytes. The Chapter-2 escalation was a **job SWAP** (s2 Thief → Time Mage), done inline.
+
+```text
+s7  Summoner  L101 jl8  R Reflexes  M +1  Mage Hat / shop Robe / Featherweave + shop Rod
+s8  Summoner  L101 jl8  (same kit)
+s2  Time Mage L101 jl4  R Reflexes  M +1  (same caster kit)  -- Haste/Slow, no hard lock
+s5  Archer    L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s6  Archer    L100 jl8  (same kit)
+s3  Thief     L100 jl8  R First Strike  S Atk-Boost  M +2  Thief's Cap / Black Garb / Germinas + Air Knife
+s9  Thief     L100 jl8  (same kit)  -- Steal Heart innate
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Goug `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 2 Summoner + 2 Archer + 2 Thief + player + Mustadio slots.
-- [ ] Confirm Summoner + Time Mage job IDs; keep summons mid-tier with intact charge times.
-- [ ] Swap one Thief -> Time Mage; constrain it to Haste/Slow (no hard lock).
-- [ ] Set levels: both Summoners + Time Mage + one Archer `101`; second Archer + Thief `100`.
-- [ ] Set JobLevel `8` on all active enemy slots; keep Steal Heart on the one Thief.
-- [ ] Do NOT touch Mustadio's guest scripting; preserve elevation positions.
-- [ ] Patch via the correct layer; keep the diff inside the Goug window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional.
-- [ ] Install mod, test from a New Game+ save; verify Haste speeds the summon race fairly.
+- [x] Identify Goug ENTD entry (411); fill "Local Data Confirmed".
+- [x] Dump original entry; verify Summoners + Archers + Thieves (+ guest, disabled slots).
+- [x] Confirm Summoner + Time Mage job IDs. (Summon-tier control = playtest item, as at Balias Tor.)
+- [x] Swap one Thief -> Time Mage; jl capped to 4 (Haste/Slow, no hard lock).
+- [x] Set levels: both Summoners + Time Mage + one Archer `101`; second Archer + Thieves `100`.
+- [x] Set JobLevel `8` on scaled slots (Time Mage jl4); Steal Heart innate on the Thieves.
+- [x] Guest (cid 0x16) and anomalous lvl-1 thief (s10) left untouched.
+- [x] Patch the embedded ENTD (NG+-only); diff inside entry 411 only.
+- [x] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; verify Haste speeds the race fairly; confirm guest cid 0x16 identity.
 
 ## Test Questions
 
