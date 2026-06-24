@@ -107,7 +107,9 @@ public class Program : IMod
     // run. Affects ONLY the battle swap (shops/map rewards keep their own level-proxy detection).
     // The [battle-id] diagnostic still logs normally, so endgame entries can be captured either way.
     // MUST be false for any real release.
-    private const bool DEBUG_FORCE_NGPLUS = false;
+    // static readonly (not const) on purpose: keeps the compiler from const-folding the `if` branches
+    // into "unreachable code" (CS0162) when this is false. Behaviour is identical to a const toggle.
+    private static readonly bool DEBUG_FORCE_NGPLUS = false;
 
     // --- NG+ SHOPS ---
     // The store inventory is two STATIC in-memory exe tables (parsed by the modloader): which shops
