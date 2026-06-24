@@ -8,7 +8,9 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
-    <OutputPath>$(RELOADEDIIMODS)/fftivc.battles.ngplus</OutputPath>
+    <!-- Local dev: deploy straight into the Reloaded-II Mods folder. On CI (RELOADEDIIMODS unset) fall
+         back to the default bin/ so the build/publish doesn't target an empty path. -->
+    <OutputPath Condition="'$(RELOADEDIIMODS)' != ''">$(RELOADEDIIMODS)/fftivc.battles.ngplus</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
