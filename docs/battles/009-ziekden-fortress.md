@@ -167,24 +167,49 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Argath - Boss (Lv 103)
+### Argath - Boss (Lv 103) — evasive self-healing crossbow sniper
+
+This restores Argath's VANILLA identity: his vanilla slot equips this Knight-job unit with a
+**crossbow** (vanilla `rh=78`) + Auto-Potion — a unit that's hard to hit and heals when struck.
+The first re-tune mistakenly turned him into a melee Knight with Runeblade + Fundaments (no real
+offense, mild Counter, only +3 levels) and he played as a passive, toothless tank. The rework below
+leans all the way into the sniper archetype.
 
 ```text
-Job: Argath / Knight-type (id TBD — preserve the named-unit link)   JobLevel: 8
-Secondary: Fundaments (5) — Squire utility (Yell/Tailwind-style) fits an arrogant noble (NO break)
-Reaction: Damage Split or Counter (id TBD) — punishes the player dogpiling the boss
-Support: Attack Boost (465)
-Movement: Movement +1 (486)
+Job: Knight (76) — UNCHANGED. Keeping the vanilla job preserves the "Defeat Argath!" named-unit
+     link AND the runtime guest-scaler skip (it ignores his slot only because job 76 != charId 7).
+     Off-job gear (crossbow/hat/clothing) is assigned via ENTD — vanilla already does exactly this.
+JobLevel: 8
+Brave: 90        — Mana Shield is Brave-gated, so 90 fires it on ~90% of hits (vanilla was 29)
+Secondary: Aim (8) — Archer's charge-up command (PSX "Charge"): big charged crossbow shots at range
+Reaction: Mana Shield (445) — routes HP damage into MP (PSX "MP Switch")
+Support: Attack Boost (465) — boosts the physical (crossbow) damage; does NOT use the movement slot
+Movement: Move-MP Up (494) — refuels MP each move (WotL "Manafont"); he kites every turn -> tops off
 
-Head: shop heavy helm (e.g. Crystal Helm-tier, id TBD)
-Body: shop heavy armor (e.g. Crystal Mail-tier, id TBD)
-Accessory: Bracers (218) or a defensive accessory (id TBD)
-Right hand: a strong shop sword — Runeblade (30) or Icebrand (29) (NOT a unique blade)
-Left hand: shop shield (e.g. Crystal Shield-tier, id TBD)
+Head: Twist Headband (163)  — PA item (crossbow dmg = PA * WP)
+Body: Power Sleeve / "Power Garb" (195) — PA item
+Accessory: Feather Mantle / "Featherweave" cloak (234) — best buyable cloak: phys+magic evasion
+Right hand: Gastrophetes (82) — best buyable crossbow (WP 10); one-handed, so a shield is legal
+Left hand: Crystal Shield (139) — best buyable shield; high evasion
 ```
 
-Role: the centerpiece. Tanky and confident; the Damage-Split/Counter reaction means the player
-can't simply alpha-strike him down without consequence. Strong but pointedly NOT a superboss.
+Role: the centerpiece, reworked into a frustrating attrition boss. Survival rides on DOUBLE evasion
+(Crystal Shield + Feather Mantle) so most attacks whiff; what lands is routed into MP by Mana Shield,
+and Move-MP Up refills that MP buffer as he kites at crossbow range 4. Offense is real this time:
+max PA (Headband + Power Sleeve + Attack Boost) * a WP-10 crossbow, with Aim landing heavy charged
+shots from afar. Strong and annoying, but pointedly NOT a superboss — and every piece is non-unique
+shop gear.
+
+Trade-offs / playtest watch-items (all approved by design):
+- The accessory is the cloak (evasion), NOT Bracer (+3 PA) — chosen to maximize "hard to hit," so
+  crossbow damage is a touch lower than a Bracer build.
+- Mana Shield's buffer scales with Max MP, and a Knight's MP is low; big single hits will still spill
+  into HP. Move-MP Up only tops off what the small pool can hold. Verify he feels durable-but-killable,
+  not either trivial or unkillable.
+- Off-job: confirm in-game that the Knight-job Argath actually fires the crossbow's ranged Attack and
+  that Aim charges/fires correctly. (Vanilla already equips him a crossbow, so this is expected to work.)
+- We could NOT force the Auto-Potion X-Potion tier via ENTD (engine picks the lowest available potion),
+  which is why the survival package is Mana Shield + Move-MP Up instead of Auto-Potion.
 
 ### Knight (Render) x2 (Lv 102 / 101)
 
