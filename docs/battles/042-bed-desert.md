@@ -7,6 +7,10 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **447** (local entry 63, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py bed_desert`
 
+> **NG++ reward applied (2026-06-27):** the full gun trio - Glacial Gun (s0, kept) + Blaze Gun (s1) +
+> Blaster (s2), thematic to Barich the machinist. Guaranteed Spoils of War (ENTD 0x1e), NG+ only, within
+> the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 Implemented (entry 447, vanilla-dump verified):
 - s0 **Barich** (job 43 Machinist, BOSS, dies → rare pays) — L104/jl8; Tier-A rare = **Glacial Gun (74)**,
   already his equipped weapon (steal-bait = disarm + reward); job/secondary/head/body/acc/win-on-death preserved.

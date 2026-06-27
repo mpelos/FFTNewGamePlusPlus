@@ -7,6 +7,11 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **452** (local entry 68, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py germinas`
 
+> **NG++ reward applied (2026-06-27):** the ninja arsenal - Ninja Gear (s0, Ninja) + Koga Blade (s1, Ninja)
+> + Iga Blade (s2, Thief). The two prior minor spoils (s1 item212, s2 Germinas Boots) were overwritten so
+> the three ninja items are the awarded 3. Guaranteed Spoils of War (ENTD 0x1e), NG+ only, within the
+> 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 Implemented (entry 452, vanilla-dump verified) — slots: s0 Ninja, s1,s2 Thief, s3,s4,s5 Archer:
 - s0 Ninja L103 (apex) + s1 Thief→**Ninja** L102 — dual Ninja Longblades; Thief's Cap/Black Garb/Germinas; First Strike/Atk Boost/Mv+2.
 - s2 Thief L101 — Air Knife; Steal harass; First Strike/Atk Boost/Mv+2.

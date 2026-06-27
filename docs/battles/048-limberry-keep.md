@@ -7,6 +7,10 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **456** (local 72, entd4)
 File: `battle_entd4_ent.bin`
 
+> **NG++ reward applied (2026-06-27):** Chirijiraden (s2) added to Elmdor's katana set, alongside the
+> existing Masamune (s0) + Genji Armor (s1) - the story spike on Elmdor. Guaranteed Spoils of War (ENTD
+> 0x1e), NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 ## Implemented (v1, entry 456)
 
 ```text

@@ -142,6 +142,12 @@ TRIPLE BOSS-TIER (no generics) — three named Templars at once; the escalation 
 
 ## Boss rare loot — TIER-S (first best-of-best)
 
+> **Updated (2026-06-27 rebalance):** Nave now ALSO pays the other two Templar legendaries as battle-wide
+> spoils on Folmarv's death, relocated here from the no-resupply gauntlet so the player owns them before the
+> point of no return: **Escutcheon (Loffrey, s1)** and **Robe of Lords (Cletienne, s2)**. Folmarv still
+> carries **Chaos Blade (s0)**, so the triple-Templar fight hands over all three at once (within the
+> 3-spoils cap). The "retreat = no drop" note below is intentionally bent here. Canonical: `chapter-4-rewards-implementation.md`.
+
 ```text
 FOLMARV TENGILLE → CHAOS BLADE (Tier-S — the dark Knights-Templar blade).
   Steal-or-drop on Folmarv, the NAMED, intended kill target. Thematically the corrupted Templar

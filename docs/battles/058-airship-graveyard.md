@@ -137,6 +137,10 @@ TWO-PHASE + FULL RESTORE — the canonical finale structure; preserved exactly (
 
 ## Boss rare loot — TIER-S CAPSTONE
 
+> **Superseded (2026-06-27 rebalance):** Ragnarok on the FINAL boss is dead loot - it drops after the game
+> ends, so it can never be equipped. Ragnarok now pays on **Zalbaag at Sanctuary (462 s1)**, the last fight
+> before the no-resupply gauntlet; this battle is restored to standard loot. Canonical: `chapter-4-rewards-implementation.md`.
+
 ```text
 ULTIMA → RAGNAROK (Tier-S CAPSTONE — the legendary holy sword; the best-of-best, held for the very end).
   Defeating Ultima's second form ENDS the campaign in victory, so Ragnarok is framed as the CAPSTONE

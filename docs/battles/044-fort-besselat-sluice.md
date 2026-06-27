@@ -7,6 +7,9 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **450** (local entry 66, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py besselat_sluice`
 
+> **NG++ reward applied (2026-06-27):** Kaiser Shield (s2, Knight). Guaranteed Spoils of War (ENTD 0x1e),
+> NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 Implemented (entry 450, vanilla-dump verified) — slots: s0,s1 Archer; s2,s3,s6,s7 Knight; s4,s5 Black Mage:
 - s4 Black Mage L102 — AoE on high ground (priority); Mage Hat/shop Robe/Featherweave/shop Rod.
 - s5 Black Mage→**Time Mage** L102 — Slows the lever-runner; **jl4** (Haste/Slow/Float only); shop Staff.

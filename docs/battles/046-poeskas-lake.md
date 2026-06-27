@@ -7,6 +7,10 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **453** (local 69, entd4)
 File: `battle_entd4_ent.bin`
 
+> **NG++ reward applied (2026-06-27):** Cursed Ring (s0), thematic to the undead battle; the two existing
+> Phoenix Down spoils are kept (also award vs undead). Guaranteed Spoils of War (ENTD 0x1e), NG+ only,
+> within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 ## Implemented (v1, entry 453)
 
 ```text

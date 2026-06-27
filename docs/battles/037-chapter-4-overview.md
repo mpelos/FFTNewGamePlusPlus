@@ -110,6 +110,13 @@ original strategy still holds.
 
 ## NEW rule 2 — Best-in-slot boss loot (the Chapter 4 tier), with the best held for last
 
+> **Superseded for the endgame gauntlet (2026-06-27):** "hold the best for last" does NOT mean inside the
+> 5-battle no-resupply gauntlet (054-058). Rewards placed there can never be equipped (no shop/save between
+> fights), and final-boss loot drops after the game ends. All best-in-game gear is now paid by the end of
+> the **Mullonde chain (051-053)**, the last save before the point of no return. This also bends the carried
+> "retreat/survive = no drop" rule for Loffrey/Cletienne (they pay at Nave via kill-independent spoils).
+> Canonical record: `chapter-4-rewards-implementation.md`.
+
 Chapters 2–3 paid out low- then mid-high rares. Chapter 4 finally unlocks the **reserved best-in-slot
 gear** — but tiered so the campaign's power curve still peaks at the very end.
 

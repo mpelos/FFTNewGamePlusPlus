@@ -7,6 +7,10 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **457** (local 73, entd4)
 File: `battle_entd4_ent.bin`
 
+> **NG++ reward applied (2026-06-27):** Zeus Mace (s2, caster) added alongside the existing Aegis Shield
+> (s1), fitting Zalera the demon caster. Guaranteed Spoils of War (ENTD 0x1e), NG+ only, within the 3-cap,
+> no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 ## Implemented (v1, entry 457)
 
 ```text

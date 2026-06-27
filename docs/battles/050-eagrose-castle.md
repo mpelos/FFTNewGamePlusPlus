@@ -7,6 +7,10 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **459** (local 75, entd4)
 File: `battle_entd4_ent.bin`
 
+> **NG++ reward applied (2026-06-27):** the heavy-armor set - Maximillian (s1, replacing a Phoenix Down) +
+> Grand Helm (s2, kept) + Venetian Shield (s3), fitting Dycedarg/Adramelk's apex defense. Guaranteed Spoils
+> of War (ENTD 0x1e), NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 ## Implemented (v1, entry 459)
 
 ```text

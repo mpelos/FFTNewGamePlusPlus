@@ -117,6 +117,10 @@ WIN-ON-LOFFREY-FALLS — defeating Loffrey ends the fight; the casters are optio
 
 ## Boss rare loot — TIER-S (ledger reassigned thematically)
 
+> **Superseded (2026-06-27 rebalance):** the no-resupply gauntlet drops nothing usable. Escutcheon now pays
+> at Loffrey's FIRST appearance at **Nave (461 s1)**, before the point of no return; this battle is restored
+> to standard loot (Loffrey back to his vanilla Crystal Shield, no spoil). Canonical: `chapter-4-rewards-implementation.md`.
+
 ```text
 LOFFREY WODRING → ESCUTCHEON (Tier-S — the best shield; auto-Protect/Shell-tier guard).
   Steal-or-drop on Loffrey, who DIES as the win condition (guaranteed on a focus kill). THEMATIC: the

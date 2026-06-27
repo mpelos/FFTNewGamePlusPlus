@@ -138,6 +138,24 @@ public class Program : IMod
     // into "unreachable code" (CS0162) when this is false. Behaviour is identical to a const toggle.
     private static readonly bool DEBUG_FORCE_NGPLUS = false;
 
+    // --- SPOILS-OF-WAR PROBE (DEBUG, observe-only) ---
+    // The post-battle "Spoils of War" reward is assembled by engine code: offline RE found NO static
+    // (gil,item,item) reward table, and gil has no static xref (it lives at a dynamic-base offset, only
+    // stable because the allocation is). So we find WHERE the granted items land and WHICH items they
+    // are the GenericChronicle way: a background thread snapshots the persistent game-state region and
+    // logs every byte the victory tally changes. The gil global (a known stable address) changing is the
+    // event marker, so each capture is a clean before/after DIFF (gil delta + the item-count writes),
+    // not frame noise. Pure read + log to spoilsprobe_log.txt next to the exe; never touches gameplay.
+    // MUST be false for any release (like DEBUG_FORCE_NGPLUS).
+    private static readonly bool DEBUG_SPOILS_PROBE = false;
+    private const long PROBE_REGION_RVA = 0xD30000;  // brackets gil(0xD40110) + storyProgress(0xD4021C)
+    private const int  PROBE_REGION_LEN = 0x40000;   // 256 KB window of the persistent game-state block
+    private const long PROBE_GIL_RVA    = 0xD40110;  // u32 gil; its change is the spoils/gil event marker
+    private const int  PROBE_POLL_MS    = 40;
+    private const int  PROBE_WINDOW_MS  = 2500;      // keep the event open this long after the last gil tick
+    private const int  PROBE_MAX_DIFF   = 8192;      // cap changed-byte records so a noisy region can't flood
+    private const int  PROBE_BIG_EVENT  = 1000;      // > this many net changes = save load/shop -> suppress body
+
     // --- NG+ SHOPS ---
     // The store inventory is two STATIC in-memory exe tables (parsed by the modloader): which shops
     // sell each item (ITEM_SHOPS_DATA), and each item's ShopAvailability (ITEM_COMMON_DATA) = the
@@ -359,6 +377,12 @@ public class Program : IMod
             _mapTableBase = baseAddr + result.Offset - MAP_SIG_ANCHOR_BYTE_OFFSET - MAP_SIG_ANCHOR_MAPID * MAP_ENTRY_SIZE;
             Log($"Found MAP_TRAP_FORMATION_DATA table @ 0x{_mapTableBase:X} -> NG+ map rewards enabled.");
         });
+
+        if (DEBUG_SPOILS_PROBE)
+        {
+            Log("[spoils-probe] DEBUG observe-only memory-diff probe ENABLED -> spoilsprobe_log.txt (set DEBUG_SPOILS_PROBE=false for release).");
+            new System.Threading.Thread(SpoilsProbeLoop) { IsBackground = true, Name = "ngplus-spoils-probe" }.Start();
+        }
     }
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
@@ -693,6 +717,141 @@ public class Program : IMod
     }
 
     private void Log(string msg) => _logger.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [{_modConfig.ModId}] {msg}");
+
+    // ---- SPOILS PROBE IMPLEMENTATION (DEBUG, observe-only) ----
+
+    [DllImport("kernel32.dll")]
+    private static extern nuint VirtualQuery(nint lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, nuint dwLength);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MEMORY_BASIC_INFORMATION
+    {
+        public nint BaseAddress;
+        public nint AllocationBase;
+        public uint AllocationProtect;
+        public ushort PartitionId;
+        public nuint RegionSize;
+        public uint State;
+        public uint Protect;
+        public uint Type;
+    }
+
+    /// <summary>Committed+readable byte count starting at <paramref name="start"/>, capped at <paramref name="max"/>.</summary>
+    private static int ReadableExtent(nint start, int max)
+    {
+        const uint MEM_COMMIT = 0x1000, PAGE_NOACCESS = 0x01, PAGE_GUARD = 0x100;
+        int ok = 0;
+        while (ok < max)
+        {
+            if (VirtualQuery(start + ok, out var mbi, (nuint)Marshal.SizeOf<MEMORY_BASIC_INFORMATION>()) == 0) break;
+            if (mbi.State != MEM_COMMIT || (mbi.Protect & PAGE_NOACCESS) != 0 || (mbi.Protect & PAGE_GUARD) != 0) break;
+            long regionEnd = (long)mbi.BaseAddress + (long)(ulong)mbi.RegionSize;
+            int span = (int)Math.Min(regionEnd - (long)(start + ok), (long)(max - ok));
+            if (span <= 0) break;
+            ok += span;
+        }
+        return ok;
+    }
+
+    /// <summary>
+    /// Observe-only probe: snapshot the persistent game-state region every PROBE_POLL_MS and, whenever the
+    /// gil global changes (the spoils/gil tally), log the net before/after DIFF so we can see which inventory
+    /// bytes the reward wrote. Reads and logs only; never mutates game memory.
+    /// </summary>
+    private void SpoilsProbeLoop()
+    {
+        try
+        {
+            string dir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule!.FileName!)!;
+            string logPath = Path.Combine(dir, "spoilsprobe_log.txt");
+            using var sw = new StreamWriter(logPath, append: false) { AutoFlush = true };
+            void P(string s) => sw.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {s}");
+
+            nint regionAddr = _moduleBase + (nint)PROBE_REGION_RVA;
+            int len = ReadableExtent(regionAddr, PROBE_REGION_LEN);
+            int gilOff = (int)(PROBE_GIL_RVA - PROBE_REGION_RVA);
+            P($"[SPOILS-PROBE] region=module+0x{PROBE_REGION_RVA:X} readableLen=0x{len:X} gilOff=0x{gilOff:X} poll={PROBE_POLL_MS}ms window={PROBE_WINDOW_MS}ms");
+            if (len < gilOff + 4) { P("[SPOILS-PROBE] gil offset is outside the readable region; widen PROBE_REGION_*. Abort."); return; }
+
+            byte[] prev = new byte[len], cur = new byte[len], baseline = new byte[len];
+            Marshal.Copy(regionAddr, prev, 0, len);
+            Array.Copy(prev, baseline, len);
+            uint ReadGil(byte[] buf) => BitConverter.ToUInt32(buf, gilOff);
+            uint gilPrev = ReadGil(prev);
+            P($"[SPOILS-PROBE] initial gil={gilPrev}");
+
+            bool inEvent = false;
+            DateTime eventEnd = DateTime.MinValue, lastBeat = DateTime.Now;
+
+            while (true)
+            {
+                System.Threading.Thread.Sleep(PROBE_POLL_MS);
+                try { Marshal.Copy(regionAddr, cur, 0, len); } catch { continue; }
+                uint gilNow = ReadGil(cur);
+                bool gilChanged = gilNow != gilPrev;
+
+                if (!inEvent)
+                {
+                    if (gilChanged)
+                    {
+                        inEvent = true;
+                        Array.Copy(prev, baseline, len); // pre-event snapshot (one tick before the change)
+                        eventEnd = DateTime.Now.AddMilliseconds(PROBE_WINDOW_MS);
+                        P($"[SPOILS-EVENT-START] gilOld={gilPrev} gilNew={gilNow} delta={(long)gilNow - gilPrev}");
+                    }
+                    else if ((DateTime.Now - lastBeat).TotalSeconds >= 5)
+                    {
+                        lastBeat = DateTime.Now;
+                        P($"[SPOILS-HEARTBEAT] gil={gilNow}");
+                        Array.Copy(cur, baseline, len); // keep the idle baseline fresh
+                    }
+                }
+                else
+                {
+                    if (gilChanged) eventEnd = DateTime.Now.AddMilliseconds(PROBE_WINDOW_MS);
+                    if (DateTime.Now >= eventEnd)
+                    {
+                        P($"[SPOILS-EVENT-END] gilBaseline={ReadGil(baseline)} gilFinal={gilNow} gilDelta={(long)gilNow - ReadGil(baseline)}");
+                        LogDiff(P, baseline, cur, len);
+                        inEvent = false;
+                        lastBeat = DateTime.Now;
+                    }
+                }
+
+                (prev, cur) = (cur, prev); // swap; prev now holds this tick's snapshot
+                gilPrev = gilNow;
+            }
+        }
+        catch (Exception ex)
+        {
+            try { _logger.WriteLine($"[spoils-probe] error: {ex.Message}"); } catch { }
+        }
+    }
+
+    /// <summary>Log every byte that differs between two region snapshots (the net change across an event).
+    /// A single battle reward changes only a handful of bytes; a save-load or shop spree changes thousands,
+    /// so suppress the body of mass-change events to keep the real reward event readable.</summary>
+    private static void LogDiff(Action<string> P, byte[] a, byte[] b, int len)
+    {
+        int total = 0;
+        for (int i = 0; i < len; i++) if (a[i] != b[i]) total++;
+        if (total == 0) { P("[SPOILS-SUMMARY] no net change"); return; }
+        if (total > PROBE_BIG_EVENT)
+        {
+            P($"[SPOILS-SUMMARY-BIG changed={total}] likely a save load or shop spree -> body suppressed (not a single battle reward)");
+            return;
+        }
+        var sb = new System.Text.StringBuilder();
+        int n = 0;
+        for (int i = 0; i < len; i++)
+        {
+            if (a[i] == b[i]) continue;
+            long rva = PROBE_REGION_RVA + i;
+            sb.Append($" +0x{i:X}(rva0x{rva:X}):{a[i]:X2}->{b[i]:X2}");
+            if (++n >= PROBE_MAX_DIFF) { sb.Append(" ...TRUNCATED"); break; }
+        }
+        P($"[SPOILS-SUMMARY changed={n}]{sb}");
+    }
 
     public void Suspend() { }
     public void Resume() { }

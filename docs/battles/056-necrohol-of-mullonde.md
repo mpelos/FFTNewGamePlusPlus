@@ -117,6 +117,10 @@ WIN-ON-CLETIENNE-FALLS — defeating Cletienne ends the fight; the screen is opt
 
 ## Boss rare loot — TIER-S
 
+> **Superseded (2026-06-27 rebalance):** the no-resupply gauntlet drops nothing usable. Robe of Lords now
+> pays at Cletienne's FIRST appearance at **Nave (461 s2)**; this battle is restored to standard loot
+> (Cletienne back to his vanilla Black Garb, no spoil). Canonical: `chapter-4-rewards-implementation.md`.
+
 ```text
 CLETIENNE DUROI → ROBE OF LORDS (Tier-S — the best caster robe: top magic defense + stat bonuses).
   Steal-or-drop on Cletienne, who DIES as the win condition (guaranteed on a focus kill). THEMATIC: the

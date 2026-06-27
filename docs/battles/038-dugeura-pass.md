@@ -7,6 +7,9 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **442** (local entry 58, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py dugeura`
 
+> **NG++ reward applied (2026-06-27):** Rod of Faith (s1, Black Mage). Guaranteed Spoils of War (ENTD
+> 0x1e), NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 Implemented composition (entry 442, vanilla-dump verified) — roster matched [76,77,80,80,87,87]:
 - s0 Knight L101 — Heavy Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Counter/Atk Boost/Mv+1.
 - s1,s3 Black Mage L102 — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1 (AoE priority).

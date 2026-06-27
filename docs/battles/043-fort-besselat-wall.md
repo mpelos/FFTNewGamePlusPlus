@@ -5,6 +5,10 @@ Chapter: 4 — "In the Name of Love"
 Battle order: Battle 38 (A = South Wall / B = North Wall — the player picks ONE)
 Target version: Enhanced v1.5.0
 ENTD: global entries **448** (South) / **449** (North) — `battle_entd4_ent.bin` (local 64/65)
+
+> **NG++ reward applied (2026-06-27):** Yoichi Bow + Perseus Bow on the Archer slots of BOTH path entries
+> (448 s3/s4, 449 s0/s3), so either route awards them. Guaranteed Spoils of War (ENTD 0x1e), NG+ only,
+> within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py besselat_wall`
 
 Implemented (both entries, vanilla-dump verified):

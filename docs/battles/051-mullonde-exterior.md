@@ -7,6 +7,10 @@ Target version: Enhanced v1.5.0
 ENTD: global entry **460** (local 76, entd4)
 File: `battle_entd4_ent.bin`
 
+> **NG++ reward applied (2026-06-27):** the caster set - Staff of the Magi (s0) + Faerie Harp (s2), fitting
+> the Mullonde caster screen (the existing Hi-Ether spoil is kept). Guaranteed Spoils of War (ENTD 0x1e),
+> NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+
 ## Implemented (v1, entry 460)
 
 ```text

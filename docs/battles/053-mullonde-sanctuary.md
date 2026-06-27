@@ -144,6 +144,10 @@ WIN-ON-ZALBAAG-FALLS — defeating Zalbaag ends the fight; the demons are option
 
 ## Boss rare loot — TIER-S
 
+> **Updated (2026-06-27 rebalance):** Zalbaag now ALSO drops **Ragnarok (s1)**, relocated here from the
+> Ultima fight so the player holds the best sword before the no-resupply gauntlet. Ribbon (s2) unchanged;
+> the Elixir spoil moves to s3. Canonical: `chapter-4-rewards-implementation.md`.
+
 ```text
 ZALBAAG BEOULVE → RIBBON (Tier-S — the ultimate accessory: all-status immunity).
   Steal-or-drop on Zalbaag, who DIES as the win condition (guaranteed obtainable on a focus kill).

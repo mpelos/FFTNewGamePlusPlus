@@ -127,6 +127,10 @@ WIN-ON-BARICH-FALLS — defeating Barich ends the fight; the monsters are option
 
 ## Boss rare loot — TIER-S (the enshrined relic)
 
+> **Superseded (2026-06-27 rebalance):** the no-resupply gauntlet drops nothing usable. Materia Blade is
+> removed from this battle entirely and NOT relocated - it stays a side-quest / Move-Find map-54 pickup
+> ("easy to get", per the user). This battle is restored to standard loot. Canonical: `chapter-4-rewards-implementation.md`.
+
 ```text
 LOST HALIDOM RELIC → MATERIA BLADE (Tier-S — the sacred blade enshrined at the holy ground; enables
   sword-skill / advanced abilities on its wielder).
