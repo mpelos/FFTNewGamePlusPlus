@@ -77,7 +77,34 @@ public class Program : IMod
     // 0x19=Rapha (Chapter 3 — the protected NPC guest at Yardow; LOSE-on-death, so she must keep pace
     // with the party or she's one-shot and the fight is unwinnable. She already carries evasion gear
     // (White Robe + Elven Cloak), so level-scaling alone suffices. job==charId guard holds: sprite/job both 25).
-    private static readonly HashSet<byte> GuestCharIds = new() { 0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19 };
+    // --- Chapter 2 opener guests: Gaffgarion + Agrias join as guests right after Ch1 and were stuck at
+    // their vanilla low/default levels. They use SEPARATE charIds for their guest form vs their later
+    // boss form, which is exactly what makes this safe:
+    // 0x24=Gaffgarion (guest/employer form — the Merchant City of Dorter opener and his early-Ch2 escort
+    // appearances; job==charId guard holds: job 0x24). His tuned ENEMY/BOSS fights use DIFFERENT cids
+    // (0x05 Zeirchele betrayer, 0x11 Golgollada/Lionel) which are deliberately NOT in this set, so those
+    // stay at their designed ~L103 — per the "keep the bosses strong" decision.
+    // 0x34 and 0x17=Agrias's escort-guest cids in early Chapter 2 (she also uses 0x1e, already handled
+    // above, for her Balias Swale join). 0x17 is a shared/ambiguous guest cid for the Gaffgarion/Agrias
+    // escort party; scaling it is desired whichever it is. Agrias is never a tuned boss, so no boss-cid
+    // collision. (Any incidental enemy form of 0x24/0x34/0x17 the guard catches is untuned and merely
+    // gets pulled to party level = our standard "NG+ enemies at party level" behaviour, never weaker.)
+    // --- Whole-game guest sweep (Ch2-Ch4 stragglers). Derived by scanning every ENTD slot: a cid is
+    // SAFE to add iff it has a guest form (named, job==charId, ally) AND NONE of its enemy appearances
+    // are real combatants (all at level 254 = disabled cutscene actor). That rule, applied across all 4
+    // ENTD files, auto-EXCLUDES every tuned boss (Wiegraf, Elmdor, the 5 Lucavi, Dycedarg, Zalbag,
+    // Marach 0x1A, Gaffgarion-boss 0x11, etc.) because bosses always carry real combat levels. Crucially,
+    // recruitable characters use SEPARATE cids for their guest vs boss/enemy form, so we scale the guest
+    // and leave the boss untouched: Meliadoul guest 0x2A vs boss 0x2F; Reis (human) guest 0x48 vs her
+    // dragon boss 0x0F. Safety here does NOT depend on the names being exact — it depends on the verified
+    // fact that these cids never appear as a real-level enemy, so scaling them can only help a guest.
+    // 0x0C=Ovelia (protected VIP — survives escorts), 0x0D=Orlandeau, 0x16=the Goug ally guest (the
+    // doc's "not Mustadio" guest), 0x1F=Beowulf, 0x2A=Meliadoul, 0x32=Cloud, 0x48=Reis.
+    private static readonly HashSet<byte> GuestCharIds = new()
+    {
+        0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19, 0x24, 0x34, 0x17,
+        0x0c, 0x0d, 0x16, 0x1f, 0x2a, 0x32, 0x48,
+    };
 
     // fftpack index -> modded ENTD bytes (embedded). Only populated for files we actually ship a
     // modded version of; an index with no entry passes through vanilla even in NG+.
