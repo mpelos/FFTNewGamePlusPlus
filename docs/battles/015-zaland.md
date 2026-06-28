@@ -1,6 +1,6 @@
 # 015 - Castled City of Zaland
 
-Status: ✅ implemented (v1, entry 407) — Knight→Dragoon escalation done inline; Mustadio auto-scaled
+Status: ✅ implemented (v1, entry 407) — Knight→Dragoon escalation done inline; Mustadio auto-scaled + endgame gear (2026-06-27)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 14 (after Zeirchele Falls)
 Target version: Enhanced v1.5.0
@@ -10,6 +10,11 @@ File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod
 > Implemented via `tools/battle_patch.py zaland`, plus a Program.cs change adding Mustadio (cid
 > 0x22) to the runtime guest-scaler. NG+-only enemy edits; the guest-scaler runs always. See
 > `011-chapter-2-overview.md`.
+
+**Guest gear upgrade (NG+ survivability, 2026-06-27):** Mustadio (s0) re-equipped to the best buyable
+end-game gear in his ENTD slot (he was Ch2-tier): **Thief's Cap 168** (HP +100, +2 Spd, immune
+Disable/Immobilize), **Black Garb 198** (HP +100, immune Stop), **Hermes Shoes 213**, **Mythril Gun 72**.
+Level still comes from the runtime guest-scaler.
 
 ## Original Battle
 

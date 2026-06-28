@@ -1,6 +1,6 @@
 # 019 - Balias Swale (Bariaus Valley)
 
-Status: ✅ implemented (v1, entry 413) — Geomancer add deferred; Agrias auto-scaled
+Status: ✅ implemented (v1, entry 413); Geomancer add deferred; Agrias scaled + equipped for survival (2026-06-27)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 18 (after Goug Lowtown)
 Target version: Enhanced v1.5.0
@@ -62,7 +62,7 @@ whole fight.**
 
 ```text
 slot  cid    flags  job        role                       action
-s0    0x1e   0x50   30 (==cid) Agrias (Save-Agrias VIP)   AUTO-SCALED (GuestCharIds, not here)
+s0    0x1e   0x50   30 (==cid) Agrias (Save-Agrias VIP)   SCALE L100 + equip survival/offense kit
 s1    0x80   0x80   76 Knight  frontline body             SCALE -> L101
 s2    0x81   0x40   77 Archer  far-end ranged             SCALE -> L101
 s3    0x81   0x40   77 Archer  far-end ranged             SCALE -> L100
@@ -75,13 +75,32 @@ Job IDs: Knight 76, Archer 77, Black Mage 80, Agrias's Holy-Knight job 30. (TIC 
 walkthrough's 1.) The Knights run job 76 at jl8, so they carry Battle Skill (Rend) innately — a minor
 extra over this doc's "no break" preference, not suppressible without changing the job; non-blocking.
 
-### Agrias (VIP) — auto-scaled, not patched here
+### Agrias (VIP): scaled + equipped (playtest fix, 2026-06-27)
 
-Agrias (**cid 0x1e, job 30 == cid**) is the "Save Agrias!" objective unit — isolated, outnumbered,
-and her death FAILS the battle; she joins permanently right after. She was added to `GuestCharIds`
-in Program.cs, so the runtime guest-scaler keeps her at party level (job==cid guarded) and the
-rescue is viable in NG+. Her slot is not touched here, only auto-scaled at read time. The RAIN flag
-and split-team zones are map/terrain data (not in the ENTD slots), so they are untouched.
+Agrias (**cid 0x1e, job 30 == cid**) is the "Save Agrias!" objective unit: isolated, outnumbered,
+and her death FAILS the battle. She is in `GuestCharIds`, so the runtime guest-scaler already keeps
+her at party level; here her ENTD level byte is ALSO set to 100 (party level) so the scaling is
+explicit in the modded data (the scaler then no-ops on it).
+
+**Player report:** at NG+ party level she "dies way too easy"; enemies not killed before their turn
+focus Agrias and kill her. **Root cause:** scaled level but Ch2-tier gear (Golden Helm/Armor, Mythril
+Shield, Coral Sword) on an outnumbered VIP. **Fix:** equip an endgame, job-legal Holy-Knight kit
+(job 30 equips Helmet/Armor/Shield/KnightSword plus Armguard/Cloak/etc.). Only the level and the 5
+gear bytes changed; job, cid, flags, and scripting are untouched. NG+-only (modded ENTD swap).
+
+- Weapon: **Save the Queen (34)**, Power 18, +30 evasion, her signature blade (user-requested)
+- Head: **Crystal Helm (154)**, +120 HP. Body: **Crystal Mail (182)**, +110 HP (no magic-reflect, so she stays healable)
+- Shield: **Crystal Shield (139)**, 40% phys / 15% magic evasion
+- Accessory: **Bracers (218, Armguard)**, +3 PA (user-requested; she hits harder and clears her own attackers)
+
+Net at party level: stacked physical evasion (25% class + 40% shield + 30% weapon) so she dodges most
+of the melee focus, plus ~230 bonus HP (HPMult 140 job) and Save the Queen offense boosted by Bracers.
+She trades a cloak's magic evasion for PA, so her magic dodge is the shield's 15% only, offset by her
+high HP vs the rain-Thunder. Reserved player rewards (Maximillian/Grand Helm/Genji/Escutcheon) were
+avoided; Save the Queen is the user-chosen exception (it is also the Bervenia spoil 443, with no economy
+conflict since this 413 slot is the battle-only guest instance).
+
+The RAIN flag and split-team zones are map/terrain data (not in the ENTD slots), so they are untouched.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -221,10 +240,11 @@ job), which needs a verified map position; batched for the playtest pass.
 - [ ] Add the Geomancer slot (deferred — needs a verified map position; do during playtest).
 - [x] Set levels: Knights `101`/`100`; Archers `101`/`100`; both Black Mages `101`.
 - [x] Set JobLevel `8` on all scaled slots; Black Mages lean on Thunder (rain-amplified).
-- [x] Agrias auto-scaled via GuestCharIds (cid 0x1e); slot/scripting and RAIN/split terrain untouched.
+- [x] Agrias scaled (level 100 explicit + GuestCharIds) and equipped for survival/offense (Save the Queen + Crystal Helm/Mail/Shield + Bracers PA+3); scripting and RAIN/split terrain untouched.
 - [x] Patch the embedded ENTD (NG+-only); diff inside entry 413 only.
 - [x] Re-dump and diff; changes small and intentional.
-- [ ] Playtest from a NG+ save; confirm Save-Agrias + split work; verify Agrias scales.
+- [ ] Playtest from a NG+ save; confirm Save-Agrias + split work; verify Agrias scales and survives the focus.
+- [ ] Confirm whether her equipped gear carries over when she joins (Save the Queen overlaps the Bervenia 443 spoil).
 
 ## Test Questions
 

@@ -1,6 +1,6 @@
 # 026 - Lesalia Castle Postern (Lesalia Imperial Capital — Postern Gate)
 
-Status: ✅ implemented (v1, entry 420) — NG+ only; pending playtest
+Status: ✅ implemented (v1, entry 420) — NG+ only; Alma partial endgame gear 2026-06-27; pending playtest
 Chapter: 3 — "The Valiant"
 Battle order: Battle 23 (after Mining Town of Gollund)
 Target version: Enhanced v1.5.0
@@ -10,6 +10,12 @@ File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
 > See `024-chapter-3-overview.md`.
+
+**Guest gear upgrade (NG+ survivability, 2026-06-27):** Alma (s0) — **body Black Garb 198** (HP 42→100)
+and **weapon Golden Staff 64** upgraded to best buyable. **Head Barrette 170 KEPT** (no buyable
+HairAdornment exists — all are reserved; Barrette already grants KO/Stone/Stop/Charm immunity, better
+for survival than any buyable Hat) and **accessory Red Shoes 214 KEPT** (already the best buyable shoe).
+Level from the scaler.
 
 ## Original Battle
 

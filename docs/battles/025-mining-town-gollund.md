@@ -1,6 +1,6 @@
 # 025 - Mining Town of Gollund (Goland Coal City)
 
-Status: ✅ implemented (v1, entry 417) — NG+ only; pending playtest
+Status: ✅ implemented (v1, entry 417) — NG+ only; Orran given endgame gear 2026-06-27; pending playtest
 Chapter: 3 — "The Valiant"
 Battle order: Battle 22 (Chapter 3 opener)
 Target version: Enhanced v1.5.0
@@ -10,6 +10,11 @@ File: embedded `battle_entd4_ent.bin` via `tools/battle_patch.py gollund`. Orran
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
 > See `024-chapter-3-overview.md`.
+
+**Guest gear upgrade (NG+ survivability, 2026-06-27):** Orran (s0) re-equipped to the best buyable
+end-game gear (was Ch3-tier): **Thief's Cap 168** (HP +100), **Black Garb 198** (HP +100),
+**Featherweave Cloak 234** (40/30 evasion — user-requested cloak override so the fail-on-death VIP
+survives focus fire), **Papyrus Codex 97**. Level from the runtime scaler.
 
 ## Original Battle
 

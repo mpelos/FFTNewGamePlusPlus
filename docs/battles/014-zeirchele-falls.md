@@ -1,6 +1,6 @@
 # 014 - Zeirchele Falls (Zirekile Falls)
 
-Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline
+Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline; Ovelia equipped for survival (2026-06-27)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 13 (after Araguay Woods)
 Target version: Enhanced v1.5.0
@@ -65,7 +65,7 @@ the strip-his-gear counter, and lean on Agrias.**
 ```text
 slot  cid    name  flags  job        role                          action
 s0    0x05   5     0x80   5          Gaffgarion (betrayer, ENEMY)  SCALE -> L103 (job/sec kept)
-s1    0x0c   12    0x51   12         Ovelia (VIP ally, lv5)        LEAVE
+s1    0x0c   12    0x51   12         Ovelia (VIP ally)            EQUIP survival kit; lvl via scaler->100
 s2    0x80   255   0x80   76 Knight  reinforcement (lvl 254)       LEAVE (spawn scripting)
 s3    0x80   255   0x80   76 Knight  reinforcement (lvl 254)       LEAVE (spawn scripting)
 s4    0x80   255   0x80   76 Knight  escort wall (lead)            SCALE -> L101
@@ -86,6 +86,29 @@ level/gear) stay intact. His Runeblade is non-unique and STRIPPABLE — the cano
 PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit), and decide whether the
 lvl-254 reinforcement Knights (s2/s3) should be scaled too (left untouched to avoid disturbing their
 spawn scripting).
+
+### Ovelia survivability (playtest fix, 2026-06-27)
+
+**Player report:** at NG+ party level, Ovelia "is dying with one hit of anything" on the Save-Ovelia
+path, making it near-unwinnable. **Root cause:** her level IS auto-scaled to party level (the runtime
+guest-scaler hits her because job 12 == charId 0x0c), but her slot was left **gear-light** (Wizard's
+Hat / Wizard's Robe / no accessory / White Staff), so a party-level princess with paper gear gets
+one-shot. The level was never the problem; the gear was.
+
+**Fix applied:** equip Ovelia with an endgame, job-legal survival kit. Job 12 (Princess) equips
+Hat/HairAdornment, Robe/Clothing, Cloak (+ Ring/Armlet/Shoes/etc.), and Staff. Only the 4 gear bytes
+(0x12-0x15) changed; her level (left to the scaler), job, flags, and ability/scripting bytes are
+untouched. NG+-only by construction (modded ENTD swap).
+
+- Head: **Ribbon (171)** - +10 HP, immunity to nearly every status (her identity; no Charm/Stop/Sleep/Disable lockout)
+- Body: **Luminous Robe (206)** - +75 HP / +50 MP (best non-reserved robe; Lordly Robe 207 is the Cletienne reward)
+- Accessory: **Featherweave Cloak (234)** - 40% physical + 30% magical evasion (filled her empty slot; the main survival lever)
+- Weapon: **Golden Staff (64)** - Power 6, +15 evasion, MA for her defensive casting
+
+Net at party level: high evasion (innate 20% class + cloak 40% + staff 15%) + 85 bonus HP + near-total
+status immunity, so she dodges most hits, survives those that land, and can't be locked down. Still
+protectable (not invincible), so the escort stays tense. Same approach as the guest-survivability rule:
+party-level scaling alone is not enough; a must-survive guest needs evasion + job-legal gear.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -225,7 +248,8 @@ s8  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black
 - [x] Swap one Knight -> Archer (re-job s8); Archer build applied.
 - [x] Set levels: Gaffgarion `103`; lead Knights + Archer `101`; other two Knights `100`.
 - [x] Set JobLevel `8` on all scaled enemy slots; Knights have no secondary.
-- [x] Do NOT touch Ovelia/Agrias/reinforcement/story slots.
+- [x] Do NOT touch Agrias/reinforcement/story slots.
+- [x] Equip Ovelia for survival (playtest fix): endgame job-legal kit; level left to the scaler. See "Ovelia survivability".
 - [x] Patch the embedded ENTD (NG+-only); diff inside entry 405 only.
 - [x] Re-dump and diff; changes small and intentional; named links intact.
 - [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; decide on s2/s3.

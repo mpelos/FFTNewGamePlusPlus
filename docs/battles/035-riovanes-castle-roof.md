@@ -10,7 +10,8 @@ File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py riov
 Implemented composition (entry 433, vanilla-dump verified) — LEVEL-ONLY (race fight, all flee):
 - s0 **Rapha** (job 41 Skyseer — PROTECTED GUEST, control `00 84`): L100 via **direct ENTD level**
   (NOT the runtime scaler — her sprite 41 collides with the enemy clone s1, so a direct edit touches
-  only her slot). Evasion gear (Elven Cloak/White Robe) preserved → survives the race.
+  only her slot). 2026-06-27: gear upgraded to best buyable end-game (Thief's Cap 168 / Luminous Robe 206 /
+  Featherweave Cloak 234 / Eight-fluted Pole 113 — identical kit as Yardow 428) → survives the race.
 - s3 **Elmdor** (job 27 Ark Knight) L104 — level only; flees, no loot.
 - s4 **Celia** (job 45 Assassin) L103 — level only; flees, no loot.
 - s5 **Lettie** (job 46 Assassin) L103 — level only; flees, no loot.

@@ -1,6 +1,6 @@
 # 013 - Araguay Woods
 
-Status: ✅ implemented (v1, entry 404) — Red Panther add + Boco scaling deferred (see below)
+Status: ✅ implemented (v1, entry 404); Boco scaled to party level (2026-06-27, playtest-confirmed); Red Panther add still deferred (see below)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 12 (after Merchant City of Dorter)
 Target version: Enhanced v1.5.0
@@ -60,7 +60,7 @@ easy kiting, and Boco's safety is the real objective.**
 
 ```text
 slot  cid    name  flags  job             role                       action
-s0    0x82   118   0x30   94 Chocobo      Boco — rescuable ally      LEAVE (see Boco note)
+s0    0x82   118   0x30   94 Chocobo      Boco — rescuable ally      SCALE -> 100 (party level)
 s1    0x82   255   0x20   98 Gobbledeguck Black-Goblin-tier melee    SCALE -> L101
 s2    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
 s3    0x82   255   0x20   97 Goblin       swarm body                 SCALE -> L100
@@ -76,15 +76,22 @@ Weald / Mandalia). All-monster fight — Level + JobLevel are the only levers (n
 exactly like Ch1 Siedge Weald. Boco is distinguished by name_id 118 + flags 0x30 (the goblins are
 flags 0x20).
 
-### Boco note (playtest item #1)
+### Boco note (playtest item #1) — RESOLVED 2026-06-27
 
-Boco sits at **lvl 10**. Against an NG+ party (~99) the goblins are now lvl 100–101, so a lvl-10
-Boco would very likely die on turn 1 — making the OPTIONAL **"Save Chocobo!"** path non-viable. The
-mandatory **"Defeat all enemies!"** path is unaffected, so the battle is still completable. The doc
-says do not touch Boco's slot/scripting, and Boco's exact team/scripting behavior (flags 0x30) needs
-in-game observation, so Boco is **intentionally left at lvl 10 for now**. The probable fix —
-scaling Boco to party level (100) for this entry only — is held until the playtest confirms how
-Boco's team and Game-Over scripting respond. **Do this check first when playtesting Araguay.**
+**Playtest confirmed the bug.** Player report: "Boco still comes LV10... I'm LV65 so the Goblins
+hit-kill Boco", which made the optional **"Save Chocobo!"** path impossible (he was gibbed before the
+player could intercept). The mandatory **"Defeat all enemies!"** path was unaffected.
+
+**Fix applied:** Boco's level byte (s0, offset 0x03) set from 10 to **100 (= party level)** in the
+modded ENTD, the same dynamic-level lever the goblins use (100 = party, 101 = party+1). Boco now
+matches the party and the swarm exactly as he did in vanilla, where he sat at roughly goblin level.
+NG+-only by construction (whole-file swap). Only the level byte changed; his job (94 Chocobo), flags
+(0x30), name_id, and ability bytes are untouched, so his team and Game-Over scripting are unaffected.
+
+**Why not the runtime guest-scaler:** Boco's charId is **0x82**, a *generic* monster id shared with
+all the goblins, and his job (94) is not equal to his charId, so the `ScaleGuestsAlways` `job == charId`
+guard in Program.cs can never target him without also hitting the goblins. A monster guest like Boco
+must be scaled by a **direct ENTD level edit**, not the runtime charId scaler.
 
 ## Job Escalation (Chapter 2 rule)
 
@@ -157,7 +164,12 @@ it's a manageable swarm. The woods plus a spread pack keep the player from trivi
 
 Applied with `python tools/battle_patch.py araguay`; diff contained to local entry 20 (global 404),
 12 bytes. Black-Goblin tier (s1) → L101; five Goblins (s2–s6) → L100; JobLevel 8 on all six.
-Boco (s0) and the story units (s7/s8) untouched.
+Story units (s7/s8) untouched.
+
+**Boco level fix (2026-06-27):** Boco (s0) level byte set 10 -> 100 (party level) via a direct 1-byte
+ENTD edit straight into the tracked `.bin` (battle_patch.py is no longer present locally; the embedded
+`.bin` is now the source of truth). Verified surgical (only offset 0x03 changed) and confirmed in the
+deployed DLL.
 
 **Deferred — Red Panther escalation (slot-add):** the doc's single wrinkle adds a 7th monster (a
 fast poison beast with a lane to Boco). That requires inserting a unit at a verified map position,
@@ -173,7 +185,8 @@ batched for the playtest pass (same policy as the Merchant Dorter Knight add).
 - [x] Set JobLevel `8` on all scaled monsters; no equipment.
 - [x] Patch the embedded ENTD (NG+-only by construction); diff inside entry 404 only.
 - [x] Re-dump and diff; confirm changes are small and intentional; Boco slot untouched.
-- [ ] Playtest BOTH objectives (clear vs rescue) from a NG+ save; resolve the Boco-level question first.
+- [x] Resolve the Boco-level question: playtest confirmed LV10 Boco was unviable; fixed to party level (100).
+- [ ] Re-playtest the rescue path from a NG+ save to confirm a party-level Boco survives the escort.
 
 ## Test Questions
 

@@ -10,8 +10,9 @@ File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py yard
 
 Implemented composition (entry 428, vanilla-dump verified):
 - s0 **Rapha** (job 25 Skyseer — PROTECTED GUEST, control bytes `00 84` like Alma/Orran; lose-on-death):
-  NOT patched in ENTD; runtime level-scaled (charId 0x19 added to GuestCharIds). Her vanilla evasion
-  gear (White Robe 204 + Elven Cloak 232 + Musk Pole) suffices — keeps her alive vs scaled enemies.
+  runtime level-scaled (charId 0x19 added to GuestCharIds). 2026-06-27: also re-equipped to best buyable
+  end-game gear in her ENTD slot — **Thief's Cap 168** (HP +100) / **Luminous Robe 206** (HP +75, MP +50) /
+  **Featherweave Cloak 234** (40/30 evasion) / **Eight-fluted Pole 113**; identical kit at Riovanes Roof 433.
 - s1 **Marach** (job 26 Netherseer — enemy BOSS, survives/recruitable): L103 + durability gear
   (Mage Hat/shop Robe/Bracers — he was naked); job/jobLevel(unchanged, no hard-lock unlock)/secondary/
   weapon/survive scripting preserved. NO rare (survives).

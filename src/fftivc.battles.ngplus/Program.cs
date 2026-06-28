@@ -75,8 +75,9 @@ public class Program : IMod
     // 0x30=Alma (Chapter 3 — guest at Lesalia Postern providing the Aegis buff; scaled so the buff is
     // useful and she survives the wall. job==charId guard holds: sprite/job both 48).
     // 0x19=Rapha (Chapter 3 — the protected NPC guest at Yardow; LOSE-on-death, so she must keep pace
-    // with the party or she's one-shot and the fight is unwinnable. She already carries evasion gear
-    // (White Robe + Elven Cloak), so level-scaling alone suffices. job==charId guard holds: sprite/job both 25).
+    // with the party or she's one-shot and the fight is unwinnable. job==charId guard holds: sprite/job
+    // both 25. 2026-06-27: also re-equipped with best buyable end-game gear in her ENTD slots — Thief's
+    // Cap/Luminous Robe/Featherweave Cloak/Eight-fluted Pole — at both Yardow 428 and Riovanes Roof 433).
     // --- Chapter 2 opener guests: Gaffgarion + Agrias join as guests right after Ch1 and were stuck at
     // their vanilla low/default levels. They use SEPARATE charIds for their guest form vs their later
     // boss form, which is exactly what makes this safe:
