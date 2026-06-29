@@ -1,6 +1,6 @@
 # 014 - Zeirchele Falls (Zirekile Falls)
 
-Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline; Ovelia survival = JOB-INNATE Mana Shield + Manafont (Princess job 12 via FFTIVC/tables/enhanced/JobData.xml) layered over gear Always-Protect (Sortilège) + Brave 61 (2026-06-28; earlier evasion + ENTD-R/S/M passes both failed — see "Ovelia survivability"). ✅ CONFIRMED in-game 2026-06-28 — Mana Shield + Move-MP Up both active.
+Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline; Ovelia survival = JOB-INNATE Mana Shield + Manafont (Princess job 12 via FFTIVC/tables/enhanced/JobData.xml) layered over gear Always-Protect (Sortilège) + Brave 61 (2026-06-28; earlier evasion + ENTD-R/S/M passes both failed — see "Ovelia survivability"). ✅ CONFIRMED in-game 2026-06-28 — Mana Shield + Move-MP Up both active. **v2 redesign documented only** (implementation pending).
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 13 (after Araguay Woods)
 Target version: Enhanced v1.5.0
@@ -49,16 +49,15 @@ The Knights press toward Ovelia; protecting her is the whole battle.
 
 Design reading:
 
-Zeirchele is **the betrayal fight and the chapter's first big escort-defense**. The drama is
-Gaffgarion flipping from ally to enemy, but the *mechanics* are: keep **Ovelia** alive while a
-Knight wall pushes toward her and a draining Dark Knight pressures your line. It teaches the
-player to **defend a fixed, fragile VIP** across a bridge chokepoint, and rewards prep (stripping
-Gaffgarion's gear neuters him). Agrias arriving gives the player a strong sword-skill ally to
-offset the loss of Gaffgarion.
+Zeirchele is **the betrayal fight and the chapter's first real bridge-control battle**. The drama
+is Gaffgarion flipping from ally to enemy. The *mechanics* should be: control Ovelia and Agrias,
+hold the crossing, choose whether to strip/break Gaffgarion's weapon, and decide whether to kill the
+field medic or burst the traitor. Ovelia's death can remain the loss condition, but the mod should
+not make her AI or fragility the skill check. She must be durable and player-controlled in NG+.
 
-For New Game++ the identity must stay: **a tense VIP-defense on a riverbank where a betraying,
-gear-dependent Dark Knight and his Knight escort drive at Princess Ovelia — protect her, exploit
-the strip-his-gear counter, and lean on Agrias.**
+For New Game++ the identity must stay: **a tense riverbank betrayal where a gear-dependent Dark
+Knight, a Knight escort, a single ranged screen, and a healer push the bridge — control the VIP,
+break the sustain, and exploit the strip-his-gear counter.**
 
 ## Local Data Confirmed (entry 405)
 
@@ -154,17 +153,28 @@ further passives (e.g. innate Auto-Potion/Regen) can be added to the same JobDat
 patch required**. This generalizes to every named guest: give them survivability via *their job's* innate
 ability slots, not the ENTD.
 
-## Job Escalation (Chapter 2 rule)
+## Enemy Party Escalation (Chapter 2 redesign)
 
 ```text
-CHANGE: swap ONE Knight -> an Archer (keep the count at 6).
-WHY: the original escort threat is all melee Knights, which a player can wall off at the bridge
-  to shield a hanging-back Ovelia. Adding a ranged Archer means Ovelia can be threatened from
-  across the water / from elevation, so the player must actually cover her line of sight, not
-  just block the bridge. This is the single new wrinkle; the strategy ("defend Ovelia, weather
-  Gaffgarion, use Agrias") is unchanged — only harder.
-WHAT IS NOT CHANGED: Gaffgarion's gear-dependent threat and the four remaining Knights keep the
-  betrayal-and-press identity intact.
+VANILLA SPIRIT: Gaffgarion betrays at the river crossing while an Order Knight escort pushes toward
+  Ovelia.
+CHAPTER-2 UPGRADE: keep Gaffgarion's gear-dependent drain threat, keep four Knights and one Archer,
+  and add one White Mage field medic behind the escort.
+WHY: a second Archer was rejected because it over-focuses Ovelia's line-of-sight and feels cheap.
+  A White Mage instead creates target priority: if the player ignores the medic, Gaffgarion and the
+  Knights get sustain; if the player overcommits to the medic, Gaffgarion punishes the line.
+WHAT IS NOT CHANGED: Gaffgarion remains strippable/breakable, retreats instead of dying, Ovelia is
+  still the VIP objective, and the map still reads as a bridge betrayal.
+```
+
+Chapter 2 requirements applied:
+
+```text
+- Every active human enemy has full equipment.
+- Every active human enemy has intentional reaction, support, and movement.
+- Secondary is optional; the White Mage uses innate White Magic, Knights need no secondary here.
+- Hard-lock status remains banned.
+- Ovelia and Agrias must be player-controlled in NG+; guest AI is not the skill check.
 ```
 
 ## Boss rare loot
@@ -176,28 +186,39 @@ at Lionel Castle Gate (doc 021 / Battle 20), where he actually falls. Keeping hi
 strong-but-non-unique also keeps the strip-his-gear tactic meaningful.
 ```
 
-## Proposed Composition (New Game++ Zeirchele v1)
+## Guest handling
 
-Keep Gaffgarion + the Knight escort, swapping one Knight for an Archer (6 enemies). Gaffgarion
-at sub-boss tier (`103`); the Archer and lead Knight at `101`; the rest at `100`–`101`.
+```text
+Ovelia and Agrias are active allies and must be player-controlled in NG+. Ovelia keeps the v1
+survivability layers (Princess innate Mana Shield + Manafont, Always-Protect gear, Brave 61), but
+v2 adds control as a requirement so the player can route her instead of losing to AI.
+
+If Gaffgarion is controllable before the betrayal phase, that control is allowed only while he is
+still an ally. After betrayal he is an enemy sub-boss and must keep the scripted retreat behavior.
+```
+
+## Proposed Composition (New Game++ Zeirchele v2)
+
+Use seven enemies: Gaffgarion, 4 Knights, 1 Archer, 1 White Mage. Gaffgarion stays sub-boss tier
+(`103`); the Knight captain reaches `102`; the ranged/support units sit at `101`.
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
 | n | **Gaffgarion (betrayer)** | Dark Knight / Fell Knight | `103` | Draining sword-skill pressure; retreats at low HP. Strip-his-gear neuters him. |
-| n | Knight | Knight | `101` | Lead wall; drives toward Ovelia. |
-| n | Knight | Knight | `101` | Second wall; contests the bridge. |
-| n | Knight | Knight | `100` | Body; flanks along the bank. |
-| n | Knight | Knight | `100` | Body; reinforces the push on Ovelia. |
-| n | Archer (NEW) | Archer | `101` | Ranged threat to Ovelia from across the water / elevation — the new escort wrinkle. |
+| n | Knight Captain | Knight | `102` | Lead wall; contests the crossing and protects the medic. |
+| n | Knight | Knight | `101` | Second wall; presses the bridge. |
+| n | Knight | Knight | `101` | Bank guard; stops a free rush to the backline. |
+| n | Knight | Knight | `100` | Body; reinforces the push. |
+| n | Archer | Archer | `101` | One line-of-sight threat; prevents a pure bridge turtle. |
+| n | Field Medic (NEW) | White Mage | `101` | Sustain/revive pressure; forces target priority. |
 
 Reasoning:
 
-The faithful move is to **scale the escort, elevate Gaffgarion to a real sub-boss, and add one
-ranged threat to Ovelia**. Gaffgarion at `103` with draining dark sword skills is a genuine
-menace — but, true to the original, his power is in his (strippable, non-unique) weapon, so the
-counter survives. Four Knights keep the bridge-push identity; the swapped-in Archer means the
-player can't simply block the bridge and ignore Ovelia's line of sight. Agrias (ally) offsets
-the difficulty, as intended.
+The faithful move is to **scale the betrayal and bridge pressure**, not turn Ovelia into a coin-flip
+liability. Gaffgarion at `103` with draining dark sword skills is a genuine menace, but his power
+is still in his strippable weapon. Four Knights keep the Order escort identity. One Archer prevents
+a pure turtle. The White Mage is the v2 escalation: sustain makes target priority matter without
+adding hard status or a second cheap line-of-sight attacker.
 
 ## Builds (final-shop quality; Gaffgarion gear-dependent and strippable)
 
@@ -229,19 +250,21 @@ Role: the betrayer. Drains HP off the party with his sword skills, but a player 
 his gear (or breaks it) defangs him — exactly the original lesson. NON-unique kit (his rare
 drop is reserved for Lionel Gate).
 
-### Knight x4 (Lv 101 / 101 / 100 / 100)
+### Knight x4 (Lv 102 / 101 / 101 / 100)
 
 ```text
 Job: Knight (id TBD)   JobLevel: 8   Secondary: none (NO Break)
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
+Reaction: Counter (442)   Support: Defense Boost on captain / Attack Boost on others (ids TBD / 465)
+Movement: Movement +1 (486)
 Head/Body: shop heavy helm + heavy armor (ids TBD)
 Accessory: Bracers (218)
 Right hand: Runeblade (30) or Icebrand (29)   Left hand: shop shield (id TBD)
 ```
 
-Role: the wall that drives at Ovelia. Forces the player to hold the bridge/bank chokepoint.
+Role: the wall that controls the crossing. No Rend here; the fight's gear lesson is Gaffgarion's
+weapon, not generic equipment break pressure.
 
-### Archer (Lv 101) — NEW (job swap)
+### Archer (Lv 101)
 
 ```text
 Job: Archer (77)   JobLevel: 8   Secondary: none
@@ -250,8 +273,23 @@ Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
 Right hand: Windslash Bow (87)   Left hand: none / two-hand marker (254)
 ```
 
-Role: the ranged escort threat. Positioned to draw a line on Ovelia from across the water or
-from elevation, so the player must screen her, not just block the melee.
+Role: the ranged screen. Positioned to punish a bridge turtle, not to create unavoidable shots on
+Ovelia before the player can respond.
+
+### Field Medic — White Mage (Lv 101) — NEW
+
+```text
+Job: White Mage (id TBD)   JobLevel: 8   Secondary: none
+Reaction: Mana Shield / Reflexes (id TBD / 449)
+Support: Arcane Defense / Defense Boost if legal (id TBD)
+Movement: Movement +1 (486)
+Head: mage hat (id TBD)   Body: shop robe (id TBD)
+Accessory: Magic Ring / Featherweave Cloak (id TBD / 234)
+Right hand: Golden Staff (64) or shop staff (id TBD)   Left hand: none (255)
+```
+
+Role: sustain and revive pressure. The player can answer by rushing the medic, silencing it,
+or bursting Gaffgarion through the sustain.
 
 ## Positioning Plan
 
@@ -259,16 +297,50 @@ from elevation, so the player must screen her, not just block the melee.
 Gaffgarion starts on the party's side or the bridge (per his betray scripting) — when he turns,
   he pressures the player's line and drives toward Ovelia.
 The four Knights start across/at the bridge, pushing toward Ovelia's hang-back position.
-The Archer starts on elevation or the far bank with a sightline to Ovelia's area — the threat
-  the player must screen.
-Preserve Ovelia's protected position, Agrias's ally slot, and Gaffgarion's betray/retreat link.
+The Archer starts on elevation or the far bank with a sightline to the approach lane — pressure,
+  not unavoidable VIP sniping.
+The White Mage starts behind the Knight line, close enough to heal Gaffgarion/Knights but reachable
+  by a committed push or ranged answer.
+Preserve Ovelia's protected position, Agrias's ally slot, and Gaffgarion's betray/retreat link;
+  add NG+ player-control handling for Ovelia/Agrias.
 ```
 
 The map should read: "a draining traitor and a Knight wall drive across the bridge at the
-princess, with an archer drawing a bead on her from afar." Screen Ovelia, strip the traitor,
-hold the crossing.
+princess, with one archer and one medic forcing target priority." Control Ovelia, strip the
+traitor, break the sustain, hold the crossing.
 
-## Implemented (v1, entry 405)
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-014-zeirchele-falls/
+```
+
+Model scope:
+
+```text
+First four rounds after betrayal; compares action economy and weighted pressure. It explicitly
+rejects candidates that rely on Ovelia AI or excessive line-of-sight pressure.
+```
+
+Iteration results:
+
+| Candidate | Enemies | Enemy actions | Action ratio | Pressure | Delta vs v1 | Result |
+|-----------|---------|---------------|--------------|----------|-------------|--------|
+| v1 current: Gaffgarion, 4 Knight, 1 Archer | 6 | 22.2 | 0.92 | 52.4 | 0.0% | Baseline |
+| Add second Archer LoS | 7 | 26.2 | 1.09 | 60.8 | +16.0% | Rejected: too much VIP LoS |
+| Ovelia durable but not controlled | 7 | 25.6 | 1.07 | 61.2 | +16.8% | Rejected: guest-AI framing |
+| Gaffgarion, 4 Knight, 1 Archer, 1 White Mage | 7 | 25.6 | 1.07 | 61.2 | +16.8% | Accepted |
+
+Decision:
+
+```text
+Use one White Mage field medic as the v2 escalation. Do not add a second Archer. Ovelia and Agrias
+must be player-controlled in NG+, while Gaffgarion remains weapon-dependent and scripted to retreat.
+```
+
+## Current Implementation (v1, entry 405 — superseded by v2 design)
 
 Applied with `python tools/battle_patch.py zeirchele`; diff contained to local entry 21 (global 405),
 65 bytes. Unlike Merchant Dorter / Araguay, the Chapter-2 escalation here was a **job SWAP** (Knight
@@ -283,28 +355,35 @@ s7  Knight      L100 jl8  (same kit)
 s8  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
 ```
 
-## Implementation Checklist
+This implementation remains the shipped v1 data. The v2 redesign above is **documentation only** in
+this pass; it requires a later ENTD/table implementation pass to add the White Mage, verify/apply
+Ovelia/Agrias player control, and keep Gaffgarion's betrayal/retreat scripting intact.
+
+## Future Implementation Checklist (v2)
 
 - [x] Identify Zeirchele ENTD entry (405); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Gaffgarion + 5 Knight + Agrias + Ovelia slots.
 - [x] Preserve Gaffgarion's job/secondary + identity (betray/auto-retreat link untouched).
 - [x] Keep his gear strippable + non-unique (Runeblade).
 - [x] Swap one Knight -> Archer (re-job s8); Archer build applied.
-- [x] Set levels: Gaffgarion `103`; lead Knights + Archer `101`; other two Knights `100`.
-- [x] Set JobLevel `8` on all scaled enemy slots; Knights have no secondary.
-- [x] Do NOT touch Agrias/reinforcement/story slots.
+- [ ] Add one White Mage field medic in a verified reachable backline slot.
+- [ ] Set levels: Gaffgarion `103`; Knight captain `102`; two Knights + Archer + White Mage `101`;
+  last Knight `100`.
+- [ ] Set JobLevel `8` on all active enemy slots; Knights have no secondary.
+- [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
+- [ ] Set Ovelia and Agrias player-controlled in NG+; do not rely on guest AI.
 - [x] Equip Ovelia for survival (playtest fix): endgame job-legal kit; level left to the scaler. See "Ovelia survivability".
-- [x] Patch the embedded ENTD (NG+-only); diff inside entry 405 only.
-- [x] Re-dump and diff; changes small and intentional; named links intact.
+- [ ] Patch the embedded ENTD/table data in a later implementation pass; no binary/data change in this doc pass.
+- [ ] Re-dump and diff; changes small and intentional; named links intact.
 - [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; decide on s2/s3.
 
 ## Test Questions
 
-- Is protecting Ovelia genuinely tense at scale (Knight push + the new Archer threat) without
-  being an unavoidable loss?
+- Does controlling Ovelia create a fair routing decision instead of an AI survival check?
 - Does Gaffgarion feel like a dangerous betrayer, while the strip-his-gear counter still defangs him?
 - Does his auto-retreat-at-low-HP still trigger (he must NOT be killable here)?
-- Does the swapped-in Archer change the escort math (must the player screen Ovelia's LoS)?
+- Does the White Mage create meaningful target priority without making the fight a slog?
+- Does the single Archer prevent bridge turtling without creating unavoidable VIP snipes?
 - Does Agrias as an ally offset the difficulty as intended?
 - Is it harder than Araguay but not yet a Gaffgarion/Cúchulainn-tier boss wall, per the curve?
 - Does it still read as the riverbank betrayal, not a designed arena?
@@ -317,7 +396,7 @@ s8  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black
   https://game8.co/games/Final-Fantasy-Tactics/archives/553174
 - Final Fantasy Wiki, "Zirekile Falls" / "Gaffgarion": story context (betrayal, Agrias joins).
   https://finalfantasy.fandom.com/wiki/Zirekile_Falls
-- Local: `docs/battles/011-chapter-2-overview.md` (job-escalation + boss-loot rules),
+- Local: `docs/battles/011-chapter-2-overview.md` (enemy-party escalation + boss-loot rules),
   `008-fovoham-windflats.md` (gear-dependent sword-skill boss handling),
   `021-lionel-castle-gate.md` (where Gaffgarion falls and gets his rare drop — to be written).
 </content>

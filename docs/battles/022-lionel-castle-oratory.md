@@ -1,6 +1,6 @@
 # 022 - Lionel Castle Oratory — Cúchulainn (Lionel Castle Keep)
 
-Status: ✅ implemented (v1, entry 425) — CHAPTER 2 COMPLETE (rare loot deferred to reward table)
+Status: ✅ implemented (v1, entry 425) — CHAPTER 2 COMPLETE (rare loot deferred to reward table). **v2 redesign documented only** (implementation pending).
 Chapter: 2 — "The Manipulator and the Subservient" (CHAPTER FINALE)
 Battle order: Battle 21 (after Lionel Castle Gate)
 Target version: Enhanced v1.5.0
@@ -86,15 +86,29 @@ ENTD slot. A guaranteed drop/treasure lives in a separate reward table (not the 
 `.bin` patcher does not touch. The rare loot is therefore deferred to a future reward-table pass;
 the boss scaling and all his mechanics are fully implemented.
 
-## Job Escalation (Chapter 2 rule)
+## Enemy Party Escalation (Chapter 2 redesign)
 
 ```text
-THE NEW "JOB" IS THE DEMON ITSELF: Cúchulainn is the first Lucavi — a one-unit army with a
-mass-status + Holy-weakness pattern unlike anything earlier in the mod. The demon IS this fight's
-escalation; per "one new wrinkle per fight," there are NO generic jobs to add (it is a solo boss).
-WHY: a lone boss that mass-disables and executes, with an elemental-weakness puzzle, is already
-  the densest single-fight challenge of the chapter. Adding adds/minions would dilute the duel and
-  blunt the "spread out vs his AoE" lesson.
+VANILLA SPIRIT: the first Lucavi reveal; a single demon that fights like an army through mass
+  status, run-up execution, dark/poison identity, and Holy weakness.
+CHAPTER-2 UPGRADE: keep Cúchulainn solo at level `104` and make the fight explicitly chain-aware:
+  it must be tested immediately after Lionel Gate, with no resupply and moderate resource tax.
+WHY: Cúchulainn has no gear, no allies, and no party synergy. The fair Chapter 2 spike is the
+  demon's Nightmare/Holy pattern under chain pressure, not a higher hidden stat wall.
+WHAT IS NOT CHANGED: Nightmare remains telegraphed, Holy remains decisive, and the answer is still
+  spread/cleanse/Immobilize/Holy burst.
+```
+
+Chapter 2 requirements applied:
+
+```text
+- No active human enemies exist, so equipment and R/S/M completeness do not apply here.
+- No active guests are present.
+- No minions, no second mass-status source, no instant Nightmare, and no removed Holy weakness.
+- Keep level `104` as the Chapter 2 capstone band unless a later implementation review explicitly
+  reopens the chapter-level policy.
+- Reward handling is outside the monster ENTD slot: 108 Gems should be a reward-table/battle reward,
+  not fake equipment on the Unarmed Lucavi slot.
 ```
 
 ## Sanctioned exception — boss mass-status (Nightmare)
@@ -116,7 +130,7 @@ Cúchulainn -> 108 GEMS (accessory; non-buyable — rare poach/treasure in vanil
 WHY IT FITS: a demon's trinket that grants broad elemental damage reduction — thematically apt for
   a Lucavi, and a tempting steal target. It is clearly MID-TIER (a defensive utility accessory),
   well below the Chapter-4-reserved best gear (Ribbon, Genji set, best robes), so it respects the
-  "no best equipment yet" rule. Second rare boss drop of the mod (after Gaffgarion's Ancient Sword).
+  "no best equipment yet" rule. Second rare boss reward of the mod (after Gaffgarion's Blood Sword).
 ALT if 108 Gems is unsuitable on the demon's slot: a Cursed Ring (flavor) or a Mage's Cloak-tier
   rare. Verify Cúchulainn's ENTD slot supports an accessory + rare drop/steal; if the Lucavi unit
   cannot carry equipment, assign the rare as a GUARANTEED battle reward/treasure instead.
@@ -124,9 +138,10 @@ DO NOT use the rare-variant treasure already in the room (e.g. Bizen Osafune kat
   drop — keep the boss's signature item distinct and demon-themed.
 ```
 
-## Proposed Composition (New Game++ Oratory v1)
+## Proposed Composition (New Game++ Oratory v2)
 
-A single boss, scaled as the chapter spike. Cúchulainn at `104` — the highest band of Chapter 2.
+A single boss, scaled as the chapter spike. Cúchulainn stays at `104`; the v2 requirement is that
+the fight must be validated from the Lionel Gate no-resupply chain, not from a fresh save.
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
@@ -135,25 +150,25 @@ A single boss, scaled as the chapter spike. Cúchulainn at `104` — the highest
 Reasoning:
 
 The faithful move is to **scale the lone demon as a fair spike and preserve every mechanic**. At
-`104` (the chapter's top band, +1 over the Gaffgarion boss) with intact Lucavi stats, Cúchulainn
-threatens a full party alone — but the fight stays **solvable by tactics, not levels**: spread to
-deny Nightmare's multi-target value, Immobilize to stop the executes, cleanse Doom/Sleep, and burn
-him down with Holy (his weakness). Keep the Holy weakness and dark-absorb so build choice matters
-(bring Holy, leave dark home), and keep Nightmare telegraphed so spacing/cleansing is enough. The
-no-resupply lead-in means the player must arrive from the Gate with reserves — resource discipline
-is part of the capstone, without an unfair numbers wall.
+`104`, Cúchulainn should threaten a full tuned party alone, but the fight stays solvable by
+tactics: spread to deny Nightmare's multi-target value, Immobilize to stop executes, cleanse
+Doom/Sleep, and burn him down with Holy. Keep the Holy weakness and dark-absorb so build choice
+matters, and keep Nightmare telegraphed so spacing/cleansing is enough. The no-resupply lead-in
+means the player must arrive from the Gate with reserves. If playtest shows Holy trivializes the
+fight, reopen tuning explicitly; do not solve it with minions, instant Nightmare, or removing Holy.
 
 ## Boss Tuning Notes (no equipment levers — it's a monster)
 
 ```text
-Set Cúchulainn's Level 104; keep his canonical JobLevel / innate skillset and Brave.
+V2 target: keep Cúchulainn's Level byte at 104; keep his canonical JobLevel / innate skillset and
+  Brave.
 PRESERVE: Holy weakness, dark/poison ABSORB (heal-from-dark), Nightmare (Doom/Sleep) + run-up,
   and any Blood Suck / drain in his kit. These ARE the fight.
 DO NOT: add minions, add a second mass-status source, make Nightmare instant, or remove the Holy
   weakness (that weakness is the intended "bring Agrias/Holy" counter and keeps the spike fair).
 Assign the rare (108 Gems) as his drop/steal if the slot allows; else as a guaranteed reward.
-Verify HP is high enough to threaten a level-104-scaled party of 5 but not so high that a
-  Holy-leaning party can't win in a reasonable number of turns (Holy should feel decisive).
+Verify HP is high enough to threaten a level-104-scaled party of 5 arriving from Lionel Gate, but
+  not so high that a Holy-leaning party can't win in a reasonable number of turns.
 ```
 
 ## Positioning Plan
@@ -168,34 +183,76 @@ No minions, no reinforcements: the whole field is the player vs the demon.
 The Oratory should say: "a single demon, but it fights like an army — spread out, cleanse the
 nightmares, pin it down, and bring the Light."
 
-## Implemented (v1, entry 425)
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-022-lionel-castle-oratory/
+```
+
+Model scope:
+
+```text
+First four rounds only; compares a fresh-state reference, the real Gate-chain baseline, solo-boss
+pressure, counterplay, and chain tax. It rejects minions, instant Nightmare, removed Holy weakness,
+and HP-wall tuning.
+```
+
+Iteration results:
+
+| Candidate | Enemies | Boss level | Boss actions | Effective pressure | Counterplay | Chain tax | Delta vs chain v1 | Result |
+|-----------|---------|------------|--------------|--------------------|-------------|-----------|-------------------|--------|
+| v1 solo demon from fresh state | 1 | 104 | 3.5 | 45.6 | 100.0 | 0.0 | -46.4% | Fresh reference |
+| v1 solo demon from Gate chain | 1 | 104 | 3.5 | 85.0 | 100.0 | 24.6 | +0.0% | Chain baseline |
+| Add Lucavi minions | 3 | 104 | 9.5 | 127.0 | 72.0 | 24.6 | +49.4% | Rejected: breaks solo Lucavi identity |
+| Instant Nightmare | 1 | 104 | 3.5 | 179.6 | 65.0 | 24.6 | +111.3% | Rejected: unfair status cadence |
+| Remove Holy weakness HP wall | 1 | 104 | 3.5 | 127.0 | 62.0 | 24.6 | +49.4% | Rejected: removes intended answer |
+| v2 chain-aware solo Lucavi | 1 | 104 | 3.5 | 97.5 | 100.0 | 24.6 | +14.7% | Accepted |
+
+Decision:
+
+```text
+Keep Cúchulainn solo at level `104` and make the v2 requirement chain-aware playtesting from Lionel
+Gate. Do not add minions, remove Holy weakness, or make Nightmare instant. Put 108 Gems in the
+reward path, not on the Unarmed ENTD slot.
+```
+
+## Current Implementation (v1, entry 425 — superseded by v2 design)
 
 Applied with `python tools/battle_patch.py cuchulainn`; diff contained to local entry 41 (global
 425), **1 byte** (level 25 → 104). Level-only scaling preserves the entire demon kit.
 
-## Implementation Checklist
+This implementation remains the shipped v1 data. The v2 redesign above is **documentation only** in
+this pass; it requires a later implementation pass to test the Gate->Oratory chain as a chain and
+wire the 108 Gems reward through the reward-table path.
+
+## Future Implementation Checklist (v2)
 
 - [x] Identify Oratory/Keep ENTD entry (425); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Cúchulainn is the SOLE active enemy (s9) + disabled cutscene actors.
 - [x] Confirm demon job (60); Holy weakness + dark-absorb + Nightmare + run-up preserved (level-only edit).
-- [x] Set Level `104`; canonical innate skillset / JobLevel 8 / Brave kept.
+- [ ] Keep Level `104`; test from the Lionel Gate no-resupply chain, not from a fresh save.
+- [ ] Preserve canonical innate skillset / JobLevel 8 / Brave.
 - [ ] Assign 108 Gems — DEFERRED: Unarmed monster has no gear slot; needs the reward table (not ENTD).
-- [x] One mass-status source (the boss); no minions/second disruptor added.
-- [x] Small-arena geometry untouched (terrain not in ENTD slot data).
-- [x] Patch the embedded ENTD (NG+-only); diff inside entry 425 only.
-- [x] Re-dump and diff; change is minimal (level only); kit intact.
+- [ ] Keep one mass-status source (the boss); no minions/second disruptor added.
+- [ ] Preserve small-arena geometry (terrain not in ENTD slot data).
+- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [ ] Re-dump and diff; change should remain minimal; kit intact.
 - [ ] Playtest from a NG+ save (arriving from the Gate, no resupply); confirm Holy is decisive and
       Nightmare is survivable with spacing/cleansing.
 
 ## Test Questions
 
-- Does Cúchulainn threaten a full level-104 party ALONE (true one-unit-army feel)?
+- Does Cúchulainn at `104` threaten a full tuned party ALONE when tested after Lionel Gate?
+- If Holy burst trivializes the fight, can tuning be reopened without adding minions or removing Holy?
 - Is Nightmare scary but counterable by spreading out + status cleansing (not an unavoidable wipe)?
 - Is the Holy weakness clearly the intended answer — does a Holy-leaning party melt him fairly?
 - Does dark-absorb punish a player who brings dark damage (build choice matters)?
 - Does Immobilize/Leg Shot meaningfully stop his run-up executes?
 - Does the no-resupply lead-in make resource discipline matter without being unfair?
-- Does he drop a MID-TIER demon-themed rare (108 Gems) — no Ch4-reserved best gear leaked?
+- Does the reward-table path grant a MID-TIER demon-themed rare (108 Gems) — no Ch4-reserved best gear leaked?
+- Are minions, instant Nightmare, and extra status sources still absent?
 - Is it the clear hardest fight of Chapter 2 (4/5★ capstone) yet solvable by tactics, not grinding?
 
 ## Sources

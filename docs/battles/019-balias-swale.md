@@ -1,6 +1,6 @@
 # 019 - Balias Swale (Bariaus Valley)
 
-Status: ✅ implemented (v1, entry 413); Geomancer add deferred; Agrias scaled + equipped for survival (2026-06-27)
+Status: ✅ implemented (v1, entry 413); Geomancer add deferred; Agrias scaled + equipped for survival (2026-06-27). **v2 redesign documented only** (implementation pending).
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 18 (after Goug Lowtown)
 Target version: Enhanced v1.5.0
@@ -75,7 +75,7 @@ Job IDs: Knight 76, Archer 77, Black Mage 80, Agrias's Holy-Knight job 30. (TIC 
 walkthrough's 1.) The Knights run job 76 at jl8, so they carry Battle Skill (Rend) innately — a minor
 extra over this doc's "no break" preference, not suppressible without changing the job; non-blocking.
 
-### Agrias (VIP): scaled + equipped (playtest fix, 2026-06-27)
+### Agrias (VIP): scaled + equipped; v2 requires player control
 
 Agrias (**cid 0x1e, job 30 == cid**) is the "Save Agrias!" objective unit: isolated, outnumbered,
 and her death FAILS the battle. She is in `GuestCharIds`, so the runtime guest-scaler already keeps
@@ -102,17 +102,33 @@ conflict since this 413 slot is the battle-only guest instance).
 
 The RAIN flag and split-team zones are map/terrain data (not in the ENTD slots), so they are untouched.
 
-## Job Escalation (Chapter 2 rule)
+For v2, scaling/equipment is still not enough: Agrias is an active guest and must be
+player-controlled in NG+. The challenge should come from coordinating the split deployment and
+relieving her under a rain-boosted firing line, not from watching guest AI choose bad actions.
+
+## Enemy Party Escalation (Chapter 2 redesign)
 
 ```text
-CHANGE: add ONE Geomancer (marsh-themed mid-range elemental attacker).
-WHY: the swale is a wet valley — a Geomancer whose Geomancy draws on the terrain (water/marsh
-  tiles) fits perfectly and adds a NEW ranged elemental angle that pressures the player's crossing
-  and the isolated Agrias. It deepens the existing challenge (close distance under ranged fire)
-  rather than changing it, and makes Agrias a touch more outnumbered — exactly the fight's premise.
-  Single new wrinkle; Geomancer debut.
-WHAT IS NOT CHANGED: the 1 Knight + 2 Archers + 2 rain-Thunder Black Mages keep the firing-line
-  identity; the strategy ("split, rush to Agrias, manage rain-Thunder") still holds.
+VANILLA SPIRIT: split-team rescue in a rainy valley, where distance and weather make the ranged
+  firing line dangerous.
+CHAPTER-2 UPGRADE: keep the local-data roster of 2 Knights, 2 Archers, and 2 rain-Thunder Black
+  Mages, then add 1 Geomancer as the terrain-pressure debut. Optimize the full party with complete
+  equipment and intentional reaction/support/movement.
+WHY: the Geomancer fits the swale and makes the crossing itself dangerous. The accepted v2 version
+  must bias pressure onto the route and the split teams, not simply focus Agrias before the player
+  can meaningfully control the board.
+WHAT IS NOT CHANGED: the strategy is still "split, rush, relieve Agrias, and manage rain-Thunder."
+  This is not a Time Mage or hard-control fight.
+```
+
+Chapter 2 requirements applied:
+
+```text
+- Every active human enemy has full equipment.
+- Every active human enemy has intentional reaction, support, and movement.
+- Secondary is optional; the jobs' primary commands already express their roles.
+- Agrias must be scaled, geared, and player-controlled in NG+.
+- No Time Mage, no third Black Mage, and no hard-lock control package.
 ```
 
 ## Boss rare loot
@@ -121,28 +137,45 @@ WHAT IS NOT CHANGED: the 1 Knight + 2 Archers + 2 rain-Thunder Black Mages keep 
 None. No named boss here — no rare item (per the Chapter 2 overview). Generics stay shop-tier.
 ```
 
-## Proposed Composition (New Game++ Balias Swale v1)
+## Map reward note
 
-Keep the original firing line and add one Geomancer (6 enemies). The Black Mages, lead Archer,
-and Geomancer at `101`; the Knight and second Archer at `100`–`101`.
+```text
+No enemy carries rare loot here. The Chapter 2 reward ledger may still treat Balias Swale as a
+signature map-treasure battle because Agrias joins after it; that reward is not part of the enemy
+loadout and should not make a normal enemy a rare-gear carrier in Chapter 2.
+```
+
+## Guest handling
+
+```text
+Agrias is the protected guest and recruit. In NG+ she must be player-controlled from the start.
+Her strong guest kit keeps the objective from failing instantly, but enemy pressure must be placed
+so the player still has to coordinate the split deployment instead of relying on Agrias AI.
+```
+
+## Proposed Composition (New Game++ Balias Swale v2)
+
+Use seven enemies: 2 Knights, 2 Archers, 2 Black Mages, and 1 Geomancer. This is one extra active
+enemy over the shipped v1 data and keeps the fight below the boss-heavy back third.
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
-| n | Knight | Knight | `101` | The lone frontline body; contests the player's crossing. |
-| n | Archer | Archer | `101` | Far-end ranged pressure on Agrias and the rush. |
-| n | Archer | Archer | `100` | Second bow; covers the other approach lane. |
-| n | Black Mage | Black Mage | `101` | Rain-boosted Thunder — the primary threat. |
-| n | Black Mage | Black Mage | `101` | Second Thunder caster; punishes a clumped rush. |
-| n | Geomancer (NEW) | Geomancer | `101` | Marsh-terrain elemental at mid-range — the new pressure on the crossing. |
+| n | Route Anchor | Knight | `101` | Holds the main crossing lane; Battle Skill is incidental, not the headline. |
+| n | Backstop Knight | Knight | `100` | Protects the firing line and slows a straight rush. |
+| n | Lead Archer | Archer | `101` | Lane cover; pressures split units that overextend. |
+| n | Flank Archer | Archer | `100` | Covers the second approach and keeps both player teams relevant. |
+| n | Fast Storm Mage | Black Mage | `102` | Faster rain-Thunder cast; priority target. |
+| n | Power Storm Mage | Black Mage | `101` | Harder rain-Thunder cast; punishes clumping. |
+| n | Swale Geomancer | Geomancer | `101` | Delayed terrain pressure on the crossing; Geomancer debut. |
 
 Reasoning:
 
-The faithful move is to **scale the firing line, keep the rain-Thunder headline, and add one
-terrain-flavored threat**. Two rain-boosted Black Mages stay the main danger to Agrias; the
-Archers keep the far-end ranged pressure; the lone Knight gives the player a body to fight
-through. The added Geomancer fits the wet valley and makes the crossing — already the hard part —
-a little deadlier, nudging Agrias further into "outnumbered" without changing the rush-to-relieve
-plan. The split-team and weather lessons stay central.
+The faithful move is to **scale the firing line, keep rain-Thunder as the headline, and make the
+crossing more dangerous through terrain pressure**. The two Black Mages remain the priority kills,
+but the accepted v2 plan does not let every ranged unit freely focus Agrias on turn 1. The Geomancer
+and at least one caster line should pressure the player's route, forcing split-team coordination.
+Agrias being controlled by the player turns the objective into an active rescue problem instead of
+a guest-AI survival roll.
 
 ## Builds (final-shop quality; valley garrison flavor)
 
@@ -154,16 +187,19 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Knight (Lv 101)
+### Knight x2 (Lv 101 / 100)
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Secondary: none (NO Break)
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
+Job: Knight (76)   JobLevel: 8   Secondary: none
+Primary: Battle Skill exists because this is the Knight job, but do not add break-enhancing setup.
+Reaction: Counter (442)   Support: Defense Boost / Attack Boost (id TBD / 465)
+Movement: Movement +1 (486)
 Head/Body: shop heavy helm + heavy armor (ids TBD)
 Accessory: Bracers (218)   Right hand: Runeblade (30)   Left hand: shop shield (id TBD)
 ```
 
-Role: the frontline body the player must get past on the way to relieve Agrias.
+Role: route anchors. They slow the crossing and protect the firing line, but Balias Swale should
+not become a Rend puzzle; no Dual Wield, no Concentration break, and no rare gear.
 
 ### Archer x2 (Lv 101 / 100)
 
@@ -171,51 +207,103 @@ Role: the frontline body the player must get past on the way to relieve Agrias.
 Job: Archer (77)   JobLevel: 8   Secondary: none
 Reaction: Reflexes (449)   Support: Concentration (469)   Movement: Movement +1 (486)
 Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
-Right hand: Windslash Bow (87)  (a Lightning/Thunder bow is thematic in rain — id TBD)
+Right hand: Windslash Bow (87) or a verified shop-tier lightning bow if the weather interaction works
 Left hand: none / two-hand marker (254)
 ```
 
-Role: far-end ranged pressure that wears on the isolated Agrias.
+Role: lane cover. They punish overextended split units and soften Agrias only if the player ignores
+the far side; they should not be positioned as an unavoidable turn-1 Agrias execution squad.
 
-### Black Mage x2 (Lv 101) — rain-Thunder
+### Black Mage x2 (Lv 102 / 101) — rain-Thunder
 
 ```text
-Job: Black Mage (id TBD)   JobLevel: 8   Secondary: none
-Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
+Fast Storm Mage:
+Job: Black Mage (80)   JobLevel: 8   Secondary: none
+Primary: Thunder/Thundara priority; avoid unrelated status/control.
+Reaction: Reflexes (449)   Support: Swiftness/Short Charge (id TBD)   Movement: Movement +1 (486)
 Head: cloth/mage hat (id TBD)   Body: shop robe (id TBD)
 Accessory: Featherweave Cloak (234)   Right hand: shop magic-boost rod (id TBD)   Left: none (255)
-Note: lean into Thunder so the rain amplification is the headline threat (player can exploit it too).
+
+Power Storm Mage:
+Job: Black Mage (80)   JobLevel: 8   Secondary: none
+Primary: Thunder/Thundara priority; rain is the damage amplifier.
+Reaction: Reflexes (449)   Support: Arcane Strength / MA boost (id TBD)
+Movement: Movement +1 (486)
+Head: cloth/mage hat (id TBD)   Body: shop robe (id TBD)
+Accessory: Featherweave Cloak (234)   Right hand: shop magic-boost rod (id TBD)   Left: none (255)
 ```
 
-Role: the primary danger. Rain-boosted Thunder punishes a clumped rush and the exposed VIP.
+Role: the primary danger. One caster makes the clock real; the other punishes clumping. They should
+create urgent target priority without turning the first two rounds into unavoidable Agrias focus.
 
-### Geomancer (Lv 101) — NEW (job add)
+### Geomancer (Lv 101) — NEW terrain pressure
 
 ```text
 Job: Geomancer (id TBD)   JobLevel: 8   Secondary: none (innate Geomancy)
-Reaction: Counter (442) or a defensive reaction (id TBD)
+Reaction: Counter (442) or First Strike (453)
 Support: Attack Boost (465)   Movement: Movement +1 (486)
 Head: shop hat (id TBD)   Body: shop light armor / robe-tier the job allows (id TBD)
 Accessory: Bracers (218)   Right hand: a shop sword/rod the job allows (id TBD)   Left: none/shield
 ```
 
-Role: marsh-terrain elemental at mid-range — a new angle on the crossing that fits the wet valley.
+Role: delayed mid-range terrain pressure on the crossing. The Geomancer exists to make the route
+dangerous, not to add another direct VIP-focus gun.
 
 ## Positioning Plan
 
 ```text
-The firing line (2 Archers + 2 Black Mages + Geomancer) starts on the FAR END, with sightlines
-  to Agrias's isolated position, so distance is the core problem.
-The Knight starts forward of the casters as the body the player must fight through.
-Agrias starts isolated/outnumbered on the far side; the player's split teams start apart and must
-  converge to relieve her.
+The firing line (2 Archers + 2 Black Mages) starts on the FAR END, but not every unit has a clean
+  turn-1 line on Agrias.
+One Black Mage may threaten Agrias early; the other should have a stronger line on the crossing or
+  the player split, so the storm pressure is shared.
+The Geomancer starts at mid-range on a wet/valley route tile, aimed at the crossing rather than the
+  protected guest.
+The two Knights start forward and staggered: one contests the main route, one protects the firing
+  line. Leave at least two readable routes open.
+Agrias starts isolated/outnumbered and must be player-controlled in NG+.
 Preserve the split-team zones, Agrias's protected slot, and the RAIN flag.
 ```
 
 The valley should say: "your VIP is stranded under a rain-charged firing line — split up, close
 fast, and use the weather before it's used on you."
 
-## Implemented (v1, entry 413)
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-019-balias-swale/
+```
+
+Model scope:
+
+```text
+First four rounds only; compares route pressure, enemy action economy, and rain-Thunder pressure
+before the split teams can stabilize. It assumes Agrias is player-controlled in v2 and rejects
+variants where survival depends on guest AI luck, dense terrain/status pressure, or a Time Mage
+identity shift.
+```
+
+Iteration results:
+
+| Candidate | Enemies | Enemy actions | Action ratio | Rain Thunder | Terrain | Pressure | Delta vs v1 | Result |
+|-----------|---------|---------------|--------------|--------------|---------|----------|-------------|--------|
+| v1 current: 2 Knight, 2 Archer, 2 Black Mage | 6 | 20.0 | 1.14 | 6.4 | 0.0 | 150.3 | +0.0% | Baseline |
+| Guest remains AI-framed | 7 | 23.4 | 1.73 | 6.4 | 3.4 | 190.8 | +26.9% | Rejected: guest rule |
+| Two Geomancers | 8 | 26.8 | 1.57 | 6.4 | 6.8 | 214.4 | +42.6% | Rejected: too dense |
+| Add Time Mage storm tempo | 8 | 26.8 | 1.57 | 6.4 | 3.4 | 208.8 | +38.9% | Rejected: wrong identity |
+| v2 storm crossing: 2 Knight, 2 Archer, 2 Black Mage, 1 Geomancer | 7 | 23.2 | 1.28 | 6.4 | 3.2 | 175.6 | +16.8% | Accepted |
+
+Decision:
+
+```text
+Use the seven-enemy storm-crossing cell: 2 Knights, 2 Archers, 2 rain-Thunder Black Mages, and 1
+delayed route-pressure Geomancer. Agrias control reduces the split tax because the player can
+stabilize her side actively; the added difficulty comes from route pressure and caster priority,
+not guest AI.
+```
+
+## Current Implementation (v1, entry 413 — superseded by v2 design)
 
 Applied with `python tools/battle_patch.py balias_swale`; diff contained to local entry 29 (global
 413), 62 bytes. Knights L101/L100, Archers L101/L100, Black Mages L101; JobLevel 8 on all.
@@ -232,26 +320,37 @@ s6  BMage    L101 jl8  (same kit)
 **Deferred — Geomancer escalation (slot-add).** The doc's wrinkle adds a Geomancer (first use of the
 job), which needs a verified map position; batched for the playtest pass.
 
-## Implementation Checklist
+This implementation remains the shipped v1 data. The v2 redesign above is **documentation only** in
+this pass; it requires a later implementation pass to add the Geomancer, tune caster/route
+placement, complete final ability/equipment mapping, and confirm Agrias player control.
+
+## Future Implementation Checklist (v2)
 
 - [x] Identify Balias Swale ENTD entry (413); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Knights + Archers + Black Mages + Agrias.
 - [x] Confirm Knight / Black Mage / Archer job IDs and legal equipment.
-- [ ] Add the Geomancer slot (deferred — needs a verified map position; do during playtest).
-- [x] Set levels: Knights `101`/`100`; Archers `101`/`100`; both Black Mages `101`.
-- [x] Set JobLevel `8` on all scaled slots; Black Mages lean on Thunder (rain-amplified).
-- [x] Agrias scaled (level 100 explicit + GuestCharIds) and equipped for survival/offense (Save the Queen + Crystal Helm/Mail/Shield + Bracers PA+3); scripting and RAIN/split terrain untouched.
-- [x] Patch the embedded ENTD (NG+-only); diff inside entry 413 only.
-- [x] Re-dump and diff; changes small and intentional.
-- [ ] Playtest from a NG+ save; confirm Save-Agrias + split work; verify Agrias scales and survives the focus.
+- [ ] Add the Geomancer slot at a verified route-pressure position.
+- [ ] Set v2 levels: Fast Storm Mage `102`; Route Anchor + Lead Archer + Power Storm Mage +
+  Geomancer `101`; Backstop Knight + Flank Archer `100`.
+- [ ] Set JobLevel `8` on all active enemies.
+- [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
+- [ ] Tune Black Mage spell access toward Thunder/Thundara; avoid unrelated control.
+- [ ] Confirm Agrias is player-controlled in NG+ in addition to being scaled/equipped.
+- [ ] Preserve Agrias's protected slot, split deployment zones, and RAIN flag.
+- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [ ] Re-dump and diff; changes small and intentional.
+- [ ] Playtest from a NG+ save; confirm Save-Agrias + split work; verify Agrias survives because
+  the player can act, not because enemy focus is toothless.
 - [ ] Confirm whether her equipped gear carries over when she joins (Save the Queen overlaps the Bervenia 443 spoil).
 
 ## Test Questions
 
-- Is relieving the isolated, outnumbered Agrias tense but achievable with a fast split-team rush?
+- With Agrias player-controlled, is relieving her tense because of route pressure rather than guest AI?
 - Are the rain-boosted Black Mages the clear primary threat (and can the player exploit Thunder too)?
-- Does the added Geomancer make the crossing deadlier without making Agrias's survival impossible?
+- Does the added Geomancer make the crossing deadlier without becoming another direct VIP-focus unit?
 - Does the split-team deployment still force genuine two-front coordination?
+- Does route-biased placement leave at least two readable approaches instead of a single kill lane?
+- Are Time Mage tempo, hard-lock control, and third-Black-Mage burst still absent?
 - Does it read as a distinct fight (rainy VIP-rescue) vs the other split/escort battles?
 - Is it a fair step (later in the chapter) but below the Gaffgarion/Cúchulainn bosses?
 
@@ -263,7 +362,7 @@ job), which needs a verified map position; batched for the playtest pass.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553178
 - Final Fantasy Wiki, "Bariaus Valley" / "Agrias Oaks": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Bariaus_Valley
-- Local: `docs/battles/011-chapter-2-overview.md` (job-escalation rule), `005-sand-rat-sietch.md`
+- Local: `docs/battles/011-chapter-2-overview.md` (enemy-party escalation rule), `005-sand-rat-sietch.md`
   (split-team handling), `006-brigands-den.md` (rain-Thunder gimmick), `014-zeirchele-falls.md`
   (protect-the-guest).
 </content>

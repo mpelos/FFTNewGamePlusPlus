@@ -8,8 +8,9 @@ fight's identity" philosophy from Chapter 1 still apply (see `000-chapter-1-over
 two new design goals are layered on top:
 
 ```text
-1. JOB ESCALATION — start adding or swapping enemy jobs to raise the challenge, WITHOUT
-   breaking each battle's original strategy. One new wrinkle per fight, not a redesign.
+1. ENEMY PARTY ESCALATION — start building full enemy parties to raise the challenge, WITHOUT
+   breaking each battle's original strategy. One headline demand per fight; the whole enemy side
+   may support that demand.
 2. RARE BOSS LOOT — important (boss) battles equip the boss with a RARE, non-buyable item as
    a signature reward/threat. NOT best-in-slot: the very best gear is reserved for Chapter 4.
 ```
@@ -31,17 +32,17 @@ Chapter 1 (doc `001` = Battle 2, so the offset is the same established pattern: 
 
 | Doc | Battle | Location | Role in story | New element | Status |
 |-----|--------|----------|---------------|-------------|--------|
-| `012` | 11 | Merchant City of Dorter | Mercenary work; "kill them all" | revisit Dorter, tougher mix | ✅ Implemented (v1, entry 403; Knight add deferred) |
-| `013` | 12 | Araguay Woods | Rescue Boco the chocobo vs Goblins | escort + monster pack | ✅ Implemented (v1, entry 404; Panther add + Boco scaling deferred) |
-| `014` | 13 | Zeirchele Falls | Protect Ovelia; **Gaffgarion betrays** | Agrias ally; Gaffgarion turns | ✅ Implemented (v1, entry 405; Knight→Archer swap inline) |
-| `015` | 14 | Castled City of Zaland | Save Mustadio from bounty hunters | ranged/urban + Dragoon (vertical) | ✅ Implemented (v1, entry 407; Knight→Dragoon inline; Mustadio auto-scaled) |
-| `016` | 15 | Balias Tor | Defeat enemy **Summoners** + support | **Summoner** (new job) | ✅ Implemented (v1, entry 409; Summoner = built-in escalation) |
-| `017` | 16 | Tchigolith Fenlands | Swamp; **undead / dark** enemies | undead + swamp terrain | ✅ Implemented (v1, entry 410; undead = built-in escalation) |
-| `018` | 17 | Goug Lowtown | Summoners; Mustadio guest | Summoner + Time-Mage tempo | ✅ Implemented (v1, entry 411; Thief→Time Mage inline) |
-| `019` | 18 | Balias Swale | Split-team; rain-boosted Thunder | split + weather + Geomancer | ✅ Implemented (v1, entry 413; Geomancer add deferred; Agrias auto-scaled) |
-| `020` | 19 | Golgollada Gallows | **Gaffgarion** as a major threat | Dark Knight sub-boss (Drain/disarm) | ✅ Implemented (v1, entry 414; Gaffgarion sub-boss L103) |
-| `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + rare loot (Blood Sword) | ✅ Implemented (v1, entry 415; first rare boss loot) |
-| `022` | 21 | Lionel Castle Oratory | **Cúchulainn**, first Lucavi demon | demon boss + rare loot (108 Gems) | ✅ Implemented (v1, entry 425; L104, rare loot deferred) |
+| `012` | 11 | Merchant City of Dorter | Mercenary work; "kill them all" | revisit Dorter, rooftop pressure + charm | ✅ v1 implemented; **v2 documented only** |
+| `013` | 12 | Araguay Woods | Rescue Boco the chocobo vs Goblins | controlled Boco + faster monster route pressure | ✅ v1 implemented; **v2 documented only** |
+| `014` | 13 | Zeirchele Falls | Protect Ovelia; **Gaffgarion betrays** | controlled Ovelia/Agrias + betrayal bridge control | ✅ v1 implemented; **v2 documented only** |
+| `015` | 14 | Castled City of Zaland | Save Mustadio from bounty hunters | controlled Mustadio + vertical assassin pressure | ✅ v1 implemented; **v2 documented only** |
+| `016` | 15 | Balias Tor | Defeat enemy **Summoners** + support | first Summoner race + sustain screen | ✅ v1 implemented; **v2 documented only** |
+| `017` | 16 | Tchigolith Fenlands | Swamp; **undead / dark** enemies | undead attrition + one status monster | ✅ v1 implemented; **v2 documented only** |
+| `018` | 17 | Goug Lowtown | Summoners; active guest slot | second Summoner fight + Time-Mage tempo/charm | ✅ v1 implemented; **v2 documented only** |
+| `019` | 18 | Balias Swale | Split-team; rain-boosted Thunder | controlled Agrias + route-biased storm cell | ✅ v1 implemented; **v2 documented only** |
+| `020` | 19 | Golgollada Gallows | **Gaffgarion** as a major threat | Dark Knight sub-boss (Drain/disarm) | ✅ v1 implemented; **v2 documented only** |
+| `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + Blood Sword rare loot | ✅ v1 implemented; **v2 documented only** |
+| `022` | 21 | Lionel Castle Oratory | **Cúchulainn**, first Lucavi demon | solo Lucavi `104`, chain-aware + 108 Gems reward | ✅ v1 implemented; **v2 documented only** |
 | `023` | — | Chapter 2 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done (all 11) |
 
 ## Carried-over rules (from Chapter 1)
@@ -52,7 +53,7 @@ Still in force — see `000-chapter-1-overview.md` for the full text:
 - Scale to party: enemy Level = 100 + offset. Offsets stay small; bosses are the spikes.
 - Preserve each battle's identity (theme, archetypes, terrain, what it teaches).
 - Respect job equipment rules (mages wear robes, monsters wear nothing, etc.).
-- Keep the curve readable: at most ONE new meaningful demand per fight.
+- Keep the curve readable: one headline demand per fight, with the whole enemy side supporting it.
 - Guest-control rule: from Chapter 1 onward, every active guest is player-controlled in NG+,
   whether or not the objective says to save them. Guest AI is not a skill check.
 - Document any rule exception per-battle (as we did for Time Mage / equipment-break in Ch1).
@@ -118,6 +119,8 @@ RULE OF THUMB:
   too if the fight has two notable foes). Generics stay on shop-tier gear.
 - The rare item should fit the boss's identity AND be a real in-fight threat or a tempting
   steal target — not just a trophy.
+- If a monster/Lucavi ENTD slot cannot equip the rare, the item moves to a guaranteed reward/table
+  path instead of being faked onto the unit.
 ```
 
 Each battle doc with a boss includes a **"Boss rare loot"** line naming the item, why it fits,
@@ -126,21 +129,23 @@ and confirming it is mid-tier (not reserved-for-Ch4).
 ## Difficulty budget per battle (Chapter 2)
 
 Level bands creep slightly above Chapter 1; bosses are the spikes. Generics `100–102`,
-sub-bosses `102–103`, major bosses `103–104`.
+sub-bosses `102–103`, major bosses `103–104`. The solo Lucavi capstone stays at `104`;
+its v2 difficulty is validated by testing the Gate -> Oratory no-resupply chain, not by
+raising the chapter cap.
 
 | Battle | Target feel | Level band | New wrinkle / boss loot |
 |--------|-------------|------------|--------------------------|
 | Merchant Dorter (11) | Harder Dorter rematch | 100–102 | tougher mage/archer/thief mix; revisit the rooftops |
-| Araguay Woods (12) | Escort a chocobo through a pack | 100–101 | monster pack + protect Boco |
+| Araguay Woods (12) | Controlled Boco through a pack | 100–101 | monster pack + route pressure |
 | Zeirchele Falls (13) | Defend Ovelia; betrayal turn | 100–103 | Agrias ally; Gaffgarion turncoat pressure |
-| Zaland (14) | Save Mustadio under fire | 100–102 | urban assassins; ranged escort |
+| Zaland (14) | Save Mustadio under fire | 100–102 | controlled Mustadio + vertical/ranged pressure |
 | Balias Tor (15) | First Summoner fight | 100–102 | **Summoner** AoE pressure |
 | Tchigolith Fenlands (16) | Swamp of the dead | 100–102 | **undead** (reraise) + bog terrain |
-| Goug Lowtown (17) | Summoners + guest escort | 100–102 | Summoner + protect Mustadio |
-| Balias Swale (18) | Split-team in the rain | 100–102 | split + rain-Thunder synergy |
+| Goug Lowtown (17) | Summoners + active ally slot | 100–102 | Summoner + Time Mage tempo + charm |
+| Balias Swale (18) | Split-team in the rain | 100–102 | controlled Agrias + route-biased rain-Thunder |
 | Golgollada Gallows (19) | Gaffgarion looms | sub-boss 103, adds 100–102 | Dark Knight sub-boss (Drain) |
 | Lionel Gate (20) | Gaffgarion boss, two-part | boss 103, adds 100–102 | **boss + rare loot**; disarm him |
-| Lionel Oratory (21) | First Lucavi demon | boss 104, adds 100–103 | **Cúchulainn + rare loot**; Holy weakness |
+| Lionel Oratory (21) | First Lucavi demon | boss 104 | **Cúchulainn + reward-table rare**; Holy weakness |
 
 ## Workflow per battle (same as Chapter 1)
 
@@ -149,7 +154,7 @@ sub-bosses `102–103`, major bosses `103–104`.
 2. On Windows: identify the BattleId / ENTD entry (cross-ref SortieConfirm, EventId, Map,
    scenario tables; sanity-check with FFTIvaliceEditor).
 3. Dump the entry; confirm the original roster matches the doc's "Original Battle".
-4. Apply the New Game++ composition: levels, JOB ESCALATION swaps, gear, RARE BOSS LOOT,
+4. Apply the New Game++ composition: levels, ENEMY PARTY ESCALATION, gear, RARE BOSS LOOT,
    skills, placement, and guest-control flags for every active guest.
 5. Patch via the right layer (.bin or OverrideEntryData); keep the diff inside the battle window.
 6. Copy into the mod, install to Reloaded-II, test from a New Game+ save.

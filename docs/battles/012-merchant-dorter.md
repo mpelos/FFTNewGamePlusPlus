@@ -1,6 +1,6 @@
 # 012 - Merchant City of Dorter (Chapter 2)
 
-Status: ✅ implemented (v1, entry 403) — Knight job-escalation deferred (see below)
+Status: ✅ implemented (v1, entry 403) + **v2 redesign documented only** (implementation pending)
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 11 (Chapter 2 opener)
 Target version: Enhanced v1.5.0
@@ -79,16 +79,29 @@ is innate to the Thief job command at JobLevel 8** — no secondary skillset is 
 fight's signature charm threat. The Gaffgarion/Agrias/story slots are all lvl 254 in the base ENTD
 (enabled by story scripting) and are left untouched.
 
-## Job Escalation (Chapter 2 rule)
+## Enemy Party Escalation (Chapter 2 redesign)
 
 ```text
-CHANGE: add ONE Knight as a frontline anchor (the band gains muscle it lacked).
-WHY: Chapter 2 Dorter's original squad is all-squishy (no frontline). Adding a Knight wall
-  forces the player to break through before reaching the archers/mages/thieves — raising the
-  challenge while KEEPING the strategy (still "take the high ground, avoid AoE clumping,
-  counter charm", now with a wall in the way). This is the single new wrinkle for this fight.
-WHAT IS NOT CHANGED: the 2 Archer / 2 Black Mage / 2 Thief core stays intact, so the fight's
-  finesse identity is preserved.
+VANILLA SPIRIT: a coordinated city ambush where rooftops, Black Magic, and charm punish a bad
+  formation.
+CHAPTER-2 UPGRADE: keep the full 2 Archer / 2 Black Mage / 2 Thief core, add exactly ONE Knight
+  captain as the street anchor, and tune the two Black Mages as real endgame casters instead of
+  adding extra bodies or extra status.
+WHY: a single anchor forces the player to route around or break a front line before deleting the
+  mages. Optimized Black Mages make the original "do not clump" lesson matter to a tuned NG+
+  party. Two anchors were rejected because they turn the opener into cleanup.
+WHAT IS NOT CHANGED: the fight is still won by reading high ground, caster priority, and charm
+  risk. It is not a Chapter-3 synergy puzzle and not a Chapter-4 broken-build puzzle.
+```
+
+Chapter 2 requirements applied:
+
+```text
+- Every active human enemy has full equipment.
+- Every active human enemy has intentional reaction, support, and movement.
+- Secondary is optional; it appears only when it clarifies the unit's role.
+- Mime and Calculator/Arithmetician remain banned.
+- No Stop / Don't Act / Petrify / Death spam is introduced.
 ```
 
 ## Sanctioned exception — charm (Steal Heart) stays
@@ -110,28 +123,42 @@ overview, rare loot is reserved for boss battles — Gaffgarion and Cúchulainn)
 on strong shop-tier gear.
 ```
 
-## Proposed Composition (New Game++ Merchant Dorter v1)
+## Guest handling
 
-Keep the original six and add one Knight anchor (7 enemies). Archers and mages at `101`, the
-new Knight at `101`, the Thieves at `100`.
+```text
+Gaffgarion and Agrias are active story allies here. In NG+ they must be player-controlled under
+the global guest-control rule. The redesign does not use their AI as a skill check; it assumes the
+player can route them deliberately against the ambush.
+```
+
+## Proposed Composition (New Game++ Merchant Dorter v2)
+
+Keep the original six and add one Knight captain (7 enemies). The enemy side is complete, but
+still readable:
+
+```text
+1 frontline anchor
+2 elevated ranged attackers
+2 optimized AoE casters
+2 fast charm/flank threats
+```
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
-| n | Anchor (NEW) | Knight | `101` | Frontline wall; guards the archers/mages so they can't be rushed. |
+| n | Street Captain (NEW) | Knight | `102` | Frontline wall; slows the rush without adding hard control. |
 | n | Rooftop Archer | Archer | `101` | Elevated ranged pressure; the classic Dorter menace. |
 | n | Rooftop Archer | Archer | `100` | Second elevated bow; covers the other approach. |
-| n | Black Mage | Black Mage | `101` | AoE threat #1 — punishes a clumped advance. |
-| n | Black Mage | Black Mage | `101` | AoE threat #2 — forces the player to spread. |
+| n | Fast Black Mage | Black Mage | `102` | Swiftness caster; makes the first AoE race real. |
+| n | Power Black Mage | Black Mage | `101` | Arcane Strength caster; punishes clumped targets. |
 | n | Thief (charm) | Thief | `100` | Steal Heart pressure + fast harassment. |
 | n | Thief (charm) | Thief | `100` | Second charm threat; splits the player's caution. |
 
 Reasoning:
 
-The original band is already the platonic "finesse ambush," so the move is to **scale, gear,
-and add the single Knight wrinkle**. The Knight protects what was an exposed backline, turning
-a race-to-the-casters into a real break-through — the Chapter 2 escalation — without changing
-the core read. Both Black Mages keep AoE relevant at party level; the two charm Thieves keep
-the fight's signature threat; the elevated archers keep the Dorter rooftop identity.
+The original band is already the platonic "finesse ambush," so the move is to give that band a
+complete NG+ version: a single bodyguard, high-ground ranged pressure, two real caster builds, and
+the canonical charm thieves. The player still has fair answers: split formation, rush or silence
+the casters, disarm/burst the Knight, climb to the archers, or bring charm immunity/all-male units.
 
 ## Builds (final-shop quality; coordinated mercenary band flavor)
 
@@ -143,17 +170,19 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Knight Anchor (Lv 101) — NEW
+### Street Captain — Knight (Lv 102) — NEW
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Secondary: none (NO Break this fight)
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
+Job: Knight (id TBD)   JobLevel: 8   Secondary: none (NO Rend/Battle Skill this fight)
+Reaction: Counter (442)   Support: Defense Boost (id TBD)
+Movement: Movement +1 (486)
 Head/Body: shop heavy helm + heavy armor (ids TBD)
 Accessory: Bracers (218)
 Right hand: Runeblade (30) or Icebrand (29)   Left hand: shop shield (id TBD)
 ```
 
-Role: the wall the original band lacked. Stalls the street so the casters/archers keep working.
+Role: the wall the original band lacked. Stalls the street so the casters/archers get real turns.
+No Rend here: the chapter opener previews formation pressure, not gear-break pressure.
 
 ### Archer x2 (Lv 101 / 100)
 
@@ -166,18 +195,24 @@ Right hand: Windslash Bow (87)   Left hand: none / two-hand marker (254)
 
 Role: elevated harassment. Concentration keeps them relevant against evasive NG+ units.
 
-### Black Mage x2 (Lv 101)
+### Black Mage x2 (Lv 102 / 101)
 
 ```text
+Fast Black Mage:
 Job: Black Mage (id TBD)   JobLevel: 8   Secondary: none
-Reaction: Reflexes (449) or magic-defensive reaction (id TBD)
-Support: MA/Magick-boost support if available (id TBD)
-Movement: Movement +1 (486)
+Reaction: Mana Shield (id TBD)   Support: Swiftness (id TBD)   Movement: Movement +1 (486)
+Head: cloth/mage hat (id TBD)   Body: shop robe (id TBD)
+Accessory: Featherweave Cloak (234)   Right hand: shop magic-boost rod (id TBD)   Left: none (255)
+
+Power Black Mage:
+Job: Black Mage (id TBD)   JobLevel: 8   Secondary: none
+Reaction: Reflexes (449)   Support: Arcane Strength (id TBD)   Movement: Movement +1 (486)
 Head: cloth/mage hat (id TBD)   Body: shop robe (id TBD)
 Accessory: Featherweave Cloak (234)   Right hand: shop magic-boost rod (id TBD)   Left: none (255)
 ```
 
 Role: the AoE that punishes clumping — the biggest threat, exactly as the walkthrough warns.
+The fast mage creates the race; the power mage creates the punishment. No status magic is added.
 
 ### Thief x2 (Lv 100) — charm
 
@@ -193,17 +228,51 @@ Role: fast charm harassment. Forces the player to respect formation and unit gen
 ## Positioning Plan
 
 ```text
-Knight starts on the ground at the main approach, between the player and the backline.
+Knight starts on the ground at the main approach, between the player and the backline, but not
+  on a tile that seals every route.
 Both Archers start on the elevated tiles (rooftops/high ground) with wide sightlines.
-Both Black Mages start behind the Knight / at mid-height, able to AoE the approach lane.
+Fast Black Mage starts where the first spell threatens the obvious clustered approach.
+Power Black Mage starts farther back, protected but reachable by a committed rush.
 Both Thieves start on the flanks with movement lanes to dart at the player's formation.
-Do NOT alter the Gaffgarion/Agrias ally placements.
+Do NOT alter the Gaffgarion/Agrias ally placements except for the NG+ player-control flag.
 ```
 
 The map should read: "a wall up front, archers above, mages lobbing AoE, and charm-thieves
-circling" — a formation puzzle, the Chapter 2 escalation of Dorter's high-ground lesson.
+circling" — a formation problem, the Chapter 2 escalation of Dorter's high-ground lesson.
 
-## Implemented (v1, entry 403)
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-012-merchant-dorter/
+```
+
+Model scope:
+
+```text
+First four rounds only; compares action economy and weighted pressure. It does not claim exact FFT
+damage. It checks whether the opener gains meaningful pressure without adding hard-lock or cleanup.
+```
+
+Iteration results:
+
+| Candidate | Enemy actions | Action ratio | Pressure | Delta vs v1 | Result |
+|-----------|---------------|--------------|----------|-------------|--------|
+| v1 current: 2 Archer, 2 Black Mage, 2 Thief | 24.0 | 1.00 | 56.6 | 0.0% | Baseline |
+| Add 2 Knight anchors | 31.2 | 1.30 | 69.6 | +23.0% | Rejected: too much bodyblock/cleanup |
+| Add 1 Knight anchor only | 27.6 | 1.15 | 63.1 | +11.5% | Fair but soft |
+| Add 1 Knight anchor + optimized Black Mages | 28.4 | 1.18 | 67.8 | +19.8% | Accepted |
+
+Decision:
+
+```text
+Use one Knight captain and two optimized Black Mages. Do not add a second anchor, a third charm
+source, a third AoE source, or any hard-lock status. The accepted version raises pressure enough for
+the Chapter-2 opener while preserving the original answers.
+```
+
+## Current Implementation (v1, entry 403 — superseded by v2 design)
 
 Applied with `python tools/battle_patch.py merchant_dorter`; diff contained to local entry 19
 (global 403), 58 bytes.
@@ -217,32 +286,33 @@ s1  Thief      L100 jl8  R First Strike  S Atk-Boost  M +2  Thief's Cap / Black 
 s6  Thief      L100 jl8  (same kit)  — Steal Heart innate to the Thief job
 ```
 
-**Deferred — the Knight job-escalation (a 7th unit).** The doc's single Chapter-2 wrinkle is to
-ADD a Knight frontline wall. That means inserting a new unit into an empty slot (s9+), which needs
-a verified, walkable map position — every Chapter 1 battle only re-tuned existing slots, so adding a
-unit is a new, untested operation best done with an in-game playtest. The 6-unit finesse identity
-(elevation + AoE + charm) is fully delivered; the Knight add is batched for the playtest pass.
+This implementation remains the shipped v1 data. The v2 redesign above is **documentation only** in
+this pass; it requires a later ENTD implementation pass to add the Knight captain, tune the two
+Black Mages, and set the NG+ player-control flags for Gaffgarion/Agrias.
 
-## Implementation Checklist
+## Future Implementation Checklist (v2)
 
 - [x] Identify Merchant Dorter ENTD entry (403) on Windows data; fill "Local Data Confirmed".
 - [x] Dump original entry; verify 2 Archer + 2 Black Mage + 2 Thief + ally slots.
 - [x] Confirm Black Mage / Archer / Thief job IDs and legal equipment.
-- [ ] Add the Knight slot (deferred — needs a verified map position; do during playtest).
-- [x] Set levels: Archer(1) + both Black Mages `101`; Archer(2) + both Thieves `100`.
-- [x] Set JobLevel `8` on all active enemy slots.
-- [x] Keep Steal Heart on the two Thieves (innate to the Thief job at jl8).
-- [x] Equip per builds; preserve the elevation positions and the allies.
-- [x] Patch the embedded ENTD (NG+-only by construction); diff inside entry 403 only.
-- [x] Re-dump and diff; confirm changes are small and intentional.
-- [ ] Install mod, test from a New Game+ save; then add the Knight wrinkle (playtest).
+- [ ] Add one Knight captain in a verified walkable/frontline slot.
+- [ ] Set levels: Knight `102`, fast Black Mage `102`, power Black Mage + lead Archer `101`,
+  second Archer + Thieves `100`.
+- [ ] Set JobLevel `8` on all active enemy slots.
+- [ ] Keep Steal Heart on exactly the two canonical Thieves; add no other charm source.
+- [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
+- [ ] Set Gaffgarion and Agrias player-controlled in NG+; do not rely on guest AI.
+- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [ ] Re-dump and diff; confirm changes are contained to entry 403 and any deliberate guest-control bytes.
+- [ ] Install mod and test from a New Game+ save.
 
 ## Test Questions
 
-- Does the added Knight meaningfully change the fight (force a break-through) without breaking
-  the "take the high ground / avoid AoE / counter charm" strategy?
-- Are the two Black Mages still the biggest threat at scale?
+- Does one Knight captain create a real route/target-priority decision without turning Dorter into
+  a slow bodyblock cleanup?
+- Are the two optimized Black Mages still the biggest threat at scale?
 - Is the charm (Steal Heart) a fair, telegraphed threat the player can counter, not a coin-flip loss?
+- Do Gaffgarion and Agrias behave correctly as player-controlled NG+ guests?
 - Does it clearly read as a step up from Chapter 1 Dorter — coordinated finesse, not a brawl?
 - Is it a fitting Chapter 2 opener: harder than Ch1 but not a wall this early in the chapter?
 - Does it still feel like a mercenary ambush in the merchant city, not a designed arena?
@@ -254,7 +324,7 @@ unit is a new, untested operation best done with an in-game playtest. The 6-unit
   Black Mage AoE as the top threat, Thieves' Steal Heart charm (all-male-party counter), allies
   Gaffgarion + Agrias, contrast with Chapter 1 Dorter.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553172
-- Local: `docs/battles/011-chapter-2-overview.md` (job-escalation + boss-loot rules),
+- Local: `docs/battles/011-chapter-2-overview.md` (enemy-party escalation + boss-loot rules),
   `004-dorter-slums.md` (Chapter 1 Dorter, for contrast), `001-gariland.md` (slot-add method,
   confirmed item/skill IDs).
 </content>
