@@ -1,6 +1,6 @@
 # 032 - The Yuguewood (Yuguo Woods)
 
-Status: ✅ implemented (v1, entry 430)
+Status: ✅ implemented (v1, entry 430) — NG+ only; pending playtest. **v2 redesign documented only** (implementation pending).
 Chapter: 3 — "The Valiant"
 Battle order: Battle 29 (after Walled City of Yardrow)
 Target version: Enhanced v1.5.0
@@ -80,35 +80,47 @@ won by closing the permakill faster under tempo and ranged pressure.**
 ## Local Data Confirmed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 1 Ghoul + 1 Ghast + 1 Revenant + 2 Black Mage + 2 Time Mage, plus the player slots.
+ENTD entry 430 confirmed in `024-chapter-3-overview.md` and v1 implementation.
+Roster: 1 Ghoul + 1 Ghast + 1 Revenant + 2 Black Mage + 2 Time Mage, plus the player slots.
 CRITICAL: preserve the UNDEAD flags (reraise/revive + heal-damages-undead + Phoenix-Down-instakill +
   Seal-Evil-petrify + Entice-able) on the Ghoul/Ghast/Revenant. These ARE the fight.
 Keep the swamp terrain / mobility flags (the bog is part of the attrition).
-Keep Time Mage to Haste/Slow only; keep Black Mage cast cadence normal.
+Keep Time Mage to Haste/Slow/Float only; keep Black Mage cast cadence normal.
 Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
 ```
 
-Job/monster IDs (verify all in-game):
+Job/monster IDs:
 
 ```text
-Ghoul / Ghast / Revenant monster ids (TBD - verify; undead, reraise)
-Black Mage job id   (TBD - verify)
-Time Mage job id    (TBD - verify; from Ch1 Lenalian / Ch2 Goug & Gallows / Vaults 027)
+66 = enemy-variant Black Mage (confirmed; equips Rod)
+68 = enemy-variant Time Mage (confirmed; equips Staff)
+112 = Ghoul (confirmed undead monster)
+113 = Ghast (confirmed undead monster)
+114 = Revenant (confirmed undead monster)
 ```
 
-## Job Escalation (Chapter 3 rule)
+## Enemy Party Escalation (Chapter 3 redesign)
 
 ```text
-THE WRINKLE IS THE CASTER BACKLINE ON THE UNDEAD: unlike Tchigolith (017, pure monsters), the Yuguo
-undead are supported by 2 Black Mages (ranged magic) and 2 Time Mages (Haste the dead / Slow you).
-The living caster support IS this fight's escalation — it adds tempo + ranged pressure to the
-permakill puzzle. Per "one new wrinkle per fight," NO brand-new caste is introduced (the enemy
-Orator/Mediator already debuted at Gollund 025; Oracle is NOT in this roster). Keep the
-3-undead / 2 Black Mage / 2 Time Mage shape.
-WHY: reraising undead under Haste + magic is a meaningfully harder version of the Tchigolith puzzle;
-  stacking a new caste on top would overload a 2/5★ fight. (Note: the OVERVIEW initially guessed an
-  "Oracle" here — the real roster has Black/Time Mages instead; corrected.)
+VANILLA SPIRIT: reraising undead in swamp terrain must be permakilled with healing/Holy/Seal Evil
+  while living casters punish slow cleanup.
+CHAPTER-3 UPGRADE: keep the exact 3 undead / 2 Black Mage / 2 Time Mage roster, but complete every
+  active human caster setup with secondary/reaction/support/movement. Monsters keep monster legality.
+WHY: caster tempo on undead is already the escalation. Adding Oracle/status, extra undead, instant
+  magic, or hard-lock Time Magic turns a moderate permakill fight into a slog or lockdown puzzle.
+WHAT IS NOT CHANGED: undead counters remain strong and visible; Time Mages amplify Haste/Slow only;
+  Black Mages create ranged pressure with normal cast cadence.
+```
+
+Chapter 3 requirements applied:
+
+```text
+- Every active human enemy has full equipment.
+- Every active human enemy has secondary, reaction, support, and movement.
+- Monsters preserve monster legality: no equipment and no human ability completeness requirement.
+- The party has real synergy: undead reraise + Time Mage tempo + Black Mage ranged punishment.
+- No guests are present.
+- No Oracle/status add, no extra undead body, no hard-lock Time Magic, no instant Black Magic.
 ```
 
 ## Sanctioned exceptions (carried precedents)
@@ -131,7 +143,7 @@ shop-tier (monsters carry no gear). The map's rare TREASURE (Bestiary / Mythril 
 Damask Cloth) is existing map treasure, not boss loot; leave it as-is.
 ```
 
-## Proposed Composition (New Game++ Yuguewood v1)
+## Proposed Composition (New Game++ Yuguewood v2)
 
 Keep the exact roster; scale and preserve the undead + tempo mechanics. The Revenant and one Time
 Mage anchor at `101`–`102`; the rest at `100`–`101`. Moderate (2/5★).
@@ -180,7 +192,8 @@ Role: the reraising attrition core — must be permakilled, not just dropped.
 ### Time Mage x2 (Lv 101) — Haste/Slow only
 
 ```text
-Job: Time Mage (id TBD)   JobLevel: 8   Secondary: none
+Job: Time Mage (68)   JobLevel: 4 cap or command-filter equivalent
+Secondary: Item or low-tier Black/White Magic if legal; no hard status/control
 Skillset limit: Haste (on the undead) / Slow (on the player) / Float-tier ONLY.
   NO Stop, Immobilize, Don't Move, Don't Act.
 Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
@@ -193,7 +206,8 @@ Role: the tempo amplifier — Hasted undead swing more; Slow drags the player's 
 ### Black Mage x2 (Lv 101 / 100)
 
 ```text
-Job: Black Mage (id TBD)   JobLevel: 8   Secondary: none
+Job: Black Mage (66)   JobLevel: 8   Primary: Black Magic
+Secondary: Item or low-tier White Magic if legal; no Time Magic / no hard control
 Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
 Head: cloth/mage hat (id TBD)   Body: shop robe (id TBD)
 Accessory: Featherweave Cloak (234)   Right hand: shop magic-boost rod (id TBD)   Left: none (255)
@@ -214,18 +228,63 @@ Keep the undead reraise + all anti-undead counters intact.
 The woods should say: "the dead won't lie down — burn them out with light and elixirs — but their
 chronomancers keep them swinging and their mages keep you honest."
 
-## Implementation Checklist
+## Simulation Plan and Results
 
-- [ ] Identify Yuguewood `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 1 Ghoul + 1 Ghast + 1 Revenant + 2 Black Mage + 2 Time Mage.
-- [ ] Confirm undead monster ids AND that undead flags (reraise + heal-weakness + PD-kill + Seal-Evil
-      + Entice) persist; confirm Black/Time Mage ids.
+Simulation artifact:
+
+```text
+tmp/fft-level-design-032-yuguewood/
+```
+
+Model scope:
+
+```text
+First five rounds only; compares undead reraise pressure, caster tempo, Black Mage ranged pressure,
+permakill access, and slog risk. It rejects Oracle/status additions, hard-lock Time Magic, extra
+undead bodies, and instant/high-tier caster burst.
+```
+
+Iteration results:
+
+| Candidate | Enemies | Action ratio | Undead threat | Tempo threat | Magic threat | Total pressure | Permakill access | Slog risk | Answerability | Result |
+|-----------|---------|--------------|---------------|--------------|--------------|----------------|------------------|-----------|---------------|--------|
+| v1 undead caster tempo shell | 7 | 0.95 | 54.0 | 33.0 | 35.0 | 122.0 | 65.9 | 16.7 | 76.0 | Baseline |
+| v2 complete undead caster tempo | 7 | 1.00 | 57.6 | 36.0 | 37.8 | 139.4 | 73.1 | 17.6 | 74.4 | Accepted |
+| Hard-lock Time Mage swamp | 7 | 1.00 | 57.6 | 63.0 | 37.8 | 188.4 | 42.4 | 22.0 | 37.2 | Rejected: hard-lock / lost permakill |
+| Oracle undead status stack | 7 | 1.00 | 57.6 | 18.0 | 37.8 | 141.4 | 59.9 | 22.7 | 60.0 | Rejected: not in roster / status stack |
+| Fourth undead bog slog | 8 | 1.14 | 76.8 | 36.0 | 37.8 | 158.6 | 69.6 | 29.3 | 67.3 | Rejected: extra undead slog |
+| Instant Black Magic cleanup tax | 7 | 1.00 | 57.6 | 36.0 | 73.5 | 175.1 | 66.6 | 18.0 | 67.3 | Rejected: caster counterplay removed |
+
+Decision:
+
+```text
+Use the exact seven-unit undead/caster roster. Complete the four human caster setups, keep Time
+Magic to Haste/Slow/Float, and preserve every undead counter. Reject Oracle/status, extra undead,
+hard-lock Time Magic, and instant Black Magic because they turn a moderate permakill tempo fight
+into a slog or lockdown puzzle.
+```
+
+## Current Implementation (v1, entry 430 — superseded by v2 design)
+
+The shipped v1 already establishes the confirmed enemy-variant caster ids, undead monsters, undead
+flags, and Haste/Slow Time Mage cap on entry 430. The v2 redesign above is **documentation only** in
+this pass; it requires a later implementation pass to add mandatory secondary setups for the four
+active human casters and validate undead level scaling in-game.
+
+## Future Implementation Checklist (v2)
+
+- [x] Identify Yuguewood ENTD entry 430; fill "Local Data Confirmed".
+- [x] Dump original entry; verify 1 Ghoul + 1 Ghast + 1 Revenant + 2 Black Mage + 2 Time Mage.
+- [x] Confirm undead monster ids and enemy-variant Black/Time Mage ids.
+- [ ] Confirm undead flags (reraise + heal-weakness + PD-kill + Seal-Evil + Entice) persist.
 - [ ] Constrain BOTH Time Mages to Haste/Slow (no hard lock); keep Black Mage cadence normal.
 - [ ] Keep the undead's status touch single-target (no mass-status; one-disruptor cap respected).
 - [ ] Set levels: Revenant + both Time Mages + one Black Mage `101`; Ghoul/Ghast + second Black Mage `100`.
-- [ ] Set JobLevel `8`; aggressive Brave on the undead; no equipment on monsters.
+- [ ] Set caster JobLevel/command caps intentionally; aggressive Brave on the undead; no equipment on monsters.
+- [ ] Give every active human caster full equipment plus secondary/reaction/support/movement.
+- [ ] Preserve moderate tuning: no Oracle/status add, no extra undead, no hard-lock, no instant magic.
 - [ ] Preserve the swamp terrain / mobility flags.
-- [ ] Patch via the correct layer; keep the diff inside the Yuguewood window only.
+- [ ] Patch via the correct layer in a later implementation pass; no binary/data change in this doc pass.
 - [ ] Re-dump and diff; confirm changes are small and intentional; verify undead + Haste fairness.
 - [ ] Install mod, test from a New Game+ save; verify permakill (PD/Holy/Seal Evil) works under Haste.
 
@@ -248,7 +307,6 @@ chronomancers keep them swinging and their mages keep you honest."
   https://game8.co/games/Final-Fantasy-Tactics/archives/553188
 - Final Fantasy Wiki, "Yuguo Woods" + undead mechanics.
   https://finalfantasy.fandom.com/wiki/Yuguo_Woods
-- Local: `docs/battles/024-chapter-3-overview.md` (job-escalation + rare-loot rules),
+- Local: `docs/battles/024-chapter-3-overview.md` (Chapter 3 complete-party + rare-loot rules),
   `017-tchigolith-fenlands.md` (undead handling + one-disruptor cap), `018-goug-lowtown.md`
   (Time Mage Haste/Slow limit), `025-mining-town-gollund.md` (enemy Orator already debuted).
-</content>

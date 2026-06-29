@@ -1,165 +1,170 @@
 # 035 - Riovanes Castle Roof — Elmdor & the Assassins
 
-Status: ✅ implemented (v1, entry 433)
+Status: ✅ implemented (v1, entry 433) — redesign plan v2 docs-only
 Chapter: 3 — "The Valiant" — **CHAPTER FINALE**
 Battle order: Battle 32 (after Riovanes Castle Keep) — **Riovanes chain 3 of 3 (close)**
 Target version: Enhanced v1.5.0
 ENTD: global entry **433** (local entry 49, `battle_entd4_ent.bin`)
-File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py riovanes_roof`
+File: `battle_entd4_ent.bin` (embedded NG+ swap)
 
-Implemented composition (entry 433, vanilla-dump verified) — LEVEL-ONLY (race fight, all flee):
-- s0 **Rapha** (job 41 Skyseer — PROTECTED GUEST, control `00 84`): L100 via **direct ENTD level**
-  (NOT the runtime scaler — her sprite 41 collides with the enemy clone s1, so a direct edit touches
-  only her slot). 2026-06-27: gear upgraded to best buyable end-game (Thief's Cap 168 / Luminous Robe 206 /
-  Featherweave Cloak 234 / Eight-fluted Pole 113 — identical kit as Yardow 428) → survives the race.
-- s3 **Elmdor** (job 27 Ark Knight) L104 — level only; flees, no loot.
-- s4 **Celia** (job 45 Assassin) L103 — level only; flees, no loot.
-- s5 **Lettie** (job 46 Assassin) L103 — level only; flees, no loot.
-- s1 (job-41 lvl-5 Rapha clone) + s2 (job-18 lvl-5 Netherseer/Marach-class) = scripting placeholders — untouched.
+Implemented composition (entry 433, vanilla-dump verified):
 
-No skillset/jobLevel change on the enemies → no new hard lock (status stays vanilla-resistable, the
-flee-on-critical trigger + protect-Rapha fail condition + 4-unit cap preserved). NO rare:
-Elmdor's Masamune/Genji are his Chapter-4 Limberry loot.
+- s0 **Rapha** (job 41 Skyseer — protected guest, current control `00 84`) — L100 via direct ENTD
+  level. v2 requirement: Rapha must be **player-controlled in NG+** while preserving the
+  fail-on-death objective. Current gear is best-buyable/end-game support gear: Thief's Cap (168),
+  Luminous Robe (206), Featherweave Cloak (234), Eight-fluted Pole (113).
+- s3 **Elmdor** (job 27 Ark Knight) — L104; flees, no loot.
+- s4 **Celia** (job 45 Assassin) — L103; flees, no loot.
+- s5 **Lettie** (job 46 Assassin) — L103; flees, no loot.
+- s1 (job-41 L5 Rapha clone) + s2 (job-18 L5 Netherseer/Marach-class) are scripting placeholders;
+  leave untouched.
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `024-chapter-3-overview.md`.
+The v2 redesign keeps the race and flee trigger, but upgrades Elmdor/Celia/Lettie from level-only
+enemies to complete Chapter 3 human setups. It does **not** add bodies, loot, or hard-lock status.
 
 ## Original Battle
 
 Objective:
 
 ```text
-Save Rapha!  (protect the NPC — the mission fails if Rapha is defeated.)
-WIN CONDITION: force the enemy to FLEE. The moment ONE assassin (Celia or Lettie) reaches CRITICAL
-  HP, ALL THREE enemies retreat and the fight ends instantly. You do NOT defeat them — you drive
-  them off. Elmdor and both assassins ESCAPE (Elmdor reappears at Limberry in Chapter 4).
+Save Rapha! (protect objective; mission fails if Rapha is defeated.)
+WIN CONDITION: force the enemy to flee. The moment Celia or Lettie reaches critical HP, Elmdor,
+Celia, and Lettie retreat and the fight ends instantly. You drive them off; you do not kill them.
 ```
 
 Player deployment:
 
 ```text
-Up to 4 units, including Ramza (a SMALLER squad than usual). Protected NPC: RAPHA (fail on death).
-On completion, MARACH and RAPHA are recruited.
-CHAIN: arrives from the Keep on one loadout (closes the no-resupply Riovanes chain).
+Up to 4 units, including Ramza. Protected NPC: Rapha.
+On completion, Marach and Rapha are recruited.
+CHAIN: arrives from the Keep on one loadout, closing the no-resupply Riovanes chain.
 ```
 
 Original enemy composition:
 
 ```text
-1x Elmdore   (Arc Knight — draw-out/Iaido; debuffs; teleport)
-1x Celia     (Assassin — high mobility / teleport; nasty status / instant-death tools)
-1x Lettie    (Assassin — high mobility / teleport; nasty status / instant-death tools)
+1x Elmdor  (Arc Knight — Iaido/draw-out style pressure, debuffs, teleport)
+1x Celia   (Assassin — high mobility / teleport; dangerous status and instant-death tools)
+1x Lettie  (Assassin — high mobility / teleport; dangerous status and instant-death tools)
 ```
 
 Public walkthrough details:
 
 ```text
-Recommended level: ~36.  Difficulty: 2/5 stars (it is a RACE, not a slugfest).
-Rooftop arena. Protect Rapha — her death fails the mission.
-The intended play: IGNORE Elmdor's debuffs and focus ALL damage on ONE assassin (Celia or Lettie).
-  As soon as one hits critical, all three flee and the fight ends — so it is a RACE to a threshold.
-The assassins are fast and teleport, with dangerous status/instant-death; Elmdor adds debuffs.
+Recommended level: ~36. Difficulty: 2/5 stars. It is a race, not a slugfest.
+Rooftop arena. Protect Rapha.
+The intended play is to ignore Elmdor's noise and focus all damage on one assassin. As soon as one
+assassin hits critical, all three enemies flee.
 ```
 
 Design reading:
 
-The Roof is **the chapter's coda — a race-to-flee under assassin pressure**. Unlike every prior
-boss, you cannot win by killing: the enemy is built to **escape the instant you hurt one assassin
-enough**, so the fight is a sprint — **burst one assassin to critical before the teleporting killers
-(and Elmdor's debuffs) can put down the fragile Rapha**. It introduces the **Assassin** caste — the
-most mobile, most lethal generic in the game — as a pair of named threats who flicker around the
-roof toward the protected NPC. The lesson is **focus and tempo under a protect condition**: pick a
-target, ignore the noise (Elmdor), and end it fast. Nobody dies here — Elmdor and the assassins
-slip away to return in Chapter 4 — so it is a *threat* finale, not a kill, and a deliberate
-exhale (2/5★) after the Velius spike, gated only by the protect-Rapha condition and the smaller
-4-unit squad.
+The Roof is **the chapter's coda: a race-to-flee under assassin pressure**. The player has just beaten
+the hardest fight in the chapter, so this should not exceed Keep in attrition. Its challenge comes
+from tempo and focus: control Rapha, keep her alive, pick Celia or Lettie, and burst one assassin to
+critical before teleporting killers can punish the exposed objective. Elmdor is dangerous atmosphere
+and debuff noise, not the target.
 
-For New Game++ the identity must stay: **a small-squad rooftop race to drive off two teleporting
-assassins (and Elmdor) by bursting ONE to critical, before they kill the protected Rapha — focus
-and tempo, not a defeat-all; everyone escapes.**
+For New Game++ the identity is: **a 4-unit rooftop sprint where Rapha is protected but
+player-controlled, Celia and Lettie showcase complete-but-fair Assassin builds, and the fight ends the
+moment one assassin is pushed to critical. Nobody dies and nobody drops loot.**
 
 ## Local Data Confirmed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Elmdore + Celia + Lettie, plus the (max 4) player slots and RAPHA's protected NPC slot.
-CRITICAL: preserve the FLEE-ON-CRITICAL scripting (one assassin to critical -> all three retreat,
-  fight ends) and the "Save Rapha" fail-on-death objective. Preserve the 4-unit deploy cap.
-ALL THREE ENEMIES ESCAPE — none die here; Elmdor's best loot (Masamune / Genji) is a Chapter 4
-  (Limberry) matter, NOT here.
-Preserve the rooftop geometry and the assassins' teleport/high-mobility.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+Entry 433 / local entry 49 / battle_entd4_ent.bin:
+  s0  Rapha       job 41 Skyseer      L100   protected guest; v2 requires player control in NG+
+  s3  Elmdor      job 27 Ark Knight   L104   active enemy; flees
+  s4  Celia       job 45 Assassin     L103   active enemy; flees
+  s5  Lettie      job 46 Assassin     L103   active enemy; flees
+  s1  Rapha clone job 41              L5     scripting placeholder
+  s2  Netherseer  job 18              L5     scripting placeholder
+
+Preserve: 4-unit deploy cap, protected-Rapha fail condition, flee-on-critical trigger, all-three-flee
+escape behavior, rooftop geometry, and no-resupply chain close.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Job IDs:
 
 ```text
-Arc Knight job id   (TBD - verify; Elmdore — draw-out/Iaido; teleport)
-Assassin job id     (TBD - verify; Celia & Lettie — FIRST Assassins in the mod; teleport + status/death)
+Skyseer / Rapha job id:     41
+Arc Knight / Elmdor job id: 27
+Celia Assassin job id:      45
+Lettie Assassin job id:     46
 ```
 
-## Job Escalation (Chapter 3 rule)
+## Enemy Party Escalation (Chapter 3 redesign)
 
 ```text
-THE NEW CASTE IS BUILT IN: this finale debuts the ASSASSIN (Celia & Lettie) — the most mobile,
-most lethal generic, with teleport and status/instant-death tools — as named threats to the
-protected Rapha, alongside Elmdor's Arc-Knight debuffs. The Assassin caste IS this fight's
-escalation; per "one new wrinkle per fight," NO additional generic job is added. Keep the
-Elmdor + Celia + Lettie shape.
-WHY: teleporting killers that race a protect target, in a flee-on-critical sprint, is a genuinely
-  new tactical problem (focus one, ignore the rest, beat the clock). Nothing else is needed.
+The new caste is built in: Celia and Lettie are the Assassin debut. The escalation is not "more
+enemies"; it is a complete named trio whose kits create a short, dangerous race. Keep exactly
+Elmdor + Celia + Lettie.
 ```
 
-## Sanctioned exceptions (carried + new precedent)
+All three active human enemies get Chapter 3 complete setups: secondary, reaction, support, movement,
+full legal equipment, and JobLevel 8. Because the fight is a coda, their instant-death/status tools
+must be constrained: resistable, non-spam, and never a permanent lock.
+
+## Sanctioned Exceptions
 
 ```text
-ASSASSIN status / instant-death — allowed as a BOSS-tier threat, CONSTRAINED (new precedent, in the
-  spirit of the Cúchulainn 022 / Velius 034 caps):
-  ALLOWED: the assassins' signature status / instant-death tools on Celia & Lettie.
-  GUARDRAILS: NOT unavoidable and NOT spammed — instant-death/status must be RESISTABLE (accessory
-    immunity, Faith/positioning) and not land every turn; NO permanent hard lock (no Stop/Don't Act
-    chain) that makes the race impossible. The flee-on-critical win condition is itself the pressure
-    valve: the player can END the fight quickly, so the danger window is short by design — keep it that way.
-TELEPORT / high mobility — allowed and intended (it is the Assassin's identity); preserve it so the
-  threat to Rapha is real, but keep the fight endable by focusing one assassin.
-ELMDOR debuffs — allowed, soft/ignorable (the guide says ignore them); NO hard lock from Elmdor either.
+PROTECTED GUEST:
+  Rapha remains a fail condition, but she must be player-controlled in NG+. The skill check is player
+  routing and tempo, not guest AI.
+
+ASSASSIN status / instant-death:
+  Celia and Lettie may use signature Assassin pressure, but it must be resistable and non-spam.
+  No Stop/Don't Act/death chain that removes the race answer.
+
+TELEPORT / high mobility:
+  Allowed and intended. The assassins must threaten Rapha quickly, but the flee-on-critical trigger
+  gives the player a short, clear escape route.
+
+ELMDOR debuffs:
+  Allowed as ignorable pressure. He should make the roof feel unsafe without becoming the win target.
 ```
 
-## Boss rare loot
+## Boss Rare Loot
 
 ```text
-None. All three enemies FLEE — none die here, so there is nothing to drop (retreat = no rare, per
-Gallows 020 / Zalmo 026 / Wiegraf-Vaults 029 / Marach 031&033). ELMDOR's iconic best loot — the
-MASAMUNE and the GENJI set — is BEST-tier and RESERVED for Chapter 4, obtained at his LIMBERRY
-rematch where he can actually be fought for it. Do NOT place any rare here.
-The map's rare TREASURE (Jade Armlet / Elven Cloak / Orichalcum Dirk / Kodachi) is existing map
+None. Elmdor, Celia, and Lettie all flee, so this battle must not pay out enemy loot.
+Masamune and the Genji set are best-tier Chapter 4 Limberry rewards, not Roof rewards.
+```
+
+The map's rare treasure (Jade Armlet / Elven Cloak / Orichalcum Dirk / Kodachi) is existing map
 treasure, not boss loot; leave it as-is.
-```
 
-## Proposed Composition (New Game++ Riovanes Roof v1)
+## Proposed Composition (New Game++ Riovanes Roof v2)
 
-Keep the exact trio; this is a race, not a slugfest. Elmdor `104`; assassins `103`. Smaller (4-unit)
-player squad preserved.
+Keep the exact trio. Elmdor `104`; Celia/Lettie `103`; Rapha controlled by the player.
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
-| n | Elmdore | Arc Knight | `104` | Debuffs + teleport; the "noise" to ignore. Escapes. |
-| n | Celia (assassin, NEW caste) | Assassin | `103` | Teleporting killer; threatens Rapha. Burst HER to critical to end it. |
-| n | Lettie (assassin, NEW caste) | Assassin | `103` | Second teleporting killer; the other valid focus target. Escapes. |
+| s0 | Rapha (protected ally) | Skyseer (41) | `100` | Player-controlled objective; survive and help create the burst line. |
+| s3 | Elmdor | Ark Knight (27) | `104` | Debuff/teleport noise; ignore unless he blocks the race. Escapes. |
+| s4 | Celia | Assassin (45) | `103` | Teleporting killer; one valid focus target. Critical HP ends fight. |
+| s5 | Lettie | Assassin (46) | `103` | Second teleporting killer; other valid focus target. Critical HP ends fight. |
 
 Reasoning:
 
-The faithful move is to **preserve the flee-on-critical race and the protect-Rapha pressure, and
-keep the assassins lethal-but-resistable**. Elmdor at `104` piles on ignorable debuffs; the two
-Assassins at `103` flicker around the roof toward Rapha with status/instant-death — but because the
-fight ENDS the moment one of them is bursted to critical, the player has a clear, fast out: focus
-one assassin, shield Rapha, beat the clock. Constraining the instant-death to resistable, non-spam,
-no-hard-lock keeps the small 4-unit squad's race fair. Nobody dies (all flee), so there is no loot —
-the iconic Elmdor rewards wait for Chapter 4. A deliberate 2/5★ exhale after the Velius spike, gated
-by the protect condition, that still showcases the new Assassin caste.
+The faithful v2 move is to make the named trio complete without changing the objective. Celia and
+Lettie become real Assassin showcases through mobility, dual-pressure, and resistable status/death;
+Elmdor gets a complete but non-loot, non-Masamune setup; Rapha is controlled by the player so the
+protect condition rewards positioning instead of punishing AI behavior. The difficulty sits in
+choosing one assassin and ending the fight before the rooftop collapses, not in grinding down Elmdor.
 
-## Builds (final-shop quality; Elmdor's assassins flavor)
+Simulation result (`tmp/fft-level-design-035-riovanes-castle-roof/iteration-results.md`):
+
+```text
+v2 controlled-Rapha complete assassin race: Accepted.
+Threat 161.0; Rapha survival 68.1; focus-race answer 72.7; answerability 100.0;
+finale exhale 88.0.
+
+Rejected: AI-Rapha race shell, third Assassin, hard-lock Assassin showcase, Elmdor loot slugfest,
+and low-threat escort cleanup.
+```
+
+## Builds (complete human setup; no loot because all flee)
 
 Item/skill IDs from the loader tables (verify against the installed copy before patching):
 
@@ -169,83 +174,114 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Elmdore — Arc Knight (Lv 104) — escapes, no drop
+### Rapha — Skyseer Protected Ally (Lv 100) — player-controlled in NG+
 
 ```text
-Job: Arc Knight (id TBD)   JobLevel: 8   Primary: Draw Out / Iaido (soft debuffs) — NO hard lock
-Reaction: a defensive reaction (id TBD)   Support: Attack Boost (465)   Movement: Teleport / Move +1 (id TBD)
-Head/Body: shop gear his job allows (ids TBD)
-Accessory: Bracers (218)   Right hand: a shop-tier / NON-RARE katana (id TBD — NOT Masamune; he escapes,
-  nothing drops; Masamune/Genji are his Chapter 4 Limberry loot)
-ESCAPES — no rare here.
+Job: Skyseer (41)
+Control: player-controlled in NG+ while preserving protected/fail-on-death objective
+Gear: Thief's Cap (168), Luminous Robe (206), Featherweave Cloak (234), Eight-fluted Pole (113)
+Behavior target: reposition, survive, and contribute to the burst line when safe.
 ```
 
-Role: the ignorable debuffer; teleports around but is not the win target.
+Role: the objective. The player can save her by playing well, not by hoping the guest AI behaves.
 
-### Celia & Lettie — Assassins (Lv 103) — NEW caste; escape
+### Elmdor — Ark Knight (Lv 104) — escapes, no drop
 
 ```text
-Job: Assassin (id TBD)   JobLevel: 8   Primary: assassin status/instant-death tools (RESISTABLE, non-spam)
-Support: Dual Wield or Martial-arts-tier (id TBD)
-Reaction: First Strike (453) or Vanish (id TBD)   Movement: Teleport / Move +3 (id TBD — high mobility)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: a fast/evasion accessory (id TBD)
-Right/Left hand: shop ninja blades / knives (ids TBD; NON-RARE — they escape, nothing drops)
-GUARDRAILS: instant-death/status must be resistable and not every-turn; NO hard lock. Bursting EITHER
-  to critical ends the fight (all flee) — preserve that trigger.
+Job: Ark Knight (27)   JobLevel: 8
+Primary: Iaido / Arc-Knight pressure; soft debuffs only
+Secondary: Item or low-commitment command, if legal
+Reaction: defensive/evasion reaction
+Support: Attack Boost (465) or legal offensive support
+Movement: Teleport / Move +1 legal equivalent
+Head/Body/Accessory: best legal non-Genji gear
+Right hand: non-rare, non-Masamune katana
+
+Guardrails: no Masamune, no Genji, no hard lock, no rare loot. He escapes.
 ```
 
-Role: the teleporting killers and the win condition — focus one to critical to drive the trio off.
+Role: the intimidating noise. He should pressure the roof, but focusing him is usually wrong.
+
+### Celia — Assassin (Lv 103) — escapes
+
+```text
+Job: Assassin (45)   JobLevel: 8
+Primary: Assassin tools; resistable, non-spam status/death
+Secondary: Item / Fundaments / legal utility command
+Reaction: First Strike (453), Vanish, or legal evasion reaction
+Support: Dual Wield if legal, otherwise legal speed/offense support
+Movement: Teleport / high-mobility legal movement
+Head/Body/Accessory: best legal non-rare speed/evasion gear
+Weapons: non-rare knives/ninja blades; no Chapter 4 best loot
+```
+
+Role: primary focus option. If Celia hits critical, the trio flees.
+
+### Lettie — Assassin (Lv 103) — escapes
+
+```text
+Job: Assassin (46)   JobLevel: 8
+Primary: Assassin tools; resistable, non-spam status/death
+Secondary: Item / Fundaments / legal utility command
+Reaction: First Strike (453), Vanish, or legal evasion reaction
+Support: Dual Wield if legal, otherwise legal speed/offense support
+Movement: Teleport / high-mobility legal movement
+Head/Body/Accessory: best legal non-rare speed/evasion gear
+Weapons: non-rare knives/ninja blades; no Chapter 4 best loot
+```
+
+Role: second focus option and the crossfire threat. If Lettie hits critical, the trio flees.
 
 ## Positioning Plan
 
 ```text
-The trio starts on the rooftop with teleport access to Rapha's vicinity, so the threat to the NPC
-  is immediate; Rapha starts exposed (story placement).
-Elmdor anchors as the debuff "noise"; Celia & Lettie flank/teleport toward Rapha.
-Preserve the rooftop geometry, the assassins' teleport, the 4-unit deploy cap, the protect-Rapha
-  fail condition, and the FLEE-ON-CRITICAL trigger (one assassin critical -> all retreat).
+Rapha starts exposed, but player control lets the player route her first safe move.
+Elmdor anchors as debuff pressure and should not body-block the single-focus answer.
+Celia and Lettie begin with teleport/high-mobility access to Rapha's side of the roof.
+Preserve the 4-unit deploy cap, rooftop geometry, protected-Rapha fail condition, and
+flee-on-critical trigger.
 ```
 
-The roof should say: "you can't kill them — they'll vanish the moment you draw blood — so put all
-your force on ONE knife-hand, fast, before they reach the girl."
+The Roof should say: "you cannot win by fighting everyone. Move Rapha, pick one assassin, and hit
+hard enough that they vanish before the knives reach her."
 
 ## Implementation Checklist
 
-- [ ] Identify Riovanes Roof `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Elmdore + Celia + Lettie + (max 4) player slots + Rapha NPC slot.
-- [ ] Confirm Arc Knight / Assassin job ids; keep teleport + status/death (RESISTABLE, non-spam, no lock).
-- [ ] PRESERVE the flee-on-critical trigger, the protect-Rapha fail condition, and the 4-unit deploy cap.
-- [ ] Give Elmdor a NON-RARE katana (no drop); assassins NON-RARE blades (no drop) — all escape.
-- [ ] Set levels: Elmdor `104`; Celia & Lettie `103`.
-- [ ] Set JobLevel `8` on all three.
-- [ ] Confirm NO rare loot here; Masamune/Genji are deferred to Elmdor's Ch4 Limberry rematch.
-- [ ] Patch via the correct layer; keep the diff inside the Riovanes Roof window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify flee trigger + Rapha + cap.
-- [ ] Install mod, test from a New Game+ save; confirm bursting one assassin to critical ends the fight
-      and that Rapha can be kept alive by a focused 4-unit squad.
+- [x] Confirm entry 433 active slots and placeholder slots in the doc.
+- [x] Confirm job IDs: Rapha 41, Elmdor 27, Celia 45, Lettie 46.
+- [ ] Make Rapha player-controlled in NG+ while preserving protected/fail-on-death behavior.
+- [ ] Preserve the 4-unit deploy cap and no-resupply chain close.
+- [ ] Preserve the flee-on-critical trigger: either assassin critical -> all three enemies retreat.
+- [ ] Give Elmdor complete setup without Masamune, Genji, rare loot, or hard lock.
+- [ ] Give Celia and Lettie complete Assassin setups with constrained, resistable status/death.
+- [ ] Preserve exact trio: no third Assassin, no generic reinforcements, no defeat-all conversion.
+- [ ] Set/verify levels: Rapha `100`; Elmdor `104`; Celia/Lettie `103`.
+- [ ] Set JobLevel `8` on Elmdor, Celia, and Lettie where the slots support it.
+- [ ] Confirm no enemy rare loot here; Elmdor's iconic rewards stay in Chapter 4.
+- [ ] Patch only through the correct future implementation layer; keep this redesign docs-only for now.
+- [ ] Re-dump and diff after implementation; verify control, flee trigger, trio, 4-unit cap, and no loot.
+- [ ] Test from a New Game+ save: a focused 4-unit squad can keep Rapha alive and end the fight by
+      pushing one assassin to critical.
 
 ## Test Questions
 
-- Does bursting ONE assassin to critical end the fight (all flee), preserving the race identity?
-- Are the teleporting assassins a real threat to Rapha while still being out-raced by focus fire?
-- Is their instant-death/status resistable and non-spam (fair), with no hard lock on the small squad?
-- Is ignoring Elmdor's debuffs the right read (he's noise, not the win target)?
-- Does NOBODY die / nothing drop here, with Elmdor's Masamune+Genji correctly deferred to Ch4?
-- Is the 4-unit cap + protect-Rapha the real constraint, with levels kept race-appropriate?
-- Is it a deliberate 2/5★ exhale after the Velius spike, still showcasing the Assassin caste?
-- Does it faithfully close the Riovanes chain and set up the Chapter 4 Elmdor rematch?
+- Is Rapha player-controlled in NG+ while still protected by the fail condition?
+- Does pushing either Celia or Lettie to critical immediately end the battle?
+- Are the assassins dangerous enough to force urgency without hard-locking the small squad?
+- Is ignoring Elmdor still the correct read most of the time?
+- Is there no enemy loot, with Masamune/Genji deferred to Chapter 4?
+- Does the fight feel like a sharp coda after Keep, not a harder attrition wall?
+- Does it close the Riovanes chain cleanly and set up the Chapter 4 Elmdor rematch?
 
 ## Sources
 
-- Game8, "Riovanes Castle Roof Walkthrough (Battle 32)": roster (Elmdore + Celia + Lettie), objective
-  "Save Rapha!", recommended level ~36, 2/5 stars, deploy 4, flee-on-critical (one assassin critical
-  -> all three retreat), focus one assassin / ignore Elmdor's debuffs, Marach & Rapha recruited on
-  completion, rewards/treasure.
+- Game8, "Riovanes Castle Roof Walkthrough (Battle 32)": roster, Save Rapha objective, recommended
+  level, 4-unit deploy, flee-on-critical rule, focus-one-assassin plan, and treasure context.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553192
-- Final Fantasy Wiki, "Elmdor" / "Celia and Lettie": story + Assassin/Arc-Knight context, Limberry rematch loot.
+- Final Fantasy Wiki, "Elmdor" / "Celia and Lettie": story context, Assassin/Arc-Knight context, and
+  Limberry rematch loot.
   https://finalfantasy.fandom.com/wiki/Elmdor
-- Local: `docs/battles/024-chapter-3-overview.md` (job-escalation + rare-loot rules; Elmdor deferral),
-  `031-walled-city-yardrow.md` & `025-mining-town-gollund.md` (protect-NPC handling),
-  `034-riovanes-castle-keep.md` (no-resupply chain; Lucavi status caps), `022-lionel-castle-oratory.md`
-  (boss status constraint precedent).
-</content>
+- Local: `docs/battles/024-chapter-3-overview.md` (chapter rules and guest-control requirement),
+  `031-walled-city-yardrow.md` (Rapha protected-guest precedent), `034-riovanes-castle-keep.md`
+  (Riovanes chain), and `tmp/fft-level-design-035-riovanes-castle-roof/` (coarse simulation and
+  rejected variants).

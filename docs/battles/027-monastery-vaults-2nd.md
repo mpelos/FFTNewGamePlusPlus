@@ -1,6 +1,6 @@
 # 027 - Monastery Vaults, 2nd Level (Orbonne Monastery — Underground Vault)
 
-Status: ✅ implemented (v1, entry 422) — NG+ only; pending playtest
+Status: ✅ implemented (v1, entry 422) — NG+ only; pending playtest. **v2 redesign documented only** (implementation pending).
 Chapter: 3 — "The Valiant"
 Battle order: Battle 24 (after Lesalia Castle Postern) — **Vaults chain 1 of 3**
 Target version: Enhanced v1.5.0
@@ -64,8 +64,8 @@ Dragoons, and dodging telegraphed Jumps, all on a one-loadout budget.**
 ## Local Data Confirmed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 1 Chemist + 2 Time Mage + 3 Dragoon, plus the player slots.
+ENTD entry 422 confirmed in `024-chapter-3-overview.md` and v1 implementation.
+Roster: 1 Chemist + 2 Time Mage + 3 Dragoon, plus the player slots.
 Keep the underground vault geometry (obstacles/elevation that Dragoons Jump over).
 Confirm the NO-RESUPPLY chain link into the 3rd Level (Izlude) — do not break the chain.
 Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
@@ -79,16 +79,27 @@ Time Mage job id       (TBD - verify; from Ch1 Lenalian / Ch2 Goug & Gallows)
 Dragoon/Lancer job id  (TBD - verify; enemy caste debut — player-side at Zaland 015)
 ```
 
-## Job Escalation (Chapter 3 rule)
+## Enemy Party Escalation (Chapter 3 redesign)
 
 ```text
-THE NEW CASTE IS BUILT IN: this battle debuts the enemy DRAGOON (Lancer) — three of them, using
-Jump to dive the player's back line over the vault's obstacles. The Dragoon caste IS this fight's
-escalation; per "one new wrinkle per fight," NO additional generic job is swapped in. Keep the
-1 Chemist / 2 Time Mage / 3 Dragoon shape.
-WHY: Hasted aerial Jump pressure is a genuinely new tactical problem (the threat ignores walls and
-  picks your casters). The Time Mages (established tempo caste) amplify it rather than adding a new
-  mechanic, so the "one new wrinkle" budget is respected. Ninja/Oracle/Velius debut later.
+VANILLA SPIRIT: underground vault garrison where Time Mages accelerate Dragoons and a Chemist keeps
+  the engine alive across the first fight of a no-resupply chain.
+CHAPTER-3 UPGRADE: keep the exact 1 Chemist / 2 Time Mage / 3 Dragoon roster, but complete every
+  active human setup with secondary/reaction/support/movement. The party now works as a coherent
+  Haste->Jump engine.
+WHY: Hasted aerial Jump pressure is the headline. Adding a fourth Dragoon, hard-lock Time Magic, or
+  another caste would overtax the Vaults chain before Izlude.
+WHAT IS NOT CHANGED: Jump remains telegraphed and dodgeable; the Chemist remains the priority kill.
+```
+
+Chapter 3 requirements applied:
+
+```text
+- Every active human enemy has full equipment.
+- Every active human enemy has secondary, reaction, support, and movement.
+- The party has real synergy: Time Mages Haste/Slow, Dragoons dive, Chemist revives.
+- No guests are present.
+- No hard-lock Time Magic, no instant Jump, no extra body.
 ```
 
 ## Sanctioned exceptions (carried precedents)
@@ -111,7 +122,7 @@ None. No named boss here — no rare boss item (per the Chapter 3 overview). Gen
 treasure, not boss loot; leave it as-is. The chapter's boss rares come at Izlude 028 / Wiegraf 029.)
 ```
 
-## Proposed Composition (New Game++ Vaults 2nd v1)
+## Proposed Composition (New Game++ Vaults 2nd v2)
 
 Keep the exact roster; this is a tempo/positioning fight, not a damage wall. One Dragoon anchors at
 `102`; the rest at `100`–`101`. The Time Mages and Chemist at `101`.
@@ -148,6 +159,7 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 
 ```text
 Job: Dragoon/Lancer (id TBD)   JobLevel: 8   Primary: Jump (innate)
+Secondary: Item / Fundaments equivalent; no hard status
 Reaction: Reflexes (449) or Counter (442)   Support: Attack Boost (465)
 Movement: Movement +1 (486) or Ignore Height (id TBD — fits vault elevation)
 Head/Body: shop helm + light/medium armor (ids TBD)
@@ -161,7 +173,8 @@ vulnerable when grounded.
 ### Time Mage x2 (Lv 101) — Haste/Slow only
 
 ```text
-Job: Time Mage (id TBD)   JobLevel: 8   Secondary: none
+Job: Time Mage (id TBD)   JobLevel: 4 cap or command-filter equivalent
+Secondary: Item or low-tier Black Magic if legal; no status lock
 Skillset limit: Haste (on the Dragoons) / Slow (on the player) / Float-tier ONLY.
   NO Stop, Immobilize, Don't Move, Don't Act.
 Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
@@ -175,6 +188,7 @@ Role: the dive accelerator — Haste the Dragoons, Slow the player; pressure wit
 
 ```text
 Job: Chemist (75)   JobLevel: 8   Primary: Item (Hi-Potion / Phoenix Down / Remedy / Ether)
+Secondary: Steal-lite / Fundaments equivalent if legal; no hard status
 Reaction: Auto-Potion (441)   Support: Throw Items (474)   Movement: Movement +1 (486)
 Head: shop hat (id TBD)   Body: shop clothes (id TBD)   Accessory: Bracers (218)
 Right hand: shop gun/knife the job allows (id TBD)   Left: none
@@ -197,16 +211,56 @@ Remember: NO resupply into the 3rd Level — the player should be able to win wi
 The vault should say: "their lancers ignore your walls and their chronomancers speed the dives —
 kill the medic, ground the dragoons, and don't waste a potion you'll need upstairs."
 
-## Implementation Checklist
+## Simulation Plan and Results
 
-- [ ] Identify Vaults 2nd `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 1 Chemist + 2 Time Mage + 3 Dragoon + player slots.
+Simulation artifact:
+
+```text
+tmp/fft-level-design-027-monastery-vaults-2nd/
+```
+
+Model scope:
+
+```text
+First four rounds only; compares Jump pressure, Time Mage tempo pressure, Chemist sustain, and
+chain tax into Izlude. It rejects hard-lock Time Magic, instant Jump, and a fourth Dragoon.
+```
+
+Iteration results:
+
+| Candidate | Enemies | Action ratio | Jump pressure | Tempo pressure | Sustain pressure | Total pressure | Chain tax | Answerability | Result |
+|-----------|---------|--------------|---------------|----------------|------------------|----------------|-----------|---------------|--------|
+| v1 hasted jump shell | 6 | 0.95 | 81.6 | 29.8 | 22.4 | 133.8 | 14.5 | 56.8 | Baseline |
+| v2 complete hasted jump engine | 6 | 1.01 | 89.8 | 33.0 | 25.2 | 147.9 | 16.7 | 59.9 | Accepted |
+| Hard-lock Time Mages | 6 | 1.03 | 89.8 | 44.8 | 25.2 | 159.7 | 25.9 | 29.3 | Rejected: hard-lock |
+| Fourth Dragoon chain tax | 7 | 1.15 | 115.3 | 33.0 | 25.2 | 173.4 | 24.8 | 45.3 | Rejected: extra body |
+| Instant Jump tuning | 6 | 1.04 | 105.8 | 33.0 | 25.2 | 164.0 | 29.8 | 15.0 | Rejected: loses telegraph |
+
+Decision:
+
+```text
+Keep the exact six-enemy roster. Complete every setup and make the Haste/Jump engine tighter, but
+do not add a fourth Dragoon, hard-lock Time Magic, or instant Jump. The fight should tax movement
+more than inventory.
+```
+
+## Current Implementation (v1, entry 422 — superseded by v2 design)
+
+The shipped v1 scales the canonical Dragoon/Time Mage/Chemist roster. The v2 redesign above is
+**documentation only** in this pass; it requires a later implementation pass to complete secondary
+setups and validate chain tax across all three Vaults battles.
+
+## Future Implementation Checklist (v2)
+
+- [x] Identify Vaults 2nd ENTD entry 422; fill "Local Data Confirmed".
+- [x] Dump original entry; verify 1 Chemist + 2 Time Mage + 3 Dragoon + player slots.
 - [ ] Confirm Dragoon/Lancer + Time Mage job ids; keep Jump's normal charge cadence (telegraphed).
 - [ ] Constrain BOTH Time Mages to Haste/Slow (no hard lock).
 - [ ] Set levels: lead Dragoon `102`; other Dragoons `100`/`101`; both Time Mages + Chemist `101`.
-- [ ] Set JobLevel `8` on all active enemy slots.
+- [ ] Set JobLevel `8` on all active enemy slots; Time Mage command cap/filter must prevent hard-lock.
+- [ ] Give every active human enemy full equipment plus secondary/reaction/support/movement.
 - [ ] Preserve the vault geometry + the NO-RESUPPLY chain link into the 3rd Level.
-- [ ] Patch via the correct layer; keep the diff inside the Vaults 2nd window only.
+- [ ] Patch via the correct layer in a later implementation pass; no binary/data change in this doc pass.
 - [ ] Re-dump and diff; confirm changes are small and intentional.
 - [ ] Install mod, test from a New Game+ save; verify Jump is dodgeable and the chain is winnable on
       one loadout.
@@ -230,7 +284,6 @@ kill the medic, ground the dragoons, and don't waste a potion you'll need upstai
   https://game8.co/games/Final-Fantasy-Tactics/archives/553184
 - Final Fantasy Wiki, "Orbonne Monastery": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Orbonne_Monastery
-- Local: `docs/battles/024-chapter-3-overview.md` (job-escalation + rare-loot rules),
+- Local: `docs/battles/024-chapter-3-overview.md` (Chapter 3 complete-party rules),
   `015-zaland.md` (player-side Dragoon Jump, for contrast), `020-golgollada-gallows.md` (two Time
   Mages amplifying a headline), `018-goug-lowtown.md` (Time Mage Haste/Slow limit).
-</content>

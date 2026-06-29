@@ -1,6 +1,6 @@
 # 026 - Lesalia Castle Postern (Lesalia Imperial Capital — Postern Gate)
 
-Status: ✅ implemented (v1, entry 420) — NG+ only; Alma partial endgame gear 2026-06-27; pending playtest
+Status: ✅ implemented (v1, entry 420) — NG+ only; Alma partial endgame gear 2026-06-27; pending playtest. **v2 redesign documented only** (implementation pending).
 Chapter: 3 — "The Valiant"
 Battle order: Battle 23 (after Mining Town of Gollund)
 Target version: Enhanced v1.5.0
@@ -16,6 +16,9 @@ and **weapon Golden Staff 64** upgraded to best buyable. **Head Barrette 170 KEP
 HairAdornment exists — all are reserved; Barrette already grants KO/Stone/Stop/Charm immunity, better
 for survival than any buyable Hat) and **accessory Red Shoes 214 KEPT** (already the best buyable shoe).
 Level from the scaler.
+
+For v2, Alma must be player-controlled in NG+. Her Aegis support is part of the player's tactical
+toolkit, not a guest-AI variable.
 
 ## Original Battle
 
@@ -71,11 +74,11 @@ rewards Thunder line-AoE — priority and element are the whole fight.**
 ## Local Data Confirmed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Zalmo + 3 Knight + 2 Monk, plus the player slots and ALMA's guest slot.
+ENTD entry 420 confirmed in `024-chapter-3-overview.md` and v1 implementation.
+Roster: Zalmo + 3 Knight + 2 Monk, plus the player slots and Alma guest slot.
 DO NOT touch Zalmo's RETREAT scripting (he must withdraw at his HP threshold; the fight ends on
   his retreat). He does NOT die here — his death (and any rare loot) is a Chapter 4 matter.
-DO NOT touch Alma's guest scripting (Aegis buff; verify whether her death fails the battle).
+Preserve Alma's guest scripting/Aegis buff, and verify/apply player control in NG+.
 Keep the FLAME SHIELDS on the whole band (the Fire-immune / Thunder puzzle is the design).
 Keep the stair / far-cluster terrain (line-AoE counterplay depends on it).
 Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
@@ -90,17 +93,28 @@ Inquisitor job id      (TBD - verify; Zalmo — heal/revive holy boss; FIRST Inq
 Flame Shield item id   (TBD - verify; equipped on all enemies)
 ```
 
-## Job Escalation (Chapter 3 rule)
+## Enemy Party Escalation (Chapter 3 redesign)
 
 ```text
-THE NEW WRINKLE IS BUILT IN: Zalmo is a reviving INQUISITOR BOSS — the healer is now the boss
-himself, so "kill the healers" (Brigands' Den 006) no longer works; you must silence/burst the
-boss. Combined with the band-wide FLAME SHIELD elemental lock (bring Thunder), this is the fight's
-escalation. Per "one new wrinkle per fight," NO additional generic job is swapped in; keep the
-3 Knight / 2 Monk / Zalmo shape.
-WHY: a self-reviving boss + an elemental-resistance puzzle is already a clear step up from the
-  Gollund opener; adding a Ninja/Dragoon here would blur the "silence the reviver, bring Thunder"
-  read. Those castes debut in their own fights (Vaults 027 / Yardow 031).
+VANILLA SPIRIT: a reviving Inquisitor turns the enemy wall into a sustain puzzle, while Flame
+  Shields push the player toward Thunder and line/AoE on stairs.
+CHAPTER-3 UPGRADE: keep the exact Zalmo + 3 Knight + 2 Monk roster, but complete every active human
+  setup with secondary/reaction/support/movement. Alma must be player-controlled.
+WHY: the sustain boss and elemental lock are already the headline. Adding Dragoon/Ninja here would
+  steal later debuts and overpressure the pre-Vault fight.
+WHAT IS NOT CHANGED: the answer remains silence/burst Zalmo, use Thunder/non-Fire damage, and exploit
+  the stair cluster.
+```
+
+Chapter 3 requirements applied:
+
+```text
+- Every active human enemy has full equipment.
+- Every active human enemy has secondary, reaction, support, and movement.
+- The party has real synergy: Zalmo sustains/revives, Knights screen and threaten gear, Monks
+  pressure with Martial Arts, and Flame Shields create a shared element rule.
+- Alma is scaled, geared, and player-controlled in NG+.
+- No hard-lock Zalmo and no extra caste.
 ```
 
 ## Sanctioned exceptions (carried precedents)
@@ -126,7 +140,14 @@ TREASURE (Brigandine / Diamond Bracelet / Ancient Sword / Ninja Blade) is existi
 not boss loot; leave it as-is.
 ```
 
-## Proposed Composition (New Game++ Lesalia Postern v1)
+## Guest handling
+
+```text
+Alma is an active guest and must be player-controlled in NG+. Her Aegis buff remains helpful, but
+the fight's difficulty comes from Zalmo's sustain wall and element puzzle, not from Alma AI.
+```
+
+## Proposed Composition (New Game++ Lesalia Postern v2)
 
 Keep the exact roster; Zalmo is the sub-boss spike (retreats). Zalmo `103`; Knights `101`;
 Monks `101`. Whole band keeps Flame Shields.
@@ -145,10 +166,9 @@ Reasoning:
 The faithful move is to **make Zalmo the priority and keep the sustain + element puzzle**. With
 Zalmo reviving and healing at `103`, attriting his Knight/Monk wall is pointless — the player must
 silence him or focus him through the screen until he retreats. The band-wide Flame Shields force a
-Thunder pivot (and punish a Fire-leaning party), while the stair cluster rewards line/AoE. Two
-Rend-Knights keep the break lesson; the Monks are durable bodies that Zalmo keeps standing. Alma's
-Aegis helps the player weather the wall. He retreats (no kill, no drop), preserving any Ch4 payoff.
-A clear step up from Gollund, still below the Vaults bosses.
+Thunder pivot, while the stair cluster rewards line/AoE. The Knights and Monks now have complete
+setups, so the wall pressures rather than simply stalls. Alma's controlled Aegis helps the player
+weather the wall. He retreats with no rare, preserving any later payoff.
 
 ## Builds (final-shop quality; Church guard + Inquisitor flavor)
 
@@ -164,6 +184,7 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 
 ```text
 Job: Inquisitor (id TBD)   JobLevel: 8   Primary: heal/revive + holy/soft-status
+Secondary: White Magic / Item support equivalent if legal; keep to heal/revive/cleanse, no hard lock
 Skillset limit: heal, revive (Raise), holy damage, soft status ONLY — NO hard lock.
 Reaction: a defensive/MP reaction (id TBD)   Support: MA/Magick-boost (id TBD)
 Movement: Movement +1 (486)
@@ -178,7 +199,9 @@ Role: the reviving heart of the wall. Silence or burst him; everything else is a
 ### Knight x3 (Lv 101) — 2x Rend, Flame Shield
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Secondary: Rend (break) on TWO of the three (id TBD)
+Job: Knight (id TBD)   JobLevel: 8
+Secondary: Item on the wall captain; Fundaments/limited support on the third; Rend/Battle Skill
+  remains the primary Knight pressure and is capped to two meaningful break sources.
 Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
 Head/Body: shop heavy helm + heavy armor (ids TBD)
 Accessory: Bracers (218)   Right hand: Runeblade (30) / Icebrand (29)   Left: FLAME SHIELD (id TBD)
@@ -190,6 +213,7 @@ Role: the front wall Zalmo keeps reviving; Flame Shield makes Fire useless again
 
 ```text
 Job: Monk (id TBD)   JobLevel: 8   Primary: Martial Arts (Chakra self-sustain, Aurablast range)
+Secondary: Item or Fundaments equivalent; no status lock
 Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
 Head: Headband (163)   Body: Power Garb (195)   Accessory: a Fire-resist accessory (id TBD)
 (Monks cannot hold a shield; give them a Fire-null/halve accessory to keep the band's element puzzle.)
@@ -211,18 +235,58 @@ Preserve Zalmo's retreat trigger and the band-wide Flame Shields.
 The gate should say: "their priest raises the dead faster than you can drop them — silence him,
 strike with Thunder, and he'll flee."
 
-## Implementation Checklist
+## Simulation Plan and Results
 
-- [ ] Identify Lesalia Postern `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Zalmo + 3 Knight + 2 Monk + player + Alma guest slots.
+Simulation artifact:
+
+```text
+tmp/fft-level-design-026-lesalia-castle-postern/
+```
+
+Model scope:
+
+```text
+First four rounds only; compares Zalmo sustain pressure, wall pressure, and the fairness of the
+silence/burst answer. It assumes Alma is player-controlled in v2 and rejects hard-lock Zalmo or an
+extra Dragoon caste.
+```
+
+Iteration results:
+
+| Candidate | Enemies | Action ratio | Sustain pressure | Wall pressure | Total pressure | Answer window | Answer fairness | Result |
+|-----------|---------|--------------|------------------|---------------|----------------|---------------|-----------------|--------|
+| v1 sustain wall | 6 | 0.85 | 60.0 | 68.9 | 128.9 | 2.8 | 28.6 | Rejected: Zalmo answer too poor |
+| v2 complete sustain wall | 6 | 0.89 | 67.2 | 75.7 | 142.9 | 2.6 | 39.7 | Accepted |
+| Hard-lock Inquisitor | 6 | 0.90 | 74.8 | 75.7 | 150.5 | 3.2 | 26.2 | Rejected: hard-lock/too high |
+| Add Dragoon flanker | 7 | 1.01 | 67.2 | 94.0 | 161.2 | 3.1 | 30.7 | Rejected: extra caste/too high |
+
+Decision:
+
+```text
+Keep the exact six-enemy roster. Complete every setup and make Alma player-controlled. Zalmo's
+sustain gets stronger, but hard-lock status and extra Dragoon pressure are rejected.
+```
+
+## Current Implementation (v1, entry 420 — superseded by v2 design)
+
+The shipped v1 scales the fight, keeps Zalmo's retreat scripting, and gives Alma stronger gear.
+The v2 redesign above is **documentation only** in this pass; it requires a later implementation
+pass to apply Alma player control and complete secondary setups for every active enemy.
+
+## Future Implementation Checklist (v2)
+
+- [x] Identify Lesalia Postern ENTD entry 420; fill "Local Data Confirmed".
+- [x] Dump original entry; verify Zalmo + 3 Knight + 2 Monk + player + Alma guest slots.
 - [ ] Confirm Inquisitor / Knight / Monk job ids; keep Zalmo's heal/revive + holy/soft-status only.
 - [ ] Keep FLAME SHIELDS (or Fire-null/halve accessory on Monks) band-wide; verify Thunder is the answer.
 - [ ] Put Rend on TWO of the three Knights; shop-tier breakable gear only.
 - [ ] Set levels: Zalmo `103`; Knights + Monks `101`.
 - [ ] Set JobLevel `8` on all active enemy slots.
+- [ ] Give every active human enemy full equipment plus secondary/reaction/support/movement.
 - [ ] PRESERVE Zalmo's RETREAT threshold scripting (he must NOT die here; no drop).
-- [ ] Do NOT touch Alma's guest scripting; keep the stair/far-cluster terrain.
-- [ ] Patch via the correct layer; keep the diff inside the Lesalia Postern window only.
+- [ ] Apply/verify Alma player control in NG+ while preserving Aegis and guest scripting.
+- [ ] Keep the stair/far-cluster terrain.
+- [ ] Patch via the correct layer in a later implementation pass; no binary/data change in this doc pass.
 - [ ] Re-dump and diff; confirm changes are small and intentional; verify retreat + Flame Shields.
 - [ ] Install mod, test from a New Game+ save; confirm silencing/bursting Zalmo ends the fight.
 
@@ -233,7 +297,7 @@ strike with Thunder, and he'll flee."
 - Do the band-wide Flame Shields clearly push the player to Thunder (and punish Fire)?
 - Does the stair cluster reward line/AoE the way the original taught?
 - Is Zalmo's offense holy/soft-status only — annoying, not a hard lock on an endgame party?
-- Does Alma's Aegis buff help without trivializing the wall?
+- With Alma player-controlled, does Aegis help without trivializing the wall?
 - Is it a step up from Gollund but below the Vaults bosses (Izlude/Wiegraf)?
 - Does it still read as a Church gate ambush, not a designed arena?
 
@@ -246,7 +310,6 @@ strike with Thunder, and he'll flee."
   https://game8.co/games/Final-Fantasy-Tactics/archives/553183
 - Final Fantasy Wiki, "Zalmo Rusnada" / "Lesalia": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Zalmo_Rusnada
-- Local: `docs/battles/024-chapter-3-overview.md` (job-escalation + rare-loot rules),
+- Local: `docs/battles/024-chapter-3-overview.md` (Chapter 3 complete-party rules),
   `006-brigands-den.md` (kill-the-healers precedent, here inverted), `020-golgollada-gallows.md`
   (retreating boss → no drop), `016-balias-tor.md` (Knight Rend exception).
-</content>

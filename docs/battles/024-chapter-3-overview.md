@@ -10,12 +10,13 @@ sequence. The scaling mechanic and the "preserve each fight's identity" philosop
 goals continue — escalated one notch:
 
 ```text
-1. JOB ESCALATION — keep adding/swapping enemy jobs to raise the challenge WITHOUT breaking each
-   battle's original strategy. Chapter 3 introduces its own marquee castes: the Knights Templar
-   (elite sword-skill bosses), enemy DRAGOONS, the NINJA (dual-wield / wall-climb / Throw), the
-   ORACLE/Orator utility caste, and the SECOND Lucavi demon (Velius). One new wrinkle per fight.
+1. ENEMY PARTY ESCALATION — every active human enemy now gets a complete setup (full gear plus
+   secondary/reaction/support/movement), and enemy parties are tuned as coherent teams WITHOUT
+   breaking each battle's original strategy. Chapter 3 introduces marquee castes: Knights Templar,
+   enemy Dragoons, the Ninja, Orator utility, the second Lucavi demon, and Assassins. Synergy is
+   expected; deliberately broken Chapter 4 puzzle stacks are not.
 2. RARE BOSS LOOT — important (boss) battles equip the boss with a RARE, non-buyable item, now a
-   TIER ABOVE Chapter 2 (better than the Ancient Sword / 108 Gems) — but still NOT best-in-slot.
+   TIER ABOVE Chapter 2 (better than the Blood Sword / 108 Gems baseline) — but still NOT best-in-slot.
    The very best gear (Excalibur, Ragnarok, Chaos Blade, Masamune, Genji set, Save the Queen,
    Ribbon, best robes/shields) remains reserved for CHAPTER 4.
 ```
@@ -44,19 +45,17 @@ ended at `023`; this overview is `024`, so Battle 22 = doc `025`, i.e. doc = bat
 | `028` | 25 | Monastery Vaults — 3rd Level | **Izlude** on high ground + casters | Templar debut + rare (Reflect Mail); elevation | ✅ Done |
 | `029` | 26 | Monastery Vaults — 1st Level | **Boss: Wiegraf** (Holy Knight; flees) | 5-doorway chokepoint + disarm; rare deferred to 034 | ✅ Done |
 | `030` | 27 | Grogh Heights | Rain + thunder; clustered line targets | breather; two-way rain-Thunder + line-AoE | ✅ Done |
-| `031` | 28 | Walled City of Yardrow | Protect Rapha; **Ninjas** scale walls; Marach boss | **Ninja** debut; vertical assassins + Summoner AoE | ✅ Done |
+| `031` | 28 | Walled City of Yardrow | Protect/player-control Rapha; **Ninjas** scale walls; Marach boss | **Ninja** debut; vertical assassins + Summoner AoE | ✅ Done |
 | `032` | 29 | The Yuguewood | Undead woods; Seal Evil / Entice | undead + caster tempo (Time/Black Mage) | ✅ Done |
 | `033` | 30 | Riovanes Castle Gate | Assault (chain 1/3); pressure Marach | bridge + high-ground archers + Templar break; no-resupply | ✅ Done |
-| `034` | 31 | Riovanes Castle Keep | **Wiegraf solo duel → Belias/Velius** (Lucavi) | 2-phase spike; 2nd Lucavi + 4 adds; rares (Defender, Defense Ring) | ✅ Done |
-| `035` | 32 | Riovanes Castle Roof | **Elmdor** + assassins; protect Rapha | **Assassin** debut; flee-on-critical race; no loot (all flee) | ✅ Done |
+| `034` | 31 | Riovanes Castle Keep | **Wiegraf solo duel → Belias/Velius** (Lucavi) | 2-phase spike; 2nd Lucavi + 3 TIC-confirmed adds; rares (Defender, Defense Ring) | ✅ Done |
+| `035` | 32 | Riovanes Castle Roof | **Elmdor** + assassins; protect/player-control Rapha | **Assassin** debut; flee-on-critical race; no loot (all flee) | ✅ Done |
 | `036` | — | Chapter 3 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
 
-## ENTD entries — ✅ ALL CONFIRMED & IMPLEMENTED (entry-by-entry vanilla-dump verified)
+## ENTD entries — ✅ roster baseline confirmed; v2 redesign docs-only
 
-All 11 Chapter 3 battles (22–32) are implemented in `tools/battle_patch.py` (functions: gollund,
-lesalia, vaults_2nd/3rd/1st, grogh, yardrow, yuguewood, riovanes_gate/keep/roof) and each patch's
-diff was confirmed contained to its intended entry. The roster of every entry was dumped and matched
-in-game-data before patching, upgrading the MED rows below to confirmed:
+The current v1 mod has Chapter 3 entries identified and roster-checked. This v2 pass updates the
+design documents only; future implementation must still patch, re-dump, and test each entry.
 - **430 Yuguewood**: active casters are enemy-variant **job 66 = Black Mage** (equips Rod), **job 68 =
   Time Mage** (equips Staff) — distinct from player-generic 80/81; undead Ghoul/Ghast/Revenant
   (112/113/114) sit at level 0xFE (verify they scale; may be OverrideEntryData-driven).
@@ -64,10 +63,11 @@ in-game-data before patching, upgrading the MED rows below to confirmed:
   (TIC has 3 adds, not 4); lvl-1 slots are transform-scripting placeholders.
 - **433 Riovanes Roof**: s3 Elmdor(27 Ark Knight) + s4 Celia(45)/s5 Lettie(46) Assassins + s0 Rapha
   (41 Skyseer, guest); lvl-5 slots (s1 Rapha-clone, s2 Netherseer) are scripting placeholders.
-- **Guest vs enemy in ENTD**: the unit's control bytes `raw_tail[0:2] == 00 84` mark a GUEST/ally
-  (validated: Orran 417, Alma 420, Rapha 428/433); enemies use other control bytes (e.g. 03/04 9x).
-  Rapha's sprite/charId differs per battle (25 at Yardrow, 41 at Roof) and the Roof has an enemy
-  clone sharing her sprite → scale that Rapha by DIRECT ENTD level, not the runtime scaler.
+- **Guest vs enemy in ENTD**: the unit's control bytes `raw_tail[0:2] == 00 84` mark a guest/ally
+  slot (validated: Orran 417, Alma 420, Rapha 428/433); enemies use other control bytes (e.g. 03/04
+  9x). This does not by itself satisfy the NG+ rule: every active guest must be player-controlled.
+  Rapha's sprite/charId differs per battle (25 at Yardrow, 41 at Roof), and the Roof has an enemy
+  clone sharing her sprite, so scale Roof Rapha by direct ENTD level, not the runtime scaler.
 
 ## (historical) Deduced ENTD entries (offline roster-match — confirm in-game before/after patch)
 
@@ -84,13 +84,13 @@ each on entry; treat MEDIUM rows as verify-before-patch.
 | Lesalia Postern (23) | 026 | **420** | HIGH | 2 named(Zalmo+Alma) + 3 Knight + 2 Monk |
 | Vaults 2nd (24) | 027 | **422** | HIGH | named + 1 Chemist + 2 Time Mage + 3 Dragoon |
 | Vaults 3rd (25) | 028 | **423** | HIGH | named(Izlude) + 2 Knight + 2 Archer + 1 Summoner |
-| Vaults 1st (26) | 029 | **424** | HIGH | named(Wiegraf=40) + 4 Knight + 2 Archer + 1 Black Mage |
+| Vaults 1st (26) | 029 | **424** | HIGH | named(Wiegraf=40) + 2 Knight + 2 Archer + 1 Black Mage |
 | Grogh Heights (27) | 030 | **426** | MED-HIGH | 2 Squire + 2 Chemist + Archer + Thief (+extras) |
 | Yardrow (28) | 031 | **428** | HIGH | 2 named(Marach+Rapha) + 2 Summoner + 3 Ninja |
 | Yuguewood (29) | 032 | **430** | HIGH | undead trio Ghoul/Ghast/Revenant + 4 casters |
-| Riovanes Gate (30) | 033 | **431** | HIGH | 2 named(Marach) + 4 Knight + 3 Archer |
-| Riovanes Keep (31) | 034 | **432** | MEDIUM | Wiegraf(40) + monster 60 (Belias) + 3× Archaeodaemon(153) |
-| Riovanes Roof (32) | 035 | **433** | MEDIUM | 6 named/special (Elmdor + Celia/Lettie assassins + Rapha) |
+| Riovanes Gate (30) | 033 | **431** | HIGH | named(Marach) + 4 Knight + 3 Archer (v2 swaps one Knight to Templar) |
+| Riovanes Keep (31) | 034 | **432** | HIGH | Wiegraf(40) + Belias(60) + 3× Archaeodaemon(153) |
+| Riovanes Roof (32) | 035 | **433** | HIGH | Rapha + Elmdor + Celia/Lettie + 2 scripting placeholders |
 
 (Entries 418/419/421/425/427/429 in the gaps are Ch2 Cúchulainn=425 and cutscene/sub-event ENTDs.)
 
@@ -144,12 +144,12 @@ composition is synergistic without becoming a Chapter 4 broken puzzle.
 
 ## NEW rule 2 — Rare boss loot (the Chapter 3 tier)
 
-Chapter 2 bosses dropped the LOWEST tier of rares (Ancient Sword, 108 Gems). Chapter 3 bosses drop
+Chapter 2 bosses dropped the LOWEST tier of rares (Blood Sword, 108 Gems). Chapter 3 bosses drop
 **better, mid-HIGH rares** — clearly an upgrade — but still **not best-in-slot**.
 
 ```text
 CHAPTER 3 RARE-LOOT TIER (examples — verify exact ids/availability in ItemData.xml):
-  Weapons:   Defender (knight sword, above Ancient Sword/below Save the Queen), Platinum Sword,
+  Weapons:   Defender (knight sword, above Blood Sword/below Save the Queen), Platinum Sword,
              a mid-HIGH katana (Kiyomori / Murasame / Heaven's Cloud — NOT Masamune), an elemental
              gun (Blaze/Glacial/Blast), a rare bow above shop tier.
   Armor:     Reflect Mail (auto-Reflect), Carabini/Platinum-tier armor, a Wizard/Light Robe
@@ -163,12 +163,12 @@ RESERVED FOR CHAPTER 4 (do NOT use in Ch3):
   Excalibur, Ragnarok, Chaos Blade, Masamune, Save the Queen, Genji set (helm/armor/shield/gloves),
   Escutcheon II / best shields, Ribbon, best robes (Robe of Lords / Maximillian-tier).
 
-SPECIAL — ELMDOR (Riovanes Roof, 035): canonically the source of the Genji set + Masamune, but
-those are BEST-tier and RESERVED for his CHAPTER 4 rematch (Limberry). At Riovanes he carries a
-mid-HIGH rare instead (e.g. a non-best katana); the iconic loot is deliberately deferred to Ch4.
+SPECIAL — ELMDOR (Riovanes Roof, 035): canonically the source of the Genji set + Masamune, but those
+are BEST-tier and RESERVED for his CHAPTER 4 rematch (Limberry). At Riovanes Roof he flees, so he
+carries no rare highlight; use only non-rare, non-best equipment.
 
-RULE OF THUMB: each boss battle's boss gets ONE rare highlight; generics stay shop-tier. The rare
-fits the boss's identity AND is a real in-fight threat or tempting steal — not just a trophy.
+RULE OF THUMB: each boss battle's boss gets ONE rare highlight only when the boss dies or is otherwise
+claimable. Fleeing/surviving bosses carry no rare; their loot is deferred. Generics stay shop-tier.
 ```
 
 Each boss battle doc includes a **"Boss rare loot"** line naming the item, why it fits, and
@@ -181,17 +181,17 @@ Bands creep slightly above Chapter 2; bosses are the spikes. Generics `100–102
 
 | Battle | Target feel | Level band | New wrinkle / boss loot |
 |--------|-------------|------------|--------------------------|
-| Gollund (22) | Ambush with a control guest | 100–102 | Orran/Olan crowd-control guest; tougher mercs |
-| Lesalia Postern (23) | Defend Alma; silence the healer | 100–103 | **Zalmo** Inquisitor heal/revive; protect Alma |
+| Gollund (22) | Ambush with a controlled guest | 100–102 | Orran/Olan crowd-control ally; tougher mercs |
+| Lesalia Postern (23) | Defend controlled Alma; silence the healer | 100–103 | **Zalmo** Inquisitor heal/revive; protect Alma |
 | Vaults 2nd (24) | Vault raid, chain 1/3 | 100–102 | enemy **Dragoon** Jump; no resupply |
 | Vaults 3rd (25) | Izlude on high ground | sub-boss 103, adds 100–102 | **Izlude** Templar sub-boss + casters |
-| Vaults 1st (26) | **Wiegraf** Templar boss | boss 104, adds 100–102 | **boss + rare loot**; disarm his sword arts |
+| Vaults 1st (26) | **Wiegraf** Templar boss | boss 104, adds 100–102 | boss pressure; disarm his sword arts; rare deferred to Keep |
 | Grogh Heights (27) | Rain/thunder line puzzle | 100–102 | weather + line-AoE clustering |
-| Yardrow (28) | Protect Rapha vs Ninjas | 100–103 | **Ninja** debut; wall-climb assassins |
+| Yardrow (28) | Protect controlled Rapha vs Ninjas | 100–103 | **Ninja** debut; wall-climb assassins |
 | Yuguewood (29) | Undead woods | 100–102 | undead (reraise) + Oracle status |
 | Riovanes Gate (30) | Assault, chain 1/3 | 100–103 | Safeguard wall; no resupply |
-| Riovanes Keep (31) | **Wiegraf → Velius** | duel 104, Velius 105 | **2nd Lucavi + rare loot**; the chapter spike |
-| Riovanes Roof (32) | **Elmdor** + assassins | boss 104, adds 103–104 | assassins + **boss + rare loot**; protect Rapha |
+| Riovanes Keep (31) | **Wiegraf → Velius** | duel 104, Velius 105 | **2nd Lucavi + 3 adds + rare loot**; the chapter spike |
+| Riovanes Roof (32) | **Elmdor** + assassins | boss 104, assassins 103 | assassins + flee race; protect/player-control Rapha; no loot |
 
 Two **no-resupply chains** to test back-to-back: the Vaults (24→25→26) and Riovanes (30→31→32).
 
@@ -202,7 +202,7 @@ Two **no-resupply chains** to test back-to-back: the Vaults (24→25→26) and R
 2. On Windows: identify the BattleId / ENTD entry (cross-ref SortieConfirm, EventId, Map,
    scenario tables; sanity-check with FFTIvaliceEditor).
 3. Dump the entry; confirm the original roster matches the doc's "Original Battle".
-4. Apply the New Game++ composition: levels, JOB ESCALATION swaps, gear, RARE BOSS LOOT, skills,
+4. Apply the New Game++ composition: levels, enemy-party escalation swaps, gear, rare boss loot, skills,
    placement, and guest-control flags for every active guest.
 5. Patch via the right layer (.bin or OverrideEntryData); keep the diff inside the battle window.
 6. Copy into the mod, install to Reloaded-II, test from a New Game+ save.
@@ -217,4 +217,3 @@ Two **no-resupply chains** to test back-to-back: the Vaults (24→25→26) and R
   IDs are NON-sequential, verify each).
 - Local: `000-chapter-1-overview.md`, `011-chapter-2-overview.md` (carried rules),
   `023-chapter-2-balance-review.md` (exception log + rare-loot ledger this chapter builds on).
-</content>
