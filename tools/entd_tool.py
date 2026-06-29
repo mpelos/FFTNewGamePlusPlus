@@ -23,6 +23,7 @@ ENTRY_SIZE = 0x280
 SLOT_COUNT = 16
 SLOT_SIZE = 0x28
 LEVEL_OFFSET = 0x03
+JOB_LEVEL_OFFSET = 0x09
 
 
 @dataclass(frozen=True)
@@ -233,6 +234,29 @@ def patch_levels(input_path: Path, output_path: Path, global_entry: int, slots: 
     print(f"wrote {output_path}")
 
 
+def patch_job_levels(input_path: Path, output_path: Path, global_entry: int, slots: list[int], job_level: int) -> None:
+    if not (0 <= job_level <= 255):
+        raise ValueError("job level byte must be in range 0..255")
+    for slot in slots:
+        if slot < 0 or slot >= SLOT_COUNT:
+            raise ValueError("slots must be in range 0..15")
+
+    data = bytearray(input_path.read_bytes())
+    if len(data) != ENTRY_COUNT_PER_FILE * ENTRY_SIZE:
+        raise ValueError(f"{input_path} is {len(data)} bytes; expected {ENTRY_COUNT_PER_FILE * ENTRY_SIZE}")
+
+    local_entry = local_entry_for_entry(global_entry)
+    for slot in slots:
+        absolute = local_entry * ENTRY_SIZE + slot * SLOT_SIZE + JOB_LEVEL_OFFSET
+        old = data[absolute]
+        data[absolute] = job_level
+        print(f"patched entry {global_entry} slot {slot}: job_level {old} -> {job_level} at 0x{absolute:05X}")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes(data)
+    print(f"wrote {output_path}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Inspect and patch FFT TIC ENTD files.")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -249,6 +273,13 @@ def main() -> int:
     patch.add_argument("--entry", type=int, required=True)
     patch.add_argument("--slots", type=int, nargs="+", required=True)
     patch.add_argument("--level", type=int, default=100)
+
+    patch_job = sub.add_parser("patch-job-levels", help="Copy an ENTD file and patch job level bytes.")
+    patch_job.add_argument("--input", type=Path, required=True)
+    patch_job.add_argument("--output", type=Path, required=True)
+    patch_job.add_argument("--entry", type=int, required=True)
+    patch_job.add_argument("--slots", type=int, nargs="+", required=True)
+    patch_job.add_argument("--job-level", type=int, default=8)
 
     args = parser.parse_args()
 
@@ -268,6 +299,13 @@ def main() -> int:
         if args.input.name.lower() != expected:
             print(f"warning: entry {args.entry} normally lives in {expected}, got {args.input.name}")
         patch_levels(args.input, args.output, args.entry, args.slots, args.level)
+        return 0
+
+    if args.command == "patch-job-levels":
+        expected = expected_file_name(args.entry)
+        if args.input.name.lower() != expected:
+            print(f"warning: entry {args.entry} normally lives in {expected}, got {args.input.name}")
+        patch_job_levels(args.input, args.output, args.entry, args.slots, args.job_level)
         return 0
 
     raise AssertionError(args.command)

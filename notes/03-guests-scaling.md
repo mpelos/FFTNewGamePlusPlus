@@ -235,9 +235,12 @@ This is why earlier edits "did nothing": the test save already had Delita at lev
 1. From the status screen, read the guest's Bravery + Faith (e.g. 71 / 55).
 2. Fingerprint-search the ENTD bins for that adjacent byte pair (bravery@rec+0x06, faith@+0x07).
 3. The match is the guest's record; level byte = record+0x03. Set to `100 + offset`.
+   If the guest should have the full primary kit, job level byte = record+0x09. Set to `8`.
 4. Test with a save from before the guest joins (or new game).
 
 `tools/entd_tool.py patch-levels --entry <N> --slots <S> --level 100` applies it.
+`tools/entd_tool.py patch-job-levels --entry <N> --slots <S> --job-level 8` applies the
+companion JobLevel patch.
 
 ### Corrected identities
 charId `0x01` = Ramza, `0x04` = Delita. (Use the fingerprint method, not charId guesses, to be sure.)
@@ -254,6 +257,11 @@ Scaled ALL their guest-form appearances across entd4 entries 384-401 to level 10
 both fixed-level joins like e389 Argath L2, e392 Delita L1, and the 254/default appearances —
 robust against the save-cache-on-join behavior regardless of which entry is the true join).
 Argath-as-enemy (e401, job 0x4C) correctly excluded.
+
+2026-06-29 follow-up: Delita's pre-Gariland join record also needs the full guest-job kit.
+Patched **entry 392 slot 1 JobLevel `1 -> 8`** at byte `0x01431`. This follows the same
+save-cache rule as the level patch: verify from a save before Delita joins, or from a fresh NG+
+start.
 
 NOT scaled: Ramza (0x01) — he is the player's main (uses save level), not a guest.
 TODO: Boco (Ch1 chocobo guest) not found as a named job==charId record in the ENTD — likely

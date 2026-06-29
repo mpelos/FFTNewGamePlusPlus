@@ -61,7 +61,7 @@ real low levels, sitting immediately after Gariland (388). Vanilla dump:
 
 | Slot | Role | charId | Level | MainJob | Notes |
 |------|------|--------|-------|---------|-------|
-| 0,1 | guests | 0x04 / 0x07 | — | — | Delita + Argath. Left untouched (runtime guest layer scales them). |
+| 0,1 | guests | 0x04 / 0x07 | — | — | Delita + Argath. Runtime guest layer scales them; Argath is now player-controlled with JobLevel 8. |
 | 2 | enemy | 0x80 | `2` | `83` | Thief. |
 | 3 | enemy | 0x80 | `1` | `74` | Squire. |
 | 4 | enemy | 0x80 | `1` | `74` | Squire. |
@@ -79,6 +79,17 @@ Job IDs:
 83 = Thief            (confirmed)
 77 = Archer           (confirmed)
 103 = Red Panther     (confirmed — monster slot 7, flags 0x20, no equipment)
+```
+
+Guest handling:
+
+```text
+Slot 1 Argath (0x07) is the first application of the Chapter-1 guest-control rule.
+NG+ ENTD patch:
+- JobLevel stays 8 so his guest job has all available primary skills unlocked.
+- Control byte at slot offset 0x18 changed 0x84 -> 0x8C, enabling player control while preserving
+  his existing ally/guest bits.
+- Level remains 100 via the runtime guest-scaling policy.
 ```
 
 ## New Game++ Design Goal
@@ -260,6 +271,8 @@ Notes / known risks:
 - Job conversion (s6 Squire→Archer) changed only `mainJob` (0x0A); `x08` left as vanilla
   (it varies independently of job and is duplicated across slots, so it is not job/sprite/id
   critical). If the Archer renders or behaves wrong in-game, set `x08`=3 as Gariland did.
+- Argath's guest slot is player-controlled in NG+ (`raw_tail` control byte `0x84 -> 0x8C`) and
+  remains JobLevel 8 so his primary guest-job skills are fully available.
 - Thief secondary left as none (v1, per design). Archer secondary = Fundaments (matches the
   verified Gariland archer).
 - Positions kept vanilla; the open-field placement plan above is a future-tuning option.
@@ -272,6 +285,8 @@ Notes / known risks:
 - [x] Verify Archer/Thief/Squire item IDs (reused Gariland's in-game-validated IDs).
 - [x] Set levels: leader `102`, Squires `100`, Thief/Archer/Panther `101`.
 - [x] Set JobLevel `8` on all active enemy slots.
+- [x] Set Argath guest JobLevel `8` and make him player-controlled in NG+ (slot 1 control byte
+  `0x84 -> 0x8C`).
 - [x] Convert one Squire (s6) → Archer in place (no slot added; 6 already present).
 - [x] Apply gear + R/S/M per builds above.
 - [ ] Positions: kept vanilla (placement plan deferred to a tuning pass).

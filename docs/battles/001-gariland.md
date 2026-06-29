@@ -87,6 +87,20 @@ Existing successful validation patch:
 
 Result: tested in-game and confirmed story enemy scaling works.
 
+Guest join note:
+
+```text
+Delita is not the entry 388 slot 0 unit. He is cached into the save when he joins the party
+before Gariland, using the confirmed fingerprint record at entry 392 slot 1.
+
+Entry 392 slot 1:
+- Level already scales at 100.
+- JobLevel is now 8 (byte 0x01431 changed 1 -> 8).
+
+As with the level fix, this only applies when testing from a save before Delita joins or from a
+fresh New Game+ start. Saves where Delita already joined keep the old cached JobLevel.
+```
+
 ## New Game++ Design Goal
 
 Keep the battle's identity:
@@ -437,6 +451,7 @@ slow chase.
 - Add explicit reaction/support/movement skills. Done.
 - Keep slot 4 as Chemist.
 - Leave slot 0 untouched.
+- Set Delita's pre-Gariland join record (`entry 392`, slot `1`) to JobLevel `8`. Done.
 - Re-dump entry `388` after patch. Done.
 - Compare binary diff; expected changes should be small and intentional. Done.
 - Install updated `New Game++` mod into `C:\Reloaded-II\Mods`. Done.
