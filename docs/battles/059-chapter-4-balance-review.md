@@ -28,7 +28,7 @@ structural pressures.
 
 ## Difficulty curve (all 21 battles, as designed)
 
-| # | Battle | Doc | Enemies | New demand / job escalation | Terrain | Tier |
+| # | Battle | Doc | Enemies | New demand / party engine | Terrain | Tier |
 |---|--------|-----|---------|------------------------------|---------|------|
 | 33 | Dugeura Pass | `038` | 6 (2 Black Mage + 2 **Dragoon** + Knight + Haste Time Mage) | open-field tempo (Haste); no boss | open field | ▃ moderate |
 | 34 | Free City of Bervenia | `039` | 6 (**Meliadoul** + 2 Summoner + 2 Archer + Ninja; dies) | first Ch4 boss duel; equip-break; **Tier-A Save the Queen** | urban | ▅ hard |
@@ -91,11 +91,13 @@ Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletie
 LUCAVI: 105 (Zalera, Adrammelech, Hashmal).  FINAL ULTIMA: 106 — the single highest band in the mod (+6).
 Apex monsters: Tiamat/Dark Behemoth 104, Hydra 103.
 
-Boss-loot policy (Chapter 4): the long-promised payoff. Bosses that DIE carry ONE rare; the chapter
-splits them into TIER-A (strong, on the open/Limberry/Eagrose bosses) and TIER-S best-of-best (the
-finest gear in the game, held for the Mullonde + endgame bosses). Bosses that FLEE carry no rare (the
-drop is deferred to where they die). Ragnarok is the FINAL CAPSTONE on Ultima. EXCALIBUR stays with
-Orlandeau (the player's holy blade) — never on an enemy.
+Boss-loot policy (Chapter 4): the long-promised payoff. Bosses that DIE carry ONE named rare highlight;
+the chapter splits them into TIER-A (strong, on the open/Limberry/Eagrose bosses) and TIER-S best-of-best
+(the finest gear in the game, held for the Mullonde + endgame bosses). This boss-highlight ledger is no
+longer exclusive: per the global philosophy in `000`, Chapter 4 normal enemies may also carry role-fitting
+non-buyable gear when it supports a readable broken-party puzzle. Bosses that FLEE carry no named rare
+highlight (the drop is deferred to where they die). Ragnarok is the FINAL CAPSTONE on Ultima. EXCALIBUR
+stays with Orlandeau (the player's holy blade) — never on an enemy.
 ```
 
 ## Design-exception log
@@ -153,7 +155,8 @@ Airship      (058) : HASHMAL -> ULTIMA two-phase FINALE (L106); gauntlet 5/5 -> 
 New content first seen in Chapter 4: the SAMURAI caste (056, canonical), the ULTIMA-DEMON caste (048),
 APEX MONSTERS Hydra/Tiamat/Dark Behemoth (057), the vampire Ark Knight (053), the triple-boss "one
 falls" structure (052), the Magick-Surge mechanic (056), and THREE Lucavi (Zalera 049, Adrammelech 050,
-Hashmal+Ultima 058). At most one new wrinkle per fight — the rule held across all 21.
+Hashmal+Ultima 058). Revised rule: one headline puzzle engine per fight, with the rest of the enemy
+team allowed to amplify that engine through complete, synergistic, sometimes broken Chapter 4 kits.
 ```
 
 ## Rare-boss-loot ledger (rule 2) — TIER-A + TIER-S
@@ -176,7 +179,8 @@ TIER-S (best-of-best; Mullonde + endgame bosses; the long-promised payoff):
   Lost Halidom(057) : MATERIA BLADE   (enshrined relic)     -> recovered on victory (Barich wields no sword).
   Ultima      (058) : RAGNAROK        (legendary holy sword)-> the CAPSTONE; carries into the next NG++ cycle.
 
-NO RARE (boss flees / no named boss -> deferred or none):
+NO NAMED BOSS RARE (boss flees / no named boss -> deferred or none; normal enemies may still carry
+role-fitting non-buyables under the Chapter 4 puzzle-party policy):
   Dugeura (038), Finnath (040), Besselat Wall (043), Sluice (044), Mt Germinas (045), Poeska (046),
   Limberry Gate (047, Celia/Lettie flee -> paid as Ultima Demons at 048), Mullonde Exterior (051),
   Vaults 4th (054).
@@ -313,12 +317,13 @@ Design phase: COMPLETE for all 21 Chapter 4 battles (038-058 designed; none patc
 Consistency: audited; exceptions logged; job-escalation and split Tier-A/Tier-S ledgers extended.
 Curve: passes on paper; the campaign's highest, capped by Ultima L106 and the three no-resupply chains;
   two Lucavi spikes + a 5★ peak + a two-phase finale; deliberate valleys seat the spikes.
-Job escalation: one new wrinkle per fight held across all 21; the Samurai caste debuts cleanly (canon),
-  plus Ultima Demons, apex monsters, the vampire Ark Knight, the triple-boss structure, Magick Surge,
-  and three Lucavi.
-Boss-loot: six Tier-A + six Tier-S (best-of-best) tiered onto the late bosses; flee bosses deferred; the
-  Tier-S ledger rebalanced to archetype (Escutcheon->Loffrey, Robe of Lords->Cletienne); Ragnarok the
-  final capstone (carries into NG++); Excalibur kept on Orlandeau.
+Job escalation: one headline puzzle engine per fight; the Samurai caste debuts cleanly (canon), plus
+  Ultima Demons, apex monsters, the vampire Ark Knight, the triple-boss structure, Magick Surge, and
+  three Lucavi. Chapter 4 enemies may now support those engines with full broken-party synergy.
+Boss-loot: six Tier-A + six Tier-S (best-of-best) tiered onto the late bosses as named highlights;
+  normal enemies may separately carry role-fitting non-buyable gear in Chapter 4 puzzle parties. Flee
+  bosses deferred; the Tier-S ledger rebalanced to archetype (Escutcheon->Loffrey, Robe of Lords->
+  Cletienne); Ragnarok the final capstone (carries into NG++); Excalibur kept on Orlandeau.
 Next: data-layer patching + playtest in story order (the three chains as units; the gauntlet is the
   headline risk). This completes the New Game++ campaign design (Chapters 1-4, docs 000-059).
 ```

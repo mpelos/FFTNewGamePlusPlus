@@ -36,3 +36,7 @@ work/CompressDict.cs
 # .NET build artifacts
 src/**/bin/
 src/**/obj/
+
+# tmp
+tmp/*
+!tmp/.keep

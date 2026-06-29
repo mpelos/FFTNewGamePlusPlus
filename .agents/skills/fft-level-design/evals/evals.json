@@ -1,0 +1,35 @@
+{
+  "skill_name": "fft-level-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Quero fazer o level da batalha 014 Zeirchele Falls para NG++. Antes de mexer no doc, garanta que Ovelia não seja punida por AI burra e rode uma simulação simples da pressão dos Knights/Gaffgarion.",
+      "expected_output": "The agent should ask/confirm gate questions before edits, read the global and Chapter 2 docs plus the target battle doc, require guest-control handling for Ovelia, create tmp simulation artifacts, iterate on the draft, and only then describe or apply scoped changes.",
+      "files": [
+        "docs/battles/000-chapter-1-overview.md",
+        "docs/battles/011-chapter-2-overview.md",
+        "docs/battles/014-zeirchele-falls.md"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Revise a dificuldade de Yardrow no capítulo 3. Quero saber se o debut dos Ninjas está sinérgico mas ainda não roubado. Não implemente nada ainda.",
+      "expected_output": "The agent should keep the task read-only, read Chapter 3 context and Yardrow docs, apply Chapter 3 complete-build principles, propose or run tmp/read-only simulations, and return findings without editing tracked docs.",
+      "files": [
+        "docs/battles/024-chapter-3-overview.md",
+        "docs/battles/031-walled-city-yardrow.md",
+        "docs/battles/036-chapter-3-balance-review.md"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Faça um draft novo para uma batalha do capítulo 4 usando uma party inimiga roubada com combo. Pode mexer no doc depois que passar pelos gates e simular o puzzle.",
+      "expected_output": "The agent should ask which Chapter 4 battle is in scope if absent, read Chapter 4 and reward docs, enforce one readable broken puzzle engine, create tmp simulation artifacts, iterate, and then make scoped doc edits only after gates are satisfied.",
+      "files": [
+        "docs/battles/037-chapter-4-overview.md",
+        "docs/battles/059-chapter-4-balance-review.md",
+        "docs/battles/chapter-4-rewards-implementation.md"
+      ]
+    }
+  ]
+}

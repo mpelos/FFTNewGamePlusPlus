@@ -53,34 +53,43 @@ Still in force — see `000-chapter-1-overview.md` for the full text:
 - Preserve each battle's identity (theme, archetypes, terrain, what it teaches).
 - Respect job equipment rules (mages wear robes, monsters wear nothing, etc.).
 - Keep the curve readable: at most ONE new meaningful demand per fight.
+- Guest-control rule: from Chapter 1 onward, every active guest is player-controlled in NG+,
+  whether or not the objective says to save them. Guest AI is not a skill check.
 - Document any rule exception per-battle (as we did for Time Mage / equipment-break in Ch1).
 ```
 
-## NEW rule 1 — Job escalation
+## NEW rule 1 — Enemy party escalation
 
-Chapter 2 starts evolving the enemy roster. The goal is **more challenge through variety**,
-not through bigger numbers — and never at the cost of the fight's original strategy.
+Chapter 2 starts evolving the enemy roster into real New Game+ opposition. The goal is **more
+challenge through higher-skill party construction**, not bigger numbers alone — and never at the
+cost of the fight's original strategy.
 
 ```text
 HOW TO ESCALATE A FIGHT:
-- Upgrade or swap at most 1-2 generic slots to a more advanced / more thematic job that
-  INTENSIFIES the existing challenge.
-  e.g. Dorter's rooftop pressure -> swap one Archer for a Geomancer or add an Oracle for a new
-       ranged/utility angle, but keep "control the high ground" as the core read.
-- Prefer jobs the chapter canonically introduces: Summoner (Balias Tor, Goug), undead
-  (Tchigolith), Dark Knight (Gaffgarion), plus order-knights, Geomancer, Oracle, Dragoon.
-- The new job must ADD a wrinkle to the existing plan, not force a different plan. If the
-  original fight was "kill the healers first," the escalated fight is still "kill the healers
-  first, but now one of them also Hastes" — the strategy survives, the execution gets harder.
+- First diagnose the vanilla spirit: what feeling and difficulty did the original designers want?
+  Rooftop pressure, betrayal, crossing a river, undead dread, caster priority, boss duel, etc.
+- Any normal job tier is legal starting now — except Mime and Calculator/Arithmetician — if it
+  translates that spirit into a harder NG+ version.
+  e.g. Dorter's rooftop pressure can become Archer/Gunner/Geomancer/Time-supported ranged control,
+       but it must still read as "control the high ground."
+- Chapter 2 is the preview chapter for Chapter 3. It may use advanced jobs and extra enemies, but
+  it should teach one or two clear knobs rather than become a dense synergy puzzle.
+- Every active human enemy gets complete equipment. Reaction/support/movement should also be set
+  intentionally. Secondary is allowed but optional: use it when it clarifies the role or previews a
+  Chapter 3 system, not as automatic filler.
+- The enemy party may add bodies if the map needs action economy, flanks, bodyguards, or route
+  pressure. Extra enemies must sharpen the original feeling, not create cleanup.
 
 DO NOT:
-- Stack multiple brand-new mechanics in one fight (one new wrinkle at a time).
+- Stack multiple unrelated puzzle engines in one fight.
 - Introduce hard lockdown (Stop/Don't Act/Petrify spam) on an endgame party.
 - Replace a fight's identity with a different fight.
 ```
 
-A short **"job escalation"** section in each battle doc states exactly which slot(s) changed
-job and why, and confirms the original strategy still holds.
+A short **"enemy party escalation"** section in each battle doc states the original battle spirit,
+the upgraded party roles, full equipment plan, R/S/M setup, optional secondary choices, which jobs
+changed or were added, why any extra enemies exist, and how the original strategy still survives at
+a higher difficulty.
 
 ## NEW rule 2 — Rare, non-buyable boss loot (the reward escalation)
 
@@ -141,7 +150,7 @@ sub-bosses `102–103`, major bosses `103–104`.
    scenario tables; sanity-check with FFTIvaliceEditor).
 3. Dump the entry; confirm the original roster matches the doc's "Original Battle".
 4. Apply the New Game++ composition: levels, JOB ESCALATION swaps, gear, RARE BOSS LOOT,
-   skills, placement.
+   skills, placement, and guest-control flags for every active guest.
 5. Patch via the right layer (.bin or OverrideEntryData); keep the diff inside the battle window.
 6. Copy into the mod, install to Reloaded-II, test from a New Game+ save.
 7. Record results back in the battle doc.

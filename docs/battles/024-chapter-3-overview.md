@@ -103,17 +103,22 @@ Still in force — see `000-chapter-1-overview.md` and `011-chapter-2-overview.m
 - Preserve each battle's identity (theme, archetypes, terrain, what it teaches).
 - Respect job equipment rules (mages wear robes, monsters wear nothing, etc.).
 - Keep the curve readable: at most ONE new meaningful demand per fight.
+- Guest-control rule: from Chapter 1 onward, every active guest is player-controlled in NG+,
+  whether or not the objective says to save them. Guest AI is not a skill check.
 - Document any rule exception per-battle (Time Mage control, equipment-break, boss self-heal,
   boss mass-status, undead reraise, etc. — see the Ch2 design-exception log in `023`).
 ```
 
-## NEW rule 1 — Job escalation (Chapter 3 castes)
+## NEW rule 1 — Complete enemy parties (Chapter 3 castes)
 
-Chapter 3's roster turns elite. The goal remains **more challenge through variety**, never at the
-cost of the fight's original strategy.
+Chapter 3's roster turns elite. The goal remains **more challenge through variety and synergy**,
+never at the cost of the fight's original strategy. Chapter 2 already gave active human enemies full
+equipment and intentional R/S/M; Chapter 3 closes the remaining gap by making secondary skillsets
+mandatory and by tuning the whole enemy party as a coherent team.
 
 ```text
-CHAPTER 3 CASTES TO DEPLOY (prefer the ones the chapter canonically introduces):
+CHAPTER 3 CASTES TO DEPLOY (canon castes are highlighted, but any non-Mime/non-Calculator job is
+legal if it preserves the battle spirit):
 - Knights Templar  : elite sword-skill users (Wiegraf, Izlude) — Holy/Dark sword arts; the
                      bosses of the Vaults. Treat their sword skills like Ch2 Gaffgarion's Drain:
                      strong, but with a telegraphed counter (disarm / spacing / element).
@@ -125,14 +130,17 @@ CHAPTER 3 CASTES TO DEPLOY (prefer the ones the chapter canonically introduces):
 - Lucavi (Velius)  : the second demon — a multi-summon "army of one" boss (Riovanes Keep).
 - Assassins        : Celia / Lettie — named special units (Riovanes Roof).
 
-RULE: upgrade/swap at most 1–2 generic slots per fight to a more advanced/thematic job that
-INTENSIFIES the existing plan. The new job ADDS a wrinkle; it never forces a different plan.
-DO NOT stack multiple brand-new mechanics in one fight, or introduce hard lockdown
-(Stop/Don't Act/Petrify spam) on an endgame party.
+RULE: every active human enemy gets complete equipment plus a complete ability setup: secondary,
+reaction, support, and movement. Secondary is no longer optional. The party should have real synergy
+(front line + artillery + support + disruptor + boss/engine), but not yet the deliberately broken
+puzzle stacks reserved for Chapter 4. Add enemies when they create flanks, bodyguards, action economy,
+or chain pressure.
+DO NOT introduce hard lockdown (Stop/Don't Act/Petrify spam) on an endgame party.
 ```
 
-A short **"Job escalation"** section in each battle doc states which slot(s) changed and confirms
-the original strategy still holds.
+A short **"Enemy party escalation"** section in each battle doc states the vanilla battle spirit, the
+new party roles, each complete setup's job/secondary/reaction/support/movement plan, and why the
+composition is synergistic without becoming a Chapter 4 broken puzzle.
 
 ## NEW rule 2 — Rare boss loot (the Chapter 3 tier)
 
@@ -195,7 +203,7 @@ Two **no-resupply chains** to test back-to-back: the Vaults (24→25→26) and R
    scenario tables; sanity-check with FFTIvaliceEditor).
 3. Dump the entry; confirm the original roster matches the doc's "Original Battle".
 4. Apply the New Game++ composition: levels, JOB ESCALATION swaps, gear, RARE BOSS LOOT, skills,
-   placement.
+   placement, and guest-control flags for every active guest.
 5. Patch via the right layer (.bin or OverrideEntryData); keep the diff inside the battle window.
 6. Copy into the mod, install to Reloaded-II, test from a New Game+ save.
 7. Record results back in the battle doc.

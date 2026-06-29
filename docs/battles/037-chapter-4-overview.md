@@ -15,10 +15,10 @@ goals continue — now at their **final escalation**:
    the ULTIMA/ARCHAEO DEMONS (elite Lucavi minions), the multi-head DRAGONS (Hydra/Tiamat), and the
    remaining LUCAVI themselves (Zalera, Adramelk, Hashmal, and Ultima). It is the finale, so a fight
    is allowed its boss-spike — but still ONE headline demand per battle.
-2. RARE BOSS LOOT — this is the chapter where the RESERVED best-in-slot gear finally unlocks. But it
-   is TIERED: mid-Chapter-4 bosses carry the best *non-ultimate* uniques; the absolute best-of-the-
-   best is held for the ENDGAME sequence (Mullonde → Airship Graveyard). "Leave the best of the best
-   to the end game."
+2. RARE / NON-BUYABLE GEAR — this is the chapter where the RESERVED best-in-slot gear finally unlocks.
+   Bosses still carry the named Tier-A/Tier-S highlights, but Chapter 4 normal enemies may also carry
+   role-fitting non-buyable gear as part of broken puzzle-party builds. The absolute best-of-the-best
+   remains tiered into the ENDGAME sequence (Mullonde → Airship Graveyard).
 ```
 
 ## Story framing (why this is the final climb)
@@ -74,6 +74,8 @@ Still in force — see `000`, `011`, `024` for full text:
 - Respect job equipment rules (mages wear robes, monsters wear nothing, etc.).
 - Keep the curve readable: at most ONE new meaningful demand per fight (the finale earns its
   boss-spikes, but never stacks two brand-new player-facing mechanics in one battle).
+- Guest-control rule: from Chapter 1 onward, every active guest is player-controlled in NG+,
+  whether or not the objective says to save them. Guest AI is not a skill check.
 - Document any rule exception per-battle (Time Mage control, equipment-break, boss self-heal,
   boss mass-status, undead reraise, instant-death, Lucavi AoE — see the Ch3 exception log in `036`).
 - Retreat/flee/survive boss = NO rare drop (the drop is paid where the boss dies for good).
@@ -85,7 +87,7 @@ The roster reaches its ceiling. The goal is unchanged: **more challenge through 
 the cost of the fight's original strategy.
 
 ```text
-CHAPTER 4 CASTES / FOES TO DEPLOY (prefer the ones the chapter canonically introduces):
+CHAPTER 4 CASTES / FOES TO DEPLOY (canon castes are texture, not a job-tier limit):
 - Samurai (enemy)   : Draw Out (katana spirits) — AoE elemental/heal/buff from the blade. Debut at
                       the Necrohol (Cletienne's guard). Treat Draw Out like a telegraphed AoE: strong,
                       spaceable, not a lock.
@@ -99,14 +101,16 @@ CHAPTER 4 CASTES / FOES TO DEPLOY (prefer the ones the chapter canonically intro
 - Elite Templar     : Meliadoul (Mighty Sword break), Barich (machinist + dragon), Loffrey (summoner),
   named bosses         Cletienne (summoner + Samurai). Full kits; the human bosses of the finale.
 
-RULE: still upgrade/swap at most 1–2 slots toward a thematic, more-advanced job per fight, and the
-new job INTENSIFIES the existing plan. A Lucavi/Ultima-Demon boss may BE the wrinkle — but then the
-surrounding generics stay familiar. Never stack two brand-new player-facing mechanics on one map, and
-never introduce hard lockdown (Stop/Don't Act/Petrify spam) on the endgame party.
+RULE: Chapter 4 may tune the whole enemy team into a synergistic broken puzzle, not just upgrade 1-2
+slots. Keep one headline engine per battle, then let the surrounding generics amplify that engine with
+complete kits, role-fitting non-buyable gear, and readable support roles. Never stack two unrelated
+player-facing puzzle engines on one map, and never introduce hard lockdown (Stop/Don't Act/Petrify
+spam) on the endgame party.
 ```
 
-A short **"Job escalation"** section in each battle doc states which slot(s) changed and confirms the
-original strategy still holds.
+A short **"Enemy party escalation"** section in each battle doc states the vanilla battle spirit, the
+headline puzzle engine, the supporting party roles, any non-buyable gear on normal enemies, and why
+the original strategy still holds at Chapter 4 intensity.
 
 ## NEW rule 2 — Best-in-slot boss loot (the Chapter 4 tier), with the best held for last
 
@@ -136,7 +140,10 @@ NOW UNLOCKED (the game's best uniques) — assign by tier:
 
 ASSIGNMENT RULES:
   - A boss that FLEES/SURVIVES still drops nothing; the rare is paid where it dies.
-  - Each boss battle gives ONE rare highlight; generics stay shop/Ch4-tier.
+  - Each boss battle gives ONE rare highlight; this is no longer exclusive. Chapter 4 normal enemies
+    may also carry role-fitting non-buyable gear when it supports a readable broken-party puzzle.
+  - Any normal-enemy non-buyable gear must be documented per battle as steal-bait, role identity,
+    or puzzle pressure. Do not hide essential rewards on throwaway generics without intent.
   - The rare fits the boss's identity AND is a real in-fight threat or a tempting steal.
   - Elmdor's iconic MASAMUNE + GENJI (deferred from Riovanes in Ch3) are paid HERE, at Limberry Keep
     (043), where he is decisively defeated — Tier A, not the absolute capstone.
@@ -188,7 +195,7 @@ no resupply within a chain.
    scenario tables; sanity-check with FFTIvaliceEditor).
 3. Dump the entry; confirm the original roster matches the doc's "Original Battle".
 4. Apply the New Game++ composition: levels, JOB ESCALATION swaps, gear, BEST-TIER BOSS LOOT, skills,
-   placement.
+   placement, and guest-control flags for every active guest.
 5. Patch via the right layer (.bin or OverrideEntryData); keep the diff inside the battle window.
 6. Copy into the mod, install to Reloaded-II, test from a New Game+ save.
 7. Record results back in the battle doc.
