@@ -1,0 +1,27 @@
+docs/battles/001-gariland.md
+  s_4ae8d051686325::t_f9fe9c6fede5a1 90-103,454
+docs/battles/002-mandalia-plain.md
+  s_4ae8d051686325::t_1c77aa6c3eada6 64,84-94,274-275,288-289
+tools/entd_tool.py
+  s_4ae8d051686325::t_34f477e1e41298 26,237-259,277-283,304-308
+  s_4ae8d051686325::t_1898cf3b05fd56 309-310
+notes/03-guests-scaling.md
+  s_4ae8d051686325::t_1d22b8cb8f9dbd 238,242-243,261-264
+  s_4ae8d051686325::t_45d443e89e2558 265
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "a2861caaf0a76d934a16e9501af20361ca82aff9",
+  "prompts": {},
+  "sessions": {
+    "s_4ae8d051686325": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f14b8-4beb-7573-ac0b-7db8d0f69d05",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
