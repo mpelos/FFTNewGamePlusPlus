@@ -1,0 +1,49 @@
+docs/battles/011-chapter-2-overview.md
+  s_4ae8d051686325::t_47b736007495c7 77-79,90-92
+  s_4ae8d051686325::t_208127eef41668 56-57,153
+  s_4ae8d051686325::t_711283f3b48490 61,63-65,69-76,80-81,84,89
+docs/battles/024-chapter-3-overview.md
+  s_4ae8d051686325::t_7539dc674e94a9 115-117,134-137
+  s_4ae8d051686325::t_804b498626d643 112,114,120-121,133,138,141-143
+  s_4ae8d051686325::t_208127eef41668 106-107,206
+.agents/skills/fft-level-design/SKILL.md
+  s_4ae8d051686325::t_f6393be49d8bc9 1-275
+.agents/skills/fft-level-design/evals/evals.json
+  s_4ae8d051686325::t_f6393be49d8bc9 1-35
+docs/battles/000-chapter-1-overview.md
+  s_4ae8d051686325::t_2a962eaa967dbd 422-432
+  s_4ae8d051686325::t_6b9db3ac859488 211
+  s_4ae8d051686325::t_ec946b7b168faf 240-279,282-289
+  s_4ae8d051686325::t_9ac5f521e4c54c 223,296,308,311,313-314,321-323,330-398
+  s_4ae8d051686325::t_208127eef41668 104,131-136,472-473
+  s_4ae8d051686325::t_3b6d2ee0e68bda 224-239,290-293,297-301,305,307,309-310,315-320,324-329
+  s_4ae8d051686325::t_7ddd120a447ddf 160-210,212-220,399-421,433-439,488-491,496-501
+  s_4ae8d051686325::t_d2cc0327fee7ed 137-159
+  s_4ae8d051686325::t_248255e31ea031 492-495
+  s_4ae8d051686325::t_f19ba4f7098f1b 221-222,280-281,294-295,302-304,306,312
+docs/battles/037-chapter-4-overview.md
+  s_4ae8d051686325::t_c78fba12510bb6 104-108
+  s_4ae8d051686325::t_83348ad6c6fce8 90,111-113
+  s_4ae8d051686325::t_df5b4ddef6b45f 18-21,143-146
+  s_4ae8d051686325::t_208127eef41668 77-78,198
+docs/battles/059-chapter-4-balance-review.md
+  s_4ae8d051686325::t_416b5a9b2b94d4 94-100,182-183,323-326
+  s_4ae8d051686325::t_5a22dec86b0075 31
+  s_4ae8d051686325::t_4b283f023a51fb 158-159,320-322
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "b911867d579dacb1e5e62d00356322a46be91987",
+  "prompts": {},
+  "sessions": {
+    "s_4ae8d051686325": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f14b8-4beb-7573-ac0b-7db8d0f69d05",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
