@@ -19,6 +19,11 @@
     </Content>
     <EmbeddedResource Include="zlibdict.bin" />
     <EmbeddedResource Include="entd\*.bin" />
+    <!-- The modloader reads per-mod table overrides from FFTIVC/tables/<enhanced|classic|combined>/.
+         Ship that folder verbatim next to the DLL so JobData.xml (Princess innate abilities) applies. -->
+    <Content Include="FFTIVC\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

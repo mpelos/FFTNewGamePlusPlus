@@ -1,6 +1,6 @@
 # 014 - Zeirchele Falls (Zirekile Falls)
 
-Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline; Ovelia equipped for survival (2026-06-27)
+Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline; Ovelia survival = JOB-INNATE Mana Shield + Manafont (Princess job 12 via FFTIVC/tables/enhanced/JobData.xml) layered over gear Always-Protect (Sortilège) + Brave 61 (2026-06-28; earlier evasion + ENTD-R/S/M passes both failed — see "Ovelia survivability"). ✅ CONFIRMED in-game 2026-06-28 — Mana Shield + Move-MP Up both active.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 13 (after Araguay Woods)
 Target version: Enhanced v1.5.0
@@ -87,28 +87,72 @@ PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit), and 
 lvl-254 reinforcement Knights (s2/s3) should be scaled too (left untouched to avoid disturbing their
 spawn scripting).
 
-### Ovelia survivability (playtest fix, 2026-06-27)
+### Ovelia survivability (four passes; landed on JOB-INNATE Mana Shield + Manafont over gear Always-Protect, 2026-06-28)
 
-**Player report:** at NG+ party level, Ovelia "is dying with one hit of anything" on the Save-Ovelia
-path, making it near-unwinnable. **Root cause:** her level IS auto-scaled to party level (the runtime
-guest-scaler hits her because job 12 == charId 0x0c), but her slot was left **gear-light** (Wizard's
-Hat / Wizard's Robe / no accessory / White Staff), so a party-level princess with paper gear gets
-one-shot. The level was never the problem; the gear was.
+**Player report (2026-06-27):** at NG+ party level, Ovelia "is dying with one hit of anything" on the
+Save-Ovelia path, making it near-unwinnable. **Root cause:** her level IS auto-scaled to party level
+(the runtime guest-scaler hits her because job 12 == charId 0x0c), but her slot shipped **gear-light**
+(Wizard's Hat / Wizard's Robe / no accessory / White Staff). The level was never the problem; the
+defense was.
 
-**Fix applied:** equip Ovelia with an endgame, job-legal survival kit. Job 12 (Princess) equips
-Hat/HairAdornment, Robe/Clothing, Cloak (+ Ring/Armlet/Shoes/etc.), and Staff. Only the 4 gear bytes
-(0x12-0x15) changed; her level (left to the scaler), job, flags, and ability/scripting bytes are
-untouched. NG+-only by construction (modded ENTD swap).
+**Fix #1 (evasion kit) — FAILED in playtest #2.** First pass gave her an evasion kit (Ribbon /
+Luminous Robe / **Featherweave Cloak** 40/30 evade / Golden Staff). It did NOT save her, because of a
+hard engine rule: **a charging unit has 0 evasion from every side AND takes +50% physical damage**
+(only Blade Grasp bypasses this). Ovelia's AI hangs back and casts defensive magic, so she is almost
+always mid-charge when the adjacent Knight/Archer reach her — at which point her evasion is *zero* and
+the incoming hit is *amplified*: a guaranteed one-shot. **Evasion is the wrong stat for a unit that
+lives in the charge state.**
 
-- Head: **Ribbon (171)** - +10 HP, immunity to nearly every status (her identity; no Charm/Stop/Sleep/Disable lockout)
-- Body: **Luminous Robe (206)** - +75 HP / +50 MP (best non-reserved robe; Lordly Robe 207 is the Cletienne reward)
-- Accessory: **Featherweave Cloak (234)** - 40% physical + 30% magical evasion (filled her empty slot; the main survival lever)
-- Weapon: **Golden Staff (64)** - Power 6, +15 evasion, MA for her defensive casting
+**Fix #2 (Mana Shield / Move-MP Up via the ENTD R/S/M bytes) — BLOCKED.** The plan was to soak the
+(Protect-halved) hit into MP via Mana Shield. Writing it to her ENTD slot did nothing: **Ovelia is a
+NAMED GUEST, and the engine sources her command + reaction/support/movement from her fixed character
+template, NOT from the ENTD R/S/M bytes.** Proof in-game (playtest #3): the Mana Shield (445) and
+Move-MP Up (494) we wrote to her slot never appeared, and her *secondary still showed "Items"* even
+though the slot's secondary byte is 254/none. Side-finding — **`battle_patch.py` brave offset bug:**
+brave is at **0x06**, not 0x05 (the tool wrote the wrong byte; in-game Brave stayed at her template 53,
+and the stray 0x05 write corrupted a different field — now fixed). *(The conclusion first drawn here —
+"abilities can only come from a runtime code patch" — was WRONG about the remedy: the ENTD R/S/M bytes
+are indeed ignored, but the "template" the engine reads passives from is the unit's **JOB**, which is
+fully data-moddable. See Fix #4.)*
 
-Net at party level: high evasion (innate 20% class + cloak 40% + staff 15%) + 85 bonus HP + near-total
-status immunity, so she dodges most hits, survives those that land, and can't be locked down. Still
-protectable (not invincible), so the escort stays tense. Same approach as the guest-survivability rule:
-party-level scaling alone is not enough; a must-survive guest needs evasion + job-legal gear.
+**Fix #3 (gear-granted Always-Protect) — RETAINED as the deterministic layer.** Gear *does* apply to a
+named guest, so the accessory carries a charge-proof cut that needs no proc roll:
+
+- **Accessory: Sortilège (239)** — reserved female-only Perfume granting **Always: Protect + Shell**
+  (EquipBonus 68). **Protect halves every physical hit DETERMINISTICALLY, even mid-charge** — while
+  charging a hit resolves base → ×1.5 (charge) → ×0.5 (Protect) = **0.75× of a normal hit** instead of
+  an amplified one-shot. Shell halves magic. (Reserved item is fine: battle-only VIP; gear never enters
+  the player inventory.)
+- **Head: Gold Hairpin (166)** — +80 HP / +50 MP (user pick over Ribbon: HP cushion + MP that now also
+  feeds Mana Shield as well as her Holy Magicks). **Body: Luminous Robe (206)** — +75 HP. **Weapon:
+  Golden Staff (64)** — MA.
+
+**Fix #4 (JOB-INNATE Mana Shield + Manafont) — THE breakthrough; current.** The "template" the engine
+reads a named guest's passives from is the unit's **JOB**, and a job's innate abilities are data-moddable.
+Princess (job 12, unique to Ovelia) already ships innate **Defense Boost (466) + Magick Defense Boost
+(468)** in innate slots 1-2 — which is *why* her R/S/M slots render empty in-game yet she still mitigates:
+**innate abilities are always active but never display in the equipped slots.** Slots 3-4 were free, so via
+the modloader's per-mod table override — `src/fftivc.battles.ngplus/FFTIVC/tables/enhanced/JobData.xml`
+(deployed next to the DLL; wired into the `.csproj`) — we add:
+- **InnateAbilityId3 = 445 Mana Shield** — routes a would-be lethal hit to MP. No HP overflow in FFT: as
+  long as she has ≥1 MP, *any* single hit is fully absorbed, and it **works mid-charge**. Procs at Brave%.
+- **InnateAbilityId4 = 494 Manafont** (the Enhanced-edition name for **Move-MP Up**) — refills MP each
+  step to keep the Mana Shield pool topped up.
+- **Brave = 61** (ENTD 0x06, the corrected offset) — now meaningful: it IS Mana Shield's proc rate.
+
+Net layered defense: innate Defense/Magick-Defense Boost (vanilla) + gear Always-Protect (deterministic ½
+physical, charge-proof) + **61% innate Mana Shield** (negates a hit outright into MP) + ~155 bonus HP.
+Because innate abilities don't reliably show in the menu, **verify in battle by the EFFECT**, not the slot:
+watch a hit drain her MP, or watch her live through a blow that previously one-shot her. **Confirmed in-game
+2026-06-28:** both active — Mana Shield (reaction) was recognized in-game, but Manafont/Move-MP Up (movement)
+did NOT render in the slot yet worked (she moved and regained MP), same as her two vanilla support innates.
+Innate display is type-dependent; trust the effect.
+
+**If still insufficient (playtest), escalate by:** more HP via gear (body Luminous Robe → **Black Garb
+198, +100 HP**, or head → Thief's Cap 168, +100 HP but no MP). The abilities lever is now data-driven —
+further passives (e.g. innate Auto-Potion/Regen) can be added to the same JobData override, **no code
+patch required**. This generalizes to every named guest: give them survivability via *their job's* innate
+ability slots, not the ENTD.
 
 ## Job Escalation (Chapter 2 rule)
 

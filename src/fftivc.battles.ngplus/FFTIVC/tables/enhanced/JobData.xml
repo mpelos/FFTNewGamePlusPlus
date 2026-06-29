@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  New Game++ table override — Princess (job 12 = Ovelia) survivability.
+
+  A NAMED guest's passive abilities come from its JOB's innate list, NOT the ENTD R/S/M bytes
+  (those are ignored for named units — proven in-game on Ovelia: Mana Shield/Move-MP Up written to
+  her ENTD slot never appeared). Job 12 already ships innate Defense Boost (466) + Magick Defense
+  Boost (468); slots 3-4 were free. We add Mana Shield (445) and Manafont / Move-MP Up (494):
+    445 Mana Shield  — routes a would-be lethal hit to MP (no HP overflow in FFT: >=1 MP absorbs any
+                       single hit; works mid-charge). Procs at Brave% (her ENTD Brave is raised to 61).
+    494 Manafont     — the Enhanced-edition "Move-MP Up": refills MP each step to feed Mana Shield.
+  Innate abilities are ALWAYS active but do NOT render in the equipped R/S/M slots (which is why her
+  Support slot looked empty in-game despite the two vanilla innates).
+
+  All four InnateAbilityIds are listed explicitly (Id is mandatory) so the exact innate set is
+  guaranteed regardless of deserializer/inherit behavior. No other property is touched, so everything
+  else for job 12 inherits the base table. Princess is unique to Ovelia, so this affects only her.
+-->
+<JobTable>
+  <Version>1</Version>
+  <Entries>
+    <Job>
+      <Id>12</Id>
+      <InnateAbilityId1>466</InnateAbilityId1>
+      <InnateAbilityId2>468</InnateAbilityId2>
+      <InnateAbilityId3>445</InnateAbilityId3>
+      <InnateAbilityId4>494</InnateAbilityId4>
+    </Job>
+  </Entries>
+</JobTable>
