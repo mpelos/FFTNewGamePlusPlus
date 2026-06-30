@@ -1,44 +1,67 @@
 # 052 - Mullonde Cathedral Nave (Murond Holy Place)
 
-Status: ✅ implemented (v1, entry 461) — TIER-S unlock (Chaos Blade)
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 461
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 47 (Mullonde chain 2 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
 ENTD: global entry **461** (local 77, entd4)
 File: `battle_entd4_ent.bin`
 
-## Implemented (v1, entry 461)
+> **NG++ rewards applied (2026-06-27):** Chaos Blade + Escutcheon + Lordly Robe through guaranteed
+> Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. These are paid here so
+> the player has the best pre-gauntlet gear before the point of no return. Canonical map:
+> `chapter-4-rewards-implementation.md`.
+
+## Current Implementation / Data Reality
 
 ```text
-DATA (story order 459 Eagrose -> 460 Exterior -> 461 Nave; three named bosses, NO generics):
-  slot 0 = Folmarv   (name 36, job 36 Divine-Knight-class; eq head154/body182/acc232/rh30/lh139 shield).
-  slot 1 = Loffrey   (name 37, job 37 Divine-Knight-class; rh=29 Icebrand, lh=138 shield).
-  slot 2 = Cletienne (name 39, job 39 Sorcerer; rh=57 rod, no shield).
-  slot 3 = job 39 clone (name255, lvl 65, eq=0) -> scripting/summon placeholder (left untouched).
+DATA REALITY (verified from current embedded entd4 dump, entry 461):
+  slot 0 = Folmarv
+           job 36, level 105, JobLevel 8, complete gear/setup, Chaos Blade in right hand.
+           Reaction 442, support 466, movement 486. Spoils payload = 0x25 (Chaos Blade).
 
-CHANGE: scale to the human-boss band + jl8 (full kit, incl. the equip-break). Folmarv 105 (leader),
-  Loffrey & Cletienne 104.
-  *** TIER-S UNLOCK ***: Folmarv's rh set to CHAOS BLADE (37). It is a KnightSword, so it BOTH powers
-  his Divine Sword / Unyielding-Blade equip-break AND is the steal/drop reward -- delivered on the named
-  kill target. Folmarv has real equip slots (unlike the Lucavi), so this works directly via ENTD.
-  Loffrey & Cletienne RETREAT when one boss falls -> NO drop here; their Tier-S items pay where they
-  DIE later (Loffrey -> Robe of Lords at Vaults 5th 055; Cletienne -> Materia Blade at Necrohol 056).
-  Their gear is KEPT as-is. Win-on-one-falls + equip-break (Folmarv+Loffrey) + caster pressure preserved
-  (only level/jl + Folmarv's blade changed; reactions/scripting untouched). Buried Elixir left as-is.
+  slot 1 = Loffrey
+           job 37, level 104, JobLevel 8, complete gear/setup.
+           Reaction 437, support 466, movement 489. Spoils payload = 0x8F (Escutcheon).
+
+  slot 2 = Cletienne
+           job 39, level 104, JobLevel 8, complete caster gear/setup.
+           Reaction 435, support 468, movement 492. Spoils payload = 0xCF (Lordly Robe).
+
+  slot 3 = job-39 clone/script placeholder
+           level 65, no normal battle role; preserve until playtest proves active.
+
+Current v1 implementation:
+  Folmarv = 105, Loffrey/Cletienne = 104.
+  Three named bosses are complete.
+  Chaos Blade is active on Folmarv.
+  Escutcheon + Lordly Robe are reward payloads on the other boss records.
+  Win-on-one-falls and retreat behavior must be preserved.
 ```
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout.
-> **TIER-S UNLOCK BEGINS HERE** — the first best-of-best item drops in this battle.
+Planned v2 redesign (docs-only in this pass): keep the pure triple-boss Nave, preserve the win-on-one
+focus race, and align the reward language with the current ledger. Loffrey and Cletienne may retreat,
+but their best-in-slot items are still paid as guaranteed battle spoils here by project rule.
+
+> MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout.
+
+## Design Goal
+
+```text
+Make Mullonde Nave the chain's focus-and-commit boss rush: Folmarv and Loffrey threaten gear with two
+effective break sources, Cletienne denies turtling with caster pressure, and the player wins by choosing
+one boss and ending the fight before attrition strips the party. Rewards are Chaos Blade + Escutcheon +
+Lordly Robe via guaranteed spoils, not a Steal or clear-all requirement.
+```
+
+No active guests appear here. No guest-control implementation is needed for this battle.
 
 ## Original Battle
 
 Objective:
 
 ```text
-Defeat Folmarv!   (the fight ENDS the instant ANY of the three bosses falls to critical / is defeated —
-                   the other two RETREAT. Folmarv is the named, intended kill target.)
+Defeat Folmarv!   (the fight ends when one of the three bosses falls; the others retreat)
 ```
 
 Player deployment:
@@ -47,238 +70,245 @@ Player deployment:
 Up to 5 units, including Ramza. No outfitter (chain 2/3).
 ```
 
-Original enemy composition (verified via Game8, Battle 47):
+Original enemy composition:
 
 ```text
-Folmarv Tengille   (BOSS — leader of the Knights Templar; Divine Knight; "Unyielding Blade" equip-break)
-Loffrey Wodring    (BOSS — Knights Templar; Divine Knight; "Unyielding Blade" equip-break)
-Cletienne Duroi    (BOSS — Knights Templar; Sorcerer / caster; ranged magic pressure)
+Folmarv Tengille   (Divine Knight leader; equipment-break pressure)
+Loffrey Wodring    (Divine Knight; second equipment-break source)
+Cletienne Duroi    (Sorcerer; ranged magic pressure)
 ```
-
-> No generic support units in the original — a PURE three-boss Templar rush. (Verified: Game8 lists
-> only the three named enemies.)
 
 Public walkthrough details:
 
 ```text
-Recommended level: ~60.  Difficulty: 4/5 stars.  Deploy up to 5.
-Win: "Defeat Folmarv!" — but the fight ENDS once ANY of the three drops to critical / is defeated; the
-  other two RETREAT. You only have to break through ONE. Folmarv is the named, intended target.
-TERRAIN: the cathedral NAVE — pillared holy interior, raised altar/aisle elevation.
-THE THREAT — all three are boss-tier Templars acting at once: Folmarv & Loffrey wield "UNYIELDING
-  BLADE" (Divine Knight equip-break) that DESTROYS your weapons and armor; Cletienne adds ranged magic
-  so you cannot simply turtle behind one wall. Three high-level bosses, one party of five.
-WALKTHROUGH TIPS: use CRUSH / Rend (Meliadoul's Crush abilities) to BREAK the Templars' weapons first
-  and neuter Unyielding Blade; equip Auto-Potion; Holy Sword (Agrias/Orlandeau) ignores elevation and
-  hits the back line; Brawler/Ninja Ramza chases Cletienne or Loffrey; Mustadio/Chemist disrupts casters.
-Spoils: 17,600 Gil; buried (rare Elixir possible).
+Recommended level: ~60. Difficulty: 4/5 stars. Three named bosses, no generics.
+The encounter ends when any one boss is defeated or pushed to the retreat condition. Folmarv is the
+named/intended target. The tactical advice is to disarm/break the Templars and commit to a target while
+Cletienne pressures the party from range.
 ```
 
 Design reading:
 
-The Nave is **the triple-Templar boss rush** — the escalation of Bervenia (`039`)'s single
-equipment-break duel into **three boss-tier Knights Templar at once**. Its identity is **a focus-fire
-race under an equipment-destruction threat**: Folmarv and Loffrey can **shred your weapons and armor**
-with Unyielding Blade while Cletienne rains magic, so the player must **disarm the break-knights**
-(Crush / Steal Weapon) and **burst ONE boss** before attrition strips the party — all while the
-win-on-one-falls rule rewards *picking a target and committing* rather than fighting all three to the
-death. Because the others **retreat** when one drops, only the focused boss actually dies.
+The Nave is **the triple-Templar focus race**. It escalates Bervenia's single break boss into three
+named enemies acting at once, but it stays readable because the player does not need to clear all three.
+The skill test is target discipline under gear pressure: identify the break sources, control or disarm
+them, then burst one boss before the chain tax gets out of hand.
 
-For New Game++ the identity must stay: **three boss-tier Templars at once; an equipment-break threat
-that punishes turtling; win the instant ONE falls (the other two retreat); a focus-and-commit race on
-no resupply, the heart of the Mullonde chain.** And because only the focused boss dies — and the named
-target is **Folmarv** — this is the clean place to open the **Tier-S best-of-best** unlock: **Folmarv
-carries the dark Templar's blade, the Chaos Blade.** The two who retreat drop nothing (flee = no drop).
+For New Game++ the identity must stay: **three named bosses, no generics, win when one falls.**
 
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Folmarv + Loffrey + Cletienne (three named bosses, NO generics). NO outfitter (chain 2/3).
-Confirm the win condition: fight ENDS when ANY one drops to critical / is defeated; the other two RETREAT.
-Keep all three at boss strength + the Unyielding Blade equip-break (on Folmarv & Loffrey only) + the
-  Cletienne caster pressure. These ARE the fight.
-Confirm whether OverrideEntryData carries Level / equipment, or leaves them at -1.
-Set Folmarv's drop/steal = the Tier-S CHAOS BLADE (see Boss rare loot). Loffrey/Cletienne RETREAT → NO drop.
-Leave the buried map treasure (possible Elixir) as-is — existing loot.
+CONFIRMED:
+- Entry 461 is Mullonde Nave.
+- Slots 0-2 are Folmarv, Loffrey, and Cletienne.
+- Slot 3 is a job-39 script placeholder and should not be treated as a normal enemy unless proven active.
+- Folmarv is level 105; Loffrey/Cletienne are level 104.
+- All three named bosses have complete gear/setup.
+- Folmarv carries Chaos Blade actively.
+- Rewards are Chaos Blade + Escutcheon + Lordly Robe guaranteed spoils.
+- No active guests.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- Verify the fight ends when any one boss falls and the others retreat.
+- Verify all three authored spoils are awarded despite the retreat behavior.
+- Confirm Folmarv and Loffrey are the only effective break sources.
+- Confirm Cletienne's magic has answerable timing and does not become hard status/instant wipe.
+- Preserve buried map treasure as vanilla map loot.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-Folmarv  — Divine Knight / Knight Blade job id   (TBD - verify; Unyielding Blade equip-break leader)
-Loffrey  — Divine Knight / Knight Blade job id   (TBD - verify; Unyielding Blade equip-break)
-Cletienne — Sorcerer / caster job id             (TBD - verify; ranged magic; recurs at Necrohol 056)
+Headline engine: triple-Templar focus race.
+Supporting roles:
+  - Folmarv is the leader, intended target, Chaos Blade carrier, and first break source.
+  - Loffrey is the second break source and pincer threat.
+  - Cletienne is caster pressure that prevents turtling behind break protection.
+
+WHY: adding generics would dilute the original's clean boss rush. The Chapter 4 escalation is not more
+units; it is three boss-quality kits forcing the player to commit under pressure.
+
+CONSTRAINTS:
+  - Win-on-one-falls remains.
+  - No generic adds.
+  - No more than two effective break sources.
+  - Cletienne stays a caster, not a hard-lock engine or third breaker.
+  - Rewards are guaranteed spoils and do not require killing all three.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Sanctioned Exceptions
 
 ```text
-CHANGE: keep the PURE three-boss Templar rush (adding generics would dilute the triple-boss identity),
-  but escalate the trio to FULL Ch4 boss strength and make the MIXED kit the demand: two Divine-Knight
-  equip-breakers (Folmarv, Loffrey) + one Sorcerer (Cletienne) so you cannot turtle behind a single wall.
-WHY: the chapter wants more challenge via jobs WITHOUT breaking battle strategy. Here the "changed job"
-  is Cletienne as a genuine caster threat flanking the two break-knights — three distinct pressure
-  vectors (melee equip-break x2 + ranged magic) on one party of five. That is the escalation; bolting
-  on generic adds would turn a clean boss rush into a mob fight. Consistent with prior pure-boss docs.
-CONSTRAINTS (carried): EQUIP-BREAK CAPPED — only Folmarv & Loffrey carry Unyielding Blade (2 sources,
-  telegraphed); Cletienne does NOT break gear. Breaks are recoverable (answer = Crush/Steal Weapon to
-  disarm first, or break-resist gear) — NOT a hard lock. Cletienne's magic = intact charge times,
-  race-able, soft (no permanent status lock). Win-on-one-falls preserved (the other two retreat).
-WHAT IS NOT CHANGED: three named bosses, no generics, the Unyielding Blade threat, the caster pressure,
-  and the "Defeat Folmarv / ends when one falls" rule remain.
+TWO EQUIPMENT-BREAK BOSSES:
+  Allowed because this is the Templar center of the campaign. Guardrail: exactly two effective break
+  sources; disarm, break-resist, Safeguard/Maintenance, and focused burst remain fair answers.
+
+WIN-ON-ONE-FALLS:
+  Preserved as the main tactical rule. It reduces cleanup and keeps the battle about commitment.
+
+RETREAT REWARD BEND:
+  Normally retreating bosses do not pay drops. This battle intentionally bends that convention through
+  guaranteed Spoils of War because the reward ledger moves Escutcheon + Lordly Robe pre-gauntlet.
+
+PURE THREE-BOSS FIGHT:
+  No generics. The pressure is concentration, not enemy count.
 ```
 
-## Sanctioned exceptions (carried precedents)
+## Rare/reward handling
 
 ```text
-UNYIELDING BLADE (equip-break, Folmarv & Loffrey) — Divine-Knight weapon/armor break; the answer is
-  CRUSH / Steal Weapon (disarm them first) or break-resist gear. CAPPED at 2 sources, telegraphed,
-  recoverable — NOT a hard lock (039 Bervenia precedent).
-CLETIENNE CASTER MAGIC — ranged magic pressure; INTACT charge times, race-able, soft (028 precedent).
-WIN-ON-ONE-FALLS — defeating ANY one boss ends the fight; the other two RETREAT (vanilla rule; flee = no drop).
-TRIPLE BOSS-TIER (no generics) — three named Templars at once; the escalation is concentration, not count.
+Guaranteed spoils for entry 461: CHAOS BLADE + ESCUTCHEON + LORDLY ROBE.
+These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
+
+COMBAT ROLE:
+  - Chaos Blade is active on Folmarv and is both threat identity and reward payload.
+  - Escutcheon and Lordly Robe are reward payloads here, not a demand to kill Loffrey/Cletienne.
+
+PRESERVE:
+  - The other bosses can retreat when one falls.
+  - Buried map treasure remains vanilla map loot.
+  - No Excalibur. Excalibur stays Orlandeau's.
 ```
 
-## Boss rare loot — TIER-S (first best-of-best)
+## Proposed Composition (New Game++ Mullonde Nave v2)
 
-> **Updated (2026-06-27 rebalance):** Nave now ALSO pays the other two Templar legendaries as battle-wide
-> spoils on Folmarv's death, relocated here from the no-resupply gauntlet so the player owns them before the
-> point of no return: **Escutcheon (Loffrey, s1)** and **Robe of Lords (Cletienne, s2)**. Folmarv still
-> carries **Chaos Blade (s0)**, so the triple-Templar fight hands over all three at once (within the
-> 3-spoils cap). The "retreat = no drop" note below is intentionally bent here. Canonical: `chapter-4-rewards-implementation.md`.
+Keep the local three-boss roster. Folmarv is `105`; Loffrey and Cletienne are `104`.
 
-```text
-FOLMARV TENGILLE → CHAOS BLADE (Tier-S — the dark Knights-Templar blade).
-  Steal-or-drop on Folmarv, the NAMED, intended kill target. Thematically the corrupted Templar
-  leader's own dark sword — the iconic best-of-best dark blade, fitting the man who damns Ivalice.
-  RATIONALE: only the FOCUSED boss dies (the other two retreat → flee = NO drop), and the objective
-  literally names Folmarv, so the rewarded line is "commit to Folmarv, kill him, take the Chaos Blade."
-  This OPENS the Tier-S tier (per 037): the best-of-best now begins, running through the endgame docs.
-  LOFFREY & CLETIENNE → NO drop (they retreat). Their Tier-S items pay out where they DIE later:
-    Loffrey → Vaults 5th (055), Cletienne → Necrohol (056).
-  Buried map Elixir stays as-is (existing loot).
-```
-
-> Tier-S ledger (per 037): Chaos Blade (here, 052) · then Robe of Lords (Loffrey, 055) · Materia Blade
-> (Cletienne, 056) · Ribbon (undead Zalbaag, 053) · Escutcheon (Lost Halidom, 057) · Ragnarok (FINAL
-> capstone, 058). Excalibur stays with Orlandeau (player) — never on an enemy.
-
-## Proposed Composition (New Game++ Mullonde Nave v1)
-
-Keep the three bosses; no generics. Human-boss band: Folmarv (leader) `105`, Loffrey & Cletienne `104`.
-
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Folmarv (BOSS, objective) | Divine Knight | `105` | Equip-break leader; carries the Tier-S Chaos Blade; the intended kill. |
-| n | Loffrey (BOSS) | Divine Knight | `104` | Second equip-breaker; pincers with Folmarv; retreats if Folmarv falls first. |
-| n | Cletienne (BOSS) | Sorcerer | `104` | Ranged magic; denies turtling; retreats if a knight falls first. |
+| Slot | Role | Unit type | Level | Purpose |
+|------|------|-----------|-------|---------|
+| s0 | Leader / intended target / reward payload | Folmarv, Divine Knight | `105` | Break source 1; active Chaos Blade; focus target. |
+| s1 | Pincer breaker / reward payload | Loffrey, Divine Knight | `104` | Break source 2; pressures gear and positioning; Escutcheon spoil. |
+| s2 | Caster / reward payload | Cletienne, Sorcerer | `104` | Ranged magic pressure; no break; Lordly Robe spoil. |
+| s3 | Script placeholder | Job-39 clone | `65` | Preserve unless proven active. |
 
 Reasoning:
 
-The faithful move is **three boss-tier Templars, no padding** — the pressure is concentration, not
-crowd. Folmarv (`105`) and Loffrey (`104`) bring the **equip-break race** (capped 2 sources, answerable
-with Crush / Steal Weapon); Cletienne (`104`) is the **caster who punishes turtling**, forcing the
-party to move under fire. The win-on-one-falls rule keeps the original's *commit-to-a-target* tactics:
-the player picks Folmarv (the named objective + the Chaos Blade), disarms the break-knights, and bursts
-him before attrition bites — on no resupply, mid-Mullonde. It's a clean 4/5★ boss rush, harder than
-Bervenia by virtue of being **three at once**.
+The accepted design is **v2 triple-Templar focus race**. The simulation rejects every attempt to add
+generics, require clearing all three, add a third breaker, or keep the old one-reward logic. The fight
+is hard because three boss-quality kits pressure one party of five on no resupply, but the win condition
+keeps it fair: choose one, solve the break/caster screen, and end the battle.
 
-## Builds (boss-tier; corrupted-Templar flavor)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+Rejected variants:
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+- Clear-all triple boss: breaks the focus race and overtaxes the chain.
+- Templars plus generics: dilutes the pure boss identity.
+- Three-breaker pile-up: violates break-source cap.
+- Hard-lock Sorcerer: turns Cletienne into a second headline engine.
+- Old one-reward ledger: contradicts current reward map.
+- Steal-required Chaos Blade: contradicts guaranteed spoils.
+- Overlevelled Nave: replaces target discipline with raw stats.
 ```
 
-### Folmarv Tengille (Lv 105) — BOSS, objective, Tier-S carrier
+## Builds (three boss-quality kits)
 
 ```text
-Job: Divine Knight (id TBD)   JobLevel: 8   Primary: Unyielding Blade / Divine Sword (equip-break + drain)
-Reaction: Damage Split / Reflexes (id TBD)   Support: break-resist / Defense Boost (id TBD)   Movement: Move +2 (id TBD)
-Head: Genji Helm-tier (id TBD)   Body: heavy boss armor (id TBD)
-Accessory: break-resist accessory (id TBD)   Right hand: CHAOS BLADE (Tier-S steal/drop, id TBD)   Left: shield (id TBD)
-The named kill target; disarm-and-burst him for the Chaos Blade. Equip-break CAPPED, telegraphed.
+Folmarv:
+  - Level 105, JobLevel 8.
+  - Primary: Divine Knight / equipment-break package.
+  - Reaction/Support/Move: complete boss setup already present.
+  - Active gear: Chaos Blade as threat and story reward.
+  - Role: intended kill target and first break source.
+
+Loffrey:
+  - Level 104, JobLevel 8.
+  - Primary: Divine Knight / equipment-break package.
+  - Reaction/Support/Move: complete boss setup already present.
+  - Role: second break source; pincer pressure.
+
+Cletienne:
+  - Level 104, JobLevel 8.
+  - Primary: Sorcerer/caster pressure.
+  - Reaction/Support/Move: complete caster setup already present.
+  - Guardrail: no hard-lock status engine, no third break source, no instant wipe magic.
 ```
-
-Role: the leader; equip-break + the Tier-S reward; the focus-and-commit target.
-
-### Loffrey Wodring (Lv 104) — BOSS, equip-break
-
-```text
-Job: Divine Knight (id TBD)   JobLevel: 8   Primary: Unyielding Blade / Divine Sword (equip-break)
-Reaction: Reflexes (449)   Support: Defense Boost (id TBD)   Movement: Move +2 (id TBD)
-Head: heavy helm (id TBD)   Body: heavy armor (id TBD)   Accessory: shop accessory (id TBD)
-Right hand: knight sword (id TBD)   Left: shield (id TBD)
-RETREATS if Folmarv (or Cletienne) falls first → NO drop (his Tier-S pays at Vaults 5th, 055).
-```
-
-Role: the second break-knight; pincers Folmarv; capped equip-break.
-
-### Cletienne Duroi (Lv 104) — BOSS, caster
-
-```text
-Job: Sorcerer (id TBD)   JobLevel: 8   Primary: Black/area magic (INTACT charge times, race-able)
-Reaction: Reflexes (449)   Support: MA-boost (id TBD)   Movement: Move +1 (486)
-Head: mage hat (id TBD)   Body: shop robe (id TBD)   Accessory: Featherweave Cloak (234)
-Right hand: magic-boost rod (id TBD)   Left: none (255)
-No equip-break. RETREATS if a knight falls first → NO drop (his Tier-S pays at Necrohol, 056).
-```
-
-Role: ranged magic; denies turtling; soft (no permanent lock).
 
 ## Positioning Plan
 
 ```text
-The cathedral NAVE: pillared holy interior with a raised altar/aisle (elevation). Place Folmarv &
-  Loffrey forward to pressure the party with equip-break; Cletienne on the raised altar/back line for
-  ranged magic sightlines (forcing the player to advance under fire or answer with elevation-ignoring
-  Holy Sword). Keep the pillars as cover and the altar height.
-Preserve: three named bosses (no generics), the equip-break pincer + caster back line, and the
-  win-on-one-falls rule. The Chaos Blade rides on Folmarv, the intended target.
+Nave interior: Folmarv and Loffrey pressure from forward/central lanes so their break threat is visible.
+Cletienne uses altar/backline sightlines to punish turtling and force movement. Pillars and elevation
+should give the player cover, approach choices, and a reason to commit to one target.
+
+The player should see the intended line:
+  1. Pick the target, usually Folmarv because of objective/read/reward.
+  2. Disarm, protect against, or burst through the two break sources.
+  3. Keep moving under Cletienne's magic.
+  4. End the fight when one boss falls.
 ```
 
-The nave should say: "three of the Knights Templar bar the altar — break one and the others flee.
-Choose Folmarv, strip his guard, and take the dark blade from the man who would damn Ivalice."
+The nave should say: "three Templars bar the altar; choose one throat, protect your steel, and end the
+stand before the chain bleeds you dry."
+
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-052-mullonde-nave/
+  assumptions.md
+  simulate.py
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic triple-Templar focus-race model over the first six rounds.
+It scores pressure, focus clarity, break fairness, caster fairness, answerability, reward correctness,
+scripting fidelity, and chain tax. It does not simulate exact FFT formulas.
+```
+
+Result summary:
+
+| Candidate | Pressure | Focus clarity | Break fair | Caster fair | Answer | Reward | Scripting | Chain tax | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| v2 triple-Templar focus race | 338 | 96 | 92 | 88 | 98 | 100 | 100 | 52 | **Accepted** |
+| clear-all triple boss | 420 | 38 | 92 | 88 | 57 | 100 | 55 | 66 | Rejected: breaks focus |
+| templars plus generics | 374 | 76 | 92 | 88 | 84 | 100 | 80 | 64 | Rejected: generic dilution |
+| three-breaker pile-up | 387 | 96 | 68 | 58 | 75 | 100 | 100 | 52 | Rejected: too many breaks |
+| hard-lock sorcerer | 405 | 96 | 92 | 18 | 64 | 100 | 100 | 74 | Rejected: hard caster |
+| old one-reward ledger | 338 | 82 | 92 | 88 | 98 | 56 | 100 | 52 | Rejected: reward ledger |
+| steal-required chaos blade | 338 | 96 | 82 | 88 | 98 | 40 | 100 | 52 | Rejected: reward policy |
+| overlevelled nave | 366 | 96 | 92 | 80 | 88 | 100 | 100 | 62 | Rejected: raw levels |
+
+Iteration decision:
+
+```text
+ACCEPT v2 triple-Templar focus race.
+The battle stays pure: three bosses, two break sources, one caster, win when one falls, and all three
+rewards delivered through guaranteed spoils.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Mullonde Nave `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify three named bosses (Folmarv/Loffrey/Cletienne), NO generics.
-- [ ] Confirm win condition: fight ENDS when ANY one drops to critical/defeated; other two RETREAT.
-- [ ] Keep Unyielding Blade equip-break on Folmarv & Loffrey ONLY (2 sources, capped, telegraphed).
-- [ ] Keep Cletienne caster (intact charge times, race-able, no permanent lock).
-- [ ] Set levels: Folmarv `105`, Loffrey & Cletienne `104`. JobLevel `8` on all three.
-- [ ] Set Folmarv's steal/drop = Tier-S **Chaos Blade**; Loffrey & Cletienne carry NO rare here (they flee).
-- [ ] Patch via the correct layer; keep the diff inside the Mullonde Nave window only.
-- [ ] Re-dump and diff; confirm small, intentional changes; verify the 3-boss roster + win rule + Chaos Blade.
-- [ ] Install mod, test from a New Game+ save; confirm focus-and-commit play, the equip-break is
-      answerable (not a hard lock), and killing Folmarv yields the Chaos Blade.
+- [ ] Re-dump entry 461 and verify slots 0-3.
+- [ ] Preserve win-on-one-falls and retreat behavior.
+- [ ] Preserve no-generic roster.
+- [ ] Keep levels: Folmarv `105`; Loffrey/Cletienne `104`.
+- [ ] Keep no more than two effective break sources: Folmarv + Loffrey only.
+- [ ] Keep Cletienne caster pressure answerable, not hard-lock or instant wipe.
+- [ ] Author/verify spoils: Chaos Blade + Escutcheon + Lordly Robe, guaranteed and within the 3-item cap.
+- [ ] Preserve buried map treasure as map treasure.
+- [ ] Test as Mullonde chain 2/3 with resources from `051` and into `053`.
 
 ## Test Questions
 
-- Is it a clean focus-and-commit race — three boss-tier Templars, win the instant ONE falls (others retreat)?
-- Is the equip-break a real but ANSWERABLE threat (2 capped sources; Crush / Steal Weapon / break-resist)?
-- Does Cletienne's magic genuinely deny turtling (must move under fire / answer with elevation-ignoring hits)?
-- Is Folmarv clearly the rewarded target (named objective + the Tier-S Chaos Blade) and do the others
-  drop NOTHING when they retreat (flee = no drop)?
-- Is it survivable on ONE loadout (no resupply, chain 2/3) yet a clear step up from Bervenia (three at once)?
-- Does it read as the Knights Templar's last stand at the altar, not a designed mob?
+- Does the fight end when any one boss falls, with the other two retreating?
+- Are all three rewards awarded even when only one boss dies?
+- Are Folmarv/Loffrey's break threats strong but answerable?
+- Does Cletienne pressure turtling without becoming a hard-lock engine?
+- Does the fight remain a pure boss rush, not a mob fight?
+- Does the party enter Sanctuary taxed but still functional?
 
 ## Sources
 
-- Game8, "Mullonde Cathedral Nave Walkthrough (Battle 47)": three named bosses (Folmarv, Loffrey,
-  Cletienne), "Defeat Folmarv!", win = fight ends when ANY one drops to critical / is defeated (others
-  retreat), rec ~60, 4/5 stars, deploy 5, Unyielding Blade equip-break + Crush/Rend counter advice,
-  Holy Sword / Auto-Potion tips, spoils 17,600 Gil + buried Elixir.
+- Game8, "Mullonde Cathedral Nave Walkthrough (Battle 47)": public roster, win-on-one-falls behavior,
+  three named bosses, Templar break pressure, caster pressure, and buried treasure.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553207
-- Final Fantasy Wiki, "Folmarv Tengille" / "Loffrey Wodring" / "Cletienne Duroi": Divine Knight /
-  Sorcerer classes and Unyielding Blade context.
+- Final Fantasy Wiki, "Folmarv Tengille" / "Loffrey Wodring" / "Cletienne Duroi": story context.
   https://finalfantasy.fandom.com/wiki/Folmarv_Tengille
-- Local: `037-chapter-4-overview.md` (Tier-S tiering), `039-bervenia.md` (Meliadoul equip-break duel —
-  the single-boss precedent this escalates), `051-mullonde-exterior.md` (chain 1/3),
-  `053-mullonde-sanctuary.md` (chain 3/3 — to be designed), `055`/`056` (Loffrey/Cletienne death drops).
-```
+- Local: `037-chapter-4-overview.md`, `051-mullonde-exterior.md`, `053-mullonde-sanctuary.md`,
+  `chapter-4-rewards-implementation.md`, `spoils-of-war-reward-system.md`.

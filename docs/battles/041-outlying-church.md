@@ -1,27 +1,44 @@
 # 041 - Outlying Church (Zeltennia Church)
 
-Status: ✅ implemented (v1, entry 445)
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 445
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 36 (after Finnath Creek)
 Target version: Enhanced v1.5.0
 ENTD: global entry **445** (local entry 61, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py outlying_church`
 
-Implemented (entry 445, vanilla-dump verified):
-- s1 **Zalmo** (job 16 Celebrant/Inquisitor, BOSS, dies → deferred Ch3 rare pays) — L104/jl8;
-  Tier-A rare = **Light Robe = Luminous Robe (206)** as body (top robe below the Tier-S Lordly Robe;
-  upgrades his vanilla White Robe 204; steal-bait). Job/secondary/head/acc/rod/holy-sustain +
+Current implementation (entry 445, vanilla-dump verified):
+- s1 **Zalmo** (job 16 Celebrant/Inquisitor, BOSS, dies → deferred Ch3 payout lands) — L104/jl8;
+  thematic payout = **Light Robe = Luminous Robe (206)** as body (top robe below the Tier-S Lordly Robe;
+  upgrades his vanilla White Robe 204; visible steal-bait). Job/secondary/head/acc/rod/holy-sustain +
   win-on-death scripting preserved. Holy+soft only, no hard lock.
 - s2,s3 Mystic L102 — soft status (Oracle-equiv); Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1.
 - s4,s5 Knight L102, s6 Knight L101 — height-guarding screen; Heavy gear/Runeblade/shop Shield; Rend innate.
 - s0 = inactive guest placeholder (level 0xFE) — left untouched. Angel Ring + buried map rares (other layer) untouched.
 
+Planned v2 redesign (docs-only in this pass): keep the same six-body vanilla roster, but make the
+party a complete Chapter-4 **inquisition shell**: Zalmo remains the focus target, two Knights are the
+only Rend sources, the third Knight is a bodyguard/item stabilizer, and both Mystics gain limited
+defensive secondary magic so they support the boss without becoming a separate healer puzzle.
+
 > Note: TIC has no distinct "Light Robe" item; the top robe below the reserved Lordly Robe (207) is
-> Luminous Robe (206), used here. It's also the generic shop robe, so Zalmo's "rare" is a modest steal.
+> Luminous Robe (206), used here. The current reward ledger treats this as a thematic/modest payout,
+> not a best-in-slot rare.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
 > See `037-chapter-4-overview.md`.
+
+## Design Goal
+
+```text
+Make Outlying Church the decisive Zalmo execution: an elevated holy-boss burst duel where the player
+must reach, Silence, steal from, or burst the sustaining Inquisitor through a complete but constrained
+Knight/Mystic shell. The pressure comes from height, sustain, and limited Rend, not hard status or
+infinite healing.
+```
+
+No active guests appear here. No guest-control implementation is needed for this battle.
 
 ## Original Battle
 
@@ -67,26 +84,32 @@ height-ignoring damage (Holy / Black magic / Hallowed Bolt) or rush him with a m
 **burst him down before his sustain resets the fight.** A Knight screen (Rend) and two Mystics (soft
 status) guard the approach.
 
-Because he died-not in Ch3, his rare was **deferred** (see the Ch3 ledger, `036`). Here he dies for
-good, so the deferred drop pays out — a Tier-A holy-caster reward — while the map's iconic, thematic
+Because he did not die in Ch3, his payout was **deferred** (see the Ch3 ledger, `036`). Here he dies for
+good, so the deferred reward pays out — a thematic holy-caster reward — while the map's iconic, thematic
 **Angel Ring** (auto-Reraise — perfect for "the man who revives") stays as the existing guaranteed
 reward.
 
 For New Game++ the identity must stay: **an elevated holy boss-duel — reach or silence the sustaining
-Inquisitor and burst him through a Knight/Mystic screen — now with the deferred Zalmo rare finally
+Inquisitor and burst him through a Knight/Mystic screen — now with the deferred Zalmo payout finally
 paid; the boss is the escalation, the screen stays familiar.**
 
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Zalmour (boss) + 3 Knight + 2 Mystic, plus the player slots.
-Keep the win condition = "Defeat Zalmour" (ends on his death) and the ELEVATED church geometry
-  (the height wall IS the fight — do not flatten it).
-Keep Zalmour's holy sustain/revive kit + make his equipped Tier-A item stealable.
-This is a Tier-A BOSS fight: boss spike at 104, adds 101-103; ONE Tier-A rare on Zalmour.
-Preserve the vanilla guaranteed ANGEL RING reward + the buried map rares (White Robe etc.) as-is.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
+CONFIRMED:
+- Entry 445 is the Outlying Church ENTD entry.
+- Current roster is Zalmo/Zalmour + 3 Knights + 2 Mystics.
+- Current v1 implementation already sets Zalmo to L104/JL8 and preserves win-on-Zalmo-death scripting.
+- No active guest.
+- Reward ledger currently maps this battle to Light Robe + Angel Ring guaranteed spoils.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- Confirm exact enemy slot order before patching the complete v2 kits.
+- Confirm the win condition remains "Defeat Zalmour" and that any equipped/accessory choices do not
+  interfere with the death trigger.
+- Confirm whether OverrideEntryData carries level for this battle or leaves it at runtime scale.
+- Preserve elevated church geometry; the height wall is the fight.
+- Preserve buried map treasure as-is.
 ```
 
 Job IDs (carry over known, verify the rest in-game):
@@ -97,23 +120,22 @@ Mystic / Oracle id     (TBD - verify; soft-status caste)
 Inquisitor id          (TBD - verify; Zalmour's boss job — Ch3 Zalmo precedent, 026)
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-CHANGE: NO generic-slot swap. The escalation is the BOSS — Zalmour returns at full Chapter-4 boss
-  strength (`104`), and crucially he now DIES here (in Ch3/026 he fled), closing his arc and paying his
-  deferred rare.
+CHANGE: NO generic-slot swap. The escalation is the complete party shell around the BOSS — Zalmour
+  returns at full Chapter-4 boss strength (`104`), and crucially he now DIES here (in Ch3/026 he fled),
+  closing his arc and paying his deferred/modest holy reward.
 WHY: the fight's identity is already "reach/silence the sustaining holy boss and burst him on elevated
-  ground." The faithful Ch4 escalation is to deliver that boss at full power on the height map — NOT to
-  add a new mechanic onto a roster that already pairs a Knight screen (Rend) with Mystic soft-status.
-  Adding a second wrinkle would break the one-new-demand rule; the elevated out-sustaining boss IS the
-  demand.
+  ground." The faithful Ch4 escalation is to make the existing roster synergize cleanly: the Knights
+  guard the climb and threaten gear, the Mystics add soft pressure plus defensive support, and Zalmo
+  remains the single focus target. No new caste is needed.
 CONSTRAINT (carry Ch3 Zalmo precedent, 026): his sustain/revive is answered by Silence / focus-burst /
   reaching him; HOLY + SOFT status only (no hard lock). Keep Knight Rend within the carried
   ≤2-break-source cap (limit Rend to at most 2 of the 3 Knights).
-OPTIONAL: if testing finds his sustain too easy to out-race, swap ONE Knight -> a White Mage to double
-  the heal-pressure (sharpening "focus the healers") — still soft, still no hard lock. Default keeps the
-  faithful 3 Knight + 2 Mystic screen.
+REJECTED DEFAULTS: no White Mage swap, no third Rend Knight, no hard-status Mystic, no overlevelled
+  screen. These variants either create a second healer puzzle, break the Rend cap, or turn elevation
+  into lockdown.
 WHAT IS NOT CHANGED: the elevated-church geometry, the Knight/Mystic screen, and the "rush/silence and
   burst the boss" win line remain. No brand-new caste debuts here.
 ```
@@ -130,43 +152,51 @@ ELEVATION WALL — a terrain feature, not a status; preserved as the fight's cru
   damage or a mobile rush). Not an exception so much as the core puzzle.
 ```
 
-## Boss rare loot
+## Rare/reward handling
 
 ```text
-ZALMOUR (boss) drops/carries ONE Tier-A rare: LIGHT ROBE (top holy/magic robe below Robe of Lords).
-WHY IT FITS: he is a high churchman / holy caster; the best non-ultimate caster robe (Holy-aligned) is
-  his natural vestment and a tempting STEAL. It is a clear upgrade over Ch2/Ch3 caster gear without being
-  best-in-slot.
-TIER: A (mid-Chapter-4 best non-ultimate). NOT Robe of Lords (Tier-S, reserved for the endgame, 47-53).
-He DIES here (win = defeat Zalmour), so the deferred Ch3 rare finally pays — consistent with
-  "retreat/flee = no drop" (his Ch3/026 flee meant no drop THEN; it pays NOW).
-PRESERVE (vanilla, not added by us): the guaranteed ANGEL RING reward (auto-Reraise — thematically the
-  reviving Inquisitor's signature) and the buried map rares (White Robe, Japa Mala, Magick Ring,
-  Assassin's Dagger). Different slots from his equipped Light Robe — no double-dip.
+Guaranteed spoils for entry 445: LIGHT ROBE + ANGEL RING.
+These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
+WHY IT FITS: Zalmo is a high churchman / holy sustain boss, and the Angel Ring echoes his revive theme.
+STEAL ROLE: Light Robe may still be equipped as visible steal-bait, but Steal is tactical/bonus only.
+TIER: thematic mid-Chapter-4 payout; NOT Lordly Robe, Chaos Blade, Ribbon, or any Tier-S endgame item.
+PRESERVE: buried map rares (White Robe, Japa Mala, Magick Ring, Assassin's Dagger) remain vanilla map
+  treasure and are not the NG++ reward channel.
 ```
 
-## Proposed Composition (New Game++ Outlying Church v1)
+## Proposed Composition (New Game++ Outlying Church v2)
 
-Keep the count (6) and the elevated boss-duel shape; elevate Zalmour to full boss strength, keep the
-screen. Boss `104`; Knights `102`/`102`/`101`; Mystics `102`.
+Keep the count (6) and the elevated boss-duel shape; make every active human a complete Chapter-4 unit.
+Boss `104`; Knights `102`/`102`/`101`; Mystics `102`.
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
-| n | Zalmour (BOSS) | Inquisitor | `104` | Holy sustain/revive on high ground; the objective; Light Robe steal-bait. |
-| n | Knight | Knight | `102` | Front-line screen; Rend (break source 1). |
-| n | Knight | Knight | `102` | Second screen; Rend (break source 2 — cap reached). |
-| n | Knight | Knight | `101` | Third body; NO Rend (cap kept) — pure bruiser. |
-| n | Mystic | Mystic | `102` | Soft status (Oracle-equivalent) guarding the approach. |
-| n | Mystic | Mystic | `102` | Second status caster; pins the player off the height. |
+| n | Zalmour (BOSS) | Inquisitor | `104` | Holy sustain/revive on high ground; objective; Light Robe visible steal-bait. |
+| n | Rend Knight | Knight | `102` | Front-line screen; Rend source 1; threatens gear on the climb. |
+| n | Rend Knight | Knight | `102` | Second screen; Rend source 2 — cap reached. |
+| n | Bodyguard Knight | Knight | `101` | No Rend learned/enabled; Item secondary stabilizes the screen without reviving Zalmo. |
+| n | Mystic Chaplain | Mystic | `102` | Soft Mystic pressure + limited defensive White Magic secondary. |
+| n | Mystic Chaplain | Mystic | `102` | Second soft caster; supports Zalmo without hard status or Raise/Holy. |
 
 Reasoning:
 
-The faithful move is to **make the returning boss the whole escalation and keep the screen
-recognizable**. Zalmour at `104` on the elevated church, with a Silence/focus-counterable sustain kit
-and Light-Robe steal-bait, delivers the "reach-or-silence-and-burst the holy boss" duel at full Ch4
-strength — and finally kills him, paying the deferred rare. The three Knights (Rend capped to two) and
-two Mystics stay as the height-guarding screen — no new mechanic added. Only Zalmour sits at the boss
-band (`104`); the screen is `101`–`102`.
+The faithful move is to **make the returning boss the whole focus while the screen becomes fully built
+Chapter 4 support**. Zalmour at `104` on the elevated church, with a Silence/focus-counterable sustain
+kit and Light-Robe steal-bait, delivers the "reach-or-silence-and-burst the holy boss" duel at full Ch4
+strength. The Knights guard the height with exactly two Rend sources; the third uses limited Item
+support instead of adding a third break line. The Mystics gain constrained defensive secondary magic so
+they reinforce the holy shell without becoming a White Mage detour. Only Zalmour sits at the boss band
+(`104`); the screen is `101`–`102`.
+
+Rejected variants:
+
+```text
+- v1 partial setup: correct roster shape, but incomplete for Chapter 4 humans.
+- White Mage swap: creates a second healer target instead of sharpening the Zalmo focus race.
+- Triple Rend: violates the two-break-source cap and makes gear protection too binary.
+- Hard-status Mystics: turns the height puzzle into lockdown.
+- Overlevelled screen: makes the guards the fight instead of Zalmo.
+```
 
 ## Builds (Chapter-4 quality; holy-inquisition flavor)
 
@@ -182,11 +212,12 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 
 ```text
 Job: Inquisitor (id TBD)   JobLevel: 8   Primary: holy magic + sustain/revive (Holy, Cure-line, Raise);
-  Secondary: (light) soft status   — HOLY + SOFT status only; no hard lock.
-Reaction: (anti-burst) Reflexes / Counter Magic (id TBD)   Support: MA/Magick-boost (id TBD)
-  Movement: Movement +1 (486) or Ignore Height (id TBD — fits the elevated boss)
+Secondary: Mystic/White utility limited to soft support (Protect/Shell/Esuna/Cure-tier); no hard status.
+Reaction: Reflexes / Counter Magic (id TBD)   Support: Arcane Strength / MA boost (id TBD)
+  Movement: Movement +1 (486) or Ignore Height (id TBD — fits the elevated boss if legal)
 Head: holy mitre / mage hat (id TBD)   Body: LIGHT ROBE (Tier-A, id TBD)
-Accessory: Tier-A caster accessory (id TBD)   Right hand: high holy staff/rod (id TBD)   Left: none (255)
+Accessory: non-Reraise caster accessory (do NOT equip Angel Ring unless death-trigger behavior is tested)
+Right hand: high holy staff/rod (id TBD)   Left: none (255)
 ```
 
 Role: the objective and the sustain threat — reach/silence and burst him; steal his Light Robe.
@@ -195,6 +226,7 @@ Role: the objective and the sustain threat — reach/silence and burst him; stea
 
 ```text
 Job: Knight (id TBD)   JobLevel: 8   Primary: basic + Rend (ONLY on 2 of the 3 — cap)
+Secondary: Item, limited to Potion/Hi-Potion/Remedy style stabilization; no Phoenix Down/Elixir.
 Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
 Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Bracers (218)
 Right hand: shop knight sword (id TBD)   Left: shop shield (id TBD)
@@ -202,17 +234,27 @@ Right hand: shop knight sword (id TBD)   Left: shop shield (id TBD)
 
 Role: front-line screen guarding the approach to the height; Rend on at most two (cap), no break-lock.
 
+Third Knight rule:
+
+```text
+The Lv101 bodyguard Knight has the same complete equipment/reaction/support/movement package, but NO
+Rend abilities learned/enabled. His job is body-blocking, Item cleanup, and melee pressure.
+```
+
 ### Mystic x2 (Lv 102) — soft status
 
 ```text
-Job: Mystic / Oracle (id TBD)   JobLevel: 8   Secondary: none
-Soft, resistable status (no Stop/Don't Act/Petrify). Normal cast cadence.
+Job: Mystic / Oracle (id TBD)   JobLevel: 8
+Primary: soft, resistable Mystic pressure only.
+Secondary: White Magic, LIMITED to defensive/light sustain (Protect/Shell/Esuna/Cure-tier).
+  No Raise, no Holy, no Stop/Don't Act/Petrify/Death/Charm-equivalent turn deletion.
 Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
 Head: mage hat (id TBD)   Body: shop robe (id TBD)
 Accessory: Featherweave Cloak (234)   Right hand: magic-boost rod (id TBD)   Left: none (255)
 ```
 
-Role: soft status that pins the party off the height while Zalmour sustains; race-able.
+Role: soft pressure and defensive shelling that buys Zalmo a turn or two without creating a separate
+healer-kill detour.
 
 ## Positioning Plan
 
@@ -228,16 +270,63 @@ Only the boss at `104`; do not over-scale the screen.
 The church should say: "the inquisitor who ran is cornered at last — climb to him or smite him from
 below, and end him before his prayers undo your work."
 
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-041-outlying-church/
+  assumptions.md
+  simulate.py
+  iteration-1-results.json
+  iteration-1-results.md
+  iteration-2-results.json
+  iteration-2-results.md
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic opening-pressure model over the first five rounds.
+It scores local pressure, focus clarity, boss answerability, break fairness, sustain fairness, and
+hard-status risk. It does not simulate exact FFT formulas.
+```
+
+Final iteration result:
+
+| Candidate | Pressure | Focus clarity | Boss answer | Break fairness | Sustain fairness | Hard status | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---|
+| v1 partial setup | 180 | 78 | 82 | 74 | 84 | 0 | Rejected: incomplete setup |
+| v2 constrained inquisition shell | 190 | 100 | 88 | 74 | 88 | 0 | **Accepted** |
+| white mage swap sustain stack | 216 | 86 | 66 | 74 | 60 | 0 | Rejected: too spiky |
+| triple rend stair lock | 200 | 74 | 70 | 35 | 88 | 0 | Rejected: break cap violation |
+| hard status mystic lock | 246 | 69 | 39 | 74 | 48 | 55 | Rejected: hard status |
+| overlevelled screen | 212 | 100 | 78 | 66 | 80 | 0 | Rejected: too spiky |
+
+Iteration decision:
+
+```text
+ACCEPT v2 constrained inquisition shell.
+Iteration 1 rejected the full-healer reading because it pushed sustain over the local budget.
+Iteration 2 keeps the vanilla roster and complete setups, but constrains Mystic secondary magic and
+Knight item access so the answer remains Zalmo-focused: Silence, mobility, height-ignoring burst, or
+fast gear disruption.
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Outlying Church `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Zalmour + 3 Knight + 2 Mystic + player slots.
+- [ ] Confirm current entry 445 slot order: Zalmour + 3 Knight + 2 Mystic + player slots.
 - [ ] Keep win condition = "Defeat Zalmour" (ends on his death); keep the elevated geometry.
 - [ ] Set Zalmour `104` with holy sustain/revive — Silence/focus answerable, holy+soft only, no hard lock.
-- [ ] Equip Zalmour with Light Robe (Tier-A) + Tier-A accessory; confirm STEAL works.
-- [ ] Limit Rend to 2 of the 3 Knights (≤2-break-source cap); Mystics soft status only.
+- [ ] Equip Zalmour with Light Robe as visible steal-bait; rewards must still be guaranteed spoils.
+- [ ] Do not equip Angel Ring on Zalmo unless death-trigger/Reraise behavior is explicitly tested.
+- [ ] Limit Rend to 2 of the 3 Knights (≤2-break-source cap); third Knight has no Rend enabled.
+- [ ] Give Knights complete kits; Item secondary is limited and does not include Phoenix Down/Elixir.
+- [ ] Give Mystics complete kits; secondary White Magic is limited to defensive/light support, no Raise/Holy.
 - [ ] Set add levels: 2 Knight + 2 Mystic `102`; third Knight `101`.
-- [ ] Preserve the guaranteed Angel Ring + buried map rares (do not remove/duplicate).
+- [ ] Preserve guaranteed spoils: Light Robe + Angel Ring; preserve buried map rares (do not remove/duplicate).
 - [ ] Set JobLevel `8` on all active enemy slots.
 - [ ] Patch via the correct layer; keep the diff inside the Outlying Church window only.
 - [ ] Re-dump and diff; confirm changes are small and intentional; verify elevation + steal + win-cond.
@@ -248,8 +337,10 @@ below, and end him before his prayers undo your work."
 - Is the ELEVATION still the crux (player must bring height-ignoring damage or rush the boss)?
 - Does Zalmour still out-sustain chip damage so the answer is reach/Silence/focus-burst (no slow trade)?
 - Is his sustain holy/soft only — never a hard lock — and is he a tempting STEAL (Light Robe)?
-- Does the deferred Zalmo rare now pay correctly (he dies here), while Angel Ring stays the map reward?
+- Do Light Robe + Angel Ring pay through guaranteed spoils, without requiring Steal?
 - Is Knight Rend within the ≤2-source cap (no break-lock) and Mystic status soft/resistable?
+- Do all active humans have complete equipment plus secondary/reaction/support/movement?
+- Does Mystic secondary support Zalmo without becoming a second healer puzzle?
 - Is only Zalmour at the boss band (`104`), screen `101`-`102` — a Tier-A boss, not a spike?
 - Does it read as the long-awaited execution of the runaway inquisitor on his own church steps?
 
@@ -262,8 +353,7 @@ below, and end him before his prayers undo your work."
   https://game8.co/games/Final-Fantasy-Tactics/archives/553196
 - Final Fantasy Wiki, "Zalmour Lucianada" / "Zeltennia": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Zalmo_Rusnada
-- Local: `037-chapter-4-overview.md` (job-escalation + Tier-A rare-loot rules),
-  `026-lesalia-castle-postern.md` (Zalmo Ch3 — reviving Inquisitor who fled; rare deferred),
-  `036-chapter-3-balance-review.md` (the deferred-rare ledger this pays out).
-```
-</content>
+- Local: `037-chapter-4-overview.md` (job-escalation + Chapter 4 reward rules),
+  `026-lesalia-castle-postern.md` (Zalmo Ch3 — reviving Inquisitor who fled; payout deferred),
+  `036-chapter-3-balance-review.md` (the deferred Zalmo ledger this pays out),
+  `chapter-4-rewards-implementation.md` (guaranteed Light Robe + Angel Ring spoils).

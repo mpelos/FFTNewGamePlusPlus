@@ -17,13 +17,14 @@ structural pressures.
 
 ```text
 - APEX CASTES & BOSSES: the SAMURAI debut (Necrohol), the Ultima-Demon caste (Limberry Keep on), apex
-  MONSTERS (Hydra/Tiamat/Dark Behemoth), the vampire Ark Knight (Zalbaag), the triple-Templar last
+  MONSTER PIT (Lost Halidom jobs 135/139/140/141), the vampire Ark Knight (Zalbaag), the triple-Templar last
   stand (Folmarv/Loffrey/Cletienne), the Magick-Surge sorcerer, THREE Lucavi (Zalera, Adrammelech, and
   the final Hashmal→Ultima), and named bosses paying out across the chapter.
 - THREE NO-RESUPPLY CHAINS: Limberry (42-44), Mullonde (46-48), and the FIVE-battle ENDGAME GAUNTLET
   (49-53) — the longest sustained stretch in the game. Resource economy is a primary difficulty axis.
-- TIER-S BEST-OF-BEST: the campaign's finest gear (Chaos Blade, Ribbon, Escutcheon, Robe of Lords,
-  Materia Blade, Ragnarok) unlocks ONLY here, tiered onto the late bosses — the long-promised payoff.
+- TIER-S BEST-OF-BEST: the campaign's finest usable rewards are paid by the end of the Mullonde chain
+  (`051`-`053`), before the point of no return. The final gauntlet (`054`-`058`) adds no usable reward;
+  it is the challenge payoff, not an equipment payout.
 ```
 
 ## Difficulty curve (all 21 battles, as designed)
@@ -44,29 +45,29 @@ structural pressures.
 | 44 | Limberry — Undercroft | `049` | (**Zalera** Lucavi + undead guard) | mass-status Lucavi (constrained); **Tier-A Aegis Shield**; chain 3/3 | undercroft | █ SPIKE |
 | 45 | Eagrose Castle | `050` | P1 5 Knight stair-wall → P2 **Dycedarg→Adrammelech** | 2-phase brother Lucavi; Rend cap 2/5; **Tier-A Grand Helm** | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | hidden-healer caster screen; split deploy; chain 1/3; no rare | cathedral ext | ▃ moderate |
-| 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | triple-Templar equip-break race; **Tier-S Chaos Blade**; chain 2/3 | nave | ▅ hard |
-| 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | undead-brother; vampirism + break; **Tier-S Ribbon**; chain 3/3 | sanctuary | ▆ harder |
+| 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | triple-Templar equip-break race; **Tier-S Chaos Blade + Escutcheon + Lordly Robe**; chain 2/3 | nave | ▅ hard |
+| 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | undead-brother; vampirism + break; **Tier-S Ragnarok + Ribbon**; chain 3/3 | sanctuary | ▆ harder |
 | 49 | Monastery Vaults — 4th | `054` | 6 (3 Knight Rend-cap 2 + 2 Monk + Ninja) | light gear-preservation opener; no rare; gauntlet 1/5 | vault | ▂ light (opener) |
-| 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** Divine Knight + 2 Black Mage + 2 Summoner + Time Mage) | caster crossfire; disarm-first; **Tier-S Escutcheon**; gauntlet 2/5 | wide vault | ▅ hard |
-| 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai debut**; Silence/burst the surge; **Tier-S Robe of Lords**; gauntlet 3/5 | dead city | ▅ hard |
-| 52 | Lost Halidom | `057` | 6 (**Barich** + 2 Hydra + Tiamat + Dark Behemoth + Chemist) | 5★ dragon pit; 3x-breath + control; **Tier-S Materia Blade**; gauntlet 4/5 | holy ground | █ 5★ PEAK |
-| 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** (L106) + Ultima Demons | two-phase Lucavi FINALE; **capstone Tier-S Ragnarok**; gauntlet 5/5 | airship | █ FINALE |
+| 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** Divine Knight + 2 Black Mage + 2 Summoner + Time Mage) | caster crossfire; disarm-first; no usable gauntlet reward | wide vault | ▅ hard |
+| 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai debut**; Silence/burst the surge; no usable gauntlet reward | dead city | ▆ harder |
+| 52 | Lost Halidom | `057` | 6 (**Barich** + Chemist + 4 apex monsters) | 5★ overlapping breath pit + control; no usable gauntlet reward | holy ground | █ 5★ PEAK |
+| 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** (L106) + Ultima Demons/Lucavi support | two-phase Lucavi FINALE; no usable gauntlet reward | airship | █ FINALE |
 
 Reading: Chapter 4 is a **long rising arc broken into three no-resupply chains, with two mid-chapter
 Lucavi spikes and a five-fight gauntlet to the finale**. The open battles (33-41) escalate the elite
 roster and pay out the **Tier-A** unlocks one boss at a time, with two valleys (Finnath 35, Besselat
 Wall 38) for breath. The **Limberry chain (42-44)** climbs from a flee-race to the first Lucavi spike
 (**Zalera**). **Eagrose (45)** is the second spike (the **Dycedarg→Adrammelech** brother duel). The
-**Mullonde chain (46-48)** opens the **Tier-S** payouts (Chaos Blade, Ribbon) on the triple-Templar and
-the undead brother. The **endgame gauntlet (49-53)** is the campaign's spine: a light opener, three
-boss fights paying the remaining Tier-S, the **5★ Lost Halidom** peak, and the **two-phase finale**.
+**Mullonde chain (46-48)** completes the usable **Tier-S** payouts before the point of no return. The
+**endgame gauntlet (49-53)** is the campaign's spine: a light opener, two escalating boss-races, the
+**5★ Lost Halidom** peak, and the **two-phase finale**, with no usable rewards inside the gauntlet.
 
 ```text
 The back five (the endgame gauntlet) in one line each:
   Vaults 4th    : a LIGHT gear-preservation opener — don't lose your blade to Rend before the marathon
   Vaults 5th    : cross a caster crossfire, disarm Loffrey, burst him            (disperse; Steal Weapon)
   Necrohol      : Silence/burst the Magick-Surge mage past a Samurai/Ninja screen (tempo; don't slow-chip)
-  Lost Halidom  : the 5★ dragon pit — disable the beasts, break Barich's hold     (elemental resist; Arm Shot)
+  Lost Halidom  : the 5★ four-monster breath pit — disable the beasts, break Barich's hold (elemental resist; Arm Shot)
   Airship       : Hashmal, then Ultima — spread, re-buff, weather Almagest, end it (adapt; the capstone)
 ```
 
@@ -89,14 +90,16 @@ The endgame GAUNTLET (49-53) is the defining structural test; flagged as the #1 
 Generics: 101-103 (endgame-tier).  Elite/sub-bosses: 103-104 (Samurai, Ultima Demons, Hydra).
 Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletienne, Zalbaag, Dycedarg).
 LUCAVI: 105 (Zalera, Adrammelech, Hashmal).  FINAL ULTIMA: 106 — the single highest band in the mod (+6).
-Apex monsters: Tiamat/Dark Behemoth 104, Hydra 103.
+Apex monsters: the final Lost Halidom monster pit reaches 105 across four monster slots; pressure comes
+from overlapping breath lanes, sustain, and Barich control, with elemental/disable answers preserved.
 
 Boss-loot policy (Chapter 4): the long-promised payoff. Bosses that DIE carry ONE named rare highlight;
 the chapter splits them into TIER-A (strong, on the open/Limberry/Eagrose bosses) and TIER-S best-of-best
-(the finest gear in the game, held for the Mullonde + endgame bosses). This boss-highlight ledger is no
-longer exclusive: per the global philosophy in `000`, Chapter 4 normal enemies may also carry role-fitting
-non-buyable gear when it supports a readable broken-party puzzle. Bosses that FLEE carry no named rare
-highlight (the drop is deferred to where they die). Ragnarok is the FINAL CAPSTONE on Ultima. EXCALIBUR
+(paid by the end of the Mullonde chain before the final no-resupply gauntlet). This boss-highlight ledger
+is no longer exclusive: per the global philosophy in `000`, Chapter 4 normal enemies may also carry
+role-fitting non-buyable gear when it supports a readable broken-party puzzle. Bosses that FLEE normally
+carry no named rare highlight, except the current reward ledger deliberately pays Loffrey/Cletienne
+payloads at Nave before the point of no return. The final gauntlet carries no usable rewards. EXCALIBUR
 stays with Orlandeau (the player's holy blade) — never on an enemy.
 ```
 
@@ -120,7 +123,7 @@ stays with Orlandeau (the player's holy blade) — never on an enemy.
 | Vampirism (Zalbaag) | Sanctuary (`053`) | the vampire Ark Knight | SOLE source; Holy Water/Japa Mala/Esuna; non-spreading; not a lock |
 | Magick Surge (comeback mechanic) | Necrohol (`056`) | Cletienne's identity | Silence shuts it / burst beats it; magic-only retaliation; telegraphed, not a wipe |
 | Samurai Draw Out (NEW caste) | Necrohol (`056`) | the chapter's Samurai debut | AoE/break race-able, spaceable; no hard lock |
-| Dragon breath 3x/turn + Disable/Immobilize | Lost Halidom (`057`) | the 5★ dragon pit + control boss | breath ELEMENTAL/resistable + monsters disable-able; Barich status ONE resistable source (Ribbon) |
+| Monster breath lanes + Disable/Immobilize | Lost Halidom (`057`) | the 5★ four-monster pit + control boss | breath ELEMENTAL/resistable + monsters disable-able; Barich status ONE resistable source (Ribbon) |
 | Almagest / Dispelja / demon surround / 2nd form | Airship (`058`) | the Lucavi FINALE | Almagest telegraphed/sub-100%/survivable; Dispelja → re-buff; surround → Ribbon+spacing; transform telegraphed; full HP/MP restore between phases |
 
 Hard control (Stop/Don't Act/Petrify spam) remains banned everywhere. Equip-break stays ≤2 sources/fight
@@ -149,11 +152,11 @@ Mullonde San.(053) : ZALBAAG vampire Ark Knight + undead; chain 3/3         -> c
 Vaults 4th   (054) : Archer -> Ninja; LIGHT gear-preservation opener; gauntlet 1/5 -> keep your gear (Rend cap 2)
 Vaults 5th   (055) : LOFFREY + caster crossfire; gauntlet 2/5              -> disperse, disarm, burst
 Necrohol     (056) : SAMURAI DEBUT + Cletienne Magick Surge; gauntlet 3/5   -> Silence/burst the surge
-Lost Halidom (057) : APEX MONSTER PIT (Hydra/Tiamat/Behemoth) + Barich; gauntlet 4/5 -> disable + elemental resist
+Lost Halidom (057) : APEX MONSTER PIT (4 monster/dragon slots) + Barich; gauntlet 4/5 -> disable + elemental resist
 Airship      (058) : HASHMAL -> ULTIMA two-phase FINALE (L106); gauntlet 5/5 -> spread, re-buff, end it
 
 New content first seen in Chapter 4: the SAMURAI caste (056, canonical), the ULTIMA-DEMON caste (048),
-APEX MONSTERS Hydra/Tiamat/Dark Behemoth (057), the vampire Ark Knight (053), the triple-boss "one
+APEX MONSTERS / monster-dragon slots (057), the vampire Ark Knight (053), the triple-boss "one
 falls" structure (052), the Magick-Surge mechanic (056), and THREE Lucavi (Zalera 049, Adrammelech 050,
 Hashmal+Ultima 058). Revised rule: one headline puzzle engine per fight, with the rest of the enemy
 team allowed to amplify that engine through complete, synergistic, sometimes broken Chapter 4 kits.
@@ -170,24 +173,24 @@ TIER-A (strong, non-best-in-slot; open + Limberry + Eagrose bosses that DIE):
   Zalera      (049) : AEGIS SHIELD    (shield; magic-evade)             -> the 1st Lucavi's drop.
   Adrammelech (050) : GRAND HELM      (helm; top defense)               -> the 2nd-spike Lucavi's drop.
 
-TIER-S (best-of-best; Mullonde + endgame bosses; the long-promised payoff):
+TIER-S (best-of-best; paid before the no-resupply final gauntlet):
   Folmarv     (052) : CHAOS BLADE     (dark Knight sword)   -> first Tier-S; the corrupted leader's blade.
-  Zalbaag     (053) : RIBBON          (ultimate accessory)  -> the crown that wards the curse; enables 057's
-                                                               status answers downstream.
-  Loffrey     (055) : ESCUTCHEON      (best shield)         -> the Divine Knight's shield (ledger fit).
-  Cletienne   (056) : ROBE OF LORDS   (best caster robe)    -> the Sorcerer's robe (ledger fit).
-  Lost Halidom(057) : MATERIA BLADE   (enshrined relic)     -> recovered on victory (Barich wields no sword).
-  Ultima      (058) : RAGNAROK        (legendary holy sword)-> the CAPSTONE; carries into the next NG++ cycle.
+  Loffrey     (052) : ESCUTCHEON      (best shield)         -> guaranteed Nave payload, before point of no return.
+  Cletienne   (052) : LORDLY ROBE     (best caster robe)    -> guaranteed Nave payload, before point of no return.
+  Zalbaag     (053) : RIBBON          (ultimate protection) -> status answer for 057/058.
+  Zalbaag     (053) : RAGNAROK        (legendary sword)     -> paid before the final gauntlet; no dead final loot.
+  Materia Blade      : NOT placed in campaign battle 057; remains outside this gauntlet reward plan.
 
 NO NAMED BOSS RARE (boss flees / no named boss -> deferred or none; normal enemies may still carry
 role-fitting non-buyables under the Chapter 4 puzzle-party policy):
   Dugeura (038), Finnath (040), Besselat Wall (043), Sluice (044), Mt Germinas (045), Poeska (046),
   Limberry Gate (047, Celia/Lettie flee -> paid as Ultima Demons at 048), Mullonde Exterior (051),
-  Vaults 4th (054).
+  Vaults 4th (054), Vaults 5th (055), Necrohol (056), Lost Halidom (057), Airship Graveyard (058).
 
-LEDGER REASSIGNMENT (logged): the overview pencilled Robe of Lords onto Loffrey assuming he was a
-caster; Game8 confirmed Loffrey is a DIVINE KNIGHT, so Tier-S was rebalanced to archetype — Escutcheon
-(shield) -> Loffrey, Robe of Lords (robe) -> the actual caster Cletienne. Net Tier-S set unchanged.
+LEDGER REASSIGNMENT (logged): the old endgame plan placed Escutcheon/Lordly Robe/Materia Blade/
+Ragnarok inside the no-resupply gauntlet. That is now superseded. Escutcheon and Lordly Robe pay at
+Nave (052), Ragnarok pays at Sanctuary (053), Materia Blade is not placed in campaign battle 057, and
+the final gauntlet is restored to standard/vanilla loot only.
 
 UNUSED Tier-A (available, not needed this chapter): Genji Shield/Helm, Diamond Armlet. DEFENSE RING was
 AVOIDED (already the Ch3 Belias drop). No best gear leaked early; Excalibur reserved to Orlandeau.
@@ -203,7 +206,7 @@ TBD (verify on Windows, used by name): Knight, Monk, Black Mage, Time Mage, Summ
   White Mage, Mystic, Ninja, Dragoon, and the Ch4 names — Samurai (DEBUT), Divine Knight (Folmarv/
   Loffrey), Sorcerer (Cletienne), Ark Knight (Elmdore/Zalbaag), Inquisitor (Zalmo), Machinist (Barich),
   Assassin (Celia/Lettie), Lucavi (Zalera/Adrammelech/Hashmal/Ultima), Ultima Demon, Archaeodaemon,
-  Revenant/undead, and apex monsters Hydra/Tiamat/Dark Behemoth.
+  Revenant/undead, and apex monster pit jobs 135/139/140/141.
 Boss scripting to preserve (highest-risk patches):
   Meliadoul "defeat ends fight" (039); Zalmo/Barich death triggers (041/042); the Besselat Wall BRANCH
   (043); the Sluice LEVER objective (044); Celia/Lettie FLEE at Gate (047) then TRANSFORM to Ultima
@@ -224,11 +227,11 @@ Reused without conflict (as Ch1-3): Featherweave Cloak 234, Runeblade 30, and th
 NEW Ch4 rare items to map in ItemData.xml (verify non-buyable + correct tier; NOT leaked earlier):
   TIER-A: Save the Queen (039), Light Robe (041), Glacial Gun (042), Masamune + Genji Armor (048),
     Aegis Shield (049), Grand Helm (050).
-  TIER-S: Chaos Blade (052), Ribbon (053), Escutcheon (055), Robe of Lords (056), Materia Blade (057),
-    Ragnarok (058 capstone).
+  TIER-S: Chaos Blade + Escutcheon + Lordly Robe (052), Ribbon + Ragnarok (053). Materia Blade is not
+    placed in campaign battle 057. No usable reward appears in 054-058.
   Confirm Excalibur stays with Orlandeau (player) and is never placed on an enemy. Confirm Save the
-  Queen is removed from Loffrey at 055 (kept singular to 039). Confirm Barich's Glacial Gun is the 042
-  reward only (not re-dropped at 057).
+  Queen is removed/avoided on Loffrey or any active finale script record if stealable. Confirm Barich's
+  gun trio rewards stay at 042 and are not re-dropped or steal-leaked at 057.
 No conflicts found on paper.
 ```
 
@@ -250,17 +253,18 @@ CHAIN 1 — LIMBERRY (42-44 / 047-049), 3 battles, one loadout:
   Undercroft spike is faced freshly geared. Verify winnable without item starvation; test back-to-back.
 
 CHAIN 2 — MULLONDE (46-48 / 051-053), 3 battles, one loadout:
-  Exterior (hidden-healer screen) -> Nave (triple-Templar; Tier-S Chaos Blade) -> Sanctuary (vampire
-  Zalbaag; Tier-S Ribbon). Risk: two Tier-S land here; the RIBBON earned at 053 is the status answer the
-  ENDGAME (esp. 057 Barich control + 058 demon surround) assumes — verify the player actually has it
-  before the gauntlet. Test the chain as a unit.
+  Exterior (hidden-healer screen) -> Nave (triple-Templar; Chaos Blade + Escutcheon + Lordly Robe) ->
+  Sanctuary (vampire Zalbaag; Ragnarok + Ribbon). Risk: the usable Tier-S set lands before the final
+  point of no return; the RIBBON earned at 053 is the status answer the ENDGAME (esp. 057 Barich control
+  + 058 demon surround) assumes — verify the player actually has it before the gauntlet. Test the chain
+  as a unit.
 
 CHAIN 3 — ENDGAME GAUNTLET (49-53 / 054-058), 5 battles, one loadout — THE LONGEST IN THE GAME:
-  Vaults 4th (LIGHT opener, gear-preservation) -> Vaults 5th (Loffrey; Tier-S Escutcheon) -> Necrohol
-  (Cletienne + Samurai; Tier-S Robe of Lords) -> Lost Halidom (5★ dragon pit; Tier-S Materia Blade) ->
-  Airship (Hashmal->Ultima FINALE; capstone Ragnarok). Risk: the #1 balance problem of the mod — five
-  consecutive fights, no merchant, rising to a 5★ peak and a two-phase finale. The light opener (054) is
-  a deliberate resource on-ramp; the finale's full HP/MP restore between phases is the one mercy. VERIFY
+  Vaults 4th (LIGHT opener, gear-preservation) -> Vaults 5th (Loffrey caster crossfire) -> Necrohol
+  (Cletienne + Samurai surge race) -> Lost Halidom (5★ four-monster breath pit) -> Airship
+  (Hashmal->Ultima FINALE). Risk: the #1 balance problem of the mod — five consecutive fights, no
+  merchant, no usable rewards, rising to a 5★ peak and a two-phase finale. The light opener (054) is a
+  deliberate resource on-ramp; the finale's full HP/MP restore between phases is the one mercy. VERIFY
   the whole gauntlet is winnable on a single well-prepared loadout (prep happens BEFORE 049). Test all
   five back-to-back, never in isolation.
 ```
@@ -273,18 +277,19 @@ CHAIN 3 — ENDGAME GAUNTLET (49-53 / 054-058), 5 battles, one loadout — THE L
    and that the Tier-S Ribbon (053) is in hand before the gauntlet's status threats.
 3. **Two-phase Lucavi spikes (Zalera 049, Adrammelech 050)**: verify the single telegraphed status/
    summon source stays spaceable/resistable, the transforms fire correctly, and adds are clearable.
-4. **5★ Lost Halidom (057)**: confirm 3x-per-turn dragon breath is survivable with elemental resist +
-   disabling the monsters (Arm Shot), and Barich's Disable/Immobilize is one resistable source (Ribbon).
+4. **5★ Lost Halidom (057)**: confirm the four-slot monster/dragon pressure is survivable with elemental
+   resist + disabling/breaking the monsters, and Barich's Disable/Immobilize is one resistable source
+   (Ribbon).
 5. **The FINALE (058)**: the most important fairness check — Almagest telegraphed/sub-100%/survivable;
    the demon surround broken by Ribbon + spacing; both Ultima forms beatable; the full HP/MP restore and
    second-form transform fire correctly. Ultima L106 must be hard but FAIR — no unavoidable wipe.
 6. **Win-on-one-falls integrity (Nave 052)**: verify defeating ONE of the three Templars ends the fight
-   and the other two RETREAT (so only the focused boss — Folmarv — drops the Chaos Blade).
+   and the other two RETREAT, while the guaranteed spoils still pay the documented Nave reward set.
 7. **Break-pressure stacking** (≤2 sources across 039/041/044/050/052/053/054/055): confirm Safeguard/
    Steal stays a fair answer, never a mandatory tax, even in 4-5 Knight fights.
-8. **Boss-as-rare-carrier feasibility** (Tier-S slots): if a boss can't hold/drop its Tier-S item, use
-   the guaranteed-reward fallback (esp. Materia Blade as a halidom relic 057, Ragnarok as victory
-   capstone 058). Confirm steals are possible where documented.
+8. **Final-gauntlet reward leakage**: confirm no usable reward, steal-only unique, dormant reward, or
+   duplicate best gear leaks from `054`-`058` (especially Save the Queen-like scripted gear at `055/058`,
+   Barich gun-trio duplication at `057`, and any dormant Hashmal/Ultima reward data).
 9. **Repeat-foe differentiation**: Barich (042 vs 057), Elmdore/Celia/Lettie (Ch3 Roof -> 047/048), and
    the three Templars (052 -> 055/056) must read as distinct stagings, not re-runs.
 10. **Breather calibration** (Finnath 035→040, Besselat Wall 043, Mullonde Exterior 051, Vaults-4th
@@ -306,24 +311,23 @@ Implement in story order so the curve and the three chains can be felt as a play
 ```
 
 For each: dump the real entry, fill the doc's "Local Data Confirmed", apply levels + job-escalation
-swaps + gear + (Tier-A/Tier-S) boss loot + skills, patch, diff-check inside the battle window only, then
+swaps + gear + reward-ledger rules + skills, patch, diff-check inside the battle window only, then
 test from a New Game+ save and record results. **Test the three chains as units** (no resupply) — they
 are the chapter's defining balance problem, and the endgame gauntlet is the whole mod's hardest stretch.
 
 ## Status
 
 ```text
-Design phase: COMPLETE for all 21 Chapter 4 battles (038-058 designed; none patched yet).
+Design phase: COMPLETE for all 21 Chapter 4 battles (038-058 designed; this pass changed docs only).
 Consistency: audited; exceptions logged; job-escalation and split Tier-A/Tier-S ledgers extended.
 Curve: passes on paper; the campaign's highest, capped by Ultima L106 and the three no-resupply chains;
   two Lucavi spikes + a 5★ peak + a two-phase finale; deliberate valleys seat the spikes.
 Job escalation: one headline puzzle engine per fight; the Samurai caste debuts cleanly (canon), plus
   Ultima Demons, apex monsters, the vampire Ark Knight, the triple-boss structure, Magick Surge, and
   three Lucavi. Chapter 4 enemies may now support those engines with full broken-party synergy.
-Boss-loot: six Tier-A + six Tier-S (best-of-best) tiered onto the late bosses as named highlights;
-  normal enemies may separately carry role-fitting non-buyable gear in Chapter 4 puzzle parties. Flee
-  bosses deferred; the Tier-S ledger rebalanced to archetype (Escutcheon->Loffrey, Robe of Lords->
-  Cletienne); Ragnarok the final capstone (carries into NG++); Excalibur kept on Orlandeau.
+Boss-loot: six Tier-A plus the Tier-S best-of-best paid by the end of Mullonde (`052`-`053`);
+  normal enemies may separately carry role-fitting non-buyable gear in Chapter 4 puzzle parties. The
+  final gauntlet (`054`-`058`) is no-usable-reward challenge content; Excalibur stays with Orlandeau.
 Next: data-layer patching + playtest in story order (the three chains as units; the gauntlet is the
   headline risk). This completes the New Game++ campaign design (Chapters 1-4, docs 000-059).
 ```

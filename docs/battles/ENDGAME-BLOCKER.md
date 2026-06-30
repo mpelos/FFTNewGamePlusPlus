@@ -1,4 +1,4 @@
-# Endgame gauntlet (battles 49–53) — RESOLVED & IMPLEMENTED (in-game 2026-06-21)
+# Endgame gauntlet (battles 49–53) — entry mapping resolved (in-game 2026-06-21)
 
 **Update:** the blocker is fully dissolved. All six battle-entries were mapped by entering each
 in-game and matching the **on-screen roster** to a vanilla entd4 dump (the offline-only guess had
@@ -28,23 +28,22 @@ enemies as the real roster.
   cutscene NPC who animates in and exits through the door — he never fights. The real roster is
   slots 1–6 (3 Knight/2 Monk/1 Archer). Entry 436 (Vaults 5th) is the SAME Loffrey but scripted to
   fight and die, alongside the caster band. Neighboring entries differ by event script, not data.
-- **Lucavi reward note:** Hashmal (440) / Ultima (441) have **eq=255** (no equip slots), so their
-  Tier-S reward must go through the **map Move-Find reward layer**, not ENTD gear.
+- **No current gauntlet reward note:** Hashmal (440) / Ultima (441) have **eq=255** (no equip slots),
+  but the current reward ledger does not place usable NG++ rewards inside `054`-`058`. Do not use the
+  final gauntlet for Ragnarok, Materia Blade, or any other late reward payload.
 
-## Tier-S reward placement (per the NG+ "best gear, including reserved" mandate)
+## Current reward policy
 
-- Loffrey (436, Vaults 5th) → **Escutcheon (143)** in the lh/shield slot (legal for Divine Knight) ✅
-- Cletienne (438) → **Robe of Lords (207)** in the body slot (legal for Sorcerer) ✅
-- Lost Halidom (439) → **Materia Blade (32)** via map Move-Find relic on **map 54** (Lost Sacred Precincts; Barich is a gunner, can't wield it) ✅
-- Ultima (441, eq255) → **Ragnarok (36)** via map Move-Find relic on **map 55** (Graveyard of Airships) ✅
-- Vaults 4th (435) generics → scaled to endgame (lv102); no signature drop (no boss) ✅
+- No usable NG++ reward is added inside `054`-`058`.
+- `052` Mullonde Nave pays **Chaos Blade + Escutcheon + Lordly Robe** before the point of no return.
+- `053` Mullonde Sanctuary pays **Ragnarok + Ribbon** before the final gauntlet.
+- **Materia Blade** is outside the campaign-battle reward plan and must not be restored to `057`.
+- Vaults 4th (435) generics keep no signature drop or boss reward.
 
 ## Status
 
-1. ✅ All 6 entd4 entries (435/436/438/439/440/441) implemented via `tools/battle_patch.py`
-   (vaults_4th/vaults_5th/capitoline/lost_halidom/airship_hashmal/airship_ultima) → build succeeds.
-   Phase 1/2 are scripted Lucavi — transform/win-condition bytes preserved (level-only edits).
-2. ✅ Materia Blade (map 54) + Ragnarok (map 55) placed via the MAP Move-Find layer (MapRelicNgPlus in
-   Program.cs). Map ids found by research, not in-game capture: cross-verified on FFHacktics +
-   CavesOfNarshe, and confirmed by our own anchor (Mandalia=85 matches both, so TIC map numbering ==
-   documented FFT numbering). Injected into each map's first real treasure tile (no phantom-tile risk).
+1. ✅ Entry mapping is resolved for all six entd4 records (`435`/`436`/`438`/`439`/`440`/`441`).
+2. ✅ The current design docs treat the final gauntlet as challenge content only: no usable rewards,
+   no steal-dependent rares, and no late unique payloads inside `054`-`058`.
+3. Historical Move-Find notes for Materia Blade/Ragnarok are superseded by
+   `chapter-4-rewards-implementation.md` and must not be used as the current battle-design source.

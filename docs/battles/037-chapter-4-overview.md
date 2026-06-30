@@ -14,11 +14,11 @@ goals continue — now at their **final escalation**:
    battle's original strategy. Chapter 4 fields the game's top castes: enemy SAMURAI (Draw Out),
    the ULTIMA/ARCHAEO DEMONS (elite Lucavi minions), the multi-head DRAGONS (Hydra/Tiamat), and the
    remaining LUCAVI themselves (Zalera, Adramelk, Hashmal, and Ultima). It is the finale, so a fight
-   is allowed its boss-spike — but still ONE headline demand per battle.
+   is allowed its boss-spike - but still ONE headline demand per battle.
 2. RARE / NON-BUYABLE GEAR — this is the chapter where the RESERVED best-in-slot gear finally unlocks.
    Bosses still carry the named Tier-A/Tier-S highlights, but Chapter 4 normal enemies may also carry
    role-fitting non-buyable gear as part of broken puzzle-party builds. The absolute best-of-the-best
-   remains tiered into the ENDGAME sequence (Mullonde → Airship Graveyard).
+   is paid by the end of the Mullonde chain, before the no-resupply final gauntlet.
 ```
 
 ## Story framing (why this is the final climb)
@@ -55,13 +55,13 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `049` | 44 | Limberry Undercroft | **Zalera** (3rd Lucavi) + undead guard | mass-status Lucavi (constrained); **Aegis Shield** (Tier A); chain 3/3 | ✅ Done |
 | `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | 2-phase brother duel: stair-wall → spread-or-die; **Grand Helm** (Tier A) | ✅ Done |
 | `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | hidden-healer caster screen; split deploy; chain 1/3 | ✅ Done |
-| `052` | 47 | Mullonde Nave | **Folmarv/Loffrey/Cletienne** (ends when ONE falls; others retreat) | triple-Templar boss; equip-break race; chain 2/3; **Tier-S Chaos Blade (Folmarv)** | ✅ Done |
-| `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | undead brother; vampirism+break race; chain 3/3; **Tier-S Ribbon (Zalbaag)** | ✅ Done |
+| `052` | 47 | Mullonde Nave | **Folmarv/Loffrey/Cletienne** (ends when ONE falls; others retreat) | triple-Templar boss; equip-break race; chain 2/3; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** | ✅ Done |
+| `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | undead brother; vampirism+break race; chain 3/3; **Tier-S Ragnarok + Ribbon** | ✅ Done |
 | `054` | 49 | Monastery Vaults 4th Floor | ENDGAME 1/5; 3 Knight (Rend cap 2) + 2 Monk + Ninja(was Archer) | light gear-preservation opener; no boss/no rare | ✅ Done |
-| `055` | 50 | Monastery Vaults 5th Floor | ENDGAME 2/5; **Loffrey** (Divine Knight) + 2 BlackMage/2 Summoner/Time Mage | caster crossfire; disarm-first; win-when-Loffrey-falls; **Tier-S Escutcheon (Loffrey)** | ✅ Done |
-| `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** (Magick Surge) + 2 Samurai/2 Ninja/2 Time Mage | **Samurai** debut (canon); Silence/burst-the-surge race; win-when-Cletienne-falls; **Tier-S Robe of Lords (Cletienne)** | ✅ Done |
-| `057` | 52 | Lost Halidom / Lost Sacred Precincts | ENDGAME 4/5 (**5★ peak**); **Barich** rematch + 2 Hydra/Tiamat/Dark Behemoth/Chemist | 3x-breath dragon pit + Disable/Immobilize control; win-when-Barich-falls; **Tier-S Materia Blade (halidom relic)** | ✅ Done |
-| `058` | 53 | Airship Graveyard | ENDGAME 5/5; **Hashmal → Ultima** (FINAL, L106) + Ultima Demons | two-phase Lucavi finale; full-restore between; Dispelja/Almagest + 2nd form; **capstone Tier-S Ragnarok (Ultima)** | ✅ Done |
+| `055` | 50 | Monastery Vaults 5th Floor | ENDGAME 2/5; **Loffrey** (Divine Knight) + 2 BlackMage/2 Summoner/Time Mage | caster crossfire; disarm-first; win-when-Loffrey-falls; no usable gauntlet reward | ✅ Done |
+| `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** (Magick Surge) + 2 Samurai/2 Ninja/2 Time Mage | **Samurai** debut (canon); Silence/burst-the-surge race; win-when-Cletienne-falls; no usable gauntlet reward | ✅ Done |
+| `057` | 52 | Lost Halidom / Lost Sacred Precincts | ENDGAME 4/5 (**5★ peak**); **Barich** rematch + Chemist + 4 apex monsters | overlapping breath lanes + Disable/Immobilize control; win-when-Barich-falls; no usable gauntlet reward | ✅ Done |
+| `058` | 53 | Airship Graveyard | ENDGAME 5/5; **Hashmal -> Ultima** (FINAL, L106) + Ultima Demons | two-phase Lucavi finale; full restore between; Dispelja/Almagest + 2nd form; no usable gauntlet reward | ✅ Done |
 | `059` | — | Chapter 4 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
 
 ## Carried-over rules (from Chapters 1–3)
@@ -130,28 +130,30 @@ NOW UNLOCKED (the game's best uniques) — assign by tier:
   TIER A — best NON-ultimate uniques  → mid-Chapter-4 bosses (Bervenia, Bed Desert, Limberry, Eagrose):
     Save the Queen (knight sword), Masamune (katana), the Genji set (helm/armor/shield/gloves),
     Excalibur (Holy + auto-Float), Defense-tier accessories (Cursed/Angel Ring, 108 Gems already used),
-    Aegis Shield, best robes below Robe of Lords, Grand Helm/Crystal-tier armor.
+    Aegis Shield, best robes below Lordly Robe, Grand Helm/Crystal-tier armor.
 
-  TIER S — the BEST OF THE BEST  → the ENDGAME sequence ONLY (Mullonde 47-48, Vaults/Necrohol/Halidom
-    50-52, and the Airship Graveyard finale 53):
-    Ragnarok (best sword), Chaos Blade (best knight sword), Ribbon (best headgear), Robe of Lords
-    (best robe), Escutcheon (best shield), Materia Blade (special), and the single capstone reward on
-    the FINAL boss.
+  TIER S — the BEST OF THE BEST  -> paid before the no-resupply final gauntlet, concentrated in the
+    Mullonde sequence:
+    Chaos Blade (best knight sword), Ribbon (ultimate status protection), Ragnarok (best sword),
+    Lordly Robe (best robe), and Escutcheon (best shield). Materia Blade remains outside this
+    gauntlet reward plan as a side/Move-Find pickup, not a 057 battle reward.
 
 ASSIGNMENT RULES:
-  - A boss that FLEES/SURVIVES still drops nothing; the rare is paid where it dies.
-  - Each boss battle gives ONE rare highlight; this is no longer exclusive. Chapter 4 normal enemies
+  - A boss that FLEES/SURVIVES still drops nothing unless a documented guaranteed-spoils layer pays the
+    item before a point of no return.
+  - Each reward-bearing boss battle gives a named highlight; this is no longer exclusive. Chapter 4 normal enemies
     may also carry role-fitting non-buyable gear when it supports a readable broken-party puzzle.
   - Any normal-enemy non-buyable gear must be documented per battle as steal-bait, role identity,
     or puzzle pressure. Do not hide essential rewards on throwaway generics without intent.
   - The rare fits the boss's identity AND is a real in-fight threat or a tempting steal.
   - Elmdor's iconic MASAMUNE + GENJI (deferred from Riovanes in Ch3) are paid HERE, at Limberry Keep
     (043), where he is decisively defeated — Tier A, not the absolute capstone.
-  - The single best capstone item is reserved for the FINAL battle (Airship Graveyard, 058).
+  - No usable reward is placed inside the final no-resupply gauntlet (`054`-`058`). Final-boss loot is
+    dead loot after the campaign ends, and mid-gauntlet loot cannot be equipped before the next fight.
 ```
 
-Each boss battle doc includes a **"Boss rare loot"** line naming the item, its tier (A vs S), why it
-fits, and confirming the best-of-best stays on the endgame.
+Each boss battle doc includes a **"Rare/reward handling"** line naming the item policy, its tier when
+applicable, and whether the battle is reward-bearing or challenge-only.
 
 ## Difficulty budget per battle (Chapter 4)
 
@@ -175,13 +177,13 @@ Ultima `106` (the single highest band in the game).
 | Limberry Undercroft (44) | **Zalera** Lucavi | Lucavi 105, adds 103 | 3rd Lucavi spike; **rare**; chain 3/3 |
 | Eagrose (45) | **Dycedarg → Adramelk** | duel 104, Lucavi 105 | brother → Lucavi (2-phase); **rare** |
 | Mullonde Exterior (46) | Holy-ground casters | 100–103 | Geomancer/Orator; hidden W.Mage; chain 1/3 |
-| Mullonde Nave (47) | Triple-Templar boss | bosses 104–105 | **Folmarv/Loffrey/Cletienne**; **rare (Tier S)**; chain 2/3 |
-| Mullonde Sanctuary (48) | Undead **Zalbaag** | boss 104, demons 103 | undead brother + Ultima Demons; **rare (Tier S)**; chain 3/3 |
+| Mullonde Nave (47) | Triple-Templar boss | bosses 104–105 | **Folmarv/Loffrey/Cletienne**; Tier-S spoils; chain 2/3 |
+| Mullonde Sanctuary (48) | Undead **Zalbaag** | boss 105, demons 103 | undead brother + Ultima Demons; Tier-S spoils; chain 3/3 |
 | Vaults 4th (49) | ENDGAME 1/5; break gauntlet | 103–104 | Rend Knights; no resupply |
-| Vaults 5th (50) | ENDGAME 2/5; **Loffrey** | boss 104, adds 103 | Templar summoner; **rare (Tier S)** |
-| Necrohol (51) | ENDGAME 3/5; **Cletienne** | boss 104, adds 103 | **Samurai** debut; **rare (Tier S)** |
-| Lost Halidom (52) | ENDGAME 4/5; **Barich** + dragons | boss 104, dragons 104 | **Hydra + Tiamat**; **rare (Tier S)** |
-| Airship Graveyard (53) | ENDGAME 5/5; **Hashmal → Ultima** | Hashmal 105, **Ultima 106** | two-phase FINAL; **THE capstone rare (Tier S)** |
+| Vaults 5th (50) | ENDGAME 2/5; **Loffrey** | boss 105, casters 103 | caster crossfire; no usable gauntlet reward |
+| Necrohol (51) | ENDGAME 3/5; **Cletienne** | boss 105, elite screen 104 | **Samurai** debut; surge race; no usable gauntlet reward |
+| Lost Halidom (52) | ENDGAME 4/5; **Barich** + apex monsters | Barich 105, monsters 105 | 4-monster breath pit + control; no usable gauntlet reward |
+| Airship Graveyard (53) | ENDGAME 5/5; **Hashmal -> Ultima** | Hashmal 105, **Ultima 106** | two-phase FINAL; no usable gauntlet reward |
 
 **Consecutive chains to test back-to-back:** Limberry (42→43→44), Mullonde (46→47→48), and the
 five-battle **endgame gauntlet** (49→50→51→52→53). These are the chapter's defining structural test —
@@ -210,5 +212,3 @@ no resupply within a chain.
 - Local: `000-chapter-1-overview.md`, `011-chapter-2-overview.md`, `024-chapter-3-overview.md`
   (carried rules), `036-chapter-3-balance-review.md` (exception log + rare-loot ledger this chapter
   builds on and completes).
-```
-</content>

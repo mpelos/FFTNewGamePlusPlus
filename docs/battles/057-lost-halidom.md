@@ -1,284 +1,276 @@
-# 057 - Lost Halidom
+# 057 - Lost Halidom (Endgame Gauntlet 4/5)
 
-Status: designed (not yet implemented)
-Chapter: 4 — "In the Name of Love"
-Battle order: Battle 52 (ENDGAME GAUNTLET 4 of 5 — NO resupply across 49→50→51→52→53)
+Status: redesigned (documentation only; not implemented in game data by this task)
+Chapter: 4 - "In the Name of Love"
+Battle order: Battle 52 (ENDGAME GAUNTLET 4 of 5 - no resupply across 054 -> 055 -> 056 -> 057 -> 058)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: `entd4` global entry `439`
+Local slot: `055`
+Simulation artifact: `tmp/fft-level-design-057-lost-halidom/`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. ENDGAME GAUNTLET: 49 (`054`) → 50 (`055`) → 51 (`056`) →
-> 52 (`057`) → 53 (`058`), ONE loadout, no outfitter. THIS is the 5★ peak before the FINAL.
+> Docs-only redesign note: this document is the intended NG++ level design. It does not change the
+> embedded ENTD, scripts, binaries, or patch code. Implementation must later patch entry `439` and
+> preserve the win-on-Barich behavior.
+
+## Gate Answers / Constraints
+
+```text
+Scope: redesign battle doc 057 only; no game data or code changes.
+Allowed changes in design: active enemy kit/level/gear/ability plan, positioning, reward policy, and tests.
+Chapter target: Chapter 4 broken-but-readable puzzle; this is the 5-star peak before the finale.
+Must preserve: Barich rematch, control boss identity, apex monster pit, Chemist sustain, holy-ground
+  terrain, and "Defeat Barich" objective.
+Guests: no active guest. If future testing discovers any active guest/NPC, it must be player-controlled
+  in NG+ and never used as a skill check.
+Reward rule: no usable rewards inside 054-058. Materia Blade is not awarded here.
+```
 
 ## Original Battle
 
 Objective:
 
 ```text
-Defeat Barich!   (the fight ends the instant Barich falls — the dragons/monsters are OPTIONAL. This is
-                  the BARICH REMATCH — last seen at Bed Desert, 042; here he makes his final stand and DIES.)
+Defeat Barich!
 ```
 
 Player deployment:
 
 ```text
-Up to 5 units, including Ramza. No outfitter (gauntlet 4/5 — the hardest fight of the run).
+Up to 5 units, including Ramza. No outfitter: this is the fourth fight after the point of no return.
 ```
 
-Original enemy composition (verified via Game8, Battle 52):
+Original enemy composition, corrected by local data:
 
 ```text
-Barich Fendsor   (BOSS — Machinist/gunner; DISABLE + IMMOBILIZE status-locks; controls from range)
-2x Hydra          (multi-headed dragons; LIGHTNING breath; up to 3 attacks/turn)
-1x Tiamat          (apex dragon; elemental breath; up to 3 attacks/turn)
-1x Dark Behemoth   (high-HP bruiser; heavy melee)
-1x Chemist         (sustain — heals/revives the monster line)
+Barich Fendsor    (Machinist/gunner control boss)
+1x Chemist         (sustain)
+4x apex monsters   (local jobs 139/140/141/135; ENDGAME-BLOCKER identifies these as dragons)
 ```
 
-Public walkthrough details:
-
-```text
-Recommended level: 60+.  Difficulty: 5/5 stars (the HARDEST fight of the endgame gauntlet).  Deploy up to 5.
-Win: "Defeat Barich!" — the dragons/monsters are OPTIONAL (kill only Barich to end it).
-TERRAIN: the Lost Halidom (a forsaken holy ground — the lost sanctuary).
-THE THREAT — a DRAGON-BREATH CROSSFIRE under a CONTROL BOSS: 2 Hydra + 1 Tiamat each unleash ELEMENTAL
-  BREATH up to THREE times per turn (multi-target AoE), a Dark Behemoth bruises the front, and a Chemist
-  keeps the monster line alive — while BARICH locks your units with DISABLE / IMMOBILIZE from range.
-WALKTHROUGH TIPS: DISABLE the monsters first (Mustadio's Arm Shot / break their attack) to blunt the
-  3x-per-turn breath; answer Barich's Disable/Immobilize (status immunity — RIBBON now available from 053);
-  then burst Barich. Do NOT try to out-trade the dragons.
-Spoils: 41,900 Gil; buried treasure (Elixirs).
-```
-
-Design reading:
-
-The Lost Halidom is **the dragon-pit peak** of the gauntlet — a **5/5★ multi-monster breath crossfire
-under a control boss**, and the **Barich rematch** (Bed Desert, `042`); here he makes his last stand and
-**dies**. Its identity is **survive the elemental breath storm while answering the boss's status control**:
-two Hydras and a Tiamat fire **multi-target breath up to three times a turn**, a Dark Behemoth pins the
-front, a Chemist sustains them, and **Barich Disables/Immobilizes** to freeze your answers. Because the
-win condition is *defeat Barich*, it rewards **disabling the monsters, breaking the status lock, and
-bursting the gunner** rather than grinding the dragon line.
-
-For New Game++ the identity must stay: **the hardest fight of the run — a 3x-per-turn dragon-breath
-crossfire (2 Hydra + Tiamat + Dark Behemoth) sustained by a Chemist, under Barich's Disable/Immobilize
-control; win the instant Barich falls — the 5★ peak before the FINAL, on no resupply.** And because this
-is the **Lost Halidom** — a forsaken holy ground — its Tier-S is **the enshrined relic, the Materia
-Blade**, recovered by clearing the sanctuary.
+Public guides often describe the monster pit as Hydras/Tiamat/Dark Behemoth. The local ENTD entry is
+authoritative for implementation: Barich + Chemist + four monster jobs. The preserved feeling is still
+the same: a brutal breath/monster pit under Barich's Disable/Immobilize control.
 
 ## Local Data Confirmed
 
-```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Barich (gunner) + 2 Hydra + 1 Tiamat + 1 Dark Behemoth + 1 Chemist. NO outfitter (gauntlet 4/5).
-Confirm the win condition: fight ENDS when Barich falls (monsters optional).
-Keep the 3x-per-turn dragon BREATH crossfire + the Dark Behemoth bruiser + the Chemist sustain +
-  Barich's DISABLE/IMMOBILIZE control. These ARE the fight (the hardest of the gauntlet).
-Confirm whether OverrideEntryData carries Level / monster stats, or leaves them at -1.
-Set the Tier-S MATERIA BLADE as the ENSHRINED RELIC of the Lost Halidom — a GUARANTEED special treasure
-  recovered on victory (a sacred blade of the holy ground), NOT on Barich (a gunner wields no sword).
-  Barich carries no separate rare (his Glacial Gun was already the Bed Desert reward, 042).
-Leave the buried Elixir spots as-is — existing loot.
+Dump command:
+
+```bash
+python tools/entd_tool.py dump-entry --input src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin --entry 439 --include-empty
 ```
 
-Job / unit IDs (carry over known, verify the rest in-game):
+Confirmed active data:
+
+| Slot | Status | Job | Level | JL | Secondary | Reaction | Support | Move | Equipment ids | Notes |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | Active boss | 43 | 105 | 8 | 0 | 442 | 472 | 493 | 168,206,234,76,254 | Barich. Verify item `76`; swap if it duplicates the 042 gun rewards. |
+| 1 | Active | 75 | 104 | 8 | 254 | 510 | 510 | 510 | 254,254,254,75,254 | Chemist; needs complete R/S/M kit in v2. |
+| 2 | Active monster | 139 | 105 | 8 | 0 | 510 | 510 | 510 | 0,0,0,0,0 | Apex monster / dragon caste. |
+| 3 | Active monster | 140 | 105 | 8 | 0 | 510 | 510 | 510 | 0,0,0,0,0 | Apex monster / dragon caste. |
+| 4 | Active monster | 141 | 105 | 8 | 0 | 510 | 510 | 510 | 0,0,0,0,0 | Apex monster / dragon caste. |
+| 5 | Active monster | 135 | 105 | 8 | 0 | 510 | 510 | 510 | 0,0,0,0,0 | Apex monster / dragon caste. |
+
+Data implications:
 
 ```text
-Barich  — Machinist/gunner job id   (TBD - verify; Disable/Immobilize; cf. 042 Bed Desert)
-Hydra unit id        (TBD - verify; lightning breath; 3 attacks/turn)
-Tiamat unit id       (TBD - verify; apex; elemental breath; 3 attacks/turn)
-Dark Behemoth unit id (TBD - verify; high-HP melee)
-Chemist job id       (TBD - verify; Item sustain)
+- Entry 439 is confirmed moddable through ENTD direct edits.
+- The current data already makes this the peak: Barich 105, Chemist 104, four monster bodies at 105.
+- Current Chemist R/S/M slots are empty (`510`); v2 must make this an intentional complete Chapter 4 kit.
+- Barich currently uses item `76`; verify against the item table. If it is Blaze Gun, Blaster, or another
+  reward from 042, replace it with a standard/non-reward gun.
+- No Materia Blade, no special relic reward, and no usable gauntlet payout.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Design Goal
+
+Make Lost Halidom the final gauntlet's 5-star tactical peak:
 
 ```text
-CHANGE: keep the packed 5★ monster pit (2 Hydra + Tiamat + Dark Behemoth + Chemist + Barich) — it is
-  already the chapter's apex roster; no padding. Bring it to endgame strength (Barich full boss 105,
-  Tiamat/Dark Behemoth 104, Hydra 103, Chemist 103) and let the 3x-BREATH crossfire + status control be
-  the demand. The "new content" is the SCALE of the monster crossfire, not a new generic job.
-WHY: the chapter wants more challenge while keeping strategy. Here the escalation is the sheer multi-
-  target breath density (up to 9+ breath hits/turn across three dragons) plus a control boss — answered by
-  disabling the monsters (Arm Shot / break) and breaking the status lock, exactly the vanilla tactics at
-  endgame intensity. Adding generics would dilute the monster-pit identity.
-CONSTRAINTS (carried): BARICH DISABLE/IMMOBILIZE — ONE source, telegraphed, RESISTABLE/cleansable; the
-  player has earned status immunity (RIBBON, 053) and Esuna-tier cleanses, so it is NOT a permanent hard
-  lock; Barich does not chain-lock the whole party. DRAGON BREATH = ELEMENTAL (resistable with elemental
-  gear/absorb), spaceable, and the monsters are DISABLE-able (Arm Shot / break) — dangerous but answerable.
-  CHEMIST sustain = race-able (kill it or out-damage). DARK BEHEMOTH = a melee bruiser (no status).
-WHAT IS NOT CHANGED: the monster pit, the breath crossfire, the Chemist sustain, Barich's control, and the
-  "Defeat Barich" win rule remain.
+Break through overlapping monster breath lanes, blunt the dragons with elemental resistance or disable
+effects, answer Barich's single control source, and defeat Barich without being baited into a full
+monster-pit cleanup.
 ```
 
-## Sanctioned exceptions (carried precedents)
+The headline engine is **apex monster pressure under one control boss**. This is allowed to be the
+hardest fight before Ultima, but every pressure point must be visible and answerable.
 
-```text
-BARICH DISABLE/IMMOBILIZE (ONE source) — status control; telegraphed, RESISTABLE/cleansable, immunity-
-  answerable (RIBBON earned at 053); NOT a permanent hard lock, no full-party chain-lock.
-DRAGON BREATH (2 Hydra + Tiamat, 3x/turn) — ELEMENTAL multi-target AoE; resistable (elemental gear/absorb),
-  spaceable, and the monsters are DISABLE-able (Arm Shot / break). The 5★ core threat — dangerous but fair.
-DARK BEHEMOTH — high-HP melee bruiser; no status; a damage sponge to space around.
-CHEMIST SUSTAIN — heals/revives the monster line; race-able (kill it or out-damage).
-WIN-ON-BARICH-FALLS — defeating Barich ends the fight; the monsters are optional (vanilla rule).
-```
+## Enemy Party Escalation
 
-## Boss rare loot — TIER-S (the enshrined relic)
-
-> **Superseded (2026-06-27 rebalance):** the no-resupply gauntlet drops nothing usable. Materia Blade is
-> removed from this battle entirely and NOT relocated - it stays a side-quest / Move-Find map-54 pickup
-> ("easy to get", per the user). This battle is restored to standard loot. Canonical: `chapter-4-rewards-implementation.md`.
-
-```text
-LOST HALIDOM RELIC → MATERIA BLADE (Tier-S — the sacred blade enshrined at the holy ground; enables
-  sword-skill / advanced abilities on its wielder).
-  A GUARANTEED special treasure recovered on VICTORY (a relic of the forsaken sanctuary), NOT a boss
-  drop — Barich is a gunner and wields no sword, so the blade is the holy ground's own relic. THEMATIC:
-  "Lost Halidom" = a lost holy relic/sanctuary; the legendary blade is exactly what was lost here.
-  Barich carries NO separate rare (his Glacial Gun was the Bed Desert reward, 042). The monsters drop
-  nothing rare (untameable apex beasts). Buried Elixirs stay as-is.
-```
-
-> Tier-S ledger: Chaos Blade (Folmarv, 052) · Ribbon (Zalbaag, 053) · Escutcheon (Loffrey, 055) · Robe of
-> Lords (Cletienne, 056) · **Materia Blade (Lost Halidom relic, 057)** · Ragnarok (FINAL, 058). Excalibur
-> stays with Orlandeau (player) — never on an enemy.
-
-## Proposed Composition (New Game++ Lost Halidom v1)
-
-Keep the apex pit; no padding. Barich (full boss, he dies) `105`; Tiamat & Dark Behemoth `104`; Hydras &
-Chemist `103`.
+Accepted redesign: **v2 no-reward apex monster pit**.
 
 | Slot | Role | Job / Unit | Level | Purpose |
-|------|------|-----------|-------|---------|
-| n | Barich (BOSS, objective) | Machinist/gunner | `105` | Disable/Immobilize control; the intended kill; ends the fight. |
-| n | Tiamat | Apex dragon | `104` | Elemental breath, 3x/turn; the heaviest crossfire source. |
-| n | Hydra | Dragon | `103` | Lightning breath, 3x/turn; disable-able (Arm Shot). |
-| n | Hydra | Dragon | `103` | Second Hydra; widens the breath storm. |
-| n | Dark Behemoth | Bruiser | `104` | High-HP melee; pins the front; space around it. |
-| n | Chemist | Chemist | `103` | Sustain — heals/revives the monster line; race-able. |
+|---:|---|---|---:|---|
+| 0 | Boss objective | Barich / Machinist | 105 | One Disable/Immobilize control source; defeat ends the fight. |
+| 1 | Sustain | Chemist | 104 | Heals/revives or stabilizes the monster line, but must be raceable. |
+| 2 | Breath lane | Monster job 139 | 105 | Apex monster body; overlapping breath/space pressure. |
+| 3 | Breath lane | Monster job 140 | 105 | Second monster lane; pressures a different approach. |
+| 4 | Breath lane | Monster job 141 | 105 | Third monster lane; reinforces the 5-star peak. |
+| 5 | Breath lane | Monster job 135 | 105 | Fourth monster body; closes the pit without sealing Barich. |
 
-Reasoning:
-
-The faithful move is **the apex monster pit kept brutal but fair**. Three dragons (Tiamat `104` + 2 Hydra
-`103`) fire **breath up to 3x/turn** — the 5★ core threat — but it's **elemental** (resistable) and the
-monsters are **disable-able** (Arm Shot / break); the Dark Behemoth (`104`) is a sponge to space around;
-the Chemist (`103`) sustains them (race-able). **Barich `105`** controls with **Disable/Immobilize**, now
-answerable because the player earned **Ribbon at 053** and carries cleanses. Win-on-Barich-falls preserves
-the original's *disable the beasts, break the lock, burst the gunner* tactics — on no resupply, the
-hardest fight before the FINAL. The Materia Blade is recovered as the sanctuary's enshrined relic.
-
-## Builds (apex monster pit + control boss)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+Why this works:
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+- Four level-105 monsters make this the true peak over 055/056.
+- Overlapping breath lanes create the 5-star pressure, but elemental resistance/absorb and monster
+  disable/break must remain valid answers.
+- Barich is one answerable control source, not a permanent status lock.
+- The Chemist sustains the pit, but the player can race it or bypass it by focusing Barich.
+- The boss-focus lane is mandatory: defeating Barich must be a real plan before full cleanup.
+- No usable reward appears here; Materia Blade stays outside this gauntlet battle.
 ```
 
-### Barich Fendsor (Lv 105) — BOSS, objective
+## Builds
+
+### Barich Fendsor - control boss
 
 ```text
-Job: Machinist/gunner (id TBD)   JobLevel: 8   Primary: gun + DISABLE / IMMOBILIZE (ONE source, resistable)
-Reaction: Reflexes / Damage Split (id TBD)   Support: break-resist / Defense Boost (id TBD)   Movement: Move +2 (id TBD)
-Head: Genji Helm-tier (id TBD)   Body: heavy boss armor (id TBD)
-Accessory: status-resist accessory (id TBD)   Right hand: strong gun (id TBD; NOT the Glacial Gun — looted at 042)
-The intended kill; answer his control (Ribbon/cleanse), then burst. Status NOT a permanent hard lock.
+Level: 105
+JobLevel: 8
+Primary: gun pressure plus Disable/Immobilize-style control
+Secondary: intentional utility that does not create a second lock
+Reaction: Counter or defensive reaction
+Support: gun/control role support
+Movement: boss mobility
+Gear: complete gunner/caster gear; do not duplicate Glacial Gun, Blaze Gun, or Blaster from 042
+Reward: none
 ```
 
-Role: the control boss; ends the fight; no separate rare (gun looted at 042).
+Guardrail: Barich may pressure movement and actions, but he must remain one source of resistable or
+cleansable control. No party-wide chain-lock.
 
-### Tiamat (Lv 104) — apex dragon
+### Chemist - sustain
 
 ```text
-Unit: Tiamat (id TBD)   Elemental BREATH (multi-target AoE), up to 3 attacks/turn.
-Reaction: Counter-tier (id TBD)   Movement: Move +2 / fly (id TBD)
-Breath is ELEMENTAL (resistable); DISABLE-able via Arm Shot / break. The heaviest crossfire source.
+Level: 104
+JobLevel: 8
+Primary: Item sustain
+Secondary: utility only
+Reaction: intentional defensive reaction; current `510` empty reaction must be fixed
+Support: intentional defensive/support ability; current `510` empty support must be fixed
+Movement: Move +1 or equivalent; current `510` empty movement must be fixed
+Gear: complete Chemist gear
+Reward: none
 ```
 
-Role: the apex breath threat; spaceable and disable-able.
+Guardrail: sustain must be raceable. It should force priority decisions, not create a monster revive slog.
 
-### Hydra x2 (Lv 103) — dragons
+### Apex monsters x4 - breath lanes
 
 ```text
-Unit: Hydra (id TBD)   LIGHTNING breath (multi-target), up to 3 attacks/turn.
-Reaction: Counter-tier (id TBD)   Movement: Move +2 (id TBD)
-Resistable (lightning gear/absorb); disable-able (Arm Shot / break).
+Level: 105
+JobLevel: 8
+Jobs: 139, 140, 141, 135
+Primary: monster breath / apex physical pressure
+Gear: none
+Reward: none
 ```
 
-Role: widen the breath storm; answerable with elemental defense + disable.
-
-### Dark Behemoth (Lv 104) — bruiser
+Guardrails:
 
 ```text
-Unit: Dark Behemoth (id TBD)   High-HP heavy melee; no status.
-Reaction: Counter (442)   Movement: Move +1 (id TBD)
-A damage sponge to space around — not the objective.
+- Breath pressure must be elemental/resistable or otherwise mitigable.
+- Monsters must be disableable, breakable, or bluntable by established player answers.
+- Positioning creates overlapping lanes but must not seal Barich behind mandatory cleanup.
 ```
-
-Role: front-line pressure; soak, don't trade.
-
-### Chemist (Lv 103) — sustain
-
-```text
-Job: Chemist (id TBD)   JobLevel: 8   Primary: Item (X-Potion / Phoenix Down — heals/revives the monsters)
-Reaction: Reflexes (449)   Support: Move-Find Item / Defense Boost (id TBD)   Movement: Move +1 (486)
-Race-able — kill it or out-damage its sustain.
-```
-
-Role: keeps the monster line alive; a priority secondary target.
 
 ## Positioning Plan
 
 ```text
-The Lost Halidom (forsaken holy ground): place Barich at range/back (the control boss you must reach and
-  burst); the Tiamat + 2 Hydra spread across the field for overlapping breath crossfire; the Dark Behemoth
-  forward as a wall; the Chemist behind the monsters to sustain them. Keep open sightlines (the breath
-  crossfire IS the fight) and any sacred elevation of the halidom.
-Preserve: the 3x-breath monster pit + Chemist sustain + Barich's control, and the win-on-Barich-falls
-  rule. The Materia Blade is the enshrined relic, recovered on victory.
+Use the Lost Halidom as a desecrated holy arena. Put Barich at range with a real but contested lane to
+him. Spread the four monsters so their breath lanes overlap across obvious rush paths. Put Chemist behind
+or between monsters where it can sustain, but not where killing it becomes mandatory before any boss
+pressure is possible.
 ```
 
-The lost sanctuary should say: "the holy ground is a dragons' den now, and Barich would freeze you in
-their fire — disable the beasts, break his hold, and end him; the blade enshrined here is your reward."
+The player read should be: prepare elemental/status answers, disable or blunt one monster lane, push a
+route to Barich, and end the control source before the breath pit drains the run.
+
+## Simulation Plan and Results
+
+Artifact:
+
+```text
+tmp/fft-level-design-057-lost-halidom/
+```
+
+Accepted candidate:
+
+```text
+v2 no-reward apex monster pit
+Monster pressure: 192
+Control risk: 16
+Answerability: 100
+Focus clarity: 96
+Peak identity: 100
+Chain tax: 64.2
+Reward correctness: 100
+Human kit score: 100
+```
+
+Iteration notes:
+
+```text
+- Current local data has four level-105 monster bodies; this is kept because 057 is the gauntlet's
+  5-star peak.
+- First pass had enough monster pressure but too little chain-tax separation from 056; v2 requires
+  overlapping breath lanes.
+- The old lower-level / three-breath plan was rejected as too soft for this slot.
+- The peak passes only with all answers present: elemental counterplay, monster disable/break, one Barich
+  control source, raceable Chemist, and a boss-focus lane.
+- The Materia Blade campaign-reward variant was rejected by the current reward ledger.
+- Full-clear requirements, sealed monster walls, unanswerable breath, hard status locks, and overleveling
+  were rejected.
+```
+
+Residual risks:
+
+```text
+- Confirm Barich defeat ends the battle even if monsters remain.
+- Confirm monster breath is elemental/resistable and monsters can be disabled or otherwise blunted.
+- Confirm Barich control is one answerable source and does not chain-lock the party.
+- Test 056 -> 057 -> 058 as a unit; 057 should be the peak but still leave a viable path into the finale.
+```
+
+## Rare / Reward Handling
+
+```text
+None. No usable NG++ reward is added inside the final gauntlet.
+Materia Blade is not awarded here and is not relocated into this fight.
+Barich should not duplicate the gun trio from 042: Glacial Gun, Blaze Gun, or Blaster.
+No monster or Chemist carries a hidden rare payload.
+Keep standard/vanilla loot and buried Elixirs only.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Lost Halidom `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Barich + 2 Hydra + 1 Tiamat + 1 Dark Behemoth + 1 Chemist.
-- [ ] Confirm win condition: fight ENDS when Barich falls (monsters optional).
-- [ ] Keep dragon 3x-breath (elemental, resistable, disable-able); Barich Disable/Immobilize ONE source,
-      resistable/cleansable (NOT a permanent hard lock); Chemist sustain race-able.
-- [ ] Set levels: Barich `105`; Tiamat & Dark Behemoth `104`; Hydras & Chemist `103`.
-- [ ] Set the Tier-S **Materia Blade** as a GUARANTEED relic recovered on victory (not on Barich); swap
-      Barich's gun OFF the Glacial Gun (looted at 042).
-- [ ] Patch via the correct layer; keep the diff inside the Lost Halidom window only.
-- [ ] Re-dump and diff; confirm small, intentional changes; verify roster + win rule + Materia Blade relic.
-- [ ] Install mod, test from a New Game+ save; confirm it plays as the 5★ peak — breath is survivable with
-      elemental defense + disable, the status lock is answerable, and victory yields the Materia Blade.
+- [ ] Preserve entry `439` and the "Defeat Barich" objective.
+- [ ] Keep Barich level `105`, Chemist level `104`, and four monster bodies level `105`.
+- [ ] Verify monster job identities for `139`, `140`, `141`, and `135`; preserve the apex monster pit.
+- [ ] Create overlapping breath lanes through placement without sealing Barich behind mandatory cleanup.
+- [ ] Ensure monster breath has real elemental/disable/break counterplay.
+- [ ] Keep Barich to one answerable control source; no hard status lock.
+- [ ] Fill Chemist R/S/M slots and verify every active human has complete equipment plus intentional
+      secondary/reaction/support/move.
+- [ ] Verify Barich item `76`; replace it if it duplicates a 042 gun reward.
+- [ ] Add no usable reward, no Materia Blade, and no steal-dependent rare.
+- [ ] Re-dump entry `439` after implementation and verify only intended kit/ability/positioning changes.
+- [ ] Playtest `056 -> 057 -> 058` as a no-resupply unit.
 
 ## Test Questions
 
-- Is it the hardest fight of the run (5★) — a genuine 3x-per-turn dragon-breath crossfire under a control boss?
-- Is the breath answerable (elemental resist/absorb + disable the monsters via Arm Shot/break), not an
-  unavoidable wipe?
-- Is Barich's Disable/Immobilize ONE resistable/cleansable source (Ribbon from 053 / Esuna), NOT a
-  permanent party-wide hard lock?
-- Is Barich clearly the rewarded target (win condition), with the Materia Blade recovered as the
-  sanctuary's relic (not on the gunner)?
-- Is it survivable on ONE loadout as the 4th of five no-resupply fights — brutal but fair before the FINAL?
-- Does it read as a desecrated holy ground turned dragon den, not a designed arena?
+- Does this clearly feel like the 5-star peak before the finale?
+- Are monster breath lanes scary because they overlap, not because they are unanswerable?
+- Can players blunt the monster pit with elemental resist/absorb, Disable, breaks, or equivalent tools?
+- Is Barich a single control source, not a chain-lock?
+- Can the player focus Barich and end the fight without full monster cleanup?
+- Are no usable NG++ rewards or unique steal payloads present?
 
 ## Sources
 
-- Game8, "Lost Halidom Walkthrough (Battle 52)": roster (Barich + 2 Hydra + 1 Tiamat + 1 Dark Behemoth +
-  1 Chemist), "Defeat Barich!" (monsters optional), rec 60+, 5/5 stars, dragon breath 3x/turn + Barich
-  Disable/Immobilize, Arm-Shot-the-monsters advice, spoils 41,900 Gil + buried Elixirs.
+- Local: `docs/battles/ENDGAME-BLOCKER.md` for entry mapping and corrected roster.
+- Local: `docs/battles/037-chapter-4-overview.md` for Chapter 4 puzzle-party principles and gauntlet curve.
+- Local: `docs/battles/chapter-4-rewards-implementation.md` for the no-usable-reward rule in `054-058`.
+- Local: `tmp/fft-level-design-057-lost-halidom/` simulation artifact.
+- Local dump: `tools/entd_tool.py dump-entry --entry 439`.
+- Game8, "Lost Halidom Walkthrough (Battle 52)": original objective and public monster-pit framing.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553228
-- Local: `037-chapter-4-overview.md` (gauntlet + Tier-S tiering), `042-bed-desert.md` (Barich first
-  fight; Glacial Gun reward), `053-mullonde-sanctuary.md` (Ribbon — the status-immunity answer earned
-  before this fight), `058-airship-graveyard.md` (the FINAL — to be designed).
-```

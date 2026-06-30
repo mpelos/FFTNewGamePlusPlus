@@ -1,276 +1,361 @@
 # 049 - Limberry Castle Undercroft
 
-Status: ✅ implemented (v1, entry 457) — see reward + verify notes below
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 457
 Chapter: 4 — "In the Name of Love"
-Battle order: Battle 44 (Limberry chain 3 of 3 — NO resupply across 42→43→44; the capstone)
+Battle order: Battle 44 (Limberry chain 3 of 3 — NO resupply across 42→43→44)
 Target version: Enhanced v1.5.0
 ENTD: global entry **457** (local 73, entd4)
 File: `battle_entd4_ent.bin`
 
-> **NG++ reward applied (2026-06-27):** Zeus Mace (s2, caster) added alongside the existing Aegis Shield
-> (s1), fitting Zalera the demon caster. Guaranteed Spoils of War (ENTD 0x1e), NG+ only, within the 3-cap,
-> no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+> **NG++ rewards applied (2026-06-27):** Aegis Shield + Zeus Mace through guaranteed Spoils of War
+> (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Zalera has no normal equipment slots,
+> so these are reward payloads, not fake boss gear. Canonical map: `chapter-4-rewards-implementation.md`.
 
-## Implemented (v1, entry 457)
+## Current Implementation / Data Reality
 
 ```text
-DATA (verified from entd4 dump + JobData InnateStatus/MonsterGraphic):
-  slot 1 = Zalera (job 62 "Float", name n62, lvl 44 jl8, eq=255 Lucavi no-equip)  -> the boss.
-  slots 2,3 = job 61 (InnateStatus Undead, gfx0 humanoid)                          -> 2 undead Knights.
-  slots 4,5,6,8,9 = jobs 109/110/111 (Undead, gfx6)                -> Skeleton/Bonesnatch/Skeletal Fiend.
-  slot 7 = job 42 / name 0x2a, tail "00.." (guest), eq=(153,206,213,34,136) = Save the Queen + AEGIS
-           SHIELD (136) + Luminous Robe -> MELIADOUL, the guest who JOINS after this battle. (Strong
-           Undercroft signal: she recruits right after.) Left untouched -> her gear reaches the player.
-  slot 0 = Elmdor (job 27, name 0x1b, lvl 43 jl8) BUT eq=255 (no gear, unlike his fully-equipped Keep
-           appearance at 456). Most likely a scripted/cameo unit, not a lootable combatant. LEFT
-           UNTOUCHED (preserve scripting). >>> VERIFY IN-GAME whether this Elmdor is an active enemy;
-           if he fights, a follow-up will scale him to ~104.
+DATA REALITY (verified from current embedded entd4 dump, entry 457):
+  slot 0 = Elmdor cameo/script record
+           job 27, level 43, JobLevel 8, eq=255 no gear.
+           Preserve until in-game testing proves whether he is active; do not treat as a reward carrier.
 
-CHANGE (faithful, minimal): LEVEL only on the active foes.
-  Zalera = 105 (the lone Lucavi spike)   2 undead Knights = 103   skeleton family = 103
-  Win-cond ("Defeat Zalera"), Zalera's mass-status kit, and every UNDEAD/reraise innate preserved.
+  slot 1 = Zalera / Death Seraph
+           job 62, level 105, JobLevel 8, secondary 108, eq=255 no normal equipment.
+           Spoils byte = 0x88 (Aegis Shield).
 
-REWARD NOTE (Tier-A AEGIS SHIELD): Zalera is eq=255 (no equip slots) -> the shield CANNOT be equipped
-  on him via ENTD (same limitation as the Belias Defense Ring). It is already delivered via Meliadoul's
-  join gear (slot 7 carries an Aegis Shield). For a guaranteed boss-drop copy, the map Move-Find reward
-  layer is the clean path -> flagged as a reward-layer follow-up. No fake equip placed on the boss.
+  slots 2,3 = job 61 undead knight-like monster/fixed bodies
+              type=monster, level 103, JobLevel 8, eq=254 fixed/no normal gear.
+              slot 2 spoils byte = 0x41 (Zeus Mace).
+
+  slots 4,5,6,8,9 = skeleton-family undead monsters
+                    jobs 111/110/109/111/111, level 103, no normal human equipment setup.
+
+  slot 7 = Meliadoul join/post-battle record
+           job 42, level 254, gear includes Save the Queen + Aegis Shield.
+           Public battle shape has no active guest. Treat this as a join/post-battle record unless
+           playtest proves it is active; if active, NG++ guest-control rule applies immediately.
+
+Current v1 implementation:
+  Zalera = 105
+  undead guard = 103
+  Win condition, Zalera mass-status identity, undead/reraise identity, slot 0 cameo, and slot 7 join
+  record are preserved.
 ```
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. LIMBERRY CHAIN: 42 (`047`) → 43 (`048`) → 44 (`049`), one loadout.
-> Meliadoul Tengille joins permanently AFTER this battle.
+Planned v2 redesign (docs-only in this pass): keep the local ENTD reality and make the fight a **status
+Lucavi capstone with a dense undead screen but a real boss-focus lane**. The player should resist/cleanse
+Zalera's curses, use Holy/Phoenix Down/Seal Evil to manage the dead, and focus the Death Seraph before
+the end of the Limberry chain collapses into item/status debt.
+
+> Data-layer fields are known for entry 457, but final implementation still needs a fresh dump/diff and
+> in-game verification of slot 0 and slot 7 behavior. This pass updates documentation only.
+> LIMBERRY CHAIN: 42 (`047`) → 43 (`048`) → 44 (`049`), one loadout.
+
+## Design Goal
+
+```text
+Make Limberry Undercroft the chain capstone: Zalera is the single visible mass-status engine, the undead
+guard creates action-economy and permakill pressure, and the player must keep enough units acting to
+burst the Lucavi. The fight is severe, but never an unavoidable Stop/Doom/Confuse lock, never a guest-AI
+failure, and never a reward path that depends on Steal or Meliadoul's join gear.
+```
+
+No active guest is expected in the playable battle. Slot 7 must be treated as join/post-battle data. If
+implementation or playtest proves Meliadoul is active, she must be player-controlled in NG++.
 
 ## Original Battle
 
 Objective:
 
 ```text
-Defeat Zalera!   (the third Lucavi — defeating Zalera ends the battle)
+Defeat Zalera!   (defeating Zalera ends the battle)
 ```
 
 Player deployment:
 
 ```text
-Up to 5 units, including Ramza. No guests. NO outfitter access (chain 3/3 capstone).
+Up to 5 units, including Ramza. No active guests expected. NO outfitter access (chain 3/3 capstone).
 ```
 
-Original enemy composition (verified via Game8, Battle 44):
+Public-guide enemy composition:
 
 ```text
-Zalera (Death Seraph)   (BOSS — Lucavi; continuous MASS STATUS magic)
-2x Knight (undead)      (undead front-line)
-1x Skeleton             (undead)
-1x Bonesnatch           (undead)
-1x Skeletal Fiend       (undead)
+Zalera (Death Seraph)   (Lucavi boss; mass status)
+2x undead Knight        (undead screen)
+Skeleton / Bonesnatch / Skeletal Fiend
+```
+
+Local ENTD correction:
+
+```text
+The embedded data exposes a denser undead guard than the public guide lists:
+  Zalera + two job-61 undead/fixed knight-like monster bodies + five skeleton-family undead monsters.
+
+Design consequence: preserve the local roster, but positioning/scripting must leave at least one
+boss-focus lane. The undead are a screen and resource tax, not mandatory full cleanup before Zalera.
 ```
 
 Public walkthrough details:
 
 ```text
-Recommended level: ~60.  Difficulty: 3/5 stars.  Deploy up to 5.  NO resupply (Limberry chain 3/3).
-Win: "Defeat Zalera!" (his death ends it).  Undercroft / graveyard (underground) terrain.
-THE THREAT — ZALERA, the status Lucavi: he "continuously casts status ailment spells," hitting MULTIPLE
-  party members with STOP, DOOM, SLEEP, CONFUSE, TOAD (Confuseja called out). This mass-status spam is
-  the whole danger — NOT raw damage.
-ESCORT: 2 undead Knights + Skeleton + Bonesnatch + Skeletal Fiend — an all-UNDEAD guard (reraise; weak
-  to Holy / Phoenix Down).
-Lower star rating (3/5) than the Gate/Keep (5/5): predictable undead + a single status source you can
-  answer with resist/cleanse and by bursting Zalera.
-Rewards: 41,900 Gil; buried (Gastrophetes, Obelisk, Eight-Fluted Pole). Meliadoul joins after.
+Recommended level: ~60. Difficulty: 3/5 stars. Deploy up to 5. No resupply.
+Zalera repeatedly casts mass status such as Stop, Doom, Sleep, Confuse, and Toad. The guard is undead,
+so Phoenix Down, Holy, and Seal Evil style answers matter. Meliadoul joins after the battle.
+Buried map treasure includes Gastrophetes, Obelisk, and Eight-Fluted Pole.
 ```
 
 Design reading:
 
-The Undercroft is **the status-Lucavi capstone** of the Limberry gauntlet — the third Lucavi of the
-mod (after Cúchulainn in Ch2 and Belias/Velius in Ch3), and a deliberate **mechanical contrast** to
-them: where Velius (`034`) was mass-AoE *damage*, Zalera is mass-*status* — Stop, Doom, Sleep, Confuse,
-Toad raining on the party. Its identity is **a status-survival boss fight**: ward and cleanse the
-ailments, keep enough units acting, and **burst the Death Seraph** before his status spam unravels your
-formation, all while an all-undead guard (that reraises) screens him. The 3/5★ rating reflects that the
-answers are clear (status-resist gear, Esuna/Remedy, Holy/PD on the undead, focus the boss) — it's the
-*exhale* after the brutal Keep, but still a Lucavi.
+The Undercroft is **the status-Lucavi capstone** of Limberry. Gate was a flee race; Keep was a parry
+race; Undercroft is the moment where the player must prove their chain loadout can still function while
+Zalera attacks action economy directly. The undead guard matters because killing is not clean unless
+the player spends the right actions, but the tactical lesson is still boss focus: do not get hypnotized
+by the screen while the Death Seraph keeps rolling status.
 
-For New Game++ the identity must stay: **a status-Lucavi capstone — survive and cleanse Zalera's ONE
-telegraphed mass-status source while permakilling his undead guard, and burst him to win — on no
-resupply; with the status kept resistable and non-locking (no unavoidable party-wide Stop), and a
-Tier-A status-warding drop on his death.**
+For New Game++ the identity must stay: **resist, cleanse, permakill selectively, and burst Zalera**.
 
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Zalera (boss) + 2 undead Knight + Skeleton + Bonesnatch + Skeletal Fiend, + player slots.
-  NO outfitter (chain 3/3).
-Keep win = "Defeat Zalera" (his death ends it) + the undercroft geometry + every ADD flagged UNDEAD
-  (reraise; Holy/PD weakness).
-Keep Zalera's MASS-STATUS identity BUT constrain it (below): ONE telegraphed source, resistable,
-  cleansable, NON-LOCKING (no chained party-wide Stop/Doom).
-This is the Lucavi spike of the chain: Zalera 105, undead adds 103. ONE Tier-A rare on Zalera.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-Leave the buried map treasure (Gastrophetes, Obelisk, etc.) as-is — map loot. Meliadoul recruits after.
+CONFIRMED:
+- Entry 457 is the playable Limberry Undercroft battle data.
+- Slot 1 is Zalera, level 105, no normal equipment, reward payload Aegis Shield.
+- Slot 2 carries Zeus Mace as reward payload.
+- Slots 2/3 are undead/fixed monster-type knight bodies, not editable full human Knight kits.
+- Slots 4/5/6/8/9 are skeleton-family undead monsters.
+- Slot 7 is a Meliadoul join/post-battle record in the data and should not be used as a guest-AI check.
+- No active guest is expected from the public battle shape.
+- Reward ledger maps this battle to Aegis Shield + Zeus Mace guaranteed spoils.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- In-game verify whether slot 0 Elmdor and slot 7 Meliadoul are active, hidden, or join/script records.
+- If slot 7 is active, set player control per global guest rule.
+- Confirm Zalera's status cadence allows cleanse/resist windows and does not chain-lock the party.
+- Confirm undead/reraise behavior and Phoenix Down/Holy/Seal Evil answers.
+- Confirm the map has or can preserve a boss-focus lane through the dense undead screen.
+- Confirm Aegis Shield + Zeus Mace land as guaranteed spoils without using Meliadoul join gear.
+- Preserve buried map treasure as vanilla map loot.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-Zalera / Death Seraph id   (TBD - verify; Lucavi boss)
-Knight job id              (TBD - verify; undead-flagged here)
-Skeleton / Bonesnatch / Skeletal Fiend ids (TBD - verify; undead monsters)
+Headline engine: Zalera's mass-status Lucavi pressure.
+Supporting roles:
+  - Undead/fixed knight-like bodies create the first screen and punish careless physical routing.
+  - Skeleton-family undead bodies widen the screen and tax permakill resources.
+  - Slot 7 Meliadoul is not a difficulty lever; she is join/post-battle data unless proven active.
+
+WHY: this is the Limberry capstone. The enemy party can be dense and punishing, but it must remain one
+readable puzzle: stop the status engine while managing undead bodies.
+
+CONSTRAINTS:
+  - Zalera is the one mass-status source.
+  - Status must be resistable, cleansable, and non-locking.
+  - Undead bodies must not seal every route to the boss.
+  - No extra support caster, healer, or additional status engine.
+  - No fake equipment on Zalera's no-equip Lucavi slot.
+  - No guest AI survival test.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Sanctioned Exceptions
 
 ```text
-CHANGE: NO new generic caste. The escalation is the BOSS — Zalera, the third Lucavi, a MASS-STATUS demon
-  (distinct from Velius's mass-AoE-damage at 034). His all-undead guard reprises the reraise puzzle.
-WHY: the fight's identity is already "survive the status demon and burst him through an undead screen."
-  The faithful Ch4 escalation is a NEW FLAVOR of Lucavi (status instead of damage) — not a second bolt-on
-  mechanic. The mass-status survival IS the one new demand vs the Keep's parry race.
-CONSTRAINTS (carry Lucavi precedent 034 + the boss mass-status cap, and the no-hard-lock rule):
-  - Zalera is the ONE mass-status source. Effects (Stop/Doom/Sleep/Confuse/Toad) must be RESISTABLE
-    (status-resist gear) and CLEANSABLE (Esuna/Remedy), and CANNOT chain into a party-wide lock — he may
-    not perma-Stop/Doom the whole squad. DOOM is a countdown the player can race/cleanse, not instant death.
-  - Telegraphed casts (normal cadence), spaceable AoE — survivable for a prepared party WITHOUT blanket
-    immunity (mirror the Gate's balanced-build philosophy, 047).
-  - Undead adds: reraise preserved AS counterplay (Holy / Phoenix Down / Seal Evil), per 032/046.
-WHAT IS NOT CHANGED: the "defeat Zalera to win" shape, the all-undead guard, and the undercroft remain.
+LUCAVI MASS STATUS:
+  Allowed as Zalera's signature. Guardrail: visible, resistable, cleansable, and non-locking. Doom is a
+  race-able countdown; Stop/Sleep/Confuse/Toad must never become an unavoidable party-wide chain lock.
+
+UNDEAD RERAISE / PERMAKILL:
+  Allowed as the guard's identity. The player answers with Phoenix Down, Holy, Seal Evil, or selective
+  focus fire while downed. The undead are not all mandatory kills because Zalera is the win condition.
+
+DENSE LOCAL ENTD ROSTER:
+  Allowed because the embedded data proves more undead slots than the public guide lists. Guardrail:
+  preserve or create at least one boss-focus lane.
+
+JOIN/POST-BATTLE MELIADOUL RECORD:
+  Preserve the slot without making guest AI part of the challenge. If she appears active in battle,
+  player control is mandatory.
 ```
 
-## Sanctioned exceptions (carried precedents)
+## Rare/reward handling
 
 ```text
-LUCAVI MASS-STATUS (Zalera) — allowed as his identity BUT the ONE source, resistable + cleansable +
-  NON-LOCKING (no chained party-wide Stop/Doom); telegraphed, spaceable; Doom = a race-able countdown.
-  This is the boss mass-status cap (034) applied to a status Lucavi. NO hard lock.
-UNDEAD RERAISE (the guard) — preserved as mechanic AND counterplay (Holy / PD / Seal Evil), per 032/046.
-LUCAVI SPIKE — Zalera at 105 (the chain's top band), consistent with Velius (034). One spike, not a wall.
+Guaranteed spoils for entry 457: AEGIS SHIELD + ZEUS MACE.
+These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
+
+COMBAT ROLE:
+  - Zalera cannot equip normal gear (`eq=255`), so Aegis Shield is reward payload only.
+  - Zeus Mace is reward payload on the undead screen, not a required active caster weapon.
+  - Meliadoul's join gear is not the canonical reward path.
+
+PRESERVE:
+  - Buried map treasure remains vanilla map loot.
+  - Slot 7 join gear remains a separate recruitment/script concern.
 ```
 
-## Boss rare loot
+## Proposed Composition (New Game++ Limberry Undercroft v2)
 
-```text
-ZALERA (boss, DIES here) drops/carries ONE Tier-A rare: AEGIS SHIELD (best magic-evade + status-ward
-  shield below the Tier-S shields).
-WHY IT FITS: the demon who drowns you in status magic drops the shield that WARDS magic and status —
-  a thematic, identity-true reward and a real prize. It is the best non-ultimate shield, a clear Tier-A.
-TIER: A (mid-Chapter-4 best non-ultimate). NOT Tier-S: Escutcheon (best phys-evade shield) stays
-  reserved for the endgame (47-53); Genji Shield is Elmdor-set themed.
-He DIES here (win = defeat Zalera), so the rare pays out — consistent with "retreat/flee = no drop."
-The undead guard are monster/undead bodies (no boss loot). Buried map treasure stays as-is.
-```
+Keep the local roster and levels. The redesign is positioning/guardrail clarity: dense undead screen,
+one status engine, and at least one route to focus Zalera.
 
-## Proposed Composition (New Game++ Limberry Undercroft v1)
+| Slot | Role | Unit type | Level | Purpose |
+|------|------|-----------|-------|---------|
+| s1 | Boss / objective | Zalera, Death Seraph Lucavi | `105` | Single mass-status engine; defeat ends fight; Aegis Shield spoil. |
+| s2 | Screen / reward payload | Job 61 undead/fixed knight-like monster | `103` | First undead body; Zeus Mace spoil; screens a direct route. |
+| s3 | Screen | Job 61 undead/fixed knight-like monster | `103` | Second undead body; forces route choice. |
+| s4 | Undead pressure | Skeleton-family monster job 111 | `103` | Reraise/permakill action tax. |
+| s5 | Undead pressure | Skeleton-family monster job 110 | `103` | Second skeleton-family pressure body. |
+| s6 | Undead pressure | Skeleton-family monster job 109 | `103` | Lower-route undead body. |
+| s8 | Undead pressure | Skeleton-family monster job 111 | `103` | Outer screen body; must not seal boss access. |
+| s9 | Undead pressure | Skeleton-family monster job 111 | `103` | Outer screen body; cleanup risk control. |
 
-Keep the count (6) and the status-Lucavi capstone shape; Zalera the spike, undead guard the screen.
-Zalera `105`; undead adds `103`. No resupply (chain 3/3) — tune status to be survivable on one loadout.
+Non-combat/script records to preserve and verify:
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Zalera (BOSS) | Death Seraph (Lucavi) | `105` | The status spike; ONE mass-status source; Aegis Shield drop. |
-| n | Knight (undead) | Knight | `103` | Undead front-line; reraises; screens Zalera. |
-| n | Knight (undead) | Knight | `103` | Second undead body; Rend (≤2 cap — these two only). |
-| n | Skeleton (undead) | Skeleton | `103` | Undead body; reraise pressure. |
-| n | Bonesnatch (undead) | Bonesnatch | `103` | Undead body; status bite (minor, resistable). |
-| n | Skeletal Fiend (undead) | Skeletal Fiend | `103` | Undead body; the heaviest skeleton. |
+| Slot | Record | Handling |
+|------|--------|----------|
+| s0 | Elmdor cameo/script record | Preserve untouched unless playtest proves active; if active, redesign separately before implementation. |
+| s7 | Meliadoul join/post-battle record | Preserve as join data; if active, make player-controlled in NG++. |
 
 Reasoning:
 
-The faithful move is to **make Zalera's status the whole puzzle and keep it fair**. At `105` he is the
-chain's spike, but his danger is mass status — constrained to one telegraphed, resistable, cleansable,
-non-locking source so a prepared party survives without blanket immunity and can burst him. The
-all-undead guard (`103`) reprises the reraise puzzle (Holy/PD permakill) as the screen. Because the win
-is *defeat Zalera*, the line is: ward/cleanse the status, permakill or ignore the undead, and focus the
-Seraph. No resupply means the status must be survivable on one loadout (no guaranteed party-wipe combo).
-His death drops the Aegis Shield (Tier-A), and Meliadoul joins after.
+The accepted design is **v2 status-Lucavi with undead screen** after one iteration. The first simulation
+flagged the dense local undead roster as too much if the bodies formed a sealed wall. The revised design
+keeps the data-faithful roster but requires a boss-focus lane: the player may need to permakill or push
+through part of the screen, but does not have to clear every undead body while Zalera rolls status.
 
-## Builds (Chapter-4 boss quality; death-Lucavi crypt flavor)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+Rejected variants:
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+- Hard-lock Death Seraph: turns mass status into unavoidable lost turns.
+- Living support engine: adds a second puzzle behind Zalera.
+- Clear-all undead slog: breaks the boss focus objective.
+- Active AI Meliadoul risk: uses guest AI as a skill check.
+- Fake-equipped Zalera reward: violates no-equip Lucavi data.
+- Steal-or-join reward: contradicts guaranteed spoils.
+- Downplayed status exhale: loses the chain capstone.
+- Overlevelled crypt: replaces puzzle pressure with raw stats.
+- Extra undead body: adds cleanup tax to an already dense roster.
+- Sealed undead wall: ignores the required boss-focus lane.
 ```
 
-### Zalera (Lv 105) — BOSS (Death Seraph Lucavi)
+## Builds (Lucavi + monster/fixed undead screen)
 
 ```text
-Job: Death Seraph / Zalera (id TBD)   JobLevel: 8   Primary: status magic (Stop/Doom/Sleep/Confuse/Toad)
-  — ONE source, telegraphed, resistable, cleansable, NON-LOCKING (no chained party-wide lock); Doom is
-  a race-able countdown. Secondary: light demon attack.
-Reaction: (anti-burst) Counter Magic / MA-up (id TBD)   Support: MA-boost (id TBD)
-  Movement: Movement +1 (486) / float (id TBD)
-Body/accessory: innate Lucavi (no normal equip) — drops AEGIS SHIELD (Tier-A) on death.
+Zalera:
+  - Job: Death Seraph / Lucavi (job 62), JobLevel 8.
+  - Preserve no-equipment Lucavi slot (`eq=255`).
+  - Preserve mass-status identity through secondary/status kit.
+  - Status is the one headline engine: visible, resistable, cleansable, non-locking.
+  - Reward payload: Aegis Shield via spoils, not equipped gear.
+
+Job 61 undead/fixed knight-like bodies:
+  - Type is monster in the dump; equipment is fixed/no normal gear.
+  - Preserve undead/fixed body identity and level 103.
+  - Do not promise complete human Knight equipment or ability slots unless future data proves these are
+    editable active humans instead of monster/fixed bodies.
+  - Slot 2 carries Zeus Mace as reward payload only.
+
+Skeleton-family monsters:
+  - Preserve innate undead monster kits and level 103.
+  - No human equipment, secondary, reaction, support, or movement planning.
+  - Use placement to create pressure without sealing the boss.
+
+Meliadoul slot:
+  - Treat as join/post-battle record.
+  - If active, set player control and document her as an active guest before implementation.
 ```
-
-Role: the status spike and objective — ward/cleanse his ailments and burst him; do NOT let him
-perma-lock the party. His death pays the Aegis Shield.
-
-### Undead guard x5 (Lv 103) — reraising screen
-
-```text
-Knights (undead, id TBD): JobLevel 8; Rend on the 2 Knights ONLY (≤2-break-source cap); UNDEAD flag ON.
-  Reaction: Counter (442)   Support: Attack Boost (465)   Body: shop heavy armor   Right: knight sword.
-Skeleton / Bonesnatch / Skeletal Fiend (monsters, ids TBD): UNDEAD flag ON; innate skeleton kit
-  (claw / status bite — minor, resistable). No equipment slots. Set LEVEL only.
-All five reraise (Holy / Phoenix Down / Seal Evil permakill them).
-```
-
-Role: the undead screen between the player and Zalera; reraise pressure answered by Holy/PD.
 
 ## Positioning Plan
 
 ```text
-Undercroft/graveyard: Zalera starts central/back with mass-status sightlines onto the party (telegraphed,
-  spaceable), the five undead bodies forming the screen the player must permakill or push through.
-Preserve the undercroft geometry + every UNDEAD flag + reraise; keep Zalera's status ONE source and
-  spaceable (the player can break line / spread to limit the multi-target hits).
-Tune for NO resupply: status survivable on one loadout (resist + cleanse), no party-wide lock, Doom
-  race-able. Zalera the lone 105 spike; undead at 103.
+Undercroft: Zalera starts central/back with clear mass-status sightlines. Undead bodies form a dense
+screen in two clusters, but at least one route must let a prepared party reach or target Zalera without
+full undead cleanup.
+
+The player should see three valid lines:
+  1. Resist/cleanse enough status to keep turns.
+  2. Permakill selected undead bodies that block the boss-focus lane.
+  3. Commit burst onto Zalera before Doom/status/item debt overwhelms the chain.
 ```
 
-The crypt should say: "the death-angel buries your will under a tide of curses — ward your minds, burn
-the bones for good, and cut him down before the silence takes you."
+The crypt should say: "the dead crowd the way while the Seraph steals your turns; keep your people
+acting, open one lane, and end the status engine."
+
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-049-limberry-undercroft/
+  assumptions.md
+  simulate.py
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic status-Lucavi and chain-tax model over the first six rounds.
+It scores pressure, status clarity, answerability, chain tax, hard-lock risk, undead cleanup risk,
+reward correctness, scripting fidelity, and guest safety. It does not simulate exact FFT status formulas.
+```
+
+Result summary:
+
+| Candidate | Pressure | Status clarity | Answer | Chain tax | Hard lock | Cleanup | Reward | Scripting | Guest | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| v2 status-Lucavi with undead screen | 301 | 94 | 93 | 60 | 14 | 28 | 100 | 100 | 100 | **Accepted** |
+| hard-lock Death Seraph | 355 | 68 | 61 | 72 | 66 | 28 | 100 | 100 | 100 | Rejected: hard lock |
+| living support engine | 329 | 80 | 79 | 70 | 26 | 36 | 100 | 100 | 100 | Rejected: second engine |
+| clear-all undead slog | 349 | 94 | 48 | 70 | 14 | 62 | 100 | 60 | 100 | Rejected: breaks objective |
+| active AI Meliadoul risk | 301 | 94 | 93 | 60 | 14 | 28 | 100 | 100 | 30 | Rejected: guest AI |
+| fake-equipped Zalera reward | 301 | 94 | 93 | 60 | 14 | 28 | 75 | 75 | 100 | Rejected: no-equip violation |
+| steal-or-join reward | 301 | 94 | 93 | 60 | 14 | 28 | 21 | 100 | 100 | Rejected: reward policy |
+| downplayed status exhale | 263 | 58 | 93 | 46 | 14 | 28 | 100 | 100 | 100 | Rejected: loses capstone |
+| overlevelled crypt | 331 | 94 | 83 | 68 | 14 | 28 | 100 | 100 | 100 | Rejected: raw levels |
+| extra undead body | 314 | 94 | 85 | 66 | 14 | 40 | 100 | 100 | 100 | Rejected: cleanup tax |
+| sealed undead wall | 325 | 94 | 93 | 60 | 14 | 34 | 100 | 100 | 100 | Rejected: no focus lane |
+
+Iteration decision:
+
+```text
+ACCEPT v2 status-Lucavi with undead screen.
+Iteration 1 rejected the dense roster as too high-pressure if the undead form a sealed wall. Iteration 2
+keeps the local ENTD roster but requires at least one boss-focus lane. Zalera remains the sole headline
+engine, rewards stay guaranteed, and Meliadoul's slot is never a guest-AI skill check.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Limberry Undercroft `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Zalera + 2 undead Knight + Skeleton + Bonesnatch + Skeletal Fiend + slots.
-- [ ] Keep win = "Defeat Zalera"; keep the undercroft geometry + all ADDS undead (reraise, Holy/PD weak).
-- [ ] Set Zalera `105` as the ONE mass-status source — resistable, cleansable, NON-LOCKING; Doom race-able.
-- [ ] Equip the drop: AEGIS SHIELD (Tier-A) on Zalera's death.
-- [ ] Limit Rend to the 2 undead Knights; keep skeleton status bites minor/resistable.
-- [ ] Set undead adds `103`; JobLevel `8` on job slots.
-- [ ] Tune status lethality to ONE loadout (chain 3/3, no resupply) — no guaranteed party-wipe combo.
-- [ ] Patch via the correct layer; keep the diff inside the Undercroft window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify status caps + undead + drop.
-- [ ] Install mod, test from a New Game+ save (chain-realistic resources); confirm no party-wide lock,
-      Doom is survivable, undead permakillable, Zalera burst-able, Aegis Shield drops, Meliadoul recruits.
+- [ ] Re-dump entry 457 and verify slot order, levels, spoils bytes, and slot 7 behavior.
+- [ ] Preserve win condition: defeating Zalera ends the fight.
+- [ ] Keep Zalera at `105`; undead guard at `103`.
+- [ ] Preserve Zalera as the single mass-status source; no hard-lock cadence.
+- [ ] Preserve undead/reraise identity and Phoenix Down/Holy/Seal Evil answers.
+- [ ] Preserve or create at least one boss-focus lane through the undead screen.
+- [ ] Do not fake-equip Aegis Shield or Zeus Mace on no-equip/fixed slots.
+- [ ] Author/verify spoils: Aegis Shield + Zeus Mace, guaranteed and within the 3-item cap.
+- [ ] Verify slot 7 Meliadoul is not active; if active, make her player-controlled and update this doc.
+- [ ] Preserve buried map treasure as map treasure.
+- [ ] Test as Limberry chain 3/3 with resources carried from `047` and `048`.
 
 ## Test Questions
 
-- Is Zalera's mass status a FAIR survival puzzle (one source, resistable, cleansable, NON-LOCKING) —
-  never an unavoidable party-wide Stop/Doom lock, with Doom race-able?
-- Is the fight survivable WITHOUT blanket status immunity (balanced-build philosophy, like the Gate)?
-- Do the undead adds reraise with the usual answers (Holy / PD / Seal Evil), as a screen not a wall?
-- Does "Defeat Zalera ends it" keep it a focus race; does his death drop the Tier-A Aegis Shield?
-- Is Zalera the lone `105` spike (undead `103`) — a Lucavi capstone, not an over-wall — and survivable
-  on ONE loadout (no resupply)?
-- Does it read as the death-angel crypt and the climax of the Limberry gauntlet (with Meliadoul joining)?
+- Does Zalera's status cadence allow cleanse/resist windows and avoid unavoidable party-wide lock?
+- Can the player reach or target Zalera without clearing every undead body?
+- Do undead bodies force real Phoenix Down/Holy/Seal Evil decisions without becoming a cleanup slog?
+- Is Meliadoul inactive/join-only, or controllable if she appears active?
+- Do Aegis Shield + Zeus Mace appear as guaranteed spoils without Steal or join-gear dependency?
+- Does the full Limberry chain feel like Gate race -> Keep parry -> Undercroft status spike?
 
 ## Sources
 
-- Game8, "Limberry Castle Undercroft Walkthrough (Battle 44)": roster (Zalera boss + 2 undead Knight +
-  Skeleton + Bonesnatch + Skeletal Fiend), objective "Defeat Zalera!", rec ~60, 3/5 stars, deploy 5,
-  Zalera's mass status (Stop/Doom/Sleep/Confuse/Toad, Confuseja), no resupply (Limberry chain), buried
-  treasure (Gastrophetes, Obelisk), Meliadoul recruits after.
+- Game8, "Limberry Castle Undercroft Walkthrough (Battle 44)": public roster, objective, Zalera status
+  identity, no-resupply chain, buried treasure, and Meliadoul recruitment context.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553204
 - Final Fantasy Wiki, "Zalera" / "Limberry Castle": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Zalera
-- Local: `037-chapter-4-overview.md` (rules), `034-riovanes-castle-keep.md` (Velius — the Ch3 Lucavi /
-  boss mass-effect cap precedent), `046-poeskas-lake.md` (undead reraise handling),
-  `047`/`048` (Limberry chain 1-2).
-```
-</content>
+- Local: `037-chapter-4-overview.md`, `046-poeskas-lake.md`, `047-limberry-gate.md`,
+  `048-limberry-keep.md`, `chapter-4-rewards-implementation.md`, `spoils-of-war-reward-system.md`.

@@ -1,16 +1,29 @@
-# 054 - Monastery Vaults, Fourth Level (Orbonne descent / Murond Death City)
+# 054 - Monastery Vaults, Fourth Level (Endgame Gauntlet 1/5)
 
-Status: designed (not yet implemented)
-Chapter: 4 — "In the Name of Love"
-Battle order: Battle 49 (ENDGAME GAUNTLET 1 of 5 — NO resupply across 49→50→51→52→53)
+Status: redesigned (documentation only; not implemented in game data by this task)
+Chapter: 4 - "In the Name of Love"
+Battle order: Battle 49 (ENDGAME GAUNTLET 1 of 5 - no resupply across 054 -> 055 -> 056 -> 057 -> 058)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD: `entd4` global entry `435`
+Local slot: `051`
+Simulation artifact: `tmp/fft-level-design-054-monastery-vaults-fourth-level/`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. ENDGAME GAUNTLET: 49 (`054`) → 50 (`055`) → 51 (`056`) →
-> 52 (`057`) → 53 (`058`), ONE loadout, no outfitter — the longest sustained stretch in the game.
+> Docs-only redesign note: this document is the intended NG++ level design. It does not change the
+> embedded ENTD, scripts, binaries, or patch code. Implementation must later patch entry `435` and
+> preserve the event behavior verified below.
+
+## Gate Answers / Constraints
+
+```text
+Scope: redesign battle doc 054 only; no game data or code changes.
+Allowed changes in design: active enemy job/kit/level/gear/ability plan, placement, and test criteria.
+Chapter target: Chapter 4 broken-but-readable puzzle, but this specific map is the light opener.
+Must preserve: all-generic vault guard feeling, defeat-all objective, Rend/gear-preservation lesson,
+  Loffrey's cutscene exit, cramped vault terrain, and no-resupply gauntlet context.
+Guests: no active guest. If future testing discovers any active guest/NPC, it must be player-controlled
+  in NG+ and never used as a skill check.
+Reward rule: no usable rewards inside 054-058. This fight has no boss rare and no designed spoil.
+```
 
 ## Original Battle
 
@@ -23,220 +36,248 @@ Defeat all enemies!
 Player deployment:
 
 ```text
-Up to 5 units, including Ramza. No outfitter (gauntlet 1/5 — last chance to prep was BEFORE Battle 49).
+Up to 5 units, including Ramza. No outfitter: this is the first fight after the point of no return.
 ```
 
-Original enemy composition (verified via Game8, Battle 49):
+Original enemy composition:
 
 ```text
-3x Knight   (equipment-break — Rend skills strip weapons/armor)
-2x Monk      (unarmed melee; Chakra sustain / revive)
-1x Archer    (ranged chip / elevation)
+Loffrey appears as a scripted cutscene unit and exits before the fight.
+3x Knight
+2x Monk
+1x Archer
 ```
 
-> No named boss — a pure all-generic skirmish.
-
-Public walkthrough details:
-
-```text
-Recommended level: 60+.  Difficulty: 1/5 stars (the LIGHTEST of the final five — the gauntlet OPENER).
-Deploy up to 5.  Win: defeat all enemies.
-TERRAIN: the Monastery Vaults — the underground stone descent beneath Orbonne (cramped vault corridors).
-THE THREAT — the KNIGHTS' equipment-break (REND): they can strip your weapons and armor. The
-  walkthrough's tip: equip SAFEGUARD to protect your gear. The danger is CONTEXT — this is the FIRST of
-  FIVE consecutive no-resupply fights, so gear lost HERE cascades through the entire gauntlet.
-SUPPORT: two Monks (martial bodies, Chakra/revive sustain); one Archer (ranged chip from elevation).
-Spoils: 32,800 Gil; buried treasure (four spots — Elixirs). No rare gear.
-```
-
-Design reading:
-
-The Vaults Fourth Level is **the endgame gauntlet's deliberately light opener** — a pure all-generic
-skirmish (3 Knight + 2 Monk + 1 Archer) whose whole point is **resource discipline at the start of a
-five-battle no-resupply marathon**. Its identity is **a gear-preservation gate**: the Knights' **Rend**
-equipment-break can strip your loadout, and because there's **no outfitter** for the next five fights,
-losing a weapon or armor here **cascades** into the boss fights to come. It's 1/5★ by design — a warm-up
-that tests whether the player came prepared (Safeguard / Maintenance) before the descent turns deadly.
-
-For New Game++ the identity must stay: **the light, all-generic gauntlet opener whose one demand is
-don't-lose-gear-to-Rend at the start of the no-resupply marathon.** It should escalate only modestly
-(endgame-generic strength + a touch of tempo) — staying clearly LIGHTER than the bosses that follow
-(50–53). No named boss → no rare; preserve the buried Elixirs.
+The vanilla role is not a boss test. It is the gauntlet's first breath: an all-generic guard skirmish
+whose real danger is context. The Knights threaten equipment breaks at the exact moment the player is
+locked into five consecutive battles with no shop, no outfitter, and no chance to repair a stripped
+loadout. The lesson is simple and important: preserve your gear before the real bosses begin.
 
 ## Local Data Confirmed
 
-```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 3 Knight + 2 Monk + 1 Archer, no named boss. NO outfitter (gauntlet 1/5).
-Keep the REND equipment-break threat (the wrinkle) — but CAP the sources (see Job Escalation) so it is
-  answerable, not a loadout-wipe at the gauntlet's start.
-Confirm whether OverrideEntryData carries Level, or leaves it at -1.
-This is a no-boss, no-rare OPENER: levels 101-103; keep it LIGHTER than 50-53.
-Leave the four buried Elixir spots as-is — existing loot.
+Dump command:
+
+```bash
+python tools/entd_tool.py dump-entry --input src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin --entry 435 --include-empty
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Confirmed active data:
+
+| Slot | Status | Job | Level | JL | Secondary | Reaction | Support | Move | Equipment ids | Notes |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | Cutscene / exits | 37 | 1 | 4 | 61 | 447 | 466 | 492 | 153,181,211,33,136 | Loffrey. Preserve as non-combat event unit. |
+| 1 | Active | 76 | 102 | 8 | 254 | 442 | 465 | 486 | 154,182,218,254,139 | Knight body. |
+| 2 | Active | 76 | 102 | 8 | 254 | 442 | 465 | 486 | 154,182,218,254,139 | Knight body. |
+| 3 | Active | 76 | 102 | 8 | 254 | 442 | 465 | 486 | 154,182,218,254,139 | Knight body. |
+| 4 | Active | 78 | 102 | 8 | 0 | 442 | 465 | 486 | 163,195,218,254,254 | Monk body. |
+| 5 | Active | 78 | 102 | 8 | 0 | 442 | 465 | 486 | 163,195,218,254,254 | Monk body. |
+| 6 | Active | 77 | 102 | 8 | 5 | 449 | 469 | 486 | 168,198,218,87,254 | Archer body. |
+
+Data implications:
 
 ```text
-Knight job id    (TBD - verify; Rend equipment-break)
-Monk job id      (TBD - verify; Chakra / revive sustain)
-Archer job id    (TBD - verify)
-Ninja job id     (TBD - verify; the tempo swap — see Job Escalation)
+- Entry 435 is confirmed moddable through ENTD direct edits.
+- Slot 0 must not become an active boss. Loffrey's real fight is 055.
+- The active roster is exactly 6 generics. Preserve the count and all-generic opener identity.
+- Current active humans have full equipment and reaction/support/movement, but secondaries are not yet
+  intentionally designed for the Chapter 4 rule. The redesign requires complete intentional kits.
+- Current data still has the Archer; the proposed redesign swaps only that active slot to Ninja.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Design Goal
+
+Turn the old 1/5 warm-up into a readable NG++ opener: still the lightest fight of the final stretch,
+but no longer free for a tuned party. The fight should ask:
 
 ```text
-CHANGE: keep 3 Knight + 2 Monk, but SWAP the lone Archer → a NINJA (fast dual-wield flanker). Bump the
-  whole skirmish to endgame-generic strength (levels 101-103). Net feel: a 1/5★ warm-up becomes a tight
-  ~2/5★ opener — still clearly the LIGHTEST of the final five, but no longer trivial at endgame levels.
-WHY: the chapter wants more challenge via jobs without breaking strategy. The Ninja adds endgame TEMPO
-  (a fast flanker that punishes a sloppy formation) while the Knights' Rend stays the central wrinkle.
-  Keeping it light is deliberate — it's the gauntlet's gear-preservation gate, not a boss fight.
-CONSTRAINTS (carried): REND CAPPED — only 2 of the 3 Knights carry the break command (2 sources,
-  telegraphed), so Safeguard / Maintenance / Steal-Weapon can answer it; breaks are recoverable, NOT a
-  loadout-wipe (044 Sluice, 050 Eagrose stair-wall precedents — Rend capped even with 3+ Knights). Monk
-  Chakra/revive = sustain, race-able. Ninja = physical tempo, no status lock.
-WHAT IS NOT CHANGED: the all-generic shape, the Rend equipment-break wrinkle, the "defeat all" objective,
-  and the OPENER lightness remain. No named boss, no rare.
+Can you preserve weapons/armor under capped Rend pressure while a fast flanker punishes loose formation,
+without spending too much HP/MP/items before the first real boss at 055?
 ```
 
-## Sanctioned exceptions (carried precedents)
+The headline engine is **gear preservation under capped Rend**. The Ninja is support tempo, not a
+second puzzle. Monks add Chakra-first sustain, not a revive engine. No hard status, no boss, no reward.
 
-```text
-REND EQUIPMENT-BREAK (Knights) — CAPPED at 2 of 3 sources, telegraphed; answer = Safeguard / Maintenance /
-  Steal-Weapon; recoverable, NOT a loadout-wipe (044 / 050 precedents). Context-critical (no resupply).
-MONK CHAKRA / REVIVE — unarmed sustain; race-able (Ch1 precedent).
-NINJA TEMPO (swap) — fast dual-wield flanker; physical, no status lock (045 Mount Germinas precedent).
-```
+## Enemy Party Escalation
 
-## Boss rare loot
-
-```text
-None. No named boss here — no rare boss item (per the Chapter 4 overview tiering). Generics stay
-Chapter-4 endgame shop-tier. The four buried Elixir spots are EXISTING loot — leave as-is.
-(Tier-S items resume on the gauntlet's bosses: Robe of Lords at Vaults 5th / Loffrey, 055.)
-```
-
-## Proposed Composition (New Game++ Vaults Fourth Level v1)
-
-Keep the count (6) and the light-opener feel; swap Archer → Ninja; cap Rend. Endgame-opener band
-`101`–`103`. Knights `102` (Rend carriers `103`); Monks `102`; Ninja `103`.
+Accepted redesign: **v2 capped-Rend tempo opener**.
 
 | Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Knight (Rend) | Knight | `103` | Equipment-break source #1 (capped); the gear-preservation wrinkle. |
-| n | Knight (Rend) | Knight | `103` | Equipment-break source #2 (capped); the second/last break source. |
-| n | Knight | Knight | `102` | Front-line body; NO break command (cap held at 2). |
-| n | Monk | Monk | `102` | Unarmed melee + Chakra/revive sustain. |
-| n | Monk | Monk | `102` | Second Monk; sustain + martial pressure. |
-| n | Ninja | Ninja | `103` | Tempo swap (was Archer); fast dual-wield flanker punishing loose formation. |
+|---:|---|---|---:|---|
+| 0 | Cutscene | Loffrey / Divine Knight | 1 | Exits by script. Do not activate as a combatant. |
+| 1 | Rend carrier | Knight | 103 | Equipment-break source #1; telegraphed gear-preservation test. |
+| 2 | Rend carrier | Knight | 103 | Equipment-break source #2; the last allowed break source. |
+| 3 | Guard body | Knight | 102 | Armored wall without meaningful Rend pressure. |
+| 4 | Sustain body | Monk | 102 | Chakra-first melee sustain; no dedicated revive loop. |
+| 5 | Sustain body | Monk | 102 | Second martial body; pressure and emergency sustain. |
+| 6 | Tempo flanker | Ninja | 103 | Replaces Archer; melee flank tempo with tempered Throw/no high-tier payload. |
 
-Reasoning:
-
-The faithful move is **a light, gear-testing opener that escalates by tempo, not by boss pressure**. The
-two Rend Knights (`103`) keep the equipment-break wrinkle, capped to 2 sources so Safeguard / Steal-
-Weapon can answer it — critical because the next four fights have **no resupply**. The two Monks (`102`)
-bring martial sustain; the **Ninja `103`** (replacing the Archer) adds an endgame flanker so the 1/5★
-warm-up becomes a tight ~2/5★ gate without becoming a boss fight. No rare (no boss); the buried Elixirs
-remain the reward for clearing the vault.
-
-## Builds (Chapter-4 endgame generics; vault-guard flavor)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+Why this works:
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+- Two Rend sources keep the vanilla gear-loss lesson and remain answerable by Safeguard/Maintenance,
+  Steal Weapon, disabling the carriers, or quick focus fire.
+- The third Knight preserves the front wall but must not become a third effective break source.
+- The Archer becomes a Ninja because a late-game Archer is too passive against NG++ builds; the Ninja
+  forces formation discipline without adding hard control.
+- Monk sustain is useful but bounded. This fight must not become a revive-loop slog before the gauntlet
+  bosses start.
+- The fight stays all-generic, defeat-all, and clearly lighter than 055-058.
 ```
 
-### Knight x2 (Lv 103) — Rend carriers (capped)
+## Builds
+
+### Loffrey (slot 0) - cutscene unit
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Primary: Battle Skill (Rend Weapon / Rend Armor — the 2 capped sources)
-Reaction: Reflexes (449)   Support: Defense Boost (id TBD)   Movement: Move +1 (486)
-Head: heavy helm (id TBD)   Body: heavy armor (id TBD)   Accessory: shop accessory (id TBD)
-Right hand: knight sword (id TBD)   Left: shield (id TBD)
-ONLY these two carry the break command — answer with Safeguard / Steal-Weapon. Recoverable.
+Preserve event behavior: enters/exits by script and does not fight.
+Do not turn him into a boss, target, reward carrier, or meaningful source of pressure.
 ```
 
-Role: the equipment-break wrinkle, capped and telegraphed.
-
-### Knight x1 (Lv 102) — front-line body (no break)
+### Knight x2 - capped Rend carriers
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Primary: Battle Skill — NO Rend (cap held at 2).
-Reaction: Reflexes (449)   Support: Defense Boost (id TBD)   Movement: Move +1 (486)
-Right hand: knight sword (id TBD)   Left: shield (id TBD)
+Level: 103
+JobLevel: 8
+Primary: Knight / Battle Skill with Rend Weapon and Rend Armor as the visible threat
+Secondary: Item or another low-impact utility, intentionally set
+Reaction: Counter or Reflexes-tier defensive reaction
+Support: Attack Boost / Defense Boost-tier role fit
+Movement: Move +1
+Gear: complete late-Chapter-4 heavy gear, shop-tier or non-reward role gear only
+Reward: none
 ```
 
-Role: a third armored body without adding a break source.
+Guardrail: only these two may act as real break sources.
 
-### Monk x2 (Lv 102) — martial sustain
+### Knight x1 - front guard without break pressure
 
 ```text
-Job: Monk (id TBD)   JobLevel: 8   Primary: Martial Arts (Chakra / Revive sustain + unarmed hits)
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Move +1 (486)
-Head/Body: martial gear (id TBD)   Accessory: Featherweave Cloak (234)
+Level: 102
+JobLevel: 8
+Primary: Knight body, but implementation must suppress meaningful Rend use through ability selection,
+AI priority, command setup, or a nearby equivalent job if the engine cannot cap Knight skills directly.
+Secondary: Item or Basic Skill-style utility, intentionally set
+Reaction/Support/Movement: complete defensive kit
+Gear: complete heavy gear
+Reward: none
 ```
 
-Role: unarmed melee + Chakra/revive; the skirmish's staying power.
+Guardrail: if all three Knights can reliably Rend, the design fails. The cap of two break sources is
+more important than preserving the third unit's exact command list.
 
-### Ninja (Lv 103) — tempo swap
+### Monk x2 - Chakra-first sustain
 
 ```text
-Job: Ninja (id TBD)   JobLevel: 8   Primary: dual-wield strikes (+ Throw optional)
-Reaction: Reflexes (449)   Support: Dual Wield (id TBD)   Movement: Move +2 (id TBD)
-Right/Left hand: shop ninja blades (id TBD)   Accessory: Featherweave Cloak (234)
+Level: 102
+JobLevel: 8
+Primary: Martial Arts; emphasize Chakra and melee pressure
+Secondary: low-impact utility, no Phoenix Down spam engine
+Reaction: Counter
+Support: Attack Boost
+Movement: Move +1
+Gear: complete martial gear
+Reward: none
 ```
 
-Role: fast flanker (was Archer); punishes loose formation in the vault corridors.
+Guardrail: Monks may keep the skirmish from collapsing instantly, but they should not produce a long
+revive-loop cleanup before 055.
+
+### Ninja x1 - tempered tempo flanker
+
+```text
+Level: 103
+JobLevel: 8
+Primary: Ninja/Throw, but no high-tier Throw payload
+Secondary: Steal, Item, or another utility that does not add status lock
+Reaction: Reflexes
+Support: Attack Boost / Concentration-tier offense, not a second engine
+Movement: Move +2
+Gear: complete shop-tier ninja gear; dual-wield melee pressure
+Reward: none
+```
+
+Guardrail: the Ninja exists to punish loose formation and speed up the opener. It should not become a
+burst-delete unit or hidden reward carrier.
 
 ## Positioning Plan
 
 ```text
-The Monastery Vaults: cramped stone descent / vault corridors beneath Orbonne. Place the 3 Knights as
-  a front wall (the 2 Rend carriers leading), the 2 Monks behind as sustain, and the Ninja on a flank
-  to exploit a stretched party. Keep the corridor chokepoints (they make the Rend Knights a real wall).
-Preserve: the all-generic shape, the Rend wrinkle (capped 2), the "defeat all" objective, and the
-  OPENER lightness (clearly easier than 50-53). No boss, no rare.
+Use the cramped vault corridors. Put the two Rend Knights forward enough that the player sees the gear
+threat immediately. The third Knight anchors the wall. Monks sit behind/adjacent as Chakra-first sustain.
+The Ninja starts on a side route or flank so the party cannot simply turtle behind one frontliner.
 ```
 
-The vault entry should say: "the descent's first guards aren't the danger — losing your blade to a Rend
-here, with five fights and no merchant ahead, is. Bring Safeguard and keep your gear."
+The intended player read is: protect the loadout, isolate one break Knight, keep the Ninja from slipping
+onto casters, and end the guard fight with resources intact.
+
+## Simulation Plan and Results
+
+Artifact:
+
+```text
+tmp/fft-level-design-054-monastery-vaults-fourth-level/
+```
+
+Accepted candidate:
+
+```text
+v2 capped-rend tempo opener
+Pressure: 306
+Gear risk: 54
+Opener lightness: 90.1
+Answerability: 100
+Chain tax: 38
+Roster fidelity: 100
+Reward correctness: 100
+```
+
+Iteration notes:
+
+```text
+- Vanilla Archer screen was rejected as too low-tempo for NG++ endgame.
+- A raw Ninja swap was initially too heavy for an opener, so v2 tempers the Ninja: melee flank pressure,
+  no high-tier Throw payload.
+- Three Rend sources were rejected because they create a gear-loss spiral across the no-resupply chain.
+- Activating Loffrey was rejected because it steals the role of 055 and breaks the all-generic opener.
+- Hard status, extra engines, overleveling, revive-loop sustain, and usable rewards were rejected as
+  unfair chain tax.
+```
+
+Residual risks:
+
+```text
+- Confirm Loffrey exits before combat and cannot be targeted or rewarded.
+- Confirm only two Knights can meaningfully use Rend/break pressure.
+- Confirm the Ninja adds tempo without causing unrecoverable losses before 055.
+- Test 054 immediately into 055; this opener should cost attention, not consume the run.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Vaults Fourth Level `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 3 Knight + 2 Monk + 1 Archer, no named boss.
-- [ ] Swap the Archer slot → Ninja; keep 3 Knight + 2 Monk.
-- [ ] CAP Rend to 2 of 3 Knights (answerable; not a loadout-wipe at the gauntlet's start).
-- [ ] Set levels: Rend Knights & Ninja `103`; third Knight & Monks `102`. JobLevel `8` on all slots.
-- [ ] Patch via the correct layer; keep the diff inside the Vaults Fourth Level window only.
-- [ ] Re-dump and diff; confirm small, intentional changes; verify the roster + Rend cap.
-- [ ] Install mod, test from a New Game+ save; confirm it plays as a LIGHT opener, Rend is answerable,
-      and gear can be preserved into the no-resupply gauntlet.
+- [ ] Preserve entry `435`, slot `0` Loffrey as cutscene exit / non-combat unit.
+- [ ] Keep active enemy count at 6.
+- [ ] Convert the Archer slot (`s6`) to a tempered Ninja, level `103`, complete kit.
+- [ ] Keep two Knight Rend carriers at level `103`.
+- [ ] Keep the third Knight at level `102` and prevent it from becoming a third effective break source.
+- [ ] Keep both Monks level `102`, complete kits, Chakra-first sustain, no revive-loop engine.
+- [ ] Ensure every active human has complete equipment plus intentional secondary/reaction/support/move.
+- [ ] Add no usable rewards, no Tier-A/Tier-S payloads, and no steal-dependent reward hooks.
+- [ ] Re-dump entry `435` after implementation and verify only the intended slot/kit changes.
+- [ ] Playtest `054 -> 055` back-to-back from the point-of-no-return save.
 
 ## Test Questions
 
-- Is it clearly the LIGHTEST of the final five (a ~2/5★ gear-preservation gate, not a boss fight)?
-- Is the Rend equipment-break answerable (capped 2 sources; Safeguard / Steal-Weapon) and recoverable —
-  not a loadout-wipe that cripples the rest of the gauntlet?
-- Does the Ninja add real tempo (punishing a loose formation) without overstepping the opener's role?
-- Is gear-preservation the felt lesson (no resupply ahead)?
-- Is it survivable on ONE loadout as the FIRST of five consecutive no-resupply fights?
-- Does it read as the vault's first guards, not a designed arena?
+- Does the fight still read as the gauntlet's light all-generic opener?
+- Is gear preservation the felt lesson, with Rend capped at two answerable sources?
+- Does the Ninja punish loose formation without turning the opener into a burst wall?
+- Do the Monks add limited sustain without causing a cleanup slog?
+- Is there zero usable reward or rare leak inside the no-resupply gauntlet?
+- Does the party enter `055` strained but not drained?
 
 ## Sources
 
-- Game8, "Monastery Vaults: Fourth Level Walkthrough (Battle 49)": roster (3 Knight + 2 Monk + 1
-  Archer), "Defeat all enemies!", rec 60+, 1/5 stars, equipment-break Knights + Safeguard advice, "final
-  five consecutive fights" context, spoils 32,800 Gil + buried Elixirs, no rare gear.
-  https://game8.co/games/Final-Fantasy-Tactics/archives/553225
-- Game8, Chapter 4 hub (endgame battle list / page IDs 553225-553229).
-  https://game8.co/games/Final-Fantasy-Tactics/archives/543560
-- Local: `037-chapter-4-overview.md` (gauntlet + tiering), `044-fort-besselat-sluice.md` &
-  `050-eagrose-castle.md` (Rend-cap precedents), `045-mount-germinas.md` (Ninja tempo swap),
-  `055-monastery-vaults-fifth-level.md` (gauntlet 2/5 — to be designed).
-```
+- Local: `docs/battles/ENDGAME-BLOCKER.md` for entry mapping and Loffrey cutscene behavior.
+- Local: `docs/battles/037-chapter-4-overview.md` for Chapter 4 puzzle-party principles and gauntlet curve.
+- Local: `docs/battles/chapter-4-rewards-implementation.md` for the no-usable-reward rule in `054-058`.
+- Local: `tmp/fft-level-design-054-monastery-vaults-fourth-level/` simulation artifact.
+- Local dump: `tools/entd_tool.py dump-entry --entry 435`.

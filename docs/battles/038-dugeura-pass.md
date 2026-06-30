@@ -1,25 +1,28 @@
 # 038 - Dugeura Pass (Doguola Pass)
 
-Status: ✅ implemented (v1, entry 442)
+Status: ✅ implemented (v1, entry 442) — redesign plan v2 docs-only
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 33 (Chapter 4 opener)
 Target version: Enhanced v1.5.0
 ENTD: global entry **442** (local entry 58, `battle_entd4_ent.bin`)
-File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py dugeura`
+File: `battle_entd4_ent.bin` (embedded NG+ swap)
 
-> **NG++ reward applied (2026-06-27):** Rod of Faith (s1, Black Mage). Guaranteed Spoils of War (ENTD
-> 0x1e), NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+> **NG++ reward applied (2026-06-27):** Rod of Faith on s1 through guaranteed Spoils of War
+> (`0x1e`), NG+ only, within the 3-item cap, no stealing required. This is reward pressure, not
+> combat gear that must be equipped.
 
-Implemented composition (entry 442, vanilla-dump verified) — roster matched [76,77,80,80,87,87]:
-- s0 Knight L101 — Heavy Helm/Heavy Armor/Bracers/Runeblade/shop Shield; Counter/Atk Boost/Mv+1.
-- s1,s3 Black Mage L102 — Mage Hat/shop Robe/Featherweave/shop Rod; Reflexes/Atk Boost/Mv+1 (AoE priority).
-- s2 Archer→**Time Mage** L102 — Mage Hat/shop Robe/Featherweave/shop Staff; **jl4** (Haste/Slow/Float only); Reflexes/Mv+1.
-- s4,s5 Dragoon L102/L101 — Heavy Helm/Heavy Armor/Germinas/Partisan/shop Shield; Jump innate; Reflexes/Atk Boost/Mv+1.
-- No boss → no rare; bottom-of-band levels (opener, not a spike).
+Implemented v1 composition (entry 442, vanilla-dump verified):
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`.
+- s0 Knight L101.
+- s1 Black Mage L102.
+- s2 Archer -> **Time Mage** L102, JobLevel 4 cap / command-filtered to Haste/Slow/Float.
+- s3 Black Mage L102.
+- s4 Dragoon L102.
+- s5 Dragoon L101.
+
+The v2 redesign keeps this verified six-body shape, but upgrades it from "good v1 idea with some
+incomplete slots" to a complete Chapter 4 opener: every active human gets secondary/reaction/support/
+movement and legal gear, while the single headline engine remains Haste-Jump plus Black Mage AoE.
 
 ## Original Battle
 
@@ -35,123 +38,128 @@ Player deployment:
 Up to 5 units, including Ramza. No guests.
 ```
 
-Original enemy composition (verified via Game8, Battle 33):
+Original enemy composition:
 
 ```text
 1x Knight       (front-line bruiser)
 1x Archer       (ranged chip)
-2x Black Mage   (high-level AoE — the priority threat)
-2x Dragoon      (Jump — vanish off-screen, untargetable until they land)
+2x Black Mage   (high-level AoE; the priority threat)
+2x Dragoon      (Jump; untargetable while airborne, lands on marked panels)
 ```
 
 Public walkthrough details:
 
 ```text
-Recommended level: ~41.  Difficulty: 3/5 stars.  Deploy up to 5.  Win: defeat all enemies.
-Open field map (standard layout — no scripted pincer).
-THREAT 1 — BLACK MAGES: two of them, in Black Robes (boosted elemental), throwing high-level AoE that
-  can catch several of your units at once. The walkthrough's #1 tip: KILL THE BLACK MAGES FIRST.
-THREAT 2 — DRAGOONS: two of them Jump, vanishing off-screen and untargetable until they land on a
-  marked panel — step your units OFF the marked panels to dodge.
-Map (buried) treasure: Ether/Diamond Sword, Remedy/Wizard's Rod, Maiden's Kiss/Golden Staff,
-  Phoenix Down/Windslash Bow. Spoils: 27,200 Gil, Diamond Armor.
+Recommended level: ~41. Difficulty: 3/5. Open field. Kill the Black Mages first and move units off
+Dragoon landing panels. Buried map treasure and normal spoils exist, but there is no named boss.
 ```
 
 Design reading:
 
-Dugeura Pass is **the Chapter 4 "welcome to the endgame" fight**: no boss, but the generics have
-levelled hard (rec ~41) and the map teaches the two threats that define the chapter's open-field
-battles — **AoE casters you must rush down, and Jump units you must dodge by reading the floor.** Its
-identity is a clean two-axis priority puzzle: *burst the Black Mages before their AoE compounds, while
-keeping your formation off the Dragoons' landing panels.* It is the first time both pressures appear
-together at full strength.
+Dugeura is Chapter 4's first handshake: no Lucavi, no named boss, just proof that ordinary enemies now
+operate like endgame pieces. Vanilla asks for two reads: rush the Black Mages before AoE compounds,
+and dodge Dragoon Jump by respecting the landing marks. New Game++ should sharpen that lesson, not
+replace it with a spike.
 
-For New Game++ the identity must stay: **an open-field skirmish whose whole lesson is "kill the AoE
-casters fast and dance off the Jump panels," now sharpened by one tempo escalation — without turning
-the chapter opener into a boss fight.**
+For v2 the identity is: **an open-field Chapter 4 opener where a complete Time Mage links the two
+vanilla threats by Hasting the Dragoons while two Black Mages punish clumping. The answer is still
+kill casters, read Jump panels, and do not overcommit into the Knight screen.**
 
 ## Local Data Confirmed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: 1 Knight + 1 Archer + 2 Black Mage + 2 Dragoon, plus the player slots.
-Keep the open-field geometry and the Dragoon Jump behavior (untargetable-while-airborne) — these ARE
-  the fight. Keep the two Black Mages in Black-Robe-equivalent (boosted elemental AoE).
-This is the chapter OPENER: no boss, no rare; modest Ch4 levels (100-102), not a spike.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-Leave the buried map treasure as-is (existing map loot, not boss loot).
+Entry 442 / local entry 58 / battle_entd4_ent.bin:
+  s0 Knight       L101   active enemy
+  s1 Black Mage   L102   active enemy; Rod of Faith spoils carrier
+  s2 Time Mage    L102   v1 swap from Archer; Haste/Slow/Float only
+  s3 Black Mage   L102   active enemy
+  s4 Dragoon      L102   active enemy
+  s5 Dragoon      L101   active enemy
+
+Preserve: open-field geometry, two Black Mage AoE priority, two Dragoon Jump threats, no boss, no
+guest, no no-resupply chain.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+Known / carried IDs:
 
 ```text
-77 = Archer            (confirmed)  — note: SWAPPED OUT below
-Knight job id          (TBD - verify)
-Black Mage job id      (TBD - verify)
-Dragoon / Lancer id    (TBD - verify; enemy Dragoon caste, debuted as enemy at the Vaults, 027)
-Time Mage job id       (TBD - verify; the single swapped-in escalation slot)
+Archer job id: 77 (vanilla slot, swapped out)
+Rod of Faith reward item: see chapter-4-rewards-implementation.md
+Other job IDs and exact equipment IDs: verify against loader tables before implementation.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Enemy Party Escalation (Chapter 4 redesign)
 
 ```text
-CHANGE: swap the lone ARCHER -> a TIME MAGE that HASTES the Dragoons (and may Slow the player).
-WHY: the fight's two-axis identity is "burst the AoE casters / dodge the Jumps." The single, fitting
-  escalation is to TIE THE TWO AXES TOGETHER: a Time Mage that Hastes the Dragoons makes the Jump
-  cadence faster (sharper panel-dodging) AND adds a third must-kill caster — so "kill the casters
-  first" becomes more urgent without changing the plan. It INTENSIFIES the existing puzzle; it does
-  not replace it.
-CONSTRAINT: Time Mage uses Haste/Slow/Float ONLY (no Stop/Immobilize/Don't Act) — amplify the
-  headline, never hard-lock the endgame party (carried Ch2/Ch3 Time-Mage precedent).
-WHAT IS NOT CHANGED: the two Black Mages (AoE priority), the two Dragoons (Jump), and the lone Knight
-  front-line all remain. No brand-new caste debuts here — Samurai/Lucavi/Ultima-Demons debut in their
-  own fights. The opener stays an open-field skirmish, not a boss fight.
-NOTE: this corrects the overview's tentative "pincer" guess — the verified map is an open field with
-  no scripted two-sided ambush; the wrinkle is tempo (Haste), not geometry.
+Headline engine: Haste-Jump / AoE tempo.
+Supporting roles:
+  - Black Mages force immediate caster priority.
+  - Time Mage accelerates Dragoons and can Slow, but cannot hard-lock.
+  - Dragoons create panel-dodge pressure.
+  - Knight screens the casters and punishes careless rushes.
 ```
 
-## Sanctioned exceptions (carried precedents)
+This is a broken-but-readable Chapter 4 opener only in miniature: the enemy side has a real engine,
+but no extra bodies, no Stop, no boss loot, and no unrelated puzzle. The Rod of Faith is guaranteed
+spoils and should not be treated as mandatory combat equipment.
+
+## Sanctioned Exceptions
 
 ```text
-TIME MAGE CONTROL — Haste/Slow/Float only, normal cast cadence; no hard lock (Ch2/Ch3 precedent).
-DRAGOON JUMP — preserved as designed: telegraphed landing panel, untargetable while airborne; the
-  counter is to step OFF the marked panel / kill the Dragoon while grounded (Ch3 Vaults precedent, 027).
-BLACK MAGE AoE — boosted elemental (Black-Robe-equivalent); strong but race-able by rushing the casters.
-  No new exception introduced.
+TIME MAGE CONTROL:
+  Haste/Slow/Float only. No Stop, Don't Act, Immobilize, Petrify, or hard turn-deletion.
+
+DRAGOON JUMP:
+  Preserved as a telegraphed landing-panel threat. Haste may speed the cadence, but counterplay is
+  still visible movement and killing grounded Dragoons.
+
+BLACK MAGE AoE:
+  Strong elemental AoE is allowed because the walkthrough already names Black Mages as the priority.
+  Keep charge/cast cadence readable and do not add a third AoE engine.
 ```
 
-## Boss rare loot
+## Reward Handling
 
 ```text
-None. No named boss here — no rare boss item (per the Chapter 4 overview tiering). Generics stay
-Chapter-4 shop-tier. The map's buried treasure (Diamond Sword / Wizard's Rod / Golden Staff /
-Windslash Bow) is existing map treasure, not boss loot — leave it as-is.
+No boss rare. Rod of Faith is the designed guaranteed Spoils of War reward for the battle, authored
+through ENTD 0x1e on s1 and documented in chapter-4-rewards-implementation.md. Do not make stealing
+required. Do not add more than three spoils.
 ```
 
-## Proposed Composition (New Game++ Dugeura Pass v1)
+Map treasure remains the map's own reward layer and should not be conflated with the battle puzzle.
 
-Keep the count (6) and the open-field feel; swap the Archer for a Haste Time Mage. Modest Chapter-4
-levels — this is the opener, not a spike. Casters anchor at `102`; the rest `101`.
+## Proposed Composition (New Game++ Dugeura Pass v2)
+
+Keep six active enemies. Bottom-of-band levels preserve opener pacing.
 
 | Slot | Role | Job | Level | Purpose |
 |------|------|-----|-------|---------|
-| n | Black Mage | Black Mage | `102` | High-level AoE (boosted elemental) — priority kill #1. |
-| n | Black Mage | Black Mage | `102` | Second AoE caster — compounds damage if ignored. |
-| n | Dragoon | Dragoon | `102` | Jump — untargetable while airborne; lands on a marked panel. |
-| n | Dragoon | Dragoon | `101` | Second Jumper — staggered leaps pressure the back-line. |
-| n | Time Mage (NEW) | Time Mage | `102` | Hastes the Dragoons / Slows the player — the tempo escalation. |
-| n | Knight | Knight | `101` | Lone front-line bruiser; screens the casters. |
+| s0 | Screen | Knight | `101` | Blocks the direct caster rush; one break source at most. |
+| s1 | AoE priority | Black Mage | `102` | Main damage engine; Rod of Faith spoils carrier. |
+| s2 | Tempo support | Time Mage | `101` or `102` | Haste Dragoons / Slow players; no hard lock. |
+| s3 | AoE priority | Black Mage | `102` | Second AoE caster; makes clumping costly. |
+| s4 | Jump threat | Dragoon | `102` | Hasted Jump pressure; panel-dodge check. |
+| s5 | Jump threat | Dragoon | `101` | Staggered Jump pressure without spiking the opener. |
 
 Reasoning:
 
-The faithful move is to **keep the two-axis open-field puzzle and add exactly one tempo wrinkle**. The
-two Black Mages stay as the AoE priority the walkthrough is built around; the two Dragoons stay as the
-Jump-dodging threat; the lone Knight stays as the body that screens them. Swapping the Archer for a
-Haste Time Mage **welds the axes together** — the casters are now even more urgent to kill because one
-of them is accelerating the Jumps. Levels sit at the bottom of the Chapter-4 band (`101`–`102`, no
-`103`) so the opener establishes "enemies are stronger now" without spiking before Bervenia.
+The v1 swap was the right idea, but v2 needs Cap 4 completeness and cleaner guardrails. Complete
+setups make the party credible, while slightly reducing the average offset keeps the opener from
+feeling like Bervenia or Limberry. The player has at least two fair answers: blitz the Time/Black
+Mage cluster before Haste compounds, or spread defensively and punish Dragoons as they land.
 
-## Builds (Chapter-4 shop quality; conspirators'-ambush flavor)
+Simulation result (`tmp/fft-level-design-038-dugeura-pass/iteration-results.md`):
+
+```text
+v2 complete readable Haste-Jump opener: Accepted.
+Pressure 165.0; caster priority 86.0; Jump counterplay 72.0; spike risk 20.5; answerability 93.1.
+
+Rejected: Stop-Time opener trap, seven-body pincer, and over-spiking pressure. Third Black Mage
+artillery was considered but rejected as the main plan because it turns the fight into raw AoE instead
+of linking the vanilla Dragoon lesson to the caster priority lesson.
+```
+
+## Builds (complete setups; opener-tier gear)
 
 Item/skill IDs from the loader tables (verify against the installed copy before patching):
 
@@ -161,102 +169,106 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Black Mage x2 (Lv 102) — AoE priority
+### Black Mage x2 (Lv 102)
 
 ```text
-Job: Black Mage (id TBD)   JobLevel: 8   Secondary: none
-Lean into high-level AoE (Fire/Bolt/Ice 3-tier). Black-Robe-equivalent body (boosted elemental).
-Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
-Head: mage hat (id TBD)   Body: Black Robe / boosted-elemental robe (id TBD)
-Accessory: Featherweave Cloak (234)   Right hand: magic-boost rod (id TBD)   Left: none (255)
+JobLevel: 8
+Primary: Black Magic, high elemental AoE with normal charge/cast cadence
+Secondary: Item or low White Magic utility, if legal
+Reaction: Reflexes (449) or Auto-Potion (441)
+Support: Arcane Strength / magic boost if legal
+Movement: Movement +1 (486) or Move-MP Up equivalent
+Gear: final-shop mage hat + elemental/MA robe + Featherweave Cloak (234) + shop rod
+Spoils note: s1 carries Rod of Faith in 0x1e; it does not need to be equipped.
 ```
 
-Role: the priority kill — two of them, AoE that compounds if the player doesn't rush them.
+Role: the named priority. If ignored, the fight snowballs.
 
-### Dragoon x2 (Lv 102 / 101) — Jump
+### Time Mage (Lv 101-102)
 
 ```text
-Job: Dragoon / Lancer (id TBD)   JobLevel: 8   Primary: Jump
-Reaction: Reflexes (449)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Germinas Boots (210)
-Right hand: shop spear (id TBD)   Left: shop shield (id TBD)
+JobLevel: 8 or command-filtered equivalent
+Primary: Time Magic limited to Haste, Slow, Float
+Secondary: Item or low Black Magic utility, if legal
+Reaction: Reflexes (449)
+Support: Arcane Strength / Swiftness if legal and not instant-locking
+Movement: Movement +1 (486)
+Gear: final-shop mage hat + robe + Featherweave Cloak (234) + shop staff
+Forbidden: Stop, Don't Act, Immobilize, Petrify, instant spell engines.
 ```
 
-Role: vertical pressure — Jump from range/elevation onto the back-line; dodge by leaving the panel.
+Role: the engine connector. Haste Dragoons, then Slow exposed targets.
 
-### Time Mage (Lv 102) — NEW (tempo)
+### Dragoon x2 (Lv 102 / 101)
 
 ```text
-Job: Time Mage (id TBD)   JobLevel: 8   Secondary: none
-Cast HASTE on the Dragoons (and Slow on the player). Haste/Slow/Float ONLY — no Stop/Don't Act.
-Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
-Head: mage hat (id TBD)   Body: shop robe (id TBD)
-Accessory: Featherweave Cloak (234)   Right hand: magic-boost rod (id TBD)   Left: none (255)
+JobLevel: 8
+Primary: Jump
+Secondary: Item / Fundaments / light utility, if legal
+Reaction: Reflexes (449) or Counter (442)
+Support: Attack Boost (465)
+Movement: Movement +1 (486) or Jump-enhancing legal movement
+Gear: final-shop helm + heavy armor + Germinas Boots (210) + shop spear + shield if legal
 ```
 
-Role: the single escalation — speeds the Jumps and adds a third must-kill caster.
+Role: visible panel pressure. They should punish ignored positioning, not erase the party before a
+turn.
 
-### Knight (Lv 101) — front-line
+### Knight (Lv 101)
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Primary: (basic) Mighty Sword / Rend (limited — see note)
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Bracers (218)
-Right hand: shop knight sword (id TBD)   Left: shop shield (id TBD)
+JobLevel: 8
+Primary: Knight skillset; at most one Rend/Mighty Sword source
+Secondary: Item / Fundaments / light utility, if legal
+Reaction: Counter (442)
+Support: Attack Boost (465) or Safeguard if used defensively
+Movement: Movement +1 (486)
+Gear: final-shop helm + heavy armor + Bracers (218) + shop knight sword + shield
 ```
 
-Role: the lone body that screens the casters; keep Rend limited (carried ≤2-break-source cap — here
-just one Knight, well within it).
+Role: the screen. One break source is enough; do not make gear destruction the opener's headline.
 
 ## Positioning Plan
 
 ```text
-Open field: the two Black Mages start mid/back with clear sightlines, the two Dragoons on or near the
-  high ground (good Jump arcs onto the player back-line), the Time Mage tucked behind the casters, the
-  Knight forward as the screen.
-Preserve the open-field geometry and the Dragoons' Jump panels (untargetable-while-airborne).
-Spread the enemy so the player can't AoE the whole band at once — forcing the "rush the casters while
-  dodging Jumps" read the fight is about.
-Do NOT over-scale: bottom-of-band levels keep this the chapter opener, not a spike.
+Open field. Keep the two Black Mages and Time Mage behind or offset from the Knight screen so the
+player must choose a route instead of deleting all casters in one AoE. Put Dragoons where Haste gives
+them credible Jump access, but preserve readable landing panels and enough room to step away.
 ```
 
-The pass should say: "the conspiracy's hunters open Chapter 4 — burn down their mages before the AoE
-piles up, and keep your feet off the dragoons' landing marks."
+The map should say: "Chapter 4 has begun; even generics have a plan. Kill the mages, watch the floor,
+and do not chase blindly through the Knight."
 
 ## Implementation Checklist
 
-- [ ] Identify Dugeura Pass `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify 1 Knight + 1 Archer + 2 Black Mage + 2 Dragoon + player slots.
-- [ ] Swap the Archer -> Time Mage; restrict it to Haste/Slow/Float (no hard lock).
-- [ ] Keep the open-field geometry + Dragoon Jump panels (untargetable while airborne).
-- [ ] Keep both Black Mages on boosted-elemental AoE (Black-Robe-equivalent).
-- [ ] Set levels: both Black Mage, one Dragoon, Time Mage `102`; other Dragoon + Knight `101`.
-- [ ] Set JobLevel `8` on all active enemy slots; keep Jump on the Dragoons.
-- [ ] Patch via the correct layer; keep the diff inside the Dugeura Pass window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify Jump + AoE intact.
-- [ ] Install mod, test from a New Game+ save; confirm it plays as an open-field AoE/Jump opener.
+- [x] Record entry 442 roster and current v1 swap in the doc.
+- [ ] Preserve six active enemies and open-field geometry.
+- [ ] Keep Archer slot as Time Mage, but complete its setup and command-filter to Haste/Slow/Float.
+- [ ] Complete both Black Mage setups; keep s1 as Rod of Faith spoils carrier.
+- [ ] Complete both Dragoon setups; preserve Jump and landing-panel counterplay.
+- [ ] Complete Knight setup; cap break pressure at one source.
+- [ ] Tune levels as opener: Black Mages/one Dragoon `102`; Knight/one Dragoon `101`; Time Mage `101`
+      or `102` depending on playtest pressure.
+- [ ] Confirm no boss rare and no steal-dependent reward.
+- [ ] Patch only through the correct future implementation layer; keep this redesign docs-only for now.
+- [ ] Re-dump and diff after implementation; verify spoils, Time Magic filtering, Jump, and no hard lock.
 
 ## Test Questions
 
-- Are the two Black Mages still the clear priority (AoE that compounds if ignored)?
-- Do the Dragoons still Jump (untargetable while airborne) so the player must read the landing panels?
-- Does the swapped-in Time Mage sharpen the tempo (faster Jumps / urgency to kill casters) WITHOUT
-  hard-locking the player (Haste/Slow only)?
-- Is it clearly the chapter OPENER (3/5★ feel, no boss, bottom-of-band levels) — establishing Ch4
-  power without spiking before Bervenia?
-- Does it still read as an open-field ambush by mages and dragoons, not a designed arena?
-- Is the lone Knight a fair screen (one Rend source at most), not a break-lock?
+- Are Black Mages still the obvious first priority?
+- Does Haste make Jump more urgent without making it unreadable?
+- Can the player dodge marked Jump panels after Haste?
+- Does Slow add pressure without becoming a turn-deletion lock?
+- Does the Knight screen matter without turning the fight into a gear-break tax?
+- Does the fight feel like a Chapter 4 opener rather than a boss spike?
+- Does Rod of Faith arrive through guaranteed spoils, within the 3-item cap?
 
 ## Sources
 
-- Game8, "Dugeura Pass Walkthrough (Battle 33)": roster (1 Knight, 1 Archer, 2 Black Mage, 2 Dragoon),
-  objective "Defeat all enemies!", recommended level ~41, 3/5 stars, deploy 5, Black-Mage-priority +
-  Dragoon-Jump tips, buried treasure + spoils (27,200 Gil, Diamond Armor).
+- Game8, "Dugeura Pass Walkthrough (Battle 33)": roster, objective, level, Black Mage priority,
+  Dragoon Jump counterplay, treasure/spoils.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553193
-- Final Fantasy Wiki, "Doguola Pass": story/terrain context.
-  https://finalfantasy.fandom.com/wiki/Doguola_Pass
-- Local: `037-chapter-4-overview.md` (job-escalation + best-tier rare-loot rules),
-  `027-monastery-vaults-2nd.md` (enemy Dragoon Jump precedent), `030-grogh-heights.md` (open-field
-  skirmish + Black Mage build template).
-```
-</content>
+- Local: `037-chapter-4-overview.md`, `059-chapter-4-balance-review.md`,
+  `chapter-4-rewards-implementation.md`, `docs/spoils-of-war-reward-system.md`,
+  `027-monastery-vaults-2nd.md` (Dragoon precedent), and
+  `tmp/fft-level-design-038-dugeura-pass/` (simulation and rejected variants).

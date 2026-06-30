@@ -1,18 +1,22 @@
 # 040 - Finnath Creek (Finath River)
 
-Status: ✅ implemented (v1, entry 444) — pool-curation only; level-scaling needs in-game verify
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation remains pool-curation only; level-scaling needs in-game verify
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 35 (after Bervenia)
 Target version: Enhanced v1.5.0
 ENTD: global entry **444** (local entry 60, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py finath`
 
-Implemented (entry 444, vanilla-dump verified) — a 12-slot RANDOM POOL (all level 0xFE, runtime-driven):
+Current implementation (entry 444, vanilla-dump verified) — a 12-slot RANDOM POOL (all level 0xFE, runtime-driven):
 vanilla = 6 yellow Chocobo (94, s0-5) + 4 Red Chocobo (96, s6-9) + 1 Black Chocobo (95, s10) + 1 Pig (121, s11).
 - Converted **s4,s5 yellow → Black Chocobo (95), jl8** — the vanilla pool had only ONE black, so a
   random draw often lacked the Choco-Meteor threat; biasing the pool guarantees ranged-nuke pressure.
   Safe under either reading of the 0xFE slots (changes what a slot becomes, not the spawn count; no level edit).
 - Pig (s11) + Entice-recruit/poach flag preserved; yellow healers + red chip untouched. No boss/no rare.
+
+Planned v2 redesign (docs-only in this pass): replace the random outcome with a **fixed six-body flock**
+when implemented: **2 Black Chocobo + 2 yellow Chocobo + 1 Red Chocobo + 1 Pig**. The goal is a
+learnable Chapter-4 monster-tempo puzzle, not a random roll that can become trivial or spike unfairly.
 
 > ⚠️ Verify in-game: this randomized battle's LEVEL scaling is runtime/OverrideEntryData-driven, so the
 > .bin level edits used for fixed battles likely don't apply. If the flock spawns under-levelled, move
@@ -21,6 +25,16 @@ vanilla = 6 yellow Chocobo (94, s0-5) + 4 Red Chocobo (96, s6-9) + 1 Black Choco
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
 > See `037-chapter-4-overview.md`.
+
+## Design Goal
+
+```text
+Make Finnath Creek a light-but-real Chapter-4 valley: a de-randomized wild chocobo field where the
+player reads the flock, kills or disables Choco Cure sustain, spaces around Choco Meteor, and can still
+choose to recruit the Pig without being punished by guest AI, hard status, or boss-level pressure.
+```
+
+No active guests appear here. No guest-control implementation is needed for this battle.
 
 ## Original Battle
 
@@ -77,18 +91,23 @@ For New Game++ the identity must stay: **a wild chocobo-menagerie field — fast
 nuking monsters and the optional rare-Pig recruit — kept a lighter change-of-pace, but de-randomized
 to Chapter-4 strength so the mobility/tempo lesson always lands.**
 
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm the randomized monster slots; REPLACE the random roll with a CURATED Ch4 flock (below) so the
-  fight reliably tests the tempo/sustain/ranged-nuke puzzle (no trivial all-yellow roll).
-Keep the OPTIONAL PIG slot and its Entice-recruit flag intact (do NOT remove the recruit/poach hook —
-  it is vanilla; we are not adding or buffing the Ribbon poach, just preserving it).
-Keep the open river/field geometry and the chocobos' high Move (the mobility puzzle).
-This is a no-boss, no-rare CHANGE-OF-PACE: modest Ch4 levels (100-102), NOT a spike.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-Leave the buried map treasure as-is (existing map loot).
+CONFIRMED:
+- Entry 444 is the Finnath Creek ENTD entry.
+- Vanilla uses a 12-slot randomized monster pool:
+  6 yellow Chocobo + 4 Red Chocobo + 1 Black Chocobo + 1 Pig.
+- Current v1 implementation biased the pool by converting two yellow slots into Black Chocobo.
+- Pig slot and Entice/poach hook are part of vanilla identity and must remain.
+- No boss, no named rare, no active guest.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- Confirm whether the implementation layer can force a fixed six-body output from the random pool.
+- If fixed output is not available, define the closest deterministic/weighted substitute and test rolls.
+- Confirm whether OverrideEntryData carries Level for this battle or leaves levels at 0xFE runtime scale.
+- If the flock spawns under-levelled, move the intended levels to the OverrideEntryData layer.
+- Preserve buried map treasure as-is.
 ```
 
 Job IDs (monsters — verify all in-game):
@@ -98,23 +117,21 @@ Chocobo (yellow) id        (TBD - verify)
 Red Chocobo id             (TBD - verify)
 Black Chocobo id           (TBD - verify)
 Pig id                     (TBD - verify; optional Entice recruit — keep the recruit flag)
-(Bull Demon id, optional)  (TBD - verify; only if the optional bruiser variant is used — see below)
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-CHANGE: DE-RANDOMIZE the flock into a curated Ch4 menagerie that guarantees the threatening variants —
-  the Choco-Cure healers AND the Choco-Meteor nukers — at Chapter-4 levels. (No human job is swapped;
-  this is a monster field. The "escalation" is making the tempo puzzle reliable instead of a dice roll.)
+CHANGE: DE-RANDOMIZE the flock into a fixed Ch4 menagerie that guarantees the threatening variants —
+  the Choco-Cure healers AND the Choco-Meteor nukers — at Chapter-4 levels. No human job is swapped;
+  this is a monster field. The escalation is making the tempo puzzle reliable instead of a dice roll.
 WHY: the fight's identity is "mobile pack that self-heals and nukes from range." Vanilla randomization
-  can erase that (a trivial all-yellow roll). Curating the flock toward its own design intent IS the
-  faithful Ch4 escalation — it raises the floor without changing the plan, and keeps it a lighter
-  change-of-pace.
-OPTIONAL (one-new-demand budget): a single non-chocobo BRUISER (Bull Demon / Minotaur-type) MAY be
-  added for variety if the curated flock plays too soft in testing — a melee vector to complement the
-  ranged chocobos. Add AT MOST one, and only a NON-status beast (NO Cockatrice/Petrify, NO instant-
-  death monsters — keep the no-hard-lock rule). Default is the pure chocobo flock + Pig.
+  can erase that with a trivial all-yellow roll or over-spike it with too many nukers. Fixing the flock
+  toward its own design intent is the faithful Ch4 escalation: it raises the floor without adding a
+  second engine, and keeps Finnath a lighter change-of-pace.
+REJECTED DEFAULTS: no Bull Demon / Minotaur bruiser, no Cockatrice/Petrify beast, no instant-death
+  monster, no all-Black-Chocobo nuke stack. Those variants add a second demand or make the valley too
+  spiky.
 WHAT IS NOT CHANGED: the chocobo-menagerie identity, the open field, the high monster Move, and the
   optional rare-Pig Entice recruit all remain. No brand-new caste, no boss, no rare boss item.
 ```
@@ -129,31 +146,32 @@ RANGED MONSTER AoE (Black Choco Meteor) — allowed; telegraphed ranged nuke, sp
 NO HARD STATUS — explicitly NO Petrify/instant-death monsters here (no Cockatrice, etc.). Keeps the
   carried no-hard-lock rule; this is a tempo fight, not a status trap.
 PIG ENTICE RECRUIT / POACH — preserved exactly as vanilla (Speechcraft + Beast Tongue to Entice; rare
-  poach). We are NOT adding or upgrading the Ribbon poach — it is existing game behavior; the "best of
-  best" reservation concerns BOSS loot we place, not pre-existing monster-poach tables.
+  poach). We are NOT adding, upgrading, or promising any equipment reward through Finnath; the Pig hook
+  is a preserved monster-system side objective, not the Chapter 4 spoils channel.
 ```
 
-## Boss rare loot
+## Rare/reward handling
 
 ```text
-None. No named boss here — no rare boss item (per the Chapter 4 overview tiering). Monster drops and
-the optional Pig's poach are EXISTING vanilla behavior, left untouched. Buried map treasure stays as-is.
+None. Per `chapter-4-rewards-implementation.md`, Finnath Creek has no guaranteed equipment spoils.
+No named boss appears here, no boss rare is assigned, and no non-buyable gear is introduced.
+Monster drops/poach tables and buried map treasure remain vanilla behavior, not NG++ reward placement.
 ```
 
-## Proposed Composition (New Game++ Finnath Creek v1)
+## Proposed Composition (New Game++ Finnath Creek v2)
 
-Replace the random roll with a curated flock (6) that reliably poses the tempo puzzle; keep the
+Replace the random outcome with a fixed flock of six that reliably poses the tempo puzzle; keep the
 optional Pig. Modest Chapter-4 levels — this is a change-of-pace, not a spike. Black Chocobos `102`
 (the threats); yellow/red `101`; Pig `100`.
 
 | Slot | Role | Monster | Level | Purpose |
 |------|------|---------|-------|---------|
-| n | Black Chocobo | Black Chocobo | `102` | Choco Meteor — ranged AoE nuke; the real threat. |
-| n | Black Chocobo | Black Chocobo | `102` | Second nuker — two Meteors force spacing/focus. |
-| n | Chocobo (yellow) | Chocobo | `101` | Choco Cure — sustains the pack; focus-kill priority. |
-| n | Chocobo (yellow) | Chocobo | `101` | Second healer — pack won't fold to chip damage. |
-| n | Red Chocobo | Red Chocobo | `101` | Choco Pellets / cleanse — mobile chip + Esuna. |
-| n | Pig (OPTIONAL recruit) | Pig | `100` | Rare Entice target — do NOT force-kill; vanilla recruit/poach. |
+| n | Meteor threat | Black Chocobo | `102` | Choco Meteor — ranged AoE nuke; primary focus target. |
+| n | Meteor threat | Black Chocobo | `102` | Second nuker — enough pressure to force spacing without making this a spike. |
+| n | Sustain | Chocobo (yellow) | `101` | Choco Cure — keeps the flock alive; first kill if the party is using chip damage. |
+| n | Sustain | Chocobo (yellow) | `101` | Second healer — makes the pack feel like a pack, not six isolated monsters. |
+| n | Utility tempo | Red Chocobo | `101` | Choco Pellets / Choco Esuna — mobile chip and cleanup support. |
+| n | Optional recruit | Pig | `100` | Rare Entice target — keep recruitable; do not force-kill. |
 
 Reasoning:
 
@@ -163,19 +181,30 @@ sustain (so the player must focus-kill healers, not just chip); a Red Chocobo ad
 That makes the tempo/positioning puzzle reliable at Chapter-4 strength without making it a boss fight.
 The optional Pig stays as the side-objective (Entice, don't kill). Levels stay at the bottom of the
 band (`100`–`102`) to keep it a change-of-pace dip in the curve between Bervenia and the Zalmo
-rematch. (If testing finds it too soft, add one Bull Demon per the optional note — no status beasts.)
+rematch.
+
+Rejected variants:
+
+```text
+- Pool-only v1: better than vanilla, but still lets the puzzle disappear or spike by random draw.
+- Four Black Chocobos: too much Choco Meteor pressure for a deliberate valley.
+- Bull Demon / Minotaur bruiser: adds a second melee-bruiser engine instead of sharpening the flock.
+- Cockatrice / status beast: violates Finnath's no-hard-status tempo identity.
+- Mostly yellow Chocobos: too low-pressure for Chapter 4 and loses the Meteor lesson.
+```
 
 ## Builds (monster field — no human kit to spec)
 
 ```text
-Monsters have fixed innate skillsets; there is no equipment to assign. Confirm each monster's ability
-set in-game and set only LEVEL + the curated roster:
+Monsters have fixed innate skillsets; there is no equipment, secondary, reaction, support, or movement
+slot to assign. The Chapter 4 "complete setup" rule applies to active humans, not monster bodies.
+Confirm each monster's innate ability set in-game and set only LEVEL + fixed roster:
   Black Chocobo — Choco Meteor (ranged AoE), Choco Ball; high Move/Fly.
   Chocobo (yellow) — Choco Cure (pack heal), Choco Attack; high Move.
   Red Chocobo — Choco Pellets / Choco Esuna; high Move.
   Pig — Oink / Toot / Straighten (harmless); keep its Entice-recruit flag — do NOT script it hostile-
     only. (Poach reward is vanilla; untouched.)
-No Reaction/Support/Movement equipment slots for monsters — leave innate.
+No human equipment or ability-completeness checklist exists here.
 ```
 
 ## Positioning Plan
@@ -193,11 +222,51 @@ Keep it light: bottom-of-band levels, no status beasts, no boss.
 The creek should say: "a wild river crossing — run down the healer-birds, dodge the meteor-birds, and
 if you're patient, charm the lucky pig instead of cooking it."
 
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-040-finnath-creek/
+  assumptions.md
+  simulate.py
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic opening-pressure model over the first four rounds.
+It scores pressure, target clarity, Choco Meteor answerability, Pig recruit safety, breather role,
+and hard-status risk. It does not claim to simulate exact FFT damage formulas.
+```
+
+Result summary:
+
+| Candidate | Pressure | Clarity | Meteor answer | Pig safety | Breather | Status risk | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---|
+| v1 biased random pool | 167 | 79 | 66 | 71.3 | 57.7 | 0 | Rejected: too spiky / still random |
+| v2 fixed chocobo tempo flock | 129 | 97 | 90 | 88.0 | 83.6 | 0 | **Accepted** |
+| all black meteor spike | 181 | 57 | 46 | 65.0 | 61.8 | 0 | Rejected: too spiky |
+| bull demon bruiser variant | 153 | 77 | 82 | 69.7 | 57.5 | 0 | Rejected: second engine / too spiky |
+| status beast variant | 180 | 62 | 65 | 45.5 | 27.2 | 40 | Rejected: hard-status violation |
+| soft yellow pasture | 101 | 49 | 82 | 88.0 | 95.4 | 0 | Rejected: unclear / too soft |
+
+Iteration decision:
+
+```text
+ACCEPT v2 fixed flock: 2 Black Chocobo + 2 yellow Chocobo + 1 Red Chocobo + 1 Pig.
+The accepted model keeps Finnath in the light valley band while preserving real target priority.
+Do not add a bruiser/status beast unless future playtests prove the fixed flock cannot threaten tuned
+NG++ parties even at the documented level band; if that happens, redesign and resimulate first.
+```
+
 ## Implementation Checklist
 
-- [ ] Identify Finnath Creek `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; confirm the randomized monster slots + the Pig slot.
-- [ ] Replace the random roll with the curated flock (2 Black + 2 yellow + 1 Red Chocobo + 1 Pig).
+- [ ] Confirm the current v1 implementation and original randomized pool still match entry 444.
+- [ ] Determine whether the v2 implementation can force a fixed flock output instead of a weighted random pool.
+- [ ] Replace the random outcome with the fixed flock (2 Black + 2 yellow + 1 Red Chocobo + 1 Pig).
 - [ ] Preserve the Pig's Entice-recruit flag (do NOT make it hostile-only); leave poach untouched.
 - [ ] Set levels: Black Chocobos `102`; yellow + Red `101`; Pig `100`.
 - [ ] Confirm NO status beasts are present (no Cockatrice/Petrify); keep it a tempo fight.
@@ -215,6 +284,7 @@ if you're patient, charm the lucky pig instead of cooking it."
 - Are there NO hard-status beasts (no Petrify/instant-death) — keeping the no-hard-lock rule?
 - Does the high monster Move still make the open field a mobility/positioning puzzle?
 - Does it read as a wild river menagerie, not a designed arena?
+- Does the fight stay below Bervenia/Outlying Church pressure while still forcing target priority?
 
 ## Sources
 
@@ -226,5 +296,3 @@ if you're patient, charm the lucky pig instead of cooking it."
   https://finalfantasy.fandom.com/wiki/Finath_River
 - Local: `037-chapter-4-overview.md` (job-escalation + rare-loot rules), `015`/`027` (Chocobo/Dragoon
   monster precedents), `032-yuguewood.md` (monster-field handling).
-```
-</content>

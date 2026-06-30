@@ -1,294 +1,295 @@
-# 058 - Airship Graveyard (THE FINAL BATTLE — Hashmal → Ultima)
+# 058 - Airship Graveyard (Final Battle: Hashmal -> Ultima)
 
-Status: designed (not yet implemented)
-Chapter: 4 — "In the Name of Love" (CAPSTONE — the last battle of the campaign / the mod)
-Battle order: Battle 53 (ENDGAME GAUNTLET 5 of 5 — NO resupply across 49→50→51→52→53; the climax)
+Status: redesigned (documentation only; not implemented in game data by this task)
+Chapter: 4 - "In the Name of Love"
+Battle order: Battle 53 (ENDGAME GAUNTLET 5 of 5 - final campaign battle)
 Target version: Enhanced v1.5.0
-ENTD: global entry **TBD** — confirm on Windows game data
-File: `battle_entd*_ent.bin` (TBD) / `OverrideEntryData` rows (TBD)
+ENTD phase 1: `entd4` global entry `440`
+ENTD phase 2: `entd4` global entry `441`
+Local slots: `056` and `057`
+Simulation artifact: `tmp/fft-level-design-058-airship-graveyard/`
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. THE FINAL FIGHT — a TWO-PHASE Lucavi finale: Hashmal, then Ultima
-> (who transforms to a stronger second form at low HP). HP/MP fully restore between the phases.
+> Docs-only redesign note: this document is the intended NG++ finale design. It does not change the
+> embedded ENTD, scripts, binaries, or patch code. Implementation must later patch entries `440` and
+> `441` only after verifying which records are active combatants, transform records, dormant script
+> records, targetable, and stealable.
+
+## Gate Answers / Constraints
+
+```text
+Scope: redesign battle doc 058 only; no game data or code changes.
+Allowed changes in design: active boss/support level plan, slot-risk notes, reward policy, positioning,
+  and finale test criteria.
+Chapter target: Chapter 4 final capstone, broken-but-readable and fair.
+Must preserve: two-phase Hashmal -> Ultima structure, full HP/MP restore between phases, Ultima's
+  Dispelja/Almagest identity, demon surround, low-HP transformation, and final win script.
+Guests: no active guest. If future testing discovers any active guest/NPC, it must be player-controlled
+  in NG+ and never used as a skill check.
+Reward rule: no usable rewards inside 054-058. Ragnarok already pays at 053 and must not be awarded here.
+```
 
 ## Original Battle
 
 Objective:
 
 ```text
-"Defeat Hashmal!"  →  (HP/MP fully restored)  →  "Defeat Ultima!"  (including her second form)
-The campaign ENDS in victory when Ultima's second form falls.
+Defeat Hashmal!
+Full HP/MP restore.
+Defeat Ultima, including her transformed final form.
 ```
 
 Player deployment:
 
 ```text
-Up to 5 units, including Ramza. No outfitter (gauntlet 5/5 — the climax of the no-resupply run).
+Up to 5 units, including Ramza. No outfitter: this is the final fight after the point of no return.
 ```
 
-Original enemy composition (verified via Game8, Battle 53):
+Original tactical identity:
 
 ```text
-PHASE 1 — HASHMAL (Lucavi):  Hashmal (BOSS — wide-area attacks) + demon support.
-  [Note: Game8's roster line also carries "Barich (Lost Halidom)" as a label artifact from the prior
-   battle (057); the phase-1 boss is HASHMAL. Verify the exact phase-1 demon support in-game.]
-
-— on Hashmal's defeat: PARTY HP/MP FULLY RESTORED (a scripted breather before Ultima) —
-
-PHASE 2 — ULTIMA (the final Lucavi):  Ultima (BOSS) + several Ultima Demons SURROUNDING your team.
-  Ultima casts DISPELJA (strips your buffs) and ALMAGEST (deals a % of max HP as AoE damage).
-  At LOW HP, Ultima TRANSFORMS into a stronger SECOND FORM (regains strength, stronger spells).
+Phase 1: Hashmal / Lucavi wide-area pressure.
+Interphase: scripted full HP/MP restore.
+Phase 2: Ultima with demon surround, Dispelja, Almagest, and final transformation.
+Campaign ends after Ultima's final form falls.
 ```
 
-Public walkthrough details:
-
-```text
-Recommended level: 60+.  Difficulty: 4/5 stars (the scripted full-restore between phases eases the raw
-  attrition vs the 5★ Lost Halidom, but this is the CLIMAX).  Deploy up to 5.
-Win: defeat Hashmal, then defeat Ultima (second form). The game ends in victory.
-TERRAIN: the Airship Graveyard (the buried ancient airship beneath Orbonne — the final arena).
-THE THREAT —
-  PHASE 1 HASHMAL: WIDE-AREA attacks (spread out); a Lucavi bruiser with demon support.
-  INTERPHASE: HP/MP fully restored — re-buff and reposition before Ultima.
-  PHASE 2 ULTIMA: surrounds you with Ultima Demons; DISPELJA strips your buffs; ALMAGEST hits the party
-    for a % of max HP; at low HP she TRANSFORMS to a stronger second form with bigger spells.
-WALKTHROUGH TIPS: spread vs wide-area/Almagest; re-apply buffs after Dispelja; status immunity (RIBBON,
-  earned 053) blunts the demons; burst each form down with your best (Excalibur/Orlandeau, the Tier-S
-  gear earned across the gauntlet).
-Spoils: campaign victory.
-```
-
-Design reading:
-
-The Airship Graveyard is **the capstone** — a **two-phase Lucavi finale** that is the entire mod's
-climax. Its identity is **a scripted three-stage endurance duel**: **Hashmal** (wide-area Lucavi bruiser)
-→ a **full HP/MP restore** (the game's one mercy) → **Ultima** amid an **Ultima-Demon surround**, who
-**dispels your buffs** (Dispelja), **chips the whole party for % max HP** (Almagest), and at low HP
-**transforms into a stronger second form** for the final escalation. It rewards everything the campaign
-taught: **spread vs AoE, re-buff after dispel, answer status with the Ribbon, and burst each form** with
-the best-in-game gear the player has assembled.
-
-For New Game++ the identity must stay: **the two-phase Hashmal→Ultima finale with the mid-fight restore,
-Dispelja + Almagest, the Ultima-Demon surround, and the low-HP transformation — the climactic, fair-but-
-grand capstone of the no-resupply run.** Ultima stands at **Level 106 — the single highest level in the
-mod.** And as the capstone, the final reward is **Ragnarok**, the legendary blade — earned for ending the
-cycle and carried into the next **New Game++** loop.
+The finale is not the 5-star raw attrition peak; `057` owns that role. Airship Graveyard is the
+adaptation capstone: survive Hashmal, use the restore, break Ultima's circle, rebuff after Dispelja,
+heal through telegraphed Almagest, and burst the final form.
 
 ## Local Data Confirmed
 
-```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm BOTH phases: Phase 1 Hashmal (+ demon support); INTERPHASE full HP/MP restore; Phase 2 Ultima
-  (+ Ultima Demons) with the low-HP SECOND FORM transformation. NO outfitter (gauntlet 5/5).
-Confirm win sequence: defeat Hashmal → restore → defeat Ultima (second form) → campaign victory.
-Keep Hashmal's WIDE-AREA attacks; the full RESTORE between phases; Ultima's DISPELJA + ALMAGEST + the
-  Ultima-Demon surround + the SECOND-FORM transformation. These ARE the finale.
-Confirm whether the two phases are ONE ENTD entry with scripted transition, or two chained entries.
-Set the highest levels in the mod here: ULTIMA L106 (second form 106), Hashmal L105, Ultima Demons 104.
-Set Ragnarok as the CAPSTONE reward (see Boss rare loot) — on victory / steal off Ultima form 1.
+Phase 1 dump:
+
+```bash
+python tools/entd_tool.py dump-entry --input src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin --entry 440 --include-empty
 ```
 
-Unit / job IDs (verify in-game — these are scripted bosses):
+Entry `440` confirmed active/scripted data:
 
-```text
-Hashmal — Lucavi job id      (TBD - verify; wide-area attacks; cf. 050 Adrammelech, 049 Zalera)
-Ultima form 1 — Lucavi job id (TBD - verify; Dispelja + Almagest)
-Ultima form 2 — Lucavi job id (TBD - verify; the transformed stronger form)
-Ultima Demon — demon caste id (TBD - verify; the surround; cf. 048/049/053)
+| Slot | Status | Job | Level | JL | Secondary | Reaction | Support | Move | Equipment ids | Notes |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | Scripted/active record | 36 | 105 | 8 | 65 | 510 | 510 | 510 | 154,182,213,34,141 | Folmarv/Hashmal script record. Item `34` is Save the Queen; verify steal/target behavior. |
+| 1 | Scripted/active record | 44 | 105 | 8 | 254 | 0 | 0 | 0 | 171,206,234,61,255 | Named demon/support record. |
+| 2 | Scripted/active record | 64 | 105 | 0 | 112 | 0 | 0 | 0 | 255,255,255,255,255 | Hashmal/Lucavi record. |
+| 3 | Scripted/active record | 44 | 104 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Support/form record. |
+| 4 | Scripted/active record | 44 | 104 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Support/form record. |
+| 5 | Scripted/active record | 44 | 104 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Support/form record. |
+
+Phase 2 dump:
+
+```bash
+python tools/entd_tool.py dump-entry --input src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin --entry 441 --include-empty
 ```
 
-## Job Escalation (Chapter 4 rule)
+Entry `441` confirmed active/scripted data:
+
+| Slot | Status | Job | Level | JL | Secondary | Reaction | Support | Move | Equipment ids | Notes |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | Scripted/form record | 49 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Lucavi/form record. |
+| 1 | Scripted/form record | 49 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Lucavi/form record. |
+| 2 | Active boss record | 20 | 105 | 8 | 0 | 430 | 0 | 0 | 171,206,234,61,255 | Ultima-related record; v2 target active final boss to level 106 after script verification. |
+| 3 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
+| 4 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
+| 5 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
+| 6 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
+| 7 | Scripted/form record | 65 | 105 | 0 | 124 | 438 | 0 | 0 | 255,255,255,255,255 | Lucavi/form record. |
+| 8 | Scripted/form record | 73 | 105 | 0 | 126 | 0 | 0 | 0 | 255,255,255,255,255 | Lucavi/form record. |
+
+Data implications:
 
 ```text
-CHANGE: this is the scripted CAPSTONE — the escalation is APEX LEVEL and the climactic kit, not a new
-  generic job. Ultima sits at L106 (the mod's single highest), Hashmal L105, the Ultima-Demon surround
-  L104. The two-phase structure + transformation + full-restore are preserved exactly.
-WHY: the finale's challenge is endurance and adaptation across three stages — spread vs wide-area/Almagest,
-  re-buff after Dispelja, answer the demon surround with the Ribbon, and burst each form. Bolting on
-  generics would cheapen the Lucavi climax. The "increase the challenge" mandate is met by APEX levels and
-  the second-form escalation, faithfully.
-CONSTRAINTS (carried — the finale must be GRAND but FAIR, no hard-lock):
-  ALMAGEST = % of MAX HP AoE — telegraphed (charge), does NOT do 100% (leaves units alive at low HP,
-    healable); spaceable; the signature threat, NOT an unavoidable wipe.
-  DISPELJA = strips buffs — a soft reset answered by RE-BUFFING; not a lock.
-  ULTIMA-DEMON SURROUND = a positional ambush, NOT an instant collapse; answerable by Ribbon (status) +
-    spacing + the full HP/MP you enter Phase 2 with.
-  HASHMAL WIDE-AREA = AoE, spaceable; demon support race-able.
-  SECOND-FORM TRANSFORMATION = telegraphed climax escalation; bigger spells, but each still telegraphed/
-    answerable — no scripted unavoidable party-wipe.
-WHAT IS NOT CHANGED: the two-phase Hashmal→Ultima structure, the mid-fight restore, Dispelja/Almagest, the
-  demon surround, and the second-form transformation all remain. This is the canonical finale, sharpened.
+- The finale is definitely two ENTD entries: 440 then 441.
+- Current dump has all major finale records at 105. v2 design raises the active Ultima/final-form boss
+  record(s) to 106 only after confirming which records drive the real boss/transform.
+- Support records stay capped at 105. Do not overlevel supports above the final boss cap.
+- Entry 440 slot 0 carries Save the Queen `34` and shield `141`. If that slot is targetable/stealable,
+  implementation must swap those to non-reward gear or prove the items cannot leak.
+- Entry 440 may also contain dormant reward/script data. Do not turn dormant rewards into awarded loot.
+- No Ragnarok, no Save the Queen, no Excalibur, and no other unique steal/reward payload inside 058.
 ```
 
-## Sanctioned exceptions (carried precedents)
+## Design Goal
+
+Make the finale a grand but fair adaptation exam:
 
 ```text
-ALMAGEST (% max-HP AoE) — telegraphed, sub-100% (survivable at low HP, healable), spaceable. The
-  signature finale threat; NOT an unavoidable wipe.
-DISPELJA (buff strip) — soft reset; answer = re-buff. Not a lock.
-ULTIMA-DEMON SURROUND — positional ambush at Phase 2 start; answer = Ribbon (status, earned 053) +
-  spacing + the full HP/MP restore you enter with. Not an instant collapse.
-HASHMAL WIDE-AREA — AoE bruiser; spaceable (050 Adrammelech 2-phase Lucavi precedent).
-SECOND-FORM TRANSFORMATION — telegraphed climax escalation; each spell still answerable (050 phase-2
-  precedent). No scripted unavoidable wipe.
-TWO-PHASE + FULL RESTORE — the canonical finale structure; preserved exactly (the one mercy of the run).
+Phase 1 asks the party to spread and handle Hashmal/Lucavi pressure.
+The scripted restore resets HP/MP and makes Phase 2 fair after the 057 peak.
+Phase 2 asks the party to break the demon surround, rebuff after Dispelja, survive telegraphed
+sublethal Almagest, and burst Ultima through the transformation.
 ```
 
-## Boss rare loot — TIER-S CAPSTONE
+The headline engine is **two-phase adaptation under scripted Lucavi pressure**. Raw attrition already
+peaked at `057`; this fight earns its climax by changing demands without deleting counterplay.
 
-> **Superseded (2026-06-27 rebalance):** Ragnarok on the FINAL boss is dead loot - it drops after the game
-> ends, so it can never be equipped. Ragnarok now pays on **Zalbaag at Sanctuary (462 s1)**, the last fight
-> before the no-resupply gauntlet; this battle is restored to standard loot. Canonical: `chapter-4-rewards-implementation.md`.
+## Enemy Party Escalation
+
+Accepted redesign: **v2 no-reward two-phase Ultima capstone**.
+
+### Phase 1 - Hashmal / Lucavi entry 440
+
+| Slot group | Role | Level target | Purpose |
+|---|---|---:|---|
+| Hashmal/Folmarv/Lucavi active record(s) | Phase boss | 105 | Wide-area pressure; defeat triggers phase transition. |
+| Demon/support records | Screen / script support | 104-105 | Pressure and positioning, not hard lock. |
+
+### Phase 2 - Ultima entry 441
+
+| Slot group | Role | Level target | Purpose |
+|---|---|---:|---|
+| Active Ultima / final-form record(s) | Final boss | 106 | Single highest active boss in the mod. |
+| Ultima Demon x4 | Surround | 105 | Positional/status pressure with Ribbon/spacing answers. |
+| Lucavi/form records | Scripted transform/support records | 105 | Preserve transformation and win sequence. |
+
+Why this works:
 
 ```text
-ULTIMA → RAGNAROK (Tier-S CAPSTONE — the legendary holy sword; the best-of-best, held for the very end).
-  Defeating Ultima's second form ENDS the campaign in victory, so Ragnarok is framed as the CAPSTONE
-  REWARD: the legendary blade earned for clearing the finale, and — fitting "New Game++" — CARRIED INTO
-  THE NEXT ++ CYCLE. For the skilled, it is ALSO a STEAL off Ultima's FIRST form (before she transforms),
-  rewarding the steal discipline the whole mod taught (Save the Queen, Chaos Blade, etc. were all steal-
-  bait). Make the steal possible in Phase 2 form 1; otherwise grant it as the guaranteed victory capstone.
-  Hashmal and the Ultima Demons drop nothing rare (scripted Lucavi / untameable demons).
-  EXCALIBUR stays with Orlandeau (the player's own holy blade) — never on Ultima. Ragnarok is the enemy
-  capstone; Excalibur the ally one — the two legendary holy swords, kept distinct.
+- Ultima at 106 gives the finale the single-highest-boss identity.
+- Supports stay 105 so the fight does not become raw level inflation.
+- The full restore between phases is mandatory fairness after 057.
+- Almagest is allowed only if telegraphed and sublethal.
+- Dispelja is a soft reset answered by rebuffing.
+- Demon surround is positional pressure answered by Ribbon/status prep, spacing, and burst.
+- No usable reward appears here; Ragnarok already pays before the point of no return.
 ```
 
-> Tier-S ledger (COMPLETE): Chaos Blade (Folmarv, 052) · Ribbon (Zalbaag, 053) · Escutcheon (Loffrey,
-> 055) · Robe of Lords (Cletienne, 056) · Materia Blade (Lost Halidom relic, 057) · **Ragnarok (Ultima
-> CAPSTONE, 058)**. Tier-A leftovers unused this chapter (Genji Shield/Helm, Diamond Armlet) — see 059.
+## Builds / Implementation Intent
 
-## Proposed Composition (New Game++ Airship Graveyard v1)
-
-Two phases; apex levels — the mod's highest. Ultima `106` (both forms); Hashmal `105`; Ultima Demons `104`.
-
-### Phase 1 — Hashmal
-
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Hashmal (BOSS) | Lucavi | `105` | Wide-area attacks (spread); the first wall; defeat → full restore. |
-| n | Demon support | Demon caste | `104` | Screen Hashmal; race-able (verify exact support in-game). |
-| n | Demon support | Demon caste | `104` | Second demon body; pressure, not the objective. |
-
-> On Hashmal's defeat: PARTY HP/MP FULLY RESTORED (scripted). Re-buff / reposition for Ultima.
-
-### Phase 2 — Ultima (+ surround), then her second form
-
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Ultima (BOSS, form 1→2) | Final Lucavi | `106` | Dispelja + Almagest; transforms to a stronger 2nd form at low HP; the final kill. |
-| n | Ultima Demon | Demon caste | `104` | Surrounds the party at Phase 2 start; answer with Ribbon + spacing. |
-| n | Ultima Demon | Demon caste | `104` | Second surround body. |
-| n | Ultima Demon | Demon caste | `104` | Third surround body (verify exact count in-game). |
-
-Reasoning:
-
-The faithful move is **the canonical two-phase finale at apex level, kept grand but fair**. **Hashmal
-(`105`)** opens with wide-area pressure (spread) until he falls and the party is **fully restored** — the
-run's one mercy and a chance to re-buff. **Ultima (`106`, the mod's highest level)** then **surrounds**
-the party with Ultima Demons (`104`), **dispels** your buffs, and **Almagests** the team for % max HP —
-all telegraphed, survivable, and answerable with the **Ribbon** (earned `053`) + spacing + re-buffing.
-At low HP she **transforms** for the climactic second form. Every threat is telegraphed and sub-lethal by
-design — no scripted unavoidable wipe — so the finale tests **adaptation and burst**, not luck. The
-**Ragnarok** capstone is earned on victory and carried into the next New Game++ cycle.
-
-## Builds (the Lucavi finale)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+### Phase 1 active boss/support records
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+Level: 105 cap for active Hashmal/Folmarv/Lucavi records.
+Primary: wide-area Lucavi pressure and scripted transition behavior.
+Gear: verify all equipped unique-looking items. Save the Queen `34` must not be stealable/rewarded here.
+Reward: none.
 ```
 
-### Hashmal (Lv 105) — Phase 1 BOSS
+Guardrail: do not simplify or rewrite the phase. Preserve the scripts that transform/transition into
+the second ENTD entry.
+
+### Ultima / final form
 
 ```text
-Job: Lucavi (id TBD)   JobLevel: 8   Primary: WIDE-AREA attacks (spaceable AoE) + Lucavi melee
-Reaction: Damage Split / Counter (id TBD)   Support: Defense Boost (id TBD)   Movement: Move +2 (id TBD)
-A wide-area bruiser; spread to answer. Defeat → scripted full HP/MP restore.
+Level: 106 for the verified active final boss / final-form record(s).
+Primary: Dispelja + Almagest + final Lucavi magic.
+Almagest: telegraphed, sublethal, healable.
+Dispelja: buff strip, answered by rebuffing.
+Gear: no Ragnarok, no Excalibur, no unique reward payload.
+Reward: none.
 ```
 
-Role: the first wall; the AoE-spacing test; gateway to Ultima.
+Guardrail: raising the wrong dormant/form record can break scripting. Identify active final boss records
+before implementation.
 
-### Ultima (Lv 106) — Phase 2 BOSS, form 1 → second form
+### Ultima Demon surround and Lucavi/form support
 
 ```text
-Job: Final Lucavi (id TBD)   JobLevel: 8   Primary: DISPELJA (buff strip) + ALMAGEST (% max-HP AoE,
-  telegraphed, sub-100%) + holy/dark high magic
-Reaction: Reflexes / Damage Split (id TBD)   Support: MA-boost (id TBD)   Movement: Move +2 / fly (id TBD)
-Right hand: RAGNAROK (Tier-S CAPSTONE — steal off form 1; else guaranteed victory capstone, id TBD)
-At LOW HP → TRANSFORMS to a stronger SECOND FORM (bigger spells, each still telegraphed/answerable).
-The mod's highest-level unit (106). Grand but FAIR — no unavoidable wipe.
+Level: 105 cap.
+Ultima Demon jobs: 154 x4 in the dump.
+Lucavi/form records: jobs 49/65/73 plus any script form records.
+Pressure: positional surround, status/demon pressure, and support magic.
+Reward: none.
 ```
 
-Role: the final boss; the adaptation-and-burst climax; the Ragnarok capstone.
-
-### Ultima Demon x3 (Lv 104) — the surround
-
-```text
-Job: Ultima Demon / demon caste (id TBD)   JobLevel: 8   Ultima / self-destruct (telegraphed) + demon magic
-Reaction: Reflexes (449)   Support: MA-boost (id TBD)   Movement: Move +2 (id TBD)
-Surround the party at Phase 2 start; answer with RIBBON (status, 053) + spacing. Untameable.
-Verify exact count in-game.
-```
-
-Role: the Phase 2 positional ambush; answerable, not an instant collapse.
+Guardrail: surround must be answerable. No hard status pile-up, instant collapse, or support overleveling.
 
 ## Positioning Plan
 
 ```text
-The Airship Graveyard (buried ancient airship beneath Orbonne): a grand final arena.
-PHASE 1: Hashmal forward/center with his demon support — open ground to SPREAD vs wide-area attacks.
-INTERPHASE: full HP/MP restore — re-buff and reposition.
-PHASE 2: Ultima center; the Ultima Demons SURROUND the party's start — so position to break the surround
-  (spacing + Ribbon), weather Dispelja/Almagest, and burst Ultima through both forms.
-Preserve: the two-phase structure, the mid-fight restore, the demon surround, the transformation, and the
-  telegraphed-but-fair threat profile. Ragnarok is the capstone, carried into the next New Game++ cycle.
+Phase 1: keep enough space for spread-vs-wide-area play.
+Interphase: preserve the full HP/MP restore and any scripted repositioning.
+Phase 2: place Ultima as the center of the final objective and use the four Ultima Demons as a circle
+or partial surround. The surround should force immediate decisions without trapping all units.
 ```
 
-The final arena should say: "the last Lucavi waits in the dead heart of the ancient airship — outlast
-Hashmal, break Ultima's circle, weather the end of the world she casts, and end it; the legendary blade
-you take from her is yours to carry into the cycle to come."
+The player read should be: spend enough to beat Hashmal, accept the restore, rebuff after Dispelja,
+break the demon circle, heal through Almagest, and end Ultima's final form.
+
+## Simulation Plan and Results
+
+Artifact:
+
+```text
+tmp/fft-level-design-058-airship-graveyard/
+```
+
+Accepted candidate:
+
+```text
+v2 no-reward two-phase Ultima capstone
+Phase 1 pressure: 140
+Phase 2 pressure: 142
+Adaptation score: 100
+Finale identity: 100
+Chain fairness: 100
+Reward correctness: 100
+Scripting fidelity: 100
+```
+
+Iteration notes:
+
+```text
+- Ultima must be the single highest active boss at 106; support records stay 105.
+- The full restore between Hashmal and Ultima is mandatory fairness, not optional flavor.
+- Almagest must remain telegraphed/sublethal; Dispelja must keep rebuff counterplay.
+- Demon surround must be positional pressure with Ribbon/spacing answers, not a hard lock.
+- Ragnarok, Save the Queen, and any unique steal payloads inside the finale were rejected by the reward
+  ledger.
+- Scripted support/form records are preserved; do not simplify the finale into solo Ultima.
+```
+
+Residual risks:
+
+```text
+- Confirm exactly which 440/441 slots are active, targetable, stealable, transform records, or dormant
+  script records.
+- Confirm the full HP/MP restore fires between phase 1 and phase 2.
+- Confirm raising Ultima/form records to 106 does not break the low-HP transform or final win trigger.
+- Confirm any equipped unique-looking items on scripted slots cannot leak as steals; otherwise swap them out.
+```
+
+## Rare / Reward Handling
+
+```text
+None. No usable NG++ reward is added inside the final gauntlet.
+Ragnarok already pays at `053` through guaranteed Spoils of War and must not be awarded here.
+Hashmal/Ultima/demon records must not leak dead post-game rewards or steal-only uniques.
+Excalibur stays with Orlandeau and never appears on an enemy.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Airship Graveyard `BattleId` / ENTD entry(ies) on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify BOTH phases (Hashmal + support; Ultima + Ultima Demons + second form).
-- [ ] Confirm the win sequence + the scripted full HP/MP restore between phases + the low-HP transformation.
-- [ ] Keep Hashmal wide-area (spaceable); Ultima Dispelja (re-buff answer) + Almagest (telegraphed, sub-100%,
-      survivable); demon surround answerable (Ribbon + spacing); second form telegraphed — NO unavoidable wipe.
-- [ ] Set apex levels: Ultima `106` (both forms — the mod's HIGHEST), Hashmal `105`, Ultima Demons `104`.
-- [ ] Set Ragnarok as the CAPSTONE: steal off Ultima form 1, else guaranteed victory reward; carries into NG++.
-- [ ] Keep Excalibur with Orlandeau (ally) — never on Ultima.
-- [ ] Patch via the correct layer (mind the two-phase scripting); keep the diff inside the finale window only.
-- [ ] Re-dump and diff; confirm small, intentional changes; verify both phases + transformation + Ragnarok.
-- [ ] Install mod, test from a New Game+ save; confirm it plays as a GRAND but FAIR two-phase finale —
-      every threat telegraphed/answerable, the restore lands, both Ultima forms beatable, Ragnarok awarded.
+- [ ] Preserve the two-entry script: `440` phase 1 -> restore -> `441` phase 2.
+- [ ] Verify which records are active combatants, targetable, stealable, dormant, or transform-only.
+- [ ] Raise only the verified active Ultima/final-form boss record(s) to `106`.
+- [ ] Keep active support records capped at `105`; do not overlevel support above Ultima.
+- [ ] Preserve full HP/MP restore between phases.
+- [ ] Preserve low-HP transformation and final win trigger.
+- [ ] Keep Almagest telegraphed/sublethal and Dispelja rebuff-answerable.
+- [ ] Keep demon surround answerable with Ribbon/status prep, spacing, and burst.
+- [ ] Remove or prove non-leaking any unique-looking active/stealable equipment, especially Save the
+      Queen `34` on entry `440` slot `0`.
+- [ ] Add no usable reward, no Ragnarok, and no steal-dependent rare.
+- [ ] Re-dump entries `440` and `441` after implementation and verify only intended level/gear/kit changes.
+- [ ] Playtest `057 -> 058` and the full `054 -> 058` gauntlet.
 
 ## Test Questions
 
-- Does it preserve the canonical two-phase finale (Hashmal → full restore → Ultima → second form) and end
-  the campaign on the second form's defeat?
-- Is every threat GRAND but FAIR — Almagest telegraphed/sub-100%/survivable, Dispelja answered by re-buff,
-  the demon surround broken by Ribbon + spacing, the second form telegraphed — with NO unavoidable wipe?
-- Is Ultima the mod's highest-level unit (106), and is the finale a clear climax over the gauntlet's prior fights?
-- Is the Ragnarok capstone earned on victory (and/or stealable off form 1), carried into the next NG++ cycle,
-  with Excalibur kept on Orlandeau?
-- Is it winnable on ONE loadout as the 5th of five no-resupply fights, using the Tier-S gear assembled across
-  the gauntlet?
-- Does it read as the climactic Lucavi finale in the dead airship, the fitting end of the whole mod?
+- Does the final still play as Hashmal -> restore -> Ultima -> final form?
+- Is Ultima the only active level-106 enemy?
+- Does the restore fire and make Phase 2 fair after the 057 peak?
+- Are Almagest, Dispelja, and the demon surround scary but answerable?
+- Are no usable NG++ rewards or unique steal payloads present?
+- Does the finale feel climactic without becoming a scripted wipe?
 
 ## Sources
 
-- Game8, "Airship Graveyard Walkthrough (Battle 53 — Final Battle)": two phases (Defeat Hashmal → full
-  HP/MP restore → Defeat Ultima), Ultima Dispelja + Almagest (% max HP), the low-HP second-form
-  transformation, Ultima-Demon surround, Hashmal wide-area attacks, rec 60+, 4/5 stars, deploy 5.
+- Local: `docs/battles/ENDGAME-BLOCKER.md` for entry mapping and two-phase data.
+- Local: `docs/battles/037-chapter-4-overview.md` for Chapter 4 finale principles and gauntlet curve.
+- Local: `docs/battles/chapter-4-rewards-implementation.md` for the no-usable-reward rule in `054-058`.
+- Local: `tmp/fft-level-design-058-airship-graveyard/` simulation artifact.
+- Local dumps: `tools/entd_tool.py dump-entry --entry 440` and `--entry 441`.
+- Game8, "Airship Graveyard Walkthrough (Battle 53 - Final Battle)": original phase structure and
+  public finale framing.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553229
-- Final Fantasy Wiki, "Ultima (Final Fantasy Tactics)" / "Hashmal": the final Lucavi and his lieutenant.
-  https://finalfantasy.fandom.com/wiki/Ultima_(Final_Fantasy_Tactics)
-- Local: `037-chapter-4-overview.md` (gauntlet + Tier-S tiering; Ultima L106), `050-eagrose-castle.md`
-  (Adrammelech 2-phase Lucavi precedent), `049-limberry-undercroft.md` (Zalera Lucavi), `053-mullonde-
-  sanctuary.md` (Ribbon — the status answer for the demon surround), `059-chapter-4-balance-review.md`
-  (the chapter wrap-up — to be written).
-```

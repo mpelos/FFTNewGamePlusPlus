@@ -1,290 +1,360 @@
 # 050 - Eagrose Castle (Igros Castle)
 
-Status: ✅ implemented (v1, entry 459) — see Rend-cap caveat
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 459
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 45 (after the Limberry chain)
 Target version: Enhanced v1.5.0
 ENTD: global entry **459** (local 75, entd4)
 File: `battle_entd4_ent.bin`
 
-> **NG++ reward applied (2026-06-27):** the heavy-armor set - Maximillian (s1, replacing a Phoenix Down) +
-> Grand Helm (s2, kept) + Venetian Shield (s3), fitting Dycedarg/Adramelk's apex defense. Guaranteed Spoils
-> of War (ENTD 0x1e), NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
+> **NG++ rewards applied (2026-06-27):** Maximillian + Grand Helm + Venetian Shield through guaranteed
+> Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Canonical map:
+> `chapter-4-rewards-implementation.md`.
 
-## Implemented (v1, entry 459)
+## Current Implementation / Data Reality
 
 ```text
-IDENTIFICATION: entry 459 is the only one in the band with 5 generic Knights (job 76) = Phase-1 stair-
-  wall. slot7 job 69 is a LUCAVI -> entry 470 (the multi-Lucavi battle) shows job 69 with name_id==job_id
-  exactly like Velius(60)/Zalera(62), so job 69 = Adramelk. Roster:
-    slot 0 = GUEST (tail 00 84), name 8, job 8, real gear -> story ally.
-    slot 1 = Dycedarg (name 9, job 9; eq incl. Defender rh=33 + Aegis Shield lh=136) -> Phase-1 boss.
-    slots 2-6 = 5 Knights (job 76; were near-naked, only a sword) -> the upper-stair wall.
-    slot 7 = Adramelk (name 69, job 69, eq=255 Lucavi no-equip) -> Phase-2 transform spike.
-    slots 8,9 = job 8, eq=0, lvl 254 -> scripting placeholders (left untouched).
+DATA REALITY (verified from current embedded entd4 dump, entry 459):
+  slot 0 = allied story guest record
+           name/job 8, level 103, JobLevel 8, full gear (Runeblade/Crystal Shield-class loadout).
+           Must be player-controlled in NG++ if active. Do not use guest AI as difficulty.
 
-CHANGE:
-  Dycedarg = 104, head set to GRAND HELM (156) = the Tier-A steal/poach reward (he has equip slots;
-    kept his Aegis Shield + Defender). 5 Knights = 103, armed (Heavy Helm/Armor + Bracers + shield,
-    their sword kept) jl8. Adramelk = 105 (eq255, level only). Win-cond + 2-phase transform preserved.
-  GUEST (slot 0): SPRITE COLLISION -> charId 8 also appears as enemy/placeholder clones at slots 8,9
-    (job8==charId8), so the runtime GuestCharIds scaler can't be used (Rapha-Roof precedent, 433).
-    Scaled by DIRECT ENTD level (103); gear + guest tail preserved. Program.cs NOT modified.
+  slot 1 = Dycedarg
+           name/job 9, level 104, JobLevel 8, complete setup:
+           secondary 71, reaction 450, support 479, movement 486.
+           gear includes Grand Helm (156), Maximillian-tier body (181), Defender (33), Aegis Shield (136).
+           Spoils payload = 0xB9 (Maximillian).
 
-CAVEAT (Rend/Break <=2-source cap): Knight (job 76) has Arts of War as its primary command, which can't
-  be removed via ENTD without changing the job (and losing the knight-wall identity). All 5 kept as
-  Knights; the <=2-Rend cap is left as a SOFT/AI item to verify in-game (enemy Knight AI does not
-  coordinate a 5-source break-lock, and the player has Safeguard/Steal answers). If testing shows a
-  break-lock, a follow-up will re-job 3 of the 5 to a non-break bruiser or edit the ability layer.
-Buried map treasure (Blood Sword, Healing Staff, Featherweave Cloak, Thief's Cap) left as-is.
+  slots 2-6 = five Knight stair-wall bodies
+              job 76, level 103, JobLevel 8, full equipment and R/S/M setup:
+              Counter (442), Attack Boost (465), Movement +1 (486), heavy gear + Bracers.
+              slot 2 spoils payload = 0x9C (Grand Helm).
+              slot 3 spoils payload = 0x8E (Venetian Shield).
+
+  slot 7 = Adramelk / Adrammelech Lucavi transform
+           job 69, level 105, no normal equipment, secondary 120.
+
+  slots 8,9 = job-8 scripting placeholders, level 254, no normal battle role; preserve untouched.
+
+Current v1 implementation:
+  Guest slot = 103 by direct ENTD scaling.
+  Dycedarg = 104.
+  Five Knight bodies = 103 with complete gear/R/S/M.
+  Adramelk = 105.
+  Two-phase transform and buried map treasure are preserved.
 ```
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. Two-phase Lucavi fight (Velius precedent, `034`).
+Planned v2 redesign (docs-only in this pass): keep the two-phase brother fight, but make the fairness
+requirements explicit. The active guest must be controlled. The stair wall may contain five bodies, but
+no more than two can be **effective break sources**. Phase 2 must remain a sequential transform into a
+spaceable Lucavi AoE puzzle, not simultaneous pressure layered on top of the full Knight wall.
+
+> Data-layer fields are known for entry 459, but final implementation still needs a fresh dump/diff and
+> in-game verification of guest control, transform behavior, and the hard break-source cap. This pass
+> updates documentation only.
+
+## Design Goal
+
+```text
+Make Eagrose the second major Chapter 4 Lucavi spike: Phase 1 is a controlled high-stair gear-pressure
+wall around Dycedarg, Phase 2 is Adramelk's spread-or-die summon pressure. The player must protect key
+gear, crack the stair wall, then spread and burst the Lucavi. The fight must never become a five-Rend
+gear deletion wall, an AI-guest failure, or a non-spaceable AoE/status lock.
+```
+
+Slot 0 is an active-guest concern. If present in battle, this unit must be player-controlled in NG++.
 
 ## Original Battle
 
 Objective:
 
 ```text
-Defeat Dycedarg, Ramza's elder brother!   (two-phase: Dycedarg → the Lucavi Adrammelech)
+Defeat Dycedarg, Ramza's elder brother!   (two-phase: Dycedarg -> Adramelk)
 ```
 
 Player deployment:
 
 ```text
-Up to 5 units, including Ramza. No guests.
+Up to 5 units, including Ramza, plus an allied story guest record in local data.
 ```
 
-Original enemy composition (verified via Game8, Battle 45):
+Original enemy composition:
 
 ```text
-PHASE 1 — Dycedarg (Knight) + 5x Knight (Rend; on the upper stairs)
-PHASE 2 — Dycedarg TRANSFORMS into ADRAMMELECH (Lucavi) after defeat:
-            summons Bahamut / Leviathan (big AoE), inflicts Confuse, AoE devastates grouped units.
+PHASE 1:
+  Dycedarg + 5x Knight on the upper stairs.
+
+PHASE 2:
+  Dycedarg transforms into Adramelk / Adrammelech, a Lucavi with summon-AoE and status pressure.
 ```
 
 Public walkthrough details:
 
 ```text
-Recommended level: ~60.  Difficulty: 4/5 stars.  Deploy up to 5.  Win: defeat Dycedarg/Adrammelech.
-TERRAIN: Eagrose Castle keep — MULTI-LEVEL with STAIRS; the Knights hold the UPPER stairs (elevation).
-PHASE 1: crack a Rend-Knight wall on the high ground — attack from BELOW with elevation-ignoring
-  abilities (Holy Sword, height-ignoring magic).
-PHASE 2: Dycedarg becomes ADRAMMELECH (Lucavi) — summon-AoE (Bahamut/Leviathan) that devastates
-  GROUPED units, plus Confuse/Stone. Tips: Jade Armlet to nullify Stone, spread out, Holy Sword/magic
-  that ignores height, heavy hitters (Orlandeau/Agrias/Meliadoul).
-Rewards: 36,100 Gil; buried (Blood Sword, Featherweave Cloak, Healing Staff, Thief's Cap).
+Recommended level: ~60. Difficulty: 4/5 stars. Multi-level Eagrose keep with upper stairs.
+Phase 1 asks the player to crack a Knight wall from below. Phase 2 punishes grouped units with large
+summon-AoE and resistable status such as Confuse/Stone. Buried map treasure includes Blood Sword,
+Healing Staff, Featherweave Cloak, and Thief's Cap.
 ```
 
 Design reading:
 
-Eagrose is **the brother fight** — Ramza is forced to kill his eldest brother **Dycedarg**, who is
-revealed as the Lucavi **Adrammelech**. Its identity is a **two-phase castle duel**: Phase 1 is a
-**Rend-Knight wall on the stairs** (an elevation puzzle — strike from below with height-ignoring
-damage), and Phase 2 is a **summon-AoE Lucavi** whose Bahamut/Leviathan blasts punish grouped units,
-demanding **spacing** and %-damage/Holy answers. It mirrors the Riovanes Keep two-phase (`034`,
-Wiegraf→Velius) but with a distinct shape: a stair-wall human phase into a *spread-or-die* demon
-phase. The emotional beat — a sibling turned monster — is the chapter's penultimate Lucavi before the
-march on Mullonde.
+Eagrose is **the brother fight**. Its shape is not just "another Lucavi": the human phase forces Ramza
+through the institutional Beoulve wall first, then reveals the monster underneath. That means the two
+demands must remain sequential and readable. If all five Knights are effective Rend users, the first
+phase becomes a gear-destruction tax. If Adramelk's AoE is non-spaceable, the second phase becomes a
+wipe check. If the guest is AI-controlled, the fight asks the player to babysit a bad decision engine.
 
-For New Game++ the identity must stay: **a two-phase brother duel — crack the Rend-Knight stair-wall
-from below (height-ignoring damage), then survive and burst the summon-AoE Lucavi Adrammelech by
-spreading out — with the Rend capped, the Lucavi's mass-AoE one telegraphed source, and a Tier-A
-knight-lord drop on his death.**
+For New Game++ the identity must stay: **controlled guest, capped break wall, then space against the
+Lucavi.**
 
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Dycedarg (boss) + 5 Knight (Phase 1), and the Adrammelech transform (Phase 2), + player
-  slots.
-Keep win = "Defeat Dycedarg" (his/Adrammelech's death ends it) + the MULTI-LEVEL STAIR geometry (the
-  elevation wall IS Phase 1) + the 2-phase transform (Phase 2 Lucavi).
-Keep Adrammelech's summon-AoE + Confuse identity BUT constrain it (below): ONE telegraphed mass source,
-  spaceable, Confuse resistable/non-locking.
-This is a 2-phase Lucavi fight: Dycedarg 104 (Phase 1), Adrammelech 105 (Phase 2 spike), Knights 103.
-  ONE Tier-A rare on Dycedarg/Adrammelech.
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-Leave the buried map treasure (Blood Sword, Healing Staff, etc.) as-is — map loot.
+CONFIRMED:
+- Entry 459 is Eagrose Castle / Igros Castle.
+- Slot 0 is an allied guest/story unit at level 103 with full gear.
+- Slot 1 is Dycedarg at level 104 with complete setup.
+- Slots 2-6 are five level-103 Knight bodies with complete gear/R/S/M.
+- Slot 7 is Adramelk/Adrammelech at level 105.
+- Slots 8/9 are job-8 placeholders and should be preserved.
+- Rewards are already mapped to Maximillian + Grand Helm + Venetian Shield guaranteed spoils.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- Verify slot 0 is active and player-controllable; if not, set the guest-control bit.
+- Verify the transform from Dycedarg to Adramelk fires correctly.
+- Enforce the two-effective-breaker cap. If Knight primary command makes all five job-76 bodies real
+  break sources, implementation must change three bodies' job/command/AI/ability layer to non-break
+  heavy guards. Leaving a five-Rend wall is not acceptable v2 behavior.
+- Confirm Adramelk's AoE/status cadence is telegraphed, spaceable, resistable, and non-locking.
+- Confirm all three spoils land in the first three awarded `0x1e` items.
+- Preserve buried map treasure as vanilla map loot.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-Knight job id              (TBD - verify)
-Dycedarg boss job id       (TBD - verify; Knight/lord form, Phase 1)
-Adrammelech / Lucavi id    (TBD - verify; Phase 2 demon form)
+Headline engine: two-phase brother-to-Lucavi fight.
+Phase 1 support structure:
+  - Dycedarg anchors the upper stairs.
+  - Two effective breakers threaten gear and force Safeguard/Maintenance/Steal/disarm decisions.
+  - Three non-break heavy guards preserve the Knight-wall feeling without creating a five-source break
+    lock.
+
+Phase 2 support structure:
+  - Adramelk is the single Lucavi engine.
+  - Summon-AoE punishes clumping.
+  - Confuse/Stone-style status is resistable and non-locking.
+
+WHY: the original battle is already a strong puzzle: elevation wall -> demon reveal. Chapter 4 v2 makes
+both halves matter while keeping them sequential and answerable.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Sanctioned Exceptions
 
 ```text
-CHANGE: NO new generic caste. The escalation is the 2-PHASE BOSS — Dycedarg (Knight-lord) → Adrammelech
-  (summon-AoE Lucavi), the fourth Lucavi of the mod (Cúchulainn/Velius/Zalera precede). The 5-Knight
-  Rend-wall on the stairs is the Phase-1 demand.
-WHY: the fight's identity is already "crack the stair-wall, then spread vs the demon's AoE." The faithful
-  Ch4 escalation is the two-phase human→Lucavi delivered at full power with a distinct shape (stair-wall
-  → spread-or-die summons) — NOT a third bolted-on mechanic. The 2-phase brother duel IS the demand.
-CONSTRAINTS (carry Velius 2-phase precedent 034 + the caps):
-  - REND CAP: only 2 of the 5 Knights carry Rend (≤2-break-source cap) — the other 3 are plain bruisers.
-    A 5-Rend wall would be a break-lock; forbidden.
-  - LUCAVI MASS-AoE (Bahamut/Leviathan): ONE telegraphed, spaceable source; the answer is SPACING +
-    %-damage/Holy (mirror Velius's Gravity answer). Not instant, no hard lock.
-  - CONFUSE / STONE: resistable (Jade-Armlet-class gear) + non-locking; the boss mass-status cap.
-WHAT IS NOT CHANGED: the stair geometry, the elevation puzzle, the transform, and the "defeat Dycedarg
-  to win" shape remain.
+KNIGHT REND / BREAK:
+  Allowed because Phase 1 is a gear-preservation wall. Guardrail: hard cap of two effective break
+  sources. Five coordinated breakers are banned.
+
+TWO-PHASE TRANSFORM:
+  Preserved as the emotional and tactical beat. Phase pressure is sequential, not simultaneous.
+
+LUCAVI SUMMON-AoE:
+  Allowed as Adramelk's identity. Guardrail: telegraphed, spaceable, and survivable through spread,
+  Shell/mitigation, burst, and boss focus.
+
+LUCAVI STATUS:
+  Confuse/Stone-style effects may exist as support pressure, but must be resistable and non-locking.
+
+ACTIVE GUEST:
+  Slot 0 must be controllable if active. Guest AI is not a skill check.
 ```
 
-## Sanctioned exceptions (carried precedents)
+## Rare/reward handling
 
 ```text
-KNIGHT REND / BREAK — capped to 2 of the 5 Knights (≤2-break-source cap, 028/033/044); telegraphed,
-  Safeguard/Steal answers. NEVER a 5-source break-lock.
-LUCAVI SUMMON-AoE (Adrammelech) — ONE telegraphed, spaceable mass source (Bahamut/Leviathan); answered
-  by SPACING + %-damage/Holy; not instant, no hard lock (Velius precedent, 034).
-LUCAVI STATUS (Confuse/Stone) — resistable (status/Stone-ward gear) + non-locking; boss mass-status cap.
-TWO-PHASE TRANSFORM — the human→Lucavi spike, as Wiegraf→Velius (034). One transform, telegraphed.
+Guaranteed spoils for entry 459: MAXIMILLIAN + GRAND HELM + VENETIAN SHIELD.
+These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
+
+COMBAT ROLE:
+  - Dycedarg may visibly carry defensive lord gear as threat identity.
+  - The armor set is still guaranteed through spoils, not dependent on stealing from him.
+
+PRESERVE:
+  - Buried map treasure remains vanilla map loot.
+  - No Excalibur. Excalibur stays Orlandeau's.
 ```
 
-## Boss rare loot
+## Proposed Composition (New Game++ Eagrose Castle v2)
 
-```text
-DYCEDARG / ADRAMMELECH (boss, DIES here) drops/carries ONE Tier-A rare: GRAND HELM (the best non-Genji
-  heavy helm).
-WHY IT FITS: Dycedarg is the Beoulve warlord — the head of Ramza's knightly house; the finest heavy helm
-  is his natural crown and a clear best-non-ultimate prize. It is unused so far and unmistakably Tier-A.
-TIER: A (mid-Chapter-4 best non-ultimate). NOT Tier-S: the Genji set is Elmdor-themed (Genji Armor paid
-  at 048); Ribbon / Robe of Lords / the Tier-S capstones stay on the endgame (47-53 / docs 052-058).
-He DIES here (win = defeat Dycedarg), so the rare pays out — consistent with "retreat/flee = no drop."
-The 5 Knights are generic (no boss loot). Buried map treasure (Blood Sword, etc.) stays as-is.
-```
+Keep the local two-phase roster and levels. The required redesign is not more bodies; it is hard
+fairness around break count, guest control, reward handling, and phase separation.
 
-## Proposed Composition (New Game++ Eagrose Castle v1)
+### Phase 1 - Dycedarg + High-Stair Wall
 
-Keep the two-phase shape; Phase-1 stair-wall (Rend capped) into Phase-2 summon-AoE Lucavi. Dycedarg
-`104`; Knights `103`; Adrammelech `105`.
+| Slot | Role | Unit type | Level | Purpose |
+|------|------|-----------|-------|---------|
+| s0 | Allied guest/story unit | Guest record | `103` | Player-controlled ally if active; not a failure condition engine. |
+| s1 | Boss / phase trigger | Dycedarg | `104` | High-stair anchor; defeat triggers Lucavi phase; reward payload. |
+| s2 | Breaker 1 / reward payload | Knight body | `103` | Effective break source 1; Grand Helm spoil. |
+| s3 | Breaker 2 / reward payload | Knight body | `103` | Effective break source 2; Venetian Shield spoil. |
+| s4 | Heavy guard | Non-break effective stair guard | `103` | Body pressure without break-lock. |
+| s5 | Heavy guard | Non-break effective stair guard | `103` | Second guard; preserves wall. |
+| s6 | Heavy guard | Non-break effective stair guard | `103` | Third guard; blocks route without extra Rend pressure. |
 
-### Phase 1 — Dycedarg + Knight stair-wall
+### Phase 2 - Adramelk / Adrammelech
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Dycedarg (BOSS) | Knight-lord | `104` | Holds the high ground; transforms on defeat; Grand Helm drop. |
-| n | Knight | Knight | `103` | Upper-stair wall; Rend (break source 1). |
-| n | Knight | Knight | `103` | Upper-stair wall; Rend (break source 2 — cap reached). |
-| n | Knight | Knight | `103` | Upper-stair wall; NO Rend (plain bruiser). |
-| n | Knight | Knight | `103` | Upper-stair wall; NO Rend. |
-| n | Knight | Knight | `103` | Upper-stair wall; NO Rend. |
+| Slot | Role | Unit type | Level | Purpose |
+|------|------|-----------|-------|---------|
+| s7 | Lucavi boss | Adramelk / Adrammelech | `105` | Sequential transform spike; spaceable summon-AoE + resistable status. |
 
-### Phase 2 — Adrammelech (Lucavi spike)
+Script placeholders to preserve:
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Adrammelech (BOSS) | Lucavi | `105` | Summon-AoE (Bahamut/Leviathan) + Confuse; spread-or-die; the spike. |
+| Slot | Record | Handling |
+|------|--------|----------|
+| s8 | job-8 placeholder | Preserve untouched unless implementation proves active. |
+| s9 | job-8 placeholder | Preserve untouched unless implementation proves active. |
 
 Reasoning:
 
-The faithful move is to **honor the two-phase brother duel with both caps in place**. Phase 1 is the
-stair-wall elevation puzzle: Dycedarg (`104`) and five Knights (`103`) on the high ground, but Rend is
-limited to two of them (no break-lock), so the player strikes from below with height-ignoring damage.
-Phase 2 is the Lucavi spike: Adrammelech (`105`) with ONE telegraphed summon-AoE source that punishes
-clumping — answered by spreading out and %-damage/Holy, with Confuse/Stone resistable. Killing the
-boss (either phase's final blow) ends it and drops the Grand Helm (Tier-A). It echoes Velius (`034`)
-but plays differently: wall-crack then spread-or-die.
+The accepted design is **v2 hard-capped brother duel**. The first simulation overcounted pressure by
+treating both phases as simultaneous; iteration 2 correctly models the transform as sequential. Under
+that model, the fight is a valid Chapter 4 spike only if the five-body stair wall has no more than two
+effective breakers and the guest is controlled. The reward ledger is the full armor/shield set, not the
+old single-Grand-Helm plan.
 
-## Builds (Chapter-4 boss quality; Beoulve-lord + demon flavor)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+Rejected variants:
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+- Five-Rend stair wall: gear deletion tax, violates break-source cap.
+- AI guest hostage: guest AI becomes a failure condition.
+- Unavoidable summon lock: Phase 2 loses spacing counterplay.
+- Extra caster support: adds a second engine to an already two-phase fight.
+- Single-phase Dycedarg: removes the Lucavi reveal.
+- One-rare old ledger: contradicts Maximillian + Grand Helm + Venetian Shield reward map.
+- Steal-required armor set: contradicts guaranteed spoils.
+- Overlevelled brother spike: replaces puzzle pressure with raw stats.
+- No-break stair wall: loses Phase 1's gear-preservation lesson.
+- Simultaneous pressure pile-up: makes phase 1 and phase 2 feel like one overloaded fight.
 ```
 
-### Dycedarg (Lv 104) — BOSS Phase 1 (Knight-lord)
+## Builds (two-phase boss fight)
 
 ```text
-Job: Knight-lord (id TBD)   JobLevel: 8   Primary: Rend/Mighty Sword + basic   Secondary: basic
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: GRAND HELM (Tier-A, id TBD)   Body: Tier-A heavy armor (id TBD)   Accessory: Tier-A accessory (id TBD)
-Right hand: Tier-A knight sword (id TBD)   Left: Tier-A shield (id TBD)
+Guest/story ally slot 0:
+  - Keep level 103 and current gear unless implementation data says otherwise.
+  - Must be player-controlled if active.
+  - Do not tune the battle around this unit's AI survival.
+
+Dycedarg:
+  - Level 104, JobLevel 8, complete setup already present.
+  - Preserve lord/defender identity and transform trigger.
+  - Defensive gear is allowed as visible identity; rewards are spoils.
+
+Breaker Knights x2:
+  - Level 103, JobLevel 8, full gear/R/S/M.
+  - These are the only effective break sources.
+  - Their purpose is to force gear protection/disarm routing.
+
+Heavy guards x3:
+  - Level 103, full gear/R/S/M.
+  - Must not function as additional effective break sources.
+  - If job 76 primary makes Rend unavoidable, implementation must solve it by job/command/AI/ability
+    layer changes rather than accepting five breakers.
+
+Adramelk / Adrammelech:
+  - Level 105 Lucavi transform, no normal equipment.
+  - One summon-AoE engine, telegraphed and spaceable.
+  - Status pressure is support only: resistable, cleansable, non-locking.
 ```
-
-Role: the high-ground anchor; transforms on defeat. Drops Grand Helm.
-
-### Knight x5 (Lv 103) — stair-wall (Rend on 2 only)
-
-```text
-Job: Knight (id TBD)   JobLevel: 8   Primary: basic + Rend (ONLY 2 of the 5 — cap)
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Bracers (218)
-Right hand: shop knight sword (id TBD)   Left: shop shield (id TBD)
-```
-
-Role: the elevation wall guarding the stairs; Rend on at most two (cap), never a break-lock.
-
-### Adrammelech (Lv 105) — BOSS Phase 2 (Lucavi)
-
-```text
-Job: Adrammelech / Lucavi (id TBD)   JobLevel: 8   Primary: summon-AoE (Bahamut/Leviathan — ONE
-  telegraphed, spaceable source) + Confuse/Stone (resistable, non-locking)   Secondary: demon melee
-Reaction: (anti-burst) Counter Magic / MA-up (id TBD)   Support: MA-boost (id TBD)   Movement: float/+1
-Innate Lucavi (no normal equip). Continues Dycedarg's loot (Grand Helm pays on final death).
-```
-
-Role: the spread-or-die spike — devastates grouped units; answered by spacing + %-damage/Holy. Keep
-the mass-AoE one telegraphed source and status resistable; no hard lock.
 
 ## Positioning Plan
 
 ```text
-PHASE 1: the Knights hold the UPPER STAIRS with Dycedarg behind them — the player approaches from BELOW,
-  so the elevation is a wall best answered by height-ignoring damage (Holy Sword / magic). Keep the
-  stair geometry; Rend on only 2 Knights.
-PHASE 2: Adrammelech occupies the keep floor with summon-AoE sightlines — keep them telegraphed and
-  spaceable so SPREADING OUT is the answer (punish clumping, not the careful player). Confuse/Stone
-  resistable.
-Bosses are the spikes (104 → 105); Knights at 103. Preserve the two-phase transform.
+Phase 1: Dycedarg and the stair wall hold the upper level. The two breakers cover the most direct
+approach; the three heavy guards block lanes and bodyguard without adding more break pressure. Slot 0
+guest starts controllable and must not be exposed to unavoidable failure.
+
+Phase 2: After the transform, Adramelk's threat becomes spacing. The player should have room to spread,
+re-buff, and focus the Lucavi instead of being pinned in the stair-wall geometry by leftover break spam.
 ```
 
-The keep should say: "your own blood holds the high stair, then wears a demon's shape — climb to him,
-break his guard, and when the monster rises, scatter and burn it down."
+The keep should say: "your brother hides behind the house's steel; break through the stair wall, then
+scatter when the demon rises."
+
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-050-eagrose-castle/
+  assumptions.md
+  simulate.py
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic two-phase stair-wall and Lucavi-AoE model.
+It scores pressure, phase clarity, break fairness, AoE fairness, answerability, guest safety, reward
+correctness, and scripting fidelity. It does not simulate exact FFT formulas.
+```
+
+Result summary:
+
+| Candidate | Pressure | Phase clarity | Break fair | AoE fair | Answer | Guest | Reward | Scripting | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| v2 hard-capped brother duel | 338 | 94 | 92 | 88 | 96 | 100 | 100 | 100 | **Accepted** |
+| five-rend stair wall | 395 | 94 | 38 | 88 | 73 | 100 | 100 | 100 | Rejected: too many breaks |
+| AI guest hostage | 338 | 94 | 92 | 88 | 96 | 30 | 100 | 100 | Rejected: guest AI |
+| unavoidable summon lock | 398 | 94 | 92 | 22 | 47 | 100 | 100 | 100 | Rejected: AoE/status lock |
+| extra caster support | 368 | 74 | 92 | 88 | 84 | 100 | 100 | 100 | Rejected: second engine |
+| single-phase Dycedarg | 364 | 45 | 92 | 88 | 80 | 100 | 100 | 55 | Rejected: breaks transform |
+| one-rare old ledger | 338 | 94 | 92 | 88 | 96 | 100 | 75 | 100 | Rejected: reward ledger |
+| steal-required armor set | 338 | 94 | 80 | 88 | 96 | 100 | 35 | 100 | Rejected: reward policy |
+| overlevelled brother spike | 366 | 94 | 92 | 76 | 86 | 100 | 100 | 100 | Rejected: raw levels |
+| no-break stair wall | 282 | 94 | 78 | 88 | 96 | 100 | 100 | 100 | Rejected: loses gear lesson |
+| simultaneous pressure pile-up | 420 | 94 | 92 | 88 | 96 | 100 | 100 | 100 | Rejected: phase pile-up |
+
+Iteration decision:
+
+```text
+ACCEPT v2 hard-capped brother duel.
+Iteration 2 treats the fight as sequential phases. The stair wall is allowed only with two effective
+breakers, slot 0 must be controllable if active, and Phase 2 must remain spaceable.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Eagrose Castle `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Dycedarg + 5 Knight (Phase 1) + the Adrammelech transform + player slots.
-- [ ] Keep win = "Defeat Dycedarg"; keep the multi-level stair geometry + the 2-phase transform.
-- [ ] Phase 1: Dycedarg `104`, Knights `103`; LIMIT Rend to 2 of the 5 Knights (cap).
-- [ ] Phase 2: Adrammelech `105`; summon-AoE = ONE telegraphed, spaceable source; Confuse/Stone resistable, non-locking.
-- [ ] Equip the drop: GRAND HELM (Tier-A) paid on the boss's final death.
-- [ ] Set JobLevel `8` on boss/Knight slots.
-- [ ] Patch via the correct layer; keep the diff inside the Eagrose window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify Rend cap + AoE cap + transform + drop.
-- [ ] Install mod, test from a New Game+ save; confirm Phase-1 stair-wall is fair (Rend capped), Phase-2
-      AoE is spaceable (spread-or-die, not unavoidable), Confuse resistable, and Grand Helm drops.
+- [ ] Re-dump entry 459 and verify slot order, rewards, placeholder behavior, and transform.
+- [ ] Verify slot 0 is active and controllable; if active but not controllable, set player control.
+- [ ] Preserve win condition and Dycedarg -> Adramelk transform.
+- [ ] Keep Dycedarg at `104`; Knight bodies at `103`; Adramelk at `105`; guest at `103`.
+- [ ] Enforce hard cap: no more than two effective break sources in Phase 1.
+- [ ] Preserve complete gear/R/S/M on active human enemies, but do not let all five Knights be breakers.
+- [ ] Keep Phase 2 AoE/status telegraphed, spaceable, resistable, and non-locking.
+- [ ] Author/verify spoils: Maximillian + Grand Helm + Venetian Shield, guaranteed and within the 3-item cap.
+- [ ] Preserve buried map treasure as map treasure.
 
 ## Test Questions
 
-- Is Phase 1 a fair elevation puzzle (crack the stair-wall from below; Rend capped to 2; no break-lock)?
-- Is Phase 2's summon-AoE ONE telegraphed, spaceable source so SPREADING is the answer (no unavoidable wipe)?
-- Are Confuse/Stone resistable + non-locking (boss mass-status cap)?
-- Does killing the boss end it, and does the Grand Helm (Tier-A) drop on his final death?
-- Are the bands right (Dycedarg 104, Knights 103, Adrammelech 105) — a 2-phase Lucavi, not an over-wall?
-- Does it land the brother-fight beat and read as the Beoulve keep, echoing Velius (034) yet distinct?
+- Is slot 0 player-controlled if active, and does the battle avoid guest-AI failure?
+- Are only two enemies functioning as effective break sources in Phase 1?
+- Does the stair wall still feel like Eagrose without becoming a gear deletion lock?
+- Does the transform fire cleanly and make Phase 2 sequential rather than simultaneous with Phase 1?
+- Is Adramelk's summon/status pressure spaceable and resistable?
+- Do Maximillian + Grand Helm + Venetian Shield appear as guaranteed spoils?
 
 ## Sources
 
-- Game8, "Eagrose Castle Walkthrough (Battle 45)": roster (Dycedarg boss + 5 Knight), two-phase
-  (Dycedarg → Adrammelech Lucavi), "Defeat Dycedarg!", rec ~60, 4/5 stars, deploy 5, multi-level stair
-  terrain, Phase-1 Rend wall on the high ground, Phase-2 Bahamut/Leviathan AoE + Confuse/Stone (Jade
-  Armlet tip), rewards (36,100 Gil; buried Blood Sword, Healing Staff, Featherweave Cloak, Thief's Cap).
+- Game8, "Eagrose Castle Walkthrough (Battle 45)": public roster, two-phase boss shape, stair terrain,
+  Adramelk summon/status pressure, and buried treasure.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553205
 - Final Fantasy Wiki, "Dycedarg Beoulve" / "Adramelk": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Dycedarg_Beoulve
-- Local: `037-chapter-4-overview.md` (rules), `034-riovanes-castle-keep.md` (Wiegraf→Velius — the
-  two-phase Lucavi precedent + Gravity/spacing answer), `049-limberry-undercroft.md` (Zalera Lucavi).
-```
-</content>
+- Local: `037-chapter-4-overview.md`, `034-riovanes-castle-keep.md`,
+  `049-limberry-undercroft.md`, `chapter-4-rewards-implementation.md`,
+  `spoils-of-war-reward-system.md`.

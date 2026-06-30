@@ -1,35 +1,43 @@
 # 047 - Limberry Castle Gate
 
-Status: ✅ implemented (v1, entry 454)
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 454
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 42 (Limberry chain 1 of 3 — NO resupply between 42→43→44)
 Target version: Enhanced v1.5.0
 ENTD: global entry **454** (local 70, entd4)
 File: `battle_entd4_ent.bin`
 
-## Implemented (v1, entry 454)
+## Current Implementation (v1, entry 454)
 
 ```text
 DATA (verified from entd4 dump):
-  slot 0 = Celia  (job 45 Assassin, name_id 45)  eq=254 (fixed boss gear, no equip slots)
+  slot 0 = Celia  (job 45 Assassin, name_id 45)  eq=254 (fixed boss gear, no editable equip slots)
   slot 1 = Lettie (job 46 Assassin, name_id 46)  eq=254
-  slots 2-5 = Reaver (job 150 monster, lvl 254 runtime, eq=255)  -- the 4 demon escort
-  Confirmed by story position: between Poeskas (453) and the Elmdor chain (455).
+  slots 2-5 = Reaver (job 150 monster, lvl 254 runtime, eq=255) -- the 4 demon escort
 
-CHANGE (faithful, minimal): re-stage the flee-race at endgame intensity by LEVEL only.
-  Celia/Lettie = 104 (boss-tier chain opener)   4 Reavers = 103
-  - eq=254 on the assassins => no gear to set, and there is NO rare here (flee-on-critical = no drop;
-    the Masamune/Genji reckoning is Elmdor's, at the Keep 048).
-  - The flee-on-critical end trigger, teleport mobility, status kit (Charm/Stone/Stop/Toad) and Ultima
-    all live in the unit/AI data and scripting tail -- preserved untouched (only the level byte changed).
-  - jl left as-is on the named assassins: their ability set is fixed and bumping jl risks their kit.
-  These are the same assassins as Riovanes Roof (433), delivered one tier higher (103 -> 104).
-  Buried map treasure (Gaia Gear, Black Robe, Hermes Shoes) left as-is.
+CHANGE (faithful, minimal):
+  Celia/Lettie = 104 (boss-tier chain opener)
+  4 Reavers = 103
+  flee-on-critical trigger, teleport mobility, status kit, Ultima behavior, and scripting tail preserved.
 ```
+
+Planned v2 redesign (docs-only in this pass): keep the fixed Assassin boss kits and the 4-Reaver
+escort. Do not plan normal equipment/secondary setup for Celia/Lettie because their slots are fixed.
+The design target is the flee race and chain tax, not gear editing.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
 > See `037-chapter-4-overview.md`. LIMBERRY CHAIN: 42 (`047`) → 43 (`048`) → 44 (`049`), one loadout.
+
+## Design Goal
+
+```text
+Make Limberry Gate a dangerous but bounded chain opener: burst one teleporting Assassin to critical
+before status and Ultima drain too many resources, while Reavers create body pressure. Preserve the
+status-immunity vs Ultima tradeoff and flee trigger; do not add drops, extra bodies, or hard locks.
+```
+
+No active guests appear here. No guest-control implementation is needed for this battle.
 
 ## Original Battle
 
@@ -45,208 +53,195 @@ Player deployment:
 Up to 5 units, including Ramza. No guests. NO outfitter access (chain 1/3).
 ```
 
-Original enemy composition (verified via Game8, Battle 42):
+Original enemy composition:
 
 ```text
-Celia    (Assassin — teleport killer; Charm/Stone/Stop/Toad + ULTIMA)
-Lettie   (Assassin — teleport killer; Charm/Stone/Stop/Toad + ULTIMA)
-4x Reaver (demon/undead monster bodies)
-```
-
-Public walkthrough details:
-
-```text
-Recommended level: ~60.  Difficulty: 5/5 stars.  Deploy up to 5.  NO resupply (Limberry chain 1/3).
-WIN/END: the fight ends the instant ONE assassin hits CRITICAL health — Celia & Lettie FLEE (they are
-  not killed here; their reckoning comes later). So this is a flee-on-critical RACE, like Ch3 Roof (035).
-THE THREAT — CELIA & LETTIE: fast teleporting assassins with a nasty status kit (Charm, Stone/Petrify,
-  Stop, Toad) AND ULTIMA (massive AoE). KEY TENSION: the walkthrough notes they cast Ultima MORE when
-  your party is status-IMMUNE — so full immunity trades "no status" for "more Ultima." A real choice.
-ADDS: 4 Reavers (demon monster bodies) press while the assassins flit and snipe.
-Rewards: 34,300 Gil, Echo Herbs; buried (Gaia Gear, Black Robe, Hermes Shoes, Bracers).
+Celia     (Assassin — fixed boss kit; teleport, status, Ultima; flees on critical)
+Lettie    (Assassin — fixed boss kit; teleport, status, Ultima; flees on critical)
+4x Reaver (demon monster bodies)
 ```
 
 Design reading:
 
-Limberry Gate is **the assassin flee-race, escalated to 5★** and opening the no-resupply Limberry
-gauntlet. It reprises Ch3's Riovanes Roof (`035`) — burst ONE teleporting assassin to critical to end
-it — but raises the stakes with **Ultima** and a fuller hard-status kit, plus a **genuine build
-tension**: stack status immunity and they answer with more Ultima; go unprotected and you eat
-Charm/Stop/Petrify. Its identity is **a high-mobility status-vs-Ultima race against two flitting
-killers and their demon escort, on no resupply** — won by fast focus and a *balanced* (not all-or-
-nothing) defensive build.
+Limberry Gate is **the assassin flee-race**, now placed at the front of a three-battle no-resupply
+chain. It reprises the Ch3 Roof logic: the player does not need to kill both assassins, only push one
+to critical. The pressure is the tradeoff between status protection and Ultima. Full status immunity is
+not a free answer if it biases the assassins toward Ultima; no immunity is dangerous because Charm,
+Stop, Stone, Toad, and death-style effects can break tempo. The intended answer is a balanced chain
+loadout: enough resistance and cleanse to keep acting, enough burst to force one flee, and enough
+resource discipline to enter the Keep.
 
-For New Game++ the identity must stay: **a 5★ teleporting-assassin flee-race opening the Limberry
-chain — burst one assassin to critical while navigating the deliberate status-immunity-vs-Ultima
-tradeoff and the Reaver escort — with every lethal effect resistable and telegraphed (no hard lock,
-no unavoidable nuke), and NO drop (they flee).**
-
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Celia + Lettie (Assassins) + 4 Reaver, plus the player slots. NO outfitter (chain 1/3).
-Keep the FLEE-ON-CRITICAL end trigger (one assassin to critical ends the fight) — it IS the win shape.
-Keep the assassins' TELEPORT mobility + their status kit (Charm/Stone/Stop/Toad) + ULTIMA, AND the
-  "more Ultima vs status-immune party" targeting bias (the build tension is the puzzle).
-This is a boss-tier chain fight: assassins 104, Reavers 103. NO rare (they flee).
-Confirm whether OverrideEntryData carries Level for this battle or leaves it at -1.
-Leave the buried treasure (Gaia Gear, Black Robe, Hermes Shoes) as-is — map loot.
+CONFIRMED:
+- Entry 454 is Limberry Gate.
+- Celia and Lettie are fixed-kit Assassin boss slots with eq=254.
+- Slots 2-5 are Reaver monsters.
+- Flee-on-critical scripting is the fight shape.
+- No active guest.
+- Reward ledger maps Limberry Gate to no equipment reward because the assassins flee.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- Confirm exact Reaver display/innate behavior in installed data.
+- Confirm flee-on-critical transition into Keep remains untouched.
+- Confirm Ultima/status targeting bias still works after any future tuning.
+- Preserve buried map treasure as vanilla map loot.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-Assassin id            (TBD - verify; Celia/Lettie — Ch3 debut, Roof 035)
-Reaver id              (TBD - verify; demon/undead monster)
+CHANGE: NO new caste and no editable gear plan. The escalation is fixed-kit Celia/Lettie at 104 with
+  the status-vs-Ultima tradeoff intact, plus four Reavers at 103.
+WHY: the fight's identity is "burst one teleporting assassin to critical before the chain opener taxes
+  too many resources." Extra enemies, overleveling, or hard-status spam would turn a race into a slog.
+CONSTRAINTS:
+  - Flee-on-critical must remain.
+  - Gate has no equipment reward.
+  - Status must be resistable/cleansable and not spammed into a lock.
+  - Ultima must be telegraphed/spaceable and chain-budgeted.
+  - Reavers pressure the front but must not become cleanup tax.
+WHAT IS NOT CHANGED: teleport mobility, Assassin fixed kits, Reaver escort, no-resupply chain context.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Sanctioned Exceptions (carried precedents)
 
 ```text
-CHANGE: NO new caste. The escalation is the ASSASSINS themselves — the Ch3 Roof assassins (035) return
-  at 5★ with ULTIMA and a fuller status kit, plus the status-immunity-vs-Ultima targeting tension. The
-  4 Reaver demon bodies are the escort.
-WHY: the fight's identity is already "burst a teleporting assassin to critical under status pressure."
-  The faithful Ch4 escalation is to deliver those assassins at full endgame power (Ultima + the
-  immunity tradeoff) — NOT to add a second new mechanic. The build tension IS the one new demand.
-CONSTRAINTS (carry Ch3 Roof precedent 035 + the Lucavi/boss mass-status cap):
-  - ALL lethal/control effects (Charm/Stone/Stop/Toad/instant-death) must be RESISTABLE and NON-SPAM —
-    never a hard lock. The player must be able to survive without full immunity.
-  - ULTIMA is ONE telegraphed, spaceable AoE per caster — not instant, not unavoidable. Preserve the
-    "more likely vs status-immune" bias so the choice (eat soft status OR face Ultima) stays real and
-    BALANCED builds are rewarded over all-or-nothing immunity.
-  - FLEE-ON-CRITICAL preserved → NO drop here.
-WHAT IS NOT CHANGED: the flee-race win shape, the teleport mobility, and the Reaver escort remain.
+ASSASSIN STATUS / INSTANT-DEATH PRESSURE — allowed as identity, but resistable + non-spam + telegraphed.
+ULTIMA TRADEOFF — allowed because it is the build puzzle; status immunity should not trivialize the map.
+FLEE-ON-CRITICAL — preserved; retreat means no equipment drop here.
+FIXED BOSS KITS — active human completeness is constrained by eq=254 slots; do not invent normal gear.
+REAVER DEMON ADDS — monster bodies; set level/position only unless future data proves safe edits.
 ```
 
-## Sanctioned exceptions (carried precedents)
+## Rare/reward handling
 
 ```text
-ASSASSIN STATUS / INSTANT-DEATH (Celia/Lettie) — Charm/Stone/Stop/Toad + death effects allowed as their
-  identity BUT resistable + non-spam + telegraphed; no hard lock (Ch3 Roof 035). A non-immune party
-  must be able to survive — these are race-pressure, not a lockout.
-ULTIMA (boss mass-AoE) — ONE telegraphed, spaceable AoE per assassin; not instant; the Lucavi/boss
-  mass-status cap. Keep the "more vs status-immune" targeting so the tradeoff stays meaningful.
-FLEE-ON-CRITICAL — preserved (the race); → no rare drop (retreat = no drop).
-REAVER DEMON ADDS — monster bodies; innate kit; press while the assassins flit.
+None. Limberry Gate carries no equipment reward by design.
+Celia and Lettie flee on critical, so rewards are deferred to later Limberry outcomes.
+Masamune/Genji/Chirijiraden belong to Elmdor at the Keep (`048`), not here.
+Buried map treasure stays vanilla map loot.
 ```
 
-## Boss rare loot
+## Proposed Composition (New Game++ Limberry Gate v2)
+
+Keep the count (6) and the fixed-kit flee-race shape. Assassins `104`; Reavers `103`.
+
+| Slot | Role | Unit type | Level | Purpose |
+|------|------|-----------|-------|---------|
+| 0 | Celia | Assassin fixed boss kit | `104` | Teleport status/Ultima threat; flee target. |
+| 1 | Lettie | Assassin fixed boss kit | `104` | Second teleport status/Ultima threat; flee target. |
+| 2 | Reaver | Demon monster | `103` | Front pressure while assassins teleport. |
+| 3 | Reaver | Demon monster | `103` | Second front pressure body. |
+| 4 | Reaver | Demon monster | `103` | Flank/body pressure. |
+| 5 | Reaver | Demon monster | `103` | Screen and chain-tax body. |
+
+Rejected variants:
 
 ```text
-None HERE. Celia & Lettie FLEE on critical (retreat = no drop). Their reckoning — and any loot — is
-deferred to where they are decisively defeated (their later Ultima-Demon forms / the Limberry interior).
-The chapter's deferred MASAMUNE + GENJI belong to ELMDOR and pay at the Limberry KEEP (`048`), not here.
-Generics (Reavers) are monster bodies. Buried map treasure stays as-is.
+- Editable gear assassins: eq=254 fixed boss kits make normal gear/secondary planning invalid.
+- Hard-status assassin lock: turns the race into lost turns.
+- Extra Reaver escort: creates cleanup/chain tax before Keep.
+- Overlevelled opener: spends the chain's spike budget too early.
+- No Ultima tradeoff: removes the build puzzle.
+- Rewarded Gate: contradicts flee/no-drop policy and reward ledger.
 ```
 
-## Proposed Composition (New Game++ Limberry Gate v1)
-
-Keep the count (6) and the flee-race shape; deliver the assassins at full 5★ power with the build
-tension intact. Assassins `104`; Reavers `103`. No resupply (chain 1/3) — design lethality to be
-survivable on a single loadout.
-
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Celia (BOSS) | Assassin | `104` | Teleport killer; Charm/Stop/Stone/Toad + Ultima; flee-on-critical. |
-| n | Lettie (BOSS) | Assassin | `104` | Second assassin; same kit; the race ends when EITHER hits critical. |
-| n | Reaver | Reaver | `103` | Demon body; presses the front while assassins flit. |
-| n | Reaver | Reaver | `103` | Second demon body. |
-| n | Reaver | Reaver | `103` | Third demon body; flanks. |
-| n | Reaver | Reaver | `103` | Fourth demon body; screens the assassins. |
-
-Reasoning:
-
-The faithful move is to **re-stage the assassin flee-race at endgame intensity and protect the build
-tension**. Both assassins at `104` teleport and threaten Ultima + resistable hard-status; the player
-races to drop ONE to critical while the four Reavers (`103`) pressure. Crucially, the status is
-resistable/non-spam and Ultima is telegraphed and *more frequent against immune parties* — so a
-balanced defensive build (some resist, not blanket immunity) is the intended answer, exactly as the
-original teaches. No resupply means lethality is tuned to be survivable on one loadout (no
-guaranteed-kill combos). No rare — they flee.
-
-## Builds (Chapter-4 boss quality; Limberry assassin flavor)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+## Builds
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+Celia/Lettie:
+- Fixed Assassin boss kits; do not assign normal equipment.
+- Preserve teleport mobility, status kit, Ultima behavior, and flee-on-critical scripting.
+- Keep ability behavior resistable/cleansable/telegraphed; no unavoidable lock.
+
+Reavers:
+- Monster bodies; no normal equipment.
+- Set level/position only unless future data work proves safe monster edits.
 ```
-
-### Celia & Lettie (Lv 104) — BOSS assassins
-
-```text
-Job: Assassin (id TBD)   JobLevel: 8   Primary: assassin arts (Charm/Stone/Stop/Toad + death effect —
-  ALL resistable, non-spam, telegraphed) + ULTIMA (one telegraphed AoE)   Secondary: basic
-Reaction: (mobility) Reflexes / First Strike (id TBD)   Support: Attack Boost (465) / MA-boost
-  Movement: Teleport (id TBD) or Movement +2 (487)
-Head: Tier-A/boss headgear (id TBD)   Body: Black Robe-equivalent (id TBD)
-Accessory: Tier-A accessory (id TBD)   Right hand: assassin dagger (id TBD)   Left: none (255)
-```
-
-Role: the flee-race targets — burst one to critical to end it; keep status resistable and Ultima
-telegraphed (and biased toward status-immune parties). Do NOT make them an instant-death lock.
-
-### Reaver x4 (Lv 103) — demon escort (monsters)
-
-```text
-Monster: Reaver (id TBD)   demon/undead flag per vanilla; innate skillset (drain/claw/status bite).
-No equipment slots (monster). Set only LEVEL.
-```
-
-Role: the demon bodies that pressure the front while the assassins teleport and snipe.
 
 ## Positioning Plan
 
 ```text
-Castle gate: the two Assassins start spread (teleport range onto the back-line), the four Reavers
-  forward as the screen between the player and the assassins. Keep sightlines so Ultima is a telegraphed
-  threat the player can space against, not an ambush nuke.
-Preserve the FLEE-ON-CRITICAL trigger and the assassins' teleport mobility (the race identity).
-Tune for NO resupply: survivable lethality on one loadout; status resistable; Ultima spaceable.
-Keep the status-immunity-vs-Ultima bias intact so balanced builds are rewarded.
+Castle gate: Reavers begin forward to create body pressure. Celia and Lettie begin spread so teleport
+angles threaten the back line, but Ultima remains telegraphed and spaceable.
+
+The player should see the answer quickly:
+  1. Pick one Assassin.
+  2. Commit burst until critical.
+  3. Spend enough cleanse/resist to keep acting, but conserve resources for Keep and Undercroft.
 ```
 
-The gate should say: "two knives in the dark open Limberry's gauntlet — run one of them to the brink
-before their Ultima finds you, and don't bet everything on immunity."
+The gate should say: "two knives open Limberry's chain — push one to the brink fast, or pay for every
+turn you spend here."
+
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-047-limberry-gate/
+  assumptions.md
+  simulate.py
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic flee-race and chain-tax model over the first five rounds.
+It scores pressure, race clarity, answerability, chain tax, status-lock risk, reward correctness, and
+scripting fidelity. It does not simulate exact FFT formulas.
+```
+
+Result summary:
+
+| Candidate | Pressure | Race clarity | Answer | Chain tax | Status lock | Reward | Scripting | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| v2 fixed-kit flee race | 204 | 96 | 90 | 48 | 12 | 100 | 100 | **Accepted** |
+| editable gear assassins | 214 | 96 | 90 | 48 | 12 | 100 | 50 | Rejected: fixed-kit violation |
+| hard-status assassin lock | 266 | 78 | 60 | 76 | 67 | 100 | 100 | Rejected: hard lock |
+| extra reaver escort | 218 | 74 | 76 | 66 | 12 | 100 | 100 | Rejected: chain-tax cleanup |
+| overlevelled opener | 228 | 96 | 80 | 60 | 12 | 100 | 100 | Rejected: overlevel |
+| no ultima tradeoff | 186 | 96 | 76 | 36 | 20 | 100 | 100 | Rejected: loses build puzzle |
+| rewarded gate | 204 | 96 | 90 | 48 | 12 | 30 | 100 | Rejected: no-drop violation |
+
+Iteration decision:
+
+```text
+ACCEPT v2 fixed-kit flee race.
+Keep the fixed boss kits and race scripting. The fight should tax the chain through status/Ultima
+pressure, not through extra cleanup, fake gear setup, or unavoidable lockdown.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Limberry Gate `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Celia + Lettie (Assassins) + 4 Reaver + player slots.
-- [ ] Keep the FLEE-ON-CRITICAL end trigger (one assassin to critical ends it) → NO drop.
-- [ ] Set assassins `104`, Reavers `103`; keep teleport mobility.
-- [ ] Make ALL status (Charm/Stone/Stop/Toad/death) resistable + non-spam + telegraphed (no hard lock).
-- [ ] Keep ULTIMA as ONE telegraphed, spaceable AoE per assassin; preserve the "more vs immune" bias.
-- [ ] Tune lethality to be survivable on ONE loadout (chain 1/3, no resupply).
-- [ ] Set JobLevel `8` on the assassin slots.
-- [ ] Patch via the correct layer; keep the diff inside the Limberry Gate window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify flee trigger + status caps.
-- [ ] Install mod, test from a New Game+ save (entering with chain-realistic resources); confirm the
-      race is winnable without blanket immunity and no hard lock/Ultima-ambush occurs.
+- [ ] Confirm entry 454 slot order: Celia, Lettie, four Reavers.
+- [ ] Preserve flee-on-critical trigger and transition to Keep.
+- [ ] Keep Celia/Lettie at `104`; Reavers at `103`.
+- [ ] Preserve Assassin fixed kits (`eq=254`) and do not assign normal gear.
+- [ ] Keep status resistable/cleansable/non-spam; keep Ultima telegraphed/spaceable.
+- [ ] Preserve status-immunity vs Ultima tradeoff.
+- [ ] Preserve no equipment reward; preserve buried map treasure.
+- [ ] Test as Limberry chain 1/3 with resources carried into `048` and `049`.
 
 ## Test Questions
 
-- Is the flee-on-critical race intact (burst ONE assassin to critical to end it), with NO drop?
-- Are Charm/Stone/Stop/Toad/death ALL resistable + non-spam + telegraphed — never a hard lock?
-- Is Ultima ONE telegraphed, spaceable AoE per assassin (not an ambush nuke), and is the
-  "more-vs-immune" bias preserved so balanced builds beat blanket immunity?
-- Is the fight survivable on ONE loadout (no resupply, chain 1/3)?
-- Are the assassins `104` and Reavers `103` — a boss-tier chain opener, not an over-spike?
-- Does it read as the Ch3-Roof assassin race reborn at endgame intensity, opening Limberry?
+- Does one Assassin reaching critical end the fight reliably?
+- Can a prepared party win without blanket immunity and without being hard-locked?
+- Does blanket status immunity increase Ultima pressure enough to remain a real tradeoff?
+- Do Reavers pressure without forcing a cleanup slog before Keep?
+- Does the fight award no equipment and transition cleanly to `048`?
+- Is chain tax meaningful but not crippling before the Elmdor and Zalera fights?
 
 ## Sources
 
-- Game8, "Limberry Castle Gate Walkthrough (Battle 42)": roster (4 Reaver + Celia + Lettie Assassins),
-  ends when one assassin hits critical (they flee), rec ~60, 5/5 stars, deploy 5, Charm/Stone/Stop/Toad
-  + Ultima (more vs status-immune), no resupply (Limberry chain), rewards (34,300 Gil; buried Gaia Gear,
-  Black Robe, Hermes Shoes). https://game8.co/games/Final-Fantasy-Tactics/archives/553202
+- Game8, "Limberry Castle Gate Walkthrough (Battle 42)": roster, flee-on-critical, status/Ultima
+  behavior, chain context, and map treasure.
+  https://game8.co/games/Final-Fantasy-Tactics/archives/553202
 - Final Fantasy Wiki, "Celia and Lettie" / "Limberry Castle": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Celia_and_Lettie
-- Local: `037-chapter-4-overview.md` (rules), `035-riovanes-castle-roof.md` (Ch3 assassin flee-race
-  precedent), `048-limberry-keep.md` & `049-limberry-undercroft.md` (the rest of the chain — to be designed).
-```
-</content>
+- Local: `037-chapter-4-overview.md`, `035-riovanes-castle-roof.md`,
+  `048-limberry-keep.md`, `049-limberry-undercroft.md`, `chapter-4-rewards-implementation.md`.

@@ -86,7 +86,7 @@ All 26 accounted for: 25 placed across 14 battles + Excalibur reserved on Orland
 The endgame is a 5-battle no-resupply gauntlet (054-058: Vaults 4th, Vaults 5th, Necrohol, Lost Halidom,
 Airship). On 2026-06-27 the four Tier-S capstones originally dropped there were pulled out (gauntlet
 restored to vanilla loot: Loffrey shield back to Crystal Shield 139, Cletienne body back to Black Garb
-198) and relocated pre-gauntlet: Escutcheon + Robe of Lords to Nave (Loffrey/Cletienne), Ragnarok to
+198) and relocated pre-gauntlet: Escutcheon + Lordly Robe to Nave (Loffrey/Cletienne), Ragnarok to
 Zalbaag (Sanctuary). Materia Blade was dropped from the gauntlet (side-quest / Move-Find map-54 pickup).
 This bends the carried "retreat/survive = no drop" convention for the Templars at Nave (kill-independent
 spoils on Folmarv's death). 440 Hashmal keeps its vanilla dormant Ragnarok at s2 (never awarded).

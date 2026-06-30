@@ -1,281 +1,334 @@
 # 053 - Mullonde Cathedral Sanctuary (Murond Holy Place)
 
-Status: ✅ implemented (v1, entry 462) — TIER-S (Ribbon)
+Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 462
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 48 (Mullonde chain 3 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
 ENTD: global entry **462** (local 78, entd4)
 File: `battle_entd4_ent.bin`
 
-## Implemented (v1, entry 462)
+> **NG++ rewards applied (2026-06-27):** Ragnarok + Ribbon + Elixir/minor spoil through guaranteed
+> Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Ragnarok is reward
+> payload only; Runeblade remains Zalbaag's active combat identity. Canonical map:
+> `chapter-4-rewards-implementation.md`.
+
+## Current Implementation / Data Reality
 
 ```text
-DATA (story order 459->460->461->462; verified from dump):
-  slot 0 = Folmarv (name 36, eq=255, lvl 254) -> INACTIVE cutscene placeholder (left untouched).
-  slot 1 = Zalbaag (name 51, job 51 Ark-Knight-class; jl8; eq head154/body182/acc210/rh30 Runeblade/
-           lh139 shield) -> the ACTIVE vampire boss + Tier-S carrier. Has real equip slots.
-  slots 2,3 = Archaeodaemon (job 153, undead) -> reraise + HP-drain screen.
-  slot 4 = Ultima Demon (job 154) -> telegraphed Ultima pressure (optional target).
-  slot 5 = job 51 clone (name255, eq=255, lvl 254) -> scripting placeholder (left untouched).
-  NOTE: TIC names Zalbaag's undead boss form name_id 51 (not the standard low-range id); confirmed by
-  the active Ark-Knight+Runeblade profile + the demon screen + win="Defeat Zalbaag".
+DATA REALITY (verified from current embedded entd4 dump, entry 462):
+  slot 0 = Folmarv cutscene placeholder
+           level 254, no gear; preserve untouched.
 
-CHANGE: scale + Tier-S reward. Zalbaag 105, accessory set to RIBBON (171) = the Tier-S steal/drop on
-  the named kill target (he DIES as the win condition -> guaranteed). Kept his Runeblade (the equip-break
-  weapon) + vampirism/undead flags + scripting (only level + acc changed). Archaeodaemons & Ultima Demon
-  103. Win-on-Zalbaag-falls, vampirism (sole source), Runeblade break, and undead reraise all preserved.
-  No buried treasure (vanilla) -> Gil + Elixir spoils unchanged.
+  slot 1 = Zalbaag
+           job 51, level 105, JobLevel 8, complete setup, Runeblade, shield, Ribbon accessory.
+           Secondary 63, reaction 424, support 466, movement 493.
+           Spoils payload = 0x24 (Ragnarok).
+
+  slots 2,3 = Archaeodaemons
+              job 153, level 103, undead monster/fixed bodies.
+              slot 2 spoils payload = 0xAB (Ribbon).
+              slot 3 spoils payload = 0xF5 (Elixir/minor spoil).
+
+  slot 4 = Ultima Demon
+           job 154, level 103, monster/fixed body.
+
+  slot 5 = job-51 script placeholder
+           level 254; preserve untouched.
+
+Current v1 implementation:
+  Zalbaag = 105.
+  Archaeodaemons and Ultima Demon = 103.
+  Zalbaag keeps Runeblade/vampire identity and active Ribbon.
+  Ragnarok + Ribbon + Elixir are guaranteed reward payloads.
+  Win-on-Zalbaag-falls must be preserved.
 ```
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout.
+Planned v2 redesign (docs-only in this pass): keep the tragic undead-brother focus fight. Do not turn
+Zalbaag into an active Ragnarok sword boss just because Ragnarok is awarded here; the combat puzzle is
+vampirism plus Runeblade break pressure, screened by undead demons.
+
+> MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout. This is the chain closer and the
+> last reward payout before the no-resupply endgame gauntlet.
+
+## Design Goal
+
+```text
+Make Mullonde Sanctuary the tragic chain closer: Zalbaag is the sole vampirism source and the Runeblade
+break threat, demons screen him with undead/reraise and Ultima pressure, and the player wins by freeing
+the brother rather than clearing the room. Ragnarok + Ribbon are guaranteed spoils; the fight must not
+become spreading vampire lock, sealed demon cleanup, or active-Ragnarok stat pressure.
+```
+
+No active guests appear here. No guest-control implementation is needed for this battle.
 
 ## Original Battle
 
 Objective:
 
 ```text
-Defeat Zalbaag!   (the fight ends the instant Zalbaag falls — the Ultima Demon / Archaeodaemons are
-                   OPTIONAL. Zalbaag is Ramza's second brother, raised as an undead vampire.)
+Defeat Zalbaag!   (the fight ends when Zalbaag falls; demons are optional)
 ```
 
 Player deployment:
 
 ```text
-Up to 5 units, including Ramza. No outfitter (chain 3/3 — last of the Mullonde gauntlet).
+Up to 5 units, including Ramza. No outfitter (chain 3/3).
 ```
 
-Original enemy composition (verified via Game8, Battle 48):
+Original enemy composition:
 
 ```text
-Zalbaag Beoulve   (BOSS — Ark Knight; VAMPIRE / undead; Runeblade equip-break + vampirism/HP-drain)
-2x Archaeodaemon  (undead demons — HP-drain, reraise/undead pressure)
-1x Ultima Demon   (Chapter-4 demon caste — body double; Ultima / self-destruct threat)
+Zalbaag Beoulve   (undead/vampire Ark Knight; Runeblade/equip-break; vampirism)
+2x Archaeodaemon  (undead demon screen; reraise/HP-drain)
+1x Ultima Demon   (Ultima pressure; optional target)
 ```
 
 Public walkthrough details:
 
 ```text
-Recommended level: ~60.  Difficulty: 4/5 stars.  Deploy up to 5.
-Win: "Defeat Zalbaag!" — the Ultima Demon and Archaeodaemons are OPTIONAL (kill only Zalbaag to end it).
-TERRAIN: the cathedral SANCTUARY — the holy inner chamber (the Mullonde climax).
-THE THREAT — ZALBAAG, the VAMPIRE Ark Knight: he inflicts VAMPIRISM on your units (HP-drain / turn),
-  and wields a RUNEBLADE (Ark-Knight powerful-sword) that breaks gear. His demon screen (2 Archaeodaemon
-  + 1 Ultima Demon) drains HP and threatens Ultima; the Archaeodaemons are UNDEAD (reraise pressure).
-WALKTHROUGH TIPS: equip JAPA MALA / HOLY WATER to counter vampirism; use REND / CRUSH WEAPON to
-  permanently disable his Runeblade; holy damage answers the undead demons. Ultima Demons cannot be
-  tamed or poached — pure threats.
-Spoils: 32,800 Gil, 1x Elixir. NO buried treasure here.
+Recommended level: ~60. Difficulty: 4/5 stars. Sanctuary interior.
+The player is advised to counter vampirism with Holy Water/Japa Mala style answers, break or manage
+Zalbaag's Runeblade, and use Holy/anti-undead tools against the demon screen. No buried treasure.
 ```
 
 Design reading:
 
-The Sanctuary is **the tragic undead-brother climax** of the Mullonde gauntlet: **Zalbaag Beoulve**,
-Ramza's second brother, raised as a **vampire Ark Knight**, flanked by **undead demons and an Ultima
-Demon** in the holy inner chamber. Its identity is **a release-the-cursed-brother boss fight under two
-attrition threats** — his **vampirism** (HP-drain / turn-your-units, answered by Holy Water / Japa
-Mala) and his **Runeblade equip-break** (answered by Rend / Crush), while an **undead demon screen**
-(reraise + HP-drain + an Ultima Demon's Ultima) grinds the party on **no resupply**. Because the win
-condition is *defeat Zalbaag*, it rewards cutting through the demons to **free the brother**, not
-clearing the room.
+The Sanctuary is **the undead brother release fight**. The emotional center is not the demon screen; it
+is Zalbaag, a Beoulve brother turned into an undead weapon. The player should feel pressure from two
+recoverable boss demands: vampirism and Runeblade break. The demons matter because they make reaching
+him costly, but they must not become the real objective.
 
-For New Game++ the identity must stay: **the vampiric undead-brother boss whose vampirism and Runeblade
-equip-break are answerable-but-real, screened by undead demons + an Ultima Demon, win the instant
-Zalbaag falls — the tragic climax of the Mullonde chain on no resupply.** And because Zalbaag **dies**
-(the win condition), this is a clean Tier-S payout: **Zalbaag carries the Ribbon** — the crown that
-would have warded the curse, taken from the brother freed in death.
+For New Game++ the identity must stay: **cleanse or resist vampirism, answer the Runeblade, open the
+demon screen, and defeat Zalbaag.**
 
-## Local Data Confirmed
+## Local Data Confirmed / Data Still Needed
 
 ```text
-TBD — dump entry on Windows and fill the slot table here, like 001-gariland.
-Confirm slots: Zalbaag (Ark Knight, vampire/undead) + 2 Archaeodaemon + 1 Ultima Demon. NO outfitter (chain 3/3).
-Confirm the win condition: fight ENDS when Zalbaag falls (demons optional).
-Keep Zalbaag's VAMPIRISM (HP-drain / turn) + the RUNEBLADE equip-break + the undead-demon screen
-  (reraise + Ultima Demon). These ARE the fight.
-Confirm whether OverrideEntryData carries Level / equipment / Undead flag, or leaves them at -1.
-Set Zalbaag's drop/steal = the Tier-S RIBBON (see Boss rare loot). Demons drop nothing rare (untameable).
-NO buried treasure here (vanilla) — leave as-is.
+CONFIRMED:
+- Entry 462 is Mullonde Sanctuary.
+- Slot 1 is active Zalbaag at level 105 with complete setup, Runeblade, and Ribbon accessory.
+- Slots 2/3 are Archaeodaemon undead monster/fixed bodies at level 103.
+- Slot 4 is an Ultima Demon at level 103.
+- Slots 0/5 are placeholders and should be preserved unless playtest proves active.
+- Rewards are Ragnarok + Ribbon + Elixir/minor spoil guaranteed spoils.
+- No active guests.
+
+STILL NEEDED FOR V2 IMPLEMENTATION:
+- Verify win-on-Zalbaag-falls and optional demon cleanup.
+- Confirm vampirism is sourced only from Zalbaag and is cleansable/non-spreading.
+- Confirm Runeblade break is the only gear-break source and remains answerable.
+- Confirm demons screen without sealing Zalbaag behind mandatory cleanup.
+- Confirm Ultima pressure is telegraphed/spaceable.
+- Confirm Ragnarok + Ribbon + Elixir/minor spoil land as guaranteed spoils.
 ```
 
-Job IDs (carry over known, verify the rest in-game):
+## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-Zalbaag      — Ark Knight job id        (TBD - verify; vampire/undead; Runeblade; cf. Elmdore 048)
-Archaeodaemon — undead demon job id     (TBD - verify; reraise/undead; HP-drain)
-Ultima Demon — Ch4 demon caste job id   (TBD - verify; Ultima / self-destruct; cf. 048/049)
+Headline engine: undead brother focus fight.
+Supporting roles:
+  - Zalbaag brings vampirism and Runeblade break as the sole boss engine.
+  - Archaeodaemons create undead/reraise pressure and drain tax.
+  - Ultima Demon punishes clustering and slow play with telegraphed Ultima pressure.
+
+WHY: adding generic guards or making every demon part of the objective would dull the tragedy. The
+Chapter 4 escalation is the layered undead/break/status stack around one named brother.
+
+CONSTRAINTS:
+  - Win-on-Zalbaag remains.
+  - Vampirism is one source only.
+  - Runeblade remains active combat identity.
+  - Ragnarok is reward payload only.
+  - Demons screen, but do not seal, the boss.
+  - No generic padding.
 ```
 
-## Job Escalation (Chapter 4 rule)
+## Sanctioned Exceptions
 
 ```text
-CHANGE: keep the tragic boss-and-demons shape (no generic padding — it would cheapen the brother's
-  climax), but make the DUAL attrition the demand: Zalbaag as a genuine VAMPIRE (vampirism status +
-  HP-drain) AND Runeblade equip-breaker, screened by an UNDEAD demon line (Archaeodaemon reraise) and
-  the Ch4 ULTIMA DEMON caste. Two recoverable threats (status + equip-break) layered on undead reraise.
-WHY: the chapter wants more challenge via jobs WITHOUT breaking strategy. Here the escalation is the
-  STATUS+DRAIN+UNDEAD stack — you must bring anti-undead/anti-vampire answers and disarm the Runeblade,
-  then cut to Zalbaag. The Ultima Demon caste IS the new-job content; padding with generics would dull
-  the tragedy. Consistent with prior tragic-boss docs (Wiegraf, Elmdore).
-CONSTRAINTS (carried): VAMPIRISM CAPPED — Zalbaag is the SOLE vampirism source; cleansable (Holy Water /
-  Esuna), counter-gear (Japa Mala / anti-undead), telegraphed — NOT a permanent hard lock; it does NOT
-  chain-spread uncontrollably (the demons HP-drain but do not vampirize). RUNEBLADE equip-break = ONE
-  source, answerable (Rend / Crush / break-resist), recoverable (039/052 precedent). ULTIMA DEMON Ultima
-  = telegraphed, race-able/space-able, no instant party-wipe (048/049 precedent). UNDEAD reraise on the
-  demon line = put down with holy / finish while down (049 precedent).
-WHAT IS NOT CHANGED: Zalbaag the vampire Ark Knight, the demon screen, and the "Defeat Zalbaag" win
-  rule remain. No generics added.
+VAMPIRISM:
+  Allowed as Zalbaag's identity. Guardrail: sole source, cleansable, non-spreading, and never a hard lock.
+
+RUNEBLADE BREAK:
+  Allowed as one answerable gear-break source. Guardrail: disarm/break protection/burst must work.
+
+UNDEAD DEMON SCREEN:
+  Allowed as reraise/anti-undead pressure. Guardrail: demons are optional because the objective is
+  Zalbaag; at least one focus route must remain.
+
+ULTIMA DEMON:
+  Allowed as Chapter 4 demon pressure. Guardrail: Ultima is telegraphed and spaceable.
+
+PRE-GAUNTLET REWARD PAYOUT:
+  Ragnarok + Ribbon pay here through guaranteed spoils so the player has them before the final gauntlet.
 ```
 
-## Sanctioned exceptions (carried precedents)
+## Rare/reward handling
 
 ```text
-VAMPIRISM (Zalbaag, SOLE source) — HP-drain / turn-a-unit; cleansable (Holy Water / Esuna), countered
-  by Japa Mala / anti-undead gear, telegraphed, NON-spreading — NOT a hard lock.
-RUNEBLADE EQUIP-BREAK (Zalbaag, ONE source) — Ark-Knight powerful-sword break; answer = Rend / Crush /
-  break-resist (039 Bervenia, 048 Elmdore, 052 Nave precedents). Capped, recoverable.
-UNDEAD RERAISE (2 Archaeodaemon) — undead demons reraise; answer = holy damage / Holy Water / finish
-  while downed (049 Undercroft precedent). HP-drain, no vampirism.
-ULTIMA DEMON (1) — Ch4 demon caste; Ultima / self-destruct telegraphed, race-able/space-able, no instant
-  wipe (048/049 precedent). Untameable / unpoachable (vanilla).
-WIN-ON-ZALBAAG-FALLS — defeating Zalbaag ends the fight; the demons are optional (vanilla rule).
+Guaranteed spoils for entry 462: RAGNAROK + RIBBON + ELIXIR/minor spoil.
+These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
+
+COMBAT ROLE:
+  - Zalbaag keeps Runeblade as active weapon because it defines the break puzzle.
+  - Ribbon may remain active on Zalbaag as status-warding identity and reward visibility.
+  - Ragnarok is reward payload only; do not replace Runeblade with active Ragnarok for this fight.
+
+PRESERVE:
+  - No buried map treasure.
+  - No Excalibur. Excalibur stays Orlandeau's.
 ```
 
-## Boss rare loot — TIER-S
+## Proposed Composition (New Game++ Mullonde Sanctuary v2)
 
-> **Updated (2026-06-27 rebalance):** Zalbaag now ALSO drops **Ragnarok (s1)**, relocated here from the
-> Ultima fight so the player holds the best sword before the no-resupply gauntlet. Ribbon (s2) unchanged;
-> the Elixir spoil moves to s3. Canonical: `chapter-4-rewards-implementation.md`.
+Keep the local boss + demon screen roster. Zalbaag is `105`; demons are `103`.
 
-```text
-ZALBAAG BEOULVE → RIBBON (Tier-S — the ultimate accessory: all-status immunity).
-  Steal-or-drop on Zalbaag, who DIES as the win condition (guaranteed obtainable on a focus kill).
-  THEMATIC: the crown that would have warded the vampiric curse — taken from Ramza's brother, freed in
-  death. A fitting best-of-best for the chain's tragic climax.
-  The Archaeodaemons / Ultima Demon drop NOTHING rare (untameable, unpoachable — vanilla).
-  NO buried treasure here (vanilla) — only the 32,800 Gil + Elixir spoils stay.
-```
+| Slot | Role | Unit type | Level | Purpose |
+|------|------|-----------|-------|---------|
+| s1 | Boss / objective / reward payload | Zalbaag, undead Ark Knight | `105` | Sole vampirism source; Runeblade break; defeat ends fight; Ragnarok spoil. |
+| s2 | Undead screen / reward payload | Archaeodaemon | `103` | Reraise/drain pressure; Ribbon spoil. |
+| s3 | Undead screen / minor reward | Archaeodaemon | `103` | Second undead screen body; Elixir/minor spoil. |
+| s4 | Demon pressure | Ultima Demon | `103` | Telegraphed Ultima pressure; optional target. |
 
-> Tier-S ledger (per 037 / 052): Chaos Blade (Folmarv, 052) · **Ribbon (Zalbaag, 053)** · Robe of Lords
-> (Loffrey, 055) · Materia Blade (Cletienne, 056) · Escutcheon (Lost Halidom, 057) · Ragnarok (FINAL
-> capstone, 058). Excalibur stays with Orlandeau (player) — never on an enemy.
+Script placeholders to preserve:
 
-## Proposed Composition (New Game++ Mullonde Sanctuary v1)
-
-Keep the boss + demon screen; no generics. Zalbaag (tragic climax) `105`; Ultima Demon `103`;
-Archaeodaemons `103`.
-
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Zalbaag (BOSS, objective) | Ark Knight (vampire/undead) | `105` | Vampirism + Runeblade equip-break; carries Tier-S Ribbon; the intended kill. |
-| n | Archaeodaemon | Undead demon | `103` | Undead reraise + HP-drain; screen Zalbaag; holy answers it. |
-| n | Archaeodaemon | Undead demon | `103` | Second undead; reraise pressure; finish while down. |
-| n | Ultima Demon | Demon caste | `103` | Ultima / self-destruct (telegraphed, race-able); optional but punishing. |
+| Slot | Record | Handling |
+|------|--------|----------|
+| s0 | Folmarv cutscene placeholder | Preserve untouched unless proven active. |
+| s5 | job-51 placeholder | Preserve untouched unless proven active. |
 
 Reasoning:
 
-The faithful move is **the brother and his demons, no padding** — the pressure is the **status+drain+
-undead stack**, not numbers. Zalbaag (`105`) brings two answerable threats (vampirism → Holy Water /
-Japa Mala; Runeblade break → Rend / Crush); the **undead demon screen** (2 Archaeodaemon `103`) reraises
-and drains, demanding holy damage to keep down; the **Ultima Demon `103`** threatens a telegraphed
-Ultima you must space around. Win-on-Zalbaag-falls preserves the original's *cut to the brother and
-free him* tactics — on no resupply, the climax of Mullonde. A 4/5★ tragic boss fight, harder than the
-Nave by virtue of the undead/drain attrition.
+The accepted design is **v2 undead-brother focus**. The simulation rejects spreading vampirism, clear-all
+demon walls, active Ragnarok swap, generic padding, overleveling, and unspaceable Ultima. The battle is
+hard because it layers vampire status, one gear-break source, undead reraise, and demon AoE on a chained
+party, but it stays fair because the objective is still Zalbaag.
 
-## Builds (boss-tier; cursed-Beoulve flavor)
-
-Item/skill IDs from the loader tables (verify against the installed copy before patching):
+Rejected variants:
 
 ```text
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\ItemData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
-C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
+- Spreading vampire lock: turns a curse into lost-turn collapse.
+- Clear-all demon rite: breaks the brother focus objective.
+- Sealed demon wall: makes demons mandatory cleanup.
+- Active Ragnarok Zalbaag: loses Runeblade break identity and misuses the reward payload.
+- Old Ribbon-only reward: contradicts current reward map.
+- Steal-required Ribbon/Ragnarok: contradicts guaranteed spoils.
+- Generic-padded Sanctuary: dulls the tragic boss fight.
+- Overlevelled tragedy: replaces puzzle pressure with raw stats.
+- Unspaceable Ultima Demon: removes positioning counterplay.
 ```
 
-### Zalbaag Beoulve (Lv 105) — BOSS, objective, Tier-S carrier
+## Builds (boss + demon screen)
 
 ```text
-Job: Ark Knight (id TBD)   JobLevel: 8   Primary: Runeblade / Unyielding Blade (equip-break + drain)
-  + VAMPIRISM (HP-drain / turn — SOLE source, cleansable, telegraphed, NON-spreading)
-Reaction: Damage Split / Reflexes (id TBD)   Support: break-resist / Defense Boost (id TBD)   Movement: Move +2 (id TBD)
-Head: Genji Helm-tier (id TBD)   Body: heavy boss armor (id TBD)
-Accessory: RIBBON (Tier-S steal/drop, id TBD)   Right hand: Runeblade (id TBD)   Left: shield (id TBD)
-The intended kill; answer vampirism (Holy Water / Japa Mala) + disarm the Runeblade (Rend/Crush), then burst.
+Zalbaag:
+  - Level 105, JobLevel 8.
+  - Active weapon: Runeblade, preserving the break identity.
+  - Accessory: Ribbon may remain active.
+  - Vampirism: sole source, cleansable, non-spreading.
+  - Reaction/Support/Move: complete boss setup already present.
+  - Role: tragic focus target; defeat ends fight.
+
+Archaeodaemons x2:
+  - Level 103.
+  - Preserve undead/reraise and drain pressure.
+  - No human equipment setup; monster/fixed bodies.
+  - Role: screen and anti-undead resource test.
+
+Ultima Demon:
+  - Level 103.
+  - Preserve demon kit and telegraphed Ultima pressure.
+  - Role: punish clumping/slow play, not the objective.
 ```
-
-Role: the tragic vampire brother; two answerable threats + the Tier-S Ribbon; the focus target.
-
-### Archaeodaemon x2 (Lv 103) — undead screen
-
-```text
-Job: Archaeodaemon / undead demon (id TBD)   JobLevel: 8   Undead (RERAISE) + HP-drain.
-Reaction: Counter (442)   Support: Defense Boost (id TBD)   Movement: Move +2 (id TBD)
-Undead — answered by holy damage / Holy Water / finishing while downed. No vampirism (drain only).
-```
-
-Role: reraise pressure + HP-drain; the screen between the party and Zalbaag.
-
-### Ultima Demon (Lv 103) — demon caste
-
-```text
-Job: Ultima Demon / demon caste (id TBD)   JobLevel: 8   Ultima / self-destruct (telegraphed, race/space-able).
-Reaction: Reflexes (449)   Support: MA-boost (id TBD)   Movement: Move +2 (id TBD)
-Untameable / unpoachable (vanilla). Optional target — pressure, not the objective.
-```
-
-Role: a telegraphed Ultima threat you space around; punishes clustering.
 
 ## Positioning Plan
 
 ```text
-The cathedral SANCTUARY (holy inner chamber): place Zalbaag at the altar / back-center as the climax;
-  the 2 Archaeodaemon forward as the undead screen; the Ultima Demon to one flank (forcing the party to
-  avoid clustering near its Ultima). Keep the holy-chamber elevation. The player must punch through the
-  undead screen (holy damage) and answer vampirism/break to reach Zalbaag.
-Preserve: boss + demon screen (no generics), the dual attrition (status + equip-break) on undead reraise,
-  and the win-on-Zalbaag-falls rule. The Ribbon rides on Zalbaag, the intended target.
+Sanctuary interior: Zalbaag anchors the altar/back-center. Archaeodaemons form a partial screen, not a
+sealed wall. Ultima Demon sits on a flank where Ultima pressure is visible and spaceable.
+
+The player should see the intended line:
+  1. Prevent or cleanse vampirism.
+  2. Disarm/protect against Runeblade break.
+  3. Open one lane through undead demons.
+  4. Focus Zalbaag and end the chain.
 ```
 
-The sanctuary should say: "the last of the Knights Templar's puppets is your own brother, cursed to
-undeath — break the blade, lift the curse, and free him; the Ribbon is what should have saved him."
+The sanctuary should say: "your brother is the curse at the altar; quiet the demons only enough to
+reach him, break the blade, and free him."
+
+## Simulation Plan and Results
+
+Simulation artifact:
+
+```text
+tmp/fft-level-design-053-mullonde-sanctuary/
+  assumptions.md
+  simulate.py
+  iteration-results.json
+  iteration-results.md
+```
+
+Model scope:
+
+```text
+Coarse deterministic undead-brother focus model over the first six rounds.
+It scores pressure, focus clarity, vampirism fairness, break fairness, demon cleanup risk, answerability,
+reward correctness, and scripting fidelity. It does not simulate exact FFT formulas.
+```
+
+Result summary:
+
+| Candidate | Pressure | Focus clarity | Vamp fair | Break fair | Cleanup risk | Answer | Reward | Scripting | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| v2 undead-brother focus | 316 | 96 | 92 | 90 | 34 | 98 | 100 | 100 | **Accepted** |
+| spreading vampire lock | 432 | 96 | 8 | 90 | 34 | 76 | 100 | 100 | Rejected: hard vampirism |
+| clear-all demon rite | 378 | 22 | 92 | 90 | 60 | 30 | 100 | 55 | Rejected: breaks focus |
+| sealed demon wall | 350 | 40 | 92 | 90 | 42 | 74 | 100 | 100 | Rejected: sealed screen |
+| active Ragnarok Zalbaag | 312 | 96 | 92 | 50 | 34 | 98 | 82 | 100 | Rejected: loses Runeblade |
+| old ribbon-only reward | 316 | 96 | 92 | 90 | 34 | 98 | 75 | 100 | Rejected: reward ledger |
+| steal-required ribbon | 316 | 96 | 92 | 80 | 34 | 98 | 47 | 100 | Rejected: reward policy |
+| generic-padded sanctuary | 342 | 82 | 92 | 90 | 46 | 86 | 100 | 82 | Rejected: padding |
+| overlevelled tragedy | 344 | 96 | 92 | 90 | 34 | 86 | 100 | 100 | Rejected: raw levels |
+| unspaceable ultima demon | 340 | 96 | 92 | 90 | 44 | 82 | 100 | 100 | Rejected: unspaceable Ultima |
+
+Iteration decision:
+
+```text
+ACCEPT v2 undead-brother focus.
+Zalbaag remains the objective and sole vampirism/break engine. Demons are pressure, not mandatory
+cleanup. Ragnarok and Ribbon are guaranteed rewards, with Ragnarok kept out of active combat gear.
+```
 
 ## Implementation Checklist
 
-- [ ] Identify Mullonde Sanctuary `BattleId` / ENTD entry on Windows data; fill "Local Data Confirmed".
-- [ ] Dump original entry; verify Zalbaag + 2 Archaeodaemon + 1 Ultima Demon, and the Undead/vampire flags.
-- [ ] Confirm win condition: fight ENDS when Zalbaag falls (demons optional).
-- [ ] Keep vampirism on Zalbaag ONLY (sole source, cleansable, telegraphed, non-spreading); Runeblade
-      equip-break ONE source (Rend / Crush / break-resist answerable).
-- [ ] Keep undead reraise on the 2 Archaeodaemon (holy answer); Ultima Demon Ultima telegraphed/race-able.
-- [ ] Set levels: Zalbaag `105`; Ultima Demon & Archaeodaemons `103`. JobLevel `8` on all slots.
-- [ ] Set Zalbaag's steal/drop = Tier-S **Ribbon**; demons carry NO rare (untameable). NO buried treasure.
-- [ ] Patch via the correct layer; keep the diff inside the Mullonde Sanctuary window only.
-- [ ] Re-dump and diff; confirm small, intentional changes; verify roster + win rule + Ribbon.
-- [ ] Install mod, test from a New Game+ save; confirm vampirism/break are answerable (not hard locks),
-      undead reraise demands holy, and killing Zalbaag yields the Ribbon.
+- [ ] Re-dump entry 462 and verify slots, rewards, and placeholder behavior.
+- [ ] Preserve win-on-Zalbaag-falls.
+- [ ] Keep Zalbaag at `105`; demons at `103`.
+- [ ] Preserve Runeblade as active weapon; do not replace it with Ragnarok.
+- [ ] Keep vampirism sole-source, cleansable, and non-spreading.
+- [ ] Keep demon screen partial, with a focus lane to Zalbaag.
+- [ ] Keep Ultima pressure telegraphed/spaceable.
+- [ ] Author/verify spoils: Ragnarok + Ribbon + Elixir/minor spoil, guaranteed and within the 3-item cap.
+- [ ] Preserve no buried treasure.
+- [ ] Test as Mullonde chain 3/3 after `051` and `052`.
 
 ## Test Questions
 
-- Is it a focus kill on the tragic brother — win the instant Zalbaag falls (demons optional)?
-- Are BOTH boss threats answerable (vampirism → Holy Water / Japa Mala / Esuna; Runeblade → Rend / Crush)
-  and NOT hard locks; does vampirism stay single-source and non-spreading?
-- Does the undead screen demand holy damage (reraise / finish-while-down), and is the Ultima Demon's
-  Ultima telegraphed and space-able (no instant wipe)?
-- Is Zalbaag clearly the rewarded target (win condition + Tier-S Ribbon)?
-- Is it survivable on ONE loadout (no resupply, chain 3/3 — the longest sustained stretch yet)?
-- Does it read as freeing a cursed brother in the holy chamber, not a designed mob?
+- Does the fight end immediately when Zalbaag falls?
+- Is vampirism cleansable, single-source, and non-spreading?
+- Does Runeblade break create pressure without becoming a gear lock?
+- Can the player reach Zalbaag without clearing every demon?
+- Is Ultima pressure spaceable?
+- Do Ragnarok + Ribbon appear as guaranteed spoils?
+- Does the Mullonde chain end with the party taxed but ready for the point of no return?
 
 ## Sources
 
-- Game8, "Mullonde Cathedral Sanctuary Walkthrough (Battle 48)": roster (Zalbaag Ark Knight + 2
-  Archaeodaemon + 1 Ultima Demon), "Defeat Zalbaag!" (demons optional), rec ~60, 4/5 stars, vampire/
-  vampirism threat + Japa Mala / Holy Water counter, Runeblade + Rend/Crush advice, untameable Ultima
-  Demons, spoils 32,800 Gil + Elixir, no buried treasure.
+- Game8, "Mullonde Cathedral Sanctuary Walkthrough (Battle 48)": public roster, win condition, vampirism
+  counterplay, Runeblade/break advice, demon screen, and no buried treasure.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553208
-- Final Fantasy Wiki, "Zalbaag Beoulve": Ark Knight, undead/vampire raising, the Beoulve tragedy.
+- Final Fantasy Wiki, "Zalbaag Beoulve": story context.
   https://finalfantasy.fandom.com/wiki/Zalbaag_Beoulve
-- Local: `037-chapter-4-overview.md` (Tier-S tiering), `048-limberry-keep.md` (Elmdore Ark Knight),
-  `049-limberry-undercroft.md` (undead reraise guard), `052-mullonde-nave.md` (chain 2/3; equip-break),
-  `051-mullonde-exterior.md` (chain 1/3).
-```
+- Local: `037-chapter-4-overview.md`, `051-mullonde-exterior.md`, `052-mullonde-nave.md`,
+  `chapter-4-rewards-implementation.md`, `spoils-of-war-reward-system.md`.
