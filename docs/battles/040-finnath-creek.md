@@ -164,14 +164,14 @@ Replace the random outcome with a fixed flock of six that reliably poses the tem
 optional Pig. Modest Chapter-4 levels — this is a change-of-pace, not a spike. Black Chocobos `102`
 (the threats); yellow/red `101`; Pig `100`.
 
-| Slot | Role | Monster | Level | Purpose |
-|------|------|---------|-------|---------|
-| n | Meteor threat | Black Chocobo | `102` | Choco Meteor — ranged AoE nuke; primary focus target. |
-| n | Meteor threat | Black Chocobo | `102` | Second nuker — enough pressure to force spacing without making this a spike. |
-| n | Sustain | Chocobo (yellow) | `101` | Choco Cure — keeps the flock alive; first kill if the party is using chip damage. |
-| n | Sustain | Chocobo (yellow) | `101` | Second healer — makes the pack feel like a pack, not six isolated monsters. |
-| n | Utility tempo | Red Chocobo | `101` | Choco Pellets / Choco Esuna — mobile chip and cleanup support. |
-| n | Optional recruit | Pig | `100` | Rare Entice target — keep recruitable; do not force-kill. |
+| Slot | Role | Monster | Level | Br/Fa | Purpose |
+| ------ | ------ | --------- | ------- | --- | --------- |
+| n | Meteor threat | Black Chocobo | `102` | `90/30` | Choco Meteor — ranged AoE nuke; primary focus target. |
+| n | Meteor threat | Black Chocobo | `102` | `90/30` | Second nuker — enough pressure to force spacing without making this a spike. |
+| n | Sustain | Chocobo (yellow) | `101` | `90/30` | Choco Cure — keeps the flock alive; first kill if the party is using chip damage. |
+| n | Sustain | Chocobo (yellow) | `101` | `90/30` | Second healer — makes the pack feel like a pack, not six isolated monsters. |
+| n | Utility tempo | Red Chocobo | `101` | `90/30` | Choco Pellets / Choco Esuna — mobile chip and cleanup support. |
+| n | Optional recruit | Pig | `100` | `60/40` | Rare Entice target — keep recruitable; do not force-kill. |
 
 Reasoning:
 

@@ -143,9 +143,9 @@ DO NOT use the rare-variant treasure already in the room (e.g. Bizen Osafune kat
 A single boss, scaled as the chapter spike. Cúchulainn stays at `104`; the v2 requirement is that
 the fight must be validated from the Lionel Gate no-resupply chain, not from a fresh save.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Cúchulainn (BOSS) | Lucavi Demon | `104` | One-unit army: Nightmare mass-status + run-up execute; weak to Holy; dark-absorb. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Cúchulainn (BOSS) | Lucavi Demon | `104` | `88/82` | One-unit army: Nightmare mass-status + run-up execute; weak to Holy; dark-absorb. |
 
 Reasoning:
 

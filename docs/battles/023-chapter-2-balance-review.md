@@ -77,6 +77,19 @@ Save the Queen, Ribbon, best robes) is reserved for Chapter 4. A boss that only 
 carries no rare (nothing to drop yet) — its rare is paid out where it dies (the Gate).
 ```
 
+## Brave/Faith audit
+
+```text
+PASS (docs). Every Chapter 2 battle doc (`012`-`022`) now records Br/Fa for each fixed active enemy
+in the proposed composition. Active guests/story allies outside the enemy composition are documented
+in each battle's Guest handling block. Player-deployed units remain player-build data and are not
+fixed by encounter docs.
+
+Design intent: Chapter 2 previews Brave/Faith as a build axis without extreme values. Physical units
+sit around Br 74-78 with lower Faith; casters sit around Faith 72-76; monsters stay aggressive but
+low-Faith; guests use role-specific values.
+```
+
 ## Design-exception log
 
 Chapter-wide rules are deliberately broken in specific fights because the original battles are

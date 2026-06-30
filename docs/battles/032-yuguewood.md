@@ -148,15 +148,15 @@ Damask Cloth) is existing map treasure, not boss loot; leave it as-is.
 Keep the exact roster; scale and preserve the undead + tempo mechanics. The Revenant and one Time
 Mage anchor at `101`–`102`; the rest at `100`–`101`. Moderate (2/5★).
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Revenant (undead) | Revenant | `101` | Tougher reraising body; attrition anchor. |
-| n | Ghoul (undead) | Ghoul | `100` | Reraises; status touch; bog melee. |
-| n | Ghast (undead) | Ghast | `100` | Reraises; status touch; second dead body. |
-| n | Time Mage | Time Mage | `101` | Hastes the undead (more swings) / Slows the player. |
-| n | Time Mage | Time Mage | `101` | Second tempo caster; reinforces the Hasted-dead clock. |
-| n | Black Mage | Black Mage | `101` | Ranged elemental damage on the player's cleanup line. |
-| n | Black Mage | Black Mage | `100` | Second mage; punishes a clumped permakill. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Revenant (undead) | Revenant | `101` | `86/35` | Tougher reraising body; attrition anchor. |
+| n | Ghoul (undead) | Ghoul | `100` | `86/35` | Reraises; status touch; bog melee. |
+| n | Ghast (undead) | Ghast | `100` | `86/35` | Reraises; status touch; second dead body. |
+| n | Time Mage | Time Mage | `101` | `60/74` | Hastes the undead (more swings) / Slows the player. |
+| n | Time Mage | Time Mage | `101` | `60/74` | Second tempo caster; reinforces the Hasted-dead clock. |
+| n | Black Mage | Black Mage | `101` | `58/78` | Ranged elemental damage on the player's cleanup line. |
+| n | Black Mage | Black Mage | `100` | `58/78` | Second mage; punishes a clumped permakill. |
 
 Reasoning:
 

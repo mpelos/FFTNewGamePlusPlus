@@ -144,15 +144,15 @@ IMPLEMENTATION: keep it as his equipped weapon and steal target. If no separate 
 Keep the exact roster; Gaffgarion is the boss spike. Gaffgarion `103`; the outside gate team ranges
 from `100`–`102`, with the Summoner and lead Knight carrying the pressure.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Gaffgarion (BOSS) | Dark Knight | `103` | Blood Sword sustain; disarm/steal him, then kill. Dies here. |
-| n | Gate Captain | Knight | `102` | Main outside anchor; pressures lever control. |
-| n | Rend Knight | Knight | `101` | Gear pressure on defenders; keeps Safeguard relevant. |
-| n | Lever Guard | Knight | `101` | Blocks easy lever access and prevents passive turtling. |
-| n | Archer | Archer | `101` | Ranged pressure on the gate defenders. |
-| n | Archer | Archer | `100` | Second bow; covers the other approach to the gate. |
-| n | Gate Summoner | Summoner | `102` | Mid-tier AoE shelling the defenders; no second Summoner. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Gaffgarion (BOSS) | Dark Knight | `103` | `82/60` | Blood Sword sustain; disarm/steal him, then kill. Dies here. |
+| n | Gate Captain | Knight | `102` | `76/48` | Main outside anchor; pressures lever control. |
+| n | Rend Knight | Knight | `101` | `76/48` | Gear pressure on defenders; keeps Safeguard relevant. |
+| n | Lever Guard | Knight | `101` | `76/48` | Blocks easy lever access and prevents passive turtling. |
+| n | Archer | Archer | `101` | `74/50` | Ranged pressure on the gate defenders. |
+| n | Archer | Archer | `100` | `74/50` | Second bow; covers the other approach to the gate. |
+| n | Gate Summoner | Summoner | `102` | `55/76` | Mid-tier AoE shelling the defenders; no second Summoner. |
 
 Reasoning:
 

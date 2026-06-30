@@ -114,16 +114,16 @@ None. No named boss here — no rare item (per the Chapter 2 overview). Monsters
 Use eight monsters: the original roster plus one additional Bonesnatch. The pressure increase comes
 from undead attrition, not more status.
 
-| Slot | Monster | Level | Purpose |
-|------|---------|-------|---------|
-| n | Ghoul (undead) | `100` | Undead body; reraises. Melee + status touch. |
-| n | Ghoul (undead) | `100` | Second undead body; attrition. |
-| n | Skeleton (undead) | `100` | Undead striker; reraises unless permakilled. |
-| n | Skeleton (undead) | `101` | Tougher of the pair; pressures dry ground. |
-| n | Bonesnatch (undead) | `102` | Elite undead anchor; the durable attrition threat. |
-| n | Bonesnatch (undead) | `101` | Second elite undead; makes permakill tools matter. |
-| n | Malboro | `102` | Bad Breath mass status — the single headline disruptor. |
-| n | Floating Eye | `100` | Gaze status; chips and disables from range. |
+| Slot | Monster | Level | Br/Fa | Purpose |
+| ------ | --------- | ------- | --- | --------- |
+| n | Ghoul (undead) | `100` | `80/35` | Undead body; reraises. Melee + status touch. |
+| n | Ghoul (undead) | `100` | `80/35` | Second undead body; attrition. |
+| n | Skeleton (undead) | `100` | `80/35` | Undead striker; reraises unless permakilled. |
+| n | Skeleton (undead) | `101` | `80/35` | Tougher of the pair; pressures dry ground. |
+| n | Bonesnatch (undead) | `102` | `80/35` | Elite undead anchor; the durable attrition threat. |
+| n | Bonesnatch (undead) | `101` | `80/35` | Second elite undead; makes permakill tools matter. |
+| n | Malboro | `102` | `78/35` | Bad Breath mass status — the single headline disruptor. |
+| n | Floating Eye | `100` | `78/35` | Gaze status; chips and disables from range. |
 
 Reasoning:
 

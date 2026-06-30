@@ -101,15 +101,15 @@ second puzzle. Monks add Chakra-first sustain, not a revive engine. No hard stat
 
 Accepted redesign: **v2 capped-Rend tempo opener**.
 
-| Slot | Role | Job | Level | Purpose |
-|---:|---|---|---:|---|
-| 0 | Cutscene | Loffrey / Divine Knight | 1 | Exits by script. Do not activate as a combatant. |
-| 1 | Rend carrier | Knight | 103 | Equipment-break source #1; telegraphed gear-preservation test. |
-| 2 | Rend carrier | Knight | 103 | Equipment-break source #2; the last allowed break source. |
-| 3 | Guard body | Knight | 102 | Armored wall without meaningful Rend pressure. |
-| 4 | Sustain body | Monk | 102 | Chakra-first melee sustain; no dedicated revive loop. |
-| 5 | Sustain body | Monk | 102 | Second martial body; pressure and emergency sustain. |
-| 6 | Tempo flanker | Ninja | 103 | Replaces Archer; melee flank tempo with tempered Throw/no high-tier payload. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ---: | --- | --- | ---: | --- | --- |
+| 0 | Cutscene | Loffrey / Divine Knight | 1 | `90/55` | Exits by script. Do not activate as a combatant. |
+| 1 | Rend carrier | Knight | 103 | `88/42` | Equipment-break source #1; telegraphed gear-preservation test. |
+| 2 | Rend carrier | Knight | 103 | `88/42` | Equipment-break source #2; the last allowed break source. |
+| 3 | Guard body | Knight | 102 | `88/42` | Armored wall without meaningful Rend pressure. |
+| 4 | Sustain body | Monk | 102 | `88/40` | Chakra-first melee sustain; no dedicated revive loop. |
+| 5 | Sustain body | Monk | 102 | `88/40` | Second martial body; pressure and emergency sustain. |
+| 6 | Tempo flanker | Ninja | 103 | `90/35` | Replaces Archer; melee flank tempo with tempered Throw/no high-tier payload. |
 
 Why this works:
 

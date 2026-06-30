@@ -124,15 +124,15 @@ shop-tier. (The Summoners' summon spells are the threat, not their loot.)
 Use seven enemies: 2 optimized Summoners, 2 Rend Knights, 2 Archers, 1 Chemist. The Summoners stay
 the headline, but the Chemist makes "ignore support and race only one flank" less free.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Fast Summoner | Summoner | `102` | Swiftness caster; still raceable, but the clock is real. |
-| n | Power Summoner | Summoner | `101` | Arcane Strength caster; punishes ignored flank. |
-| n | Knight (Rend) | Knight | `101` | Break-wall; screens a Summoner. Safeguard-telegraphed threat. |
-| n | Knight (Rend) | Knight | `101` | Second break-wall; protects the other Summoner. |
-| n | Archer | Archer | `101` | Ranged support; punishes the rush toward the Summoners. |
-| n | Archer | Archer | `100` | Second bow; covers the center/hill. |
-| n | Chemist (NEW) | Chemist | `101` | Item sustain/revive; forces target priority. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Fast Summoner | Summoner | `102` | `55/76` | Swiftness caster; still raceable, but the clock is real. |
+| n | Power Summoner | Summoner | `101` | `55/76` | Arcane Strength caster; punishes ignored flank. |
+| n | Knight (Rend) | Knight | `101` | `76/48` | Break-wall; screens a Summoner. Safeguard-telegraphed threat. |
+| n | Knight (Rend) | Knight | `101` | `76/48` | Second break-wall; protects the other Summoner. |
+| n | Archer | Archer | `101` | `74/50` | Ranged support; punishes the rush toward the Summoners. |
+| n | Archer | Archer | `100` | `74/50` | Second bow; covers the center/hill. |
+| n | Chemist (NEW) | Chemist | `101` | `64/60` | Item sustain/revive; forces target priority. |
 
 Reasoning:
 

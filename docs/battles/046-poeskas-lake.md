@@ -153,14 +153,14 @@ PRESERVE: buried map treasure remains vanilla map loot, not the NG++ reward chan
 Keep the local six-monster roster. Band `101`-`103`; the Revenant anchor carries the top level, and the
 floaters create the spread/resource tax.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s4 | Revenant anchor | Revenant-family monster undead | `103` | Main reraising melee body; forces decisive permakill. |
-| s5 | Revenant anchor | Revenant-family monster undead | `102` | Second melee/reraise body; prevents one-action cleanup. |
-| s0 | Floating undead | Monster undead floater | `102` | Mobile undead pressure; spreads Phoenix Down/Holy decisions. |
-| s3 | Floating undead | Monster undead floater | `102` | Second upper-band floater; keeps the lake from collapsing into one side. |
-| s1 | Floating undead | Monster undead floater | `101` | Lower-band body; resource tax without spike. |
-| s2 | Floating undead | Monster undead floater | `101` | Lower-band body; resource tax without spike. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s4 | Revenant anchor | Revenant-family monster undead | `103` | `86/35` | Main reraising melee body; forces decisive permakill. |
+| s5 | Revenant anchor | Revenant-family monster undead | `102` | `86/35` | Second melee/reraise body; prevents one-action cleanup. |
+| s0 | Floating undead | Monster undead floater | `102` | `86/35` | Mobile undead pressure; spreads Phoenix Down/Holy decisions. |
+| s3 | Floating undead | Monster undead floater | `102` | `86/35` | Second upper-band floater; keeps the lake from collapsing into one side. |
+| s1 | Floating undead | Monster undead floater | `101` | `86/35` | Lower-band body; resource tax without spike. |
+| s2 | Floating undead | Monster undead floater | `101` | `86/35` | Lower-band body; resource tax without spike. |
 
 Reasoning:
 

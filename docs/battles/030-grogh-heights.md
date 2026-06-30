@@ -137,14 +137,14 @@ Keep the count (6) and the LIGHT feel; swap one Squire for a rain-Thunder Black 
 levels — this is a breather. Black Mage `101`; everyone else `100`–`101`. The v2 change is kit
 completeness, not new lethality.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Black Mage (NEW) | Black Mage | `101` | Rain-boosted Thunder — the weather now threatens the player too. |
-| n | Squire | Squire | `100` | Weak body; clumps in the rows. |
-| n | Chemist | Chemist | `101` | Minor heal sustain. |
-| n | Chemist | Chemist | `100` | Second medic; light sustain. |
-| n | Archer | Archer | `101` | Ranged chip; part of the cluster. |
-| n | Thief | Thief | `100` | Fast steal/charm harass. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Black Mage (NEW) | Black Mage | `101` | `58/78` | Rain-boosted Thunder — the weather now threatens the player too. |
+| n | Squire | Squire | `100` | `70/50` | Weak body; clumps in the rows. |
+| n | Chemist | Chemist | `101` | `68/64` | Minor heal sustain. |
+| n | Chemist | Chemist | `100` | `68/64` | Second medic; light sustain. |
+| n | Archer | Archer | `101` | `80/45` | Ranged chip; part of the cluster. |
+| n | Thief | Thief | `100` | `84/42` | Fast steal/charm harass. |
 
 Reasoning:
 

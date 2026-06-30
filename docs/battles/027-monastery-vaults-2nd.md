@@ -127,14 +127,14 @@ treasure, not boss loot; leave it as-is. The chapter's boss rares come at Izlude
 Keep the exact roster; this is a tempo/positioning fight, not a damage wall. One Dragoon anchors at
 `102`; the rest at `100`–`101`. The Time Mages and Chemist at `101`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Dragoon (lead, NEW caste) | Dragoon | `102` | Jump-dives the back line; the headline aerial threat. |
-| n | Dragoon | Dragoon | `101` | Second diver; splits the player's protection. |
-| n | Dragoon | Dragoon | `100` | Third diver; grounded body when not leaping. |
-| n | Time Mage | Time Mage | `101` | Hastes the Dragoons (faster Jumps) / Slows the player. |
-| n | Time Mage | Time Mage | `101` | Second tempo caster; reinforces the dive clock. |
-| n | Chemist | Chemist | `101` | Heal/revive sustain — the priority kill. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Dragoon (lead, NEW caste) | Dragoon | `102` | `84/42` | Jump-dives the back line; the headline aerial threat. |
+| n | Dragoon | Dragoon | `101` | `84/42` | Second diver; splits the player's protection. |
+| n | Dragoon | Dragoon | `100` | `84/42` | Third diver; grounded body when not leaping. |
+| n | Time Mage | Time Mage | `101` | `60/74` | Hastes the Dragoons (faster Jumps) / Slows the player. |
+| n | Time Mage | Time Mage | `101` | `60/74` | Second tempo caster; reinforces the dive clock. |
+| n | Chemist | Chemist | `101` | `68/64` | Heal/revive sustain — the priority kill. |
 
 Reasoning:
 

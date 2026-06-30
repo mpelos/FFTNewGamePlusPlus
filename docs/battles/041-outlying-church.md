@@ -169,14 +169,14 @@ PRESERVE: buried map rares (White Robe, Japa Mala, Magick Ring, Assassin's Dagge
 Keep the count (6) and the elevated boss-duel shape; make every active human a complete Chapter-4 unit.
 Boss `104`; Knights `102`/`102`/`101`; Mystics `102`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Zalmour (BOSS) | Inquisitor | `104` | Holy sustain/revive on high ground; objective; Light Robe visible steal-bait. |
-| n | Rend Knight | Knight | `102` | Front-line screen; Rend source 1; threatens gear on the climb. |
-| n | Rend Knight | Knight | `102` | Second screen; Rend source 2 — cap reached. |
-| n | Bodyguard Knight | Knight | `101` | No Rend learned/enabled; Item secondary stabilizes the screen without reviving Zalmo. |
-| n | Mystic Chaplain | Mystic | `102` | Soft Mystic pressure + limited defensive White Magic secondary. |
-| n | Mystic Chaplain | Mystic | `102` | Second soft caster; supports Zalmo without hard status or Raise/Holy. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Zalmour (BOSS) | Inquisitor | `104` | `72/82` | Holy sustain/revive on high ground; objective; Light Robe visible steal-bait. |
+| n | Rend Knight | Knight | `102` | `88/42` | Front-line screen; Rend source 1; threatens gear on the climb. |
+| n | Rend Knight | Knight | `102` | `88/42` | Second screen; Rend source 2 — cap reached. |
+| n | Bodyguard Knight | Knight | `101` | `88/42` | No Rend learned/enabled; Item secondary stabilizes the screen without reviving Zalmo. |
+| n | Mystic Chaplain | Mystic | `102` | `68/78` | Soft Mystic pressure + limited defensive White Magic secondary. |
+| n | Mystic Chaplain | Mystic | `102` | `72/82` | Second soft caster; supports Zalmo without hard status or Raise/Holy. |
 
 Reasoning:
 

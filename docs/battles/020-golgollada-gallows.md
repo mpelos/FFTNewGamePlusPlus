@@ -135,16 +135,16 @@ that disarming him is meaningful but no rare item can be stolen/dropped before h
 Keep the exact roster; Gaffgarion is the sub-boss spike. Gaffgarion `103`; the screen and support
 sit at `100`–`102` with the Time Mages and lead Knight carrying the pressure.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Gaffgarion (SUB-BOSS) | Dark Knight | `103` | Hasted Shadowblade sustain; mobile but strippable. |
-| n | Shield Knight | Knight | `102` | Primary bodyguard; blocks the clean disarm lane. |
-| n | Rend Knight | Knight | `101` | Secondary screen; threatens gear if ignored. |
-| n | Split Punisher | Knight | `101` | Pressures the weaker team and prevents five-unit dogpile. |
-| n | Archer | Archer | `101` | Ranged punishment on the rush to Gaffgarion. |
-| n | Archer | Archer | `100` | Second bow; covers the other deployment lane. |
-| n | Haste Time Mage | Time Mage | `102` | Hastes Gaffgarion early; priority support target. |
-| n | Slow Time Mage | Time Mage | `101` | Slows the disarm route; no hard-lock spells. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Gaffgarion (SUB-BOSS) | Dark Knight | `103` | `82/60` | Hasted Shadowblade sustain; mobile but strippable. |
+| n | Shield Knight | Knight | `102` | `76/48` | Primary bodyguard; blocks the clean disarm lane. |
+| n | Rend Knight | Knight | `101` | `76/48` | Secondary screen; threatens gear if ignored. |
+| n | Split Punisher | Knight | `101` | `76/48` | Pressures the weaker team and prevents five-unit dogpile. |
+| n | Archer | Archer | `101` | `74/50` | Ranged punishment on the rush to Gaffgarion. |
+| n | Archer | Archer | `100` | `74/50` | Second bow; covers the other deployment lane. |
+| n | Haste Time Mage | Time Mage | `102` | `58/72` | Hastes Gaffgarion early; priority support target. |
+| n | Slow Time Mage | Time Mage | `101` | `58/72` | Slows the disarm route; no hard-lock spells. |
 
 Reasoning:
 

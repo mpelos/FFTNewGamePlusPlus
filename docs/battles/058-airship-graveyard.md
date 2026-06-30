@@ -129,18 +129,18 @@ Accepted redesign: **v2 no-reward two-phase Ultima capstone**.
 
 ### Phase 1 - Hashmal / Lucavi entry 440
 
-| Slot group | Role | Level target | Purpose |
-|---|---|---:|---|
-| Hashmal/Folmarv/Lucavi active record(s) | Phase boss | 105 | Wide-area pressure; defeat triggers phase transition. |
-| Demon/support records | Screen / script support | 104-105 | Pressure and positioning, not hard lock. |
+| Slot group | Role | Level target | Br/Fa | Purpose |
+| --- | --- | ---: | --- | --- |
+| Hashmal/Folmarv/Lucavi active record(s) | Phase boss | 105 | `92/86` | Wide-area pressure; defeat triggers phase transition. |
+| Demon/support records | Screen / script support | 104-105 | `88/76` | Pressure and positioning, not hard lock. |
 
 ### Phase 2 - Ultima entry 441
 
-| Slot group | Role | Level target | Purpose |
-|---|---|---:|---|
-| Active Ultima / final-form record(s) | Final boss | 106 | Single highest active boss in the mod. |
-| Ultima Demon x4 | Surround | 105 | Positional/status pressure with Ribbon/spacing answers. |
-| Lucavi/form records | Scripted transform/support records | 105 | Preserve transformation and win sequence. |
+| Slot group | Role | Level target | Br/Fa | Purpose |
+| --- | --- | ---: | --- | --- |
+| Active Ultima / final-form record(s) | Final boss | 106 | `92/90` | Single highest active boss in the mod. |
+| Ultima Demon x4 | Surround | 105 | `88/76` | Positional/status pressure with Ribbon/spacing answers. |
+| Lucavi/form records | Scripted transform/support records | 105 | `92/86` | Preserve transformation and win sequence. |
 
 Why this works:
 

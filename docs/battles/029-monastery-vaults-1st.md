@@ -148,14 +148,14 @@ Nu Khai Armband) is existing map treasure, not boss loot; leave it as-is.
 Keep the exact roster; Wiegraf is the boss spike (flees). Wiegraf `104`; Knights `101`; Black
 Mage `101`; Archers `100`–`101`. The inactive placeholders stay inactive for the v2 plan.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Wiegraf (BOSS) | Holy Knight | `104` | Weapon-tied Holy Sword waves; DISARM him, then beat him to his flee threshold. |
-| n | Knight (Rend) | Knight | `101` | Holds/contests the clean disarm lane; only generic break source. |
-| n | Knight (gate body) | Knight | `101` | Second gate body; pressures a flank doorway without Rend. |
-| n | Archer (gate cover) | Archer | `101` | Ranged punishment through the doorways. |
-| n | Archer (flank cover) | Archer | `100` | Second bow; covers another gate lane without creating a ranged lock. |
-| n | Black Mage | Black Mage | `101` | Ranged magic that punishes a clumped doorway hold. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Wiegraf (BOSS) | Holy Knight | `104` | `88/60` | Weapon-tied Holy Sword waves; DISARM him, then beat him to his flee threshold. |
+| n | Knight (Rend) | Knight | `101` | `84/45` | Holds/contests the clean disarm lane; only generic break source. |
+| n | Knight (gate body) | Knight | `101` | `84/45` | Second gate body; pressures a flank doorway without Rend. |
+| n | Archer (gate cover) | Archer | `101` | `80/45` | Ranged punishment through the doorways. |
+| n | Archer (flank cover) | Archer | `100` | `80/45` | Second bow; covers another gate lane without creating a ranged lock. |
+| n | Black Mage | Black Mage | `101` | `58/78` | Ranged magic that punishes a clumped doorway hold. |
 
 Reasoning:
 

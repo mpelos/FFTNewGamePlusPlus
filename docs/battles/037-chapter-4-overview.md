@@ -155,6 +155,26 @@ ASSIGNMENT RULES:
 Each boss battle doc includes a **"Rare/reward handling"** line naming the item policy, its tier when
 applicable, and whether the battle is reward-bearing or challenge-only.
 
+## Brave/Faith tuning policy (Chapter 4)
+
+Brave/Faith is an explicit Chapter-4 puzzle lever. Battle docs use a `Br/Fa` column for fixed enemy and
+active guest/story slots. These are target ENTD values for Bravery (`0x06`) and Faith (`0x07`) during
+implementation. Player-deployed units are not fixed by the encounter doc because their Brave/Faith are
+part of the player's build.
+
+Chapter 4 may use high Brave/Faith, but the values must still explain the battle's readable answer:
+
+| Archetype | Target Br/Fa | Why |
+|-----------|--------------|-----|
+| Knights / Templars / physical bosses | `88-90/42-60` | High-Brave reactions and physical pressure; Faith stays moderate unless magic vulnerability is intended. |
+| Ninjas / Thieves / Assassins | `88-90/35-60` | Fast, high-Brave killers; Faith depends on whether magic is meant to be a primary answer. |
+| Black Mage / Summoner / Time Mage | `60-62/80-84` | Endgame magic must matter, and high Faith keeps caster priority fair both ways. |
+| Mystic / Orator / support casters | `68/78` | Soft control works but should remain resistable/cleansable. |
+| Samurai | `88/60` | Strong physical/reaction profile with enough Faith for Iaido/magic-adjacent pressure when relevant. |
+| Undead / demons / Lucavi | `86-92/35-90` | Undead keep low Faith; Lucavi/finale units get high Faith to make Holy/status/magic answers meaningful. |
+| Apex monsters / beasts | `90/30` | High-Brave monster pressure; low Faith keeps monster fights about innate breath, positioning, and disable answers. |
+| Script placeholders | `preserve` | Do not assign active Brave/Faith unless implementation proves the record fights. |
+
 ## Difficulty budget per battle (Chapter 4)
 
 Bands reach their ceiling; the Lucavi and the final demon are the spikes. Generics `100–103`,

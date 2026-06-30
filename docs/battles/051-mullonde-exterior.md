@@ -180,14 +180,14 @@ PRESERVE:
 
 Keep the local six-caster roster. White Mage is the priority target at `103`; the rest sit at `102`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| s0 | Sustain engine / reward payload | White Mage | `103` | Hidden roof heal/Raise engine; Staff of the Magi spoil. |
-| s1 | Charged AoE | Summoner | `102` | Punishes clumping/regrouping; Dragon Rod steal flavor; minor spoil. |
-| s2 | Terrain pressure / reward payload | Geomancer | `102` | Flank pressure; Faerie Harp spoil payload. |
-| s3 | Terrain pressure | Geomancer | `102` | Second flank pressure piece. |
-| s4 | Soft disruptor | Orator | `102` | Speech/status harassment, not hard lock. |
-| s5 | Soft disruptor | Orator | `102` | Second Orator, still under soft-status cap. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| s0 | Sustain engine / reward payload | White Mage | `103` | `60/84` | Hidden roof heal/Raise engine; Staff of the Magi spoil. |
+| s1 | Charged AoE | Summoner | `102` | `60/84` | Punishes clumping/regrouping; Dragon Rod steal flavor; minor spoil. |
+| s2 | Terrain pressure / reward payload | Geomancer | `102` | `68/78` | Flank pressure; Faerie Harp spoil payload. |
+| s3 | Terrain pressure | Geomancer | `102` | `68/78` | Second flank pressure piece. |
+| s4 | Soft disruptor | Orator | `102` | `68/78` | Speech/status harassment, not hard lock. |
+| s5 | Soft disruptor | Orator | `102` | `68/78` | Second Orator, still under soft-status cap. |
 
 Reasoning:
 

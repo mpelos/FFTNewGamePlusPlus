@@ -128,14 +128,14 @@ Buried map treasure stays vanilla map loot.
 
 Keep the count (6) and the fixed-kit flee-race shape. Assassins `104`; Reavers `103`.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| 0 | Celia | Assassin fixed boss kit | `104` | Teleport status/Ultima threat; flee target. |
-| 1 | Lettie | Assassin fixed boss kit | `104` | Second teleport status/Ultima threat; flee target. |
-| 2 | Reaver | Demon monster | `103` | Front pressure while assassins teleport. |
-| 3 | Reaver | Demon monster | `103` | Second front pressure body. |
-| 4 | Reaver | Demon monster | `103` | Flank/body pressure. |
-| 5 | Reaver | Demon monster | `103` | Screen and chain-tax body. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| 0 | Celia | Assassin fixed boss kit | `104` | `92/90` | Teleport status/Ultima threat; flee target. |
+| 1 | Lettie | Assassin fixed boss kit | `104` | `92/90` | Second teleport status/Ultima threat; flee target. |
+| 2 | Reaver | Demon monster | `103` | `88/76` | Front pressure while assassins teleport. |
+| 3 | Reaver | Demon monster | `103` | `88/76` | Second front pressure body. |
+| 4 | Reaver | Demon monster | `103` | `88/76` | Flank/body pressure. |
+| 5 | Reaver | Demon monster | `103` | `88/76` | Screen and chain-tax body. |
 
 Rejected variants:
 

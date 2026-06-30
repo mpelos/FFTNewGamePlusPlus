@@ -131,14 +131,14 @@ No other named boss rare. Map treasure remains map treasure.
 
 Keep six active enemies. Meliadoul is the only boss-band unit.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| s0 | Boss / objective | Divine Knight (47) | `104` | Gear-break race; steal/disarm target; guaranteed Save the Queen reward. |
-| s1 | AoE screen | Summoner | `102` | Charge-time AoE that punishes clumping on the approach. |
-| s2 | High-ground chip | Archer (77) | `102` | Covers one route to Meliadoul. |
-| s3 | High-ground chip | Archer (77) | `101` | Covers the alternate route. |
-| s4 | AoE screen | Summoner | `102` | Second charge-time AoE; forces movement. |
-| s5 | Flanker | Ninja | `102` | Fast Throw/dual-wield pressure on backline or steal attempts. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| s0 | Boss / objective | Divine Knight (47) | `104` | `88/42` | Gear-break race; steal/disarm target; guaranteed Save the Queen reward. |
+| s1 | AoE screen | Summoner | `102` | `60/84` | Charge-time AoE that punishes clumping on the approach. |
+| s2 | High-ground chip | Archer (77) | `102` | `88/55` | Covers one route to Meliadoul. |
+| s3 | High-ground chip | Archer (77) | `101` | `82/45` | Covers the alternate route. |
+| s4 | AoE screen | Summoner | `102` | `60/84` | Second charge-time AoE; forces movement. |
+| s5 | Flanker | Ninja | `102` | `90/35` | Fast Throw/dual-wield pressure on backline or steal attempts. |
 
 Reasoning:
 

@@ -180,26 +180,26 @@ the terrain do the work. No `103`+ spike — this is one of two converging paths
 
 ### South Wall (A) — melee / stealth (7)
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Knight | Knight | `102` | Wall of bodies; Rend (break source 1). |
-| n | Knight | Knight | `102` | Second body; Rend (break source 2 — cap). |
-| n | Knight | Knight | `101` | Third body; NO Rend (cap kept). |
-| n | Bow Archer | Archer | `102` | Yoichi/Perseus visible bow pressure from the parapet. |
-| n | Bow Archer | Archer | `101` | Second bow reward carrier; covers the ramp. |
-| n | Thief Flanker | Thief | `101` | Fast flank / steal harass using the walls; no hard status. |
-| n | Ninja Flanker | Ninja | `102` | Wall-climbing dual-wield / Throw — the South signature. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Knight | Knight | `102` | `88/42` | Wall of bodies; Rend (break source 1). |
+| n | Knight | Knight | `102` | `88/42` | Second body; Rend (break source 2 — cap). |
+| n | Knight | Knight | `101` | `88/42` | Third body; NO Rend (cap kept). |
+| n | Bow Archer | Archer | `102` | `82/45` | Yoichi/Perseus visible bow pressure from the parapet. |
+| n | Bow Archer | Archer | `101` | `82/45` | Second bow reward carrier; covers the ramp. |
+| n | Thief Flanker | Thief | `101` | `88/38` | Fast flank / steal harass using the walls; no hard status. |
+| n | Ninja Flanker | Ninja | `102` | `90/35` | Wall-climbing dual-wield / Throw — the South signature. |
 
 ### North Wall (B) — ranged / AoE (6)
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Summoner | Summoner | `102` | Wide-area summon — PRIORITY kill; reaches you from start. |
-| n | Dragoon | Dragoon | `102` | Jump — vertical pressure on the ledges. |
-| n | Dragoon | Dragoon | `101` | Second Jump body from local data; keeps panels readable. |
-| n | Monk | Monk | `102` | Melee bruiser (Chakra self-sustain / Wave Fist). |
-| n | Bow Archer | Archer | `102` | Yoichi/Perseus visible bow pressure from the rampart. |
-| n | Bow Archer | Archer | `101` | Second bow reward carrier; covers the approach. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Summoner | Summoner | `102` | `60/84` | Wide-area summon — PRIORITY kill; reaches you from start. |
+| n | Dragoon | Dragoon | `102` | `86/40` | Jump — vertical pressure on the ledges. |
+| n | Dragoon | Dragoon | `101` | `86/40` | Second Jump body from local data; keeps panels readable. |
+| n | Monk | Monk | `102` | `88/40` | Melee bruiser (Chakra self-sustain / Wave Fist). |
+| n | Bow Archer | Archer | `102` | `82/45` | Yoichi/Perseus visible bow pressure from the rampart. |
+| n | Bow Archer | Archer | `101` | `82/45` | Second bow reward carrier; covers the approach. |
 
 Reasoning:
 

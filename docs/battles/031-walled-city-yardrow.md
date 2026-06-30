@@ -153,19 +153,26 @@ the fight. The challenge should come from Ninja wall-climb/Throw pressure and Su
 the player chooses where Rapha moves, waits, defends, and casts.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Rapha | `65/75` | Controlled protected guest; Faith supports Skyseer identity, Brave stays moderate to keep protection relevant. |
+
 ## Proposed Composition (New Game++ Yardow v2)
 
 Keep the exact roster; the Ninjas are the headline. One Ninja anchors at `102`; Marach at `103`;
 Summoners `101`; other Ninjas `101`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Marach (BOSS) | Netherseer/Heaven-line | `103` | Boss pressure; survives (recruitable later). Damage/soft-status only. |
-| n | Ninja (lead, NEW caste) | Ninja | `102` | Wall-climbs to vantage; Throws at Rapha; ignores the front line. |
-| n | Ninja | Ninja | `101` | Second assassin; rushes the chokepoint or scales the wall. |
-| n | Ninja | Ninja | `101` | Third assassin; splits the player's protection of Rapha. |
-| n | Summoner | Summoner | `101` | Mid-tier AoE shelling the central path. |
-| n | Summoner | Summoner | `101` | Second summon threat; punishes clumping at the chokepoint. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Marach (BOSS) | Netherseer/Heaven-line | `103` | `78/72` | Boss pressure; survives (recruitable later). Damage/soft-status only. |
+| n | Ninja (lead, NEW caste) | Ninja | `102` | `86/40` | Wall-climbs to vantage; Throws at Rapha; ignores the front line. |
+| n | Ninja | Ninja | `101` | `90/60` | Second assassin; rushes the chokepoint or scales the wall. |
+| n | Ninja | Ninja | `101` | `90/60` | Third assassin; splits the player's protection of Rapha. |
+| n | Summoner | Summoner | `101` | `58/78` | Mid-tier AoE shelling the central path. |
+| n | Summoner | Summoner | `101` | `58/78` | Second summon threat; punishes clumping at the chokepoint. |
 
 Reasoning:
 

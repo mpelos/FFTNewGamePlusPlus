@@ -182,13 +182,13 @@ PRESERVE:
 Keep the five scripted enemy records: Elmdor, Celia, Lettie, and the two transform forms. No extra
 bodies. Elmdor and assassins sit at `104`; transform forms sit at `105`.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s0 | Boss / objective | Elmdor, Ark Knight | `104` | Shirahadori parry puzzle; Vampire sustain; active Masamune + Genji Armor; objective. |
-| s1 | Timer phase 1 | Celia, Assassin fixed kit | `104` | Teleport/status/pressure; not the win condition. |
-| s2 | Timer phase 1 | Lettie, Assassin fixed kit | `104` | Second assassin pressure; not the win condition. |
-| s3 | Timer phase 2 | Celia-linked Ultima Demon | `105` | Transform pressure if the player spends too long. |
-| s4 | Timer phase 2 | Lettie-linked Ultima Demon | `105` | Second transform pressure; chain tax, not required cleanup. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s0 | Boss / objective | Elmdor, Ark Knight | `104` | `90/65` | Shirahadori parry puzzle; Vampire sustain; active Masamune + Genji Armor; objective. |
+| s1 | Timer phase 1 | Celia, Assassin fixed kit | `104` | `90/60` | Teleport/status/pressure; not the win condition. |
+| s2 | Timer phase 1 | Lettie, Assassin fixed kit | `104` | `90/60` | Second assassin pressure; not the win condition. |
+| s3 | Timer phase 2 | Celia-linked Ultima Demon | `105` | `88/76` | Transform pressure if the player spends too long. |
+| s4 | Timer phase 2 | Lettie-linked Ultima Demon | `105` | `88/76` | Second transform pressure; chain tax, not required cleanup. |
 
 Reasoning:
 

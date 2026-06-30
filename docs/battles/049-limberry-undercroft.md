@@ -199,16 +199,16 @@ PRESERVE:
 Keep the local roster and levels. The redesign is positioning/guardrail clarity: dense undead screen,
 one status engine, and at least one route to focus Zalera.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s1 | Boss / objective | Zalera, Death Seraph Lucavi | `105` | Single mass-status engine; defeat ends fight; Aegis Shield spoil. |
-| s2 | Screen / reward payload | Job 61 undead/fixed knight-like monster | `103` | First undead body; Zeus Mace spoil; screens a direct route. |
-| s3 | Screen | Job 61 undead/fixed knight-like monster | `103` | Second undead body; forces route choice. |
-| s4 | Undead pressure | Skeleton-family monster job 111 | `103` | Reraise/permakill action tax. |
-| s5 | Undead pressure | Skeleton-family monster job 110 | `103` | Second skeleton-family pressure body. |
-| s6 | Undead pressure | Skeleton-family monster job 109 | `103` | Lower-route undead body. |
-| s8 | Undead pressure | Skeleton-family monster job 111 | `103` | Outer screen body; must not seal boss access. |
-| s9 | Undead pressure | Skeleton-family monster job 111 | `103` | Outer screen body; cleanup risk control. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s1 | Boss / objective | Zalera, Death Seraph Lucavi | `105` | `92/86` | Single mass-status engine; defeat ends fight; Aegis Shield spoil. |
+| s2 | Screen / reward payload | Job 61 undead/fixed knight-like monster | `103` | `86/35` | First undead body; Zeus Mace spoil; screens a direct route. |
+| s3 | Screen | Job 61 undead/fixed knight-like monster | `103` | `86/35` | Second undead body; forces route choice. |
+| s4 | Undead pressure | Skeleton-family monster job 111 | `103` | `86/35` | Reraise/permakill action tax. |
+| s5 | Undead pressure | Skeleton-family monster job 110 | `103` | `86/35` | Second skeleton-family pressure body. |
+| s6 | Undead pressure | Skeleton-family monster job 109 | `103` | `86/35` | Lower-route undead body. |
+| s8 | Undead pressure | Skeleton-family monster job 111 | `103` | `86/35` | Outer screen body; must not seal boss access. |
+| s9 | Undead pressure | Skeleton-family monster job 111 | `103` | `86/35` | Outer screen body; cleanup risk control. |
 
 Non-combat/script records to preserve and verify:
 

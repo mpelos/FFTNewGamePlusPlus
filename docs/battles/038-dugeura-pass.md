@@ -132,14 +132,14 @@ Map treasure remains the map's own reward layer and should not be conflated with
 
 Keep six active enemies. Bottom-of-band levels preserve opener pacing.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| s0 | Screen | Knight | `101` | Blocks the direct caster rush; one break source at most. |
-| s1 | AoE priority | Black Mage | `102` | Main damage engine; Rod of Faith spoils carrier. |
-| s2 | Tempo support | Time Mage | `101` or `102` | Haste Dragoons / Slow players; no hard lock. |
-| s3 | AoE priority | Black Mage | `102` | Second AoE caster; makes clumping costly. |
-| s4 | Jump threat | Dragoon | `102` | Hasted Jump pressure; panel-dodge check. |
-| s5 | Jump threat | Dragoon | `101` | Staggered Jump pressure without spiking the opener. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| s0 | Screen | Knight | `101` | `88/42` | Blocks the direct caster rush; one break source at most. |
+| s1 | AoE priority | Black Mage | `102` | `60/84` | Main damage engine; Rod of Faith spoils carrier. |
+| s2 | Tempo support | Time Mage | `101` or `102` | `62/80` | Haste Dragoons / Slow players; no hard lock. |
+| s3 | AoE priority | Black Mage | `102` | `60/84` | Second AoE caster; makes clumping costly. |
+| s4 | Jump threat | Dragoon | `102` | `86/40` | Hasted Jump pressure; panel-dodge check. |
+| s5 | Jump threat | Dragoon | `101` | `86/40` | Staggered Jump pressure without spiking the opener. |
 
 Reasoning:
 

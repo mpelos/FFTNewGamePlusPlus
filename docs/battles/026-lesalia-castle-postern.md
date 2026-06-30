@@ -147,19 +147,26 @@ Alma is an active guest and must be player-controlled in NG+. Her Aegis buff rem
 the fight's difficulty comes from Zalmo's sustain wall and element puzzle, not from Alma AI.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Alma | `60/78` | Controlled support guest; high Faith for Aegis/support role, low-mid Brave because she should not be a reaction tank. |
+
 ## Proposed Composition (New Game++ Lesalia Postern v2)
 
 Keep the exact roster; Zalmo is the sub-boss spike (retreats). Zalmo `103`; Knights `101`;
 Monks `101`. Whole band keeps Flame Shields.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Zalmo (SUB-BOSS) | Inquisitor | `103` | Heals + revives the wall; silence/burst him → he retreats, ending the fight. |
-| n | Knight (Rend) | Knight | `101` | Front wall, kept alive by Zalmo; screens him on the stairs. |
-| n | Knight (Rend) | Knight | `101` | Second wall; contests the line/AoE approach. |
-| n | Knight | Knight | `101` | Third body; pressures the player / Alma. |
-| n | Monk | Monk | `101` | Bare-fist bruiser (Chakra/Aurablast); durable, revived if downed. |
-| n | Monk | Monk | `101` | Second Monk; sustained melee pressure. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Zalmo (SUB-BOSS) | Inquisitor | `103` | `70/78` | Heals + revives the wall; silence/burst him → he retreats, ending the fight. |
+| n | Knight (Rend) | Knight | `101` | `84/45` | Front wall, kept alive by Zalmo; screens him on the stairs. |
+| n | Knight (Rend) | Knight | `101` | `84/45` | Second wall; contests the line/AoE approach. |
+| n | Knight | Knight | `101` | `84/45` | Third body; pressures the player / Alma. |
+| n | Monk | Monk | `101` | `84/42` | Bare-fist bruiser (Chakra/Aurablast); durable, revived if downed. |
+| n | Monk | Monk | `101` | `84/42` | Second Monk; sustained melee pressure. |
 
 Reasoning:
 

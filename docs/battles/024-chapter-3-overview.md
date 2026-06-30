@@ -174,6 +174,25 @@ claimable. Fleeing/surviving bosses carry no rare; their loot is deferred. Gener
 Each boss battle doc includes a **"Boss rare loot"** line naming the item, why it fits, and
 confirming it is mid-high (not reserved-for-Ch4).
 
+## Brave/Faith tuning policy (Chapter 3)
+
+Brave/Faith is part of the complete Chapter-3 setup requirement. Battle docs use a `Br/Fa` column for
+fixed enemy and active guest/story slots. These are target ENTD values for Bravery (`0x06`) and Faith
+(`0x07`) during implementation. Player-deployed units are not fixed by the encounter doc because their
+Brave/Faith are part of the player's build.
+
+Chapter 3 raises Brave/Faith from Chapter 2 by role, not by blanket inflation:
+
+| Archetype | Target Br/Fa | Why |
+|-----------|--------------|-----|
+| Knights / Dragoons / Templars | `84/42-55` | Elite physical pressure and reaction consistency, with Faith kept moderate unless the named kit needs magic. |
+| Ninjas / Thieves | `84-86/40-42` | High-Brave assassins/flankers; low Faith keeps them from being erased only by spell burst. |
+| Archers / Squires | `80/45-50` | Credible support bodies without stealing the headline. |
+| Black Mage / Summoner / Time Mage | `58-60/74-78` | Magic and tempo become reliable, but charge/counterplay remains the answer. |
+| Orator / Chemist / support | `65-68/64-72` | Support and soft status work without turning the opener into damage inflation. |
+| Undead / demon monsters | `84-86/35-72` | Undead keep low Faith; Lucavi/demon adds use higher Faith where magic/status identity matters. |
+| Active guests | role-specific | Protected/support guests are documented per battle and must be player-controlled in NG+. |
+
 ## Difficulty budget per battle (Chapter 3)
 
 Bands creep slightly above Chapter 2; bosses are the spikes. Generics `100–102`, sub-bosses

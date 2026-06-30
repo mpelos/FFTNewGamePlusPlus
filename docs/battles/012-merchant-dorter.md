@@ -131,6 +131,14 @@ the global guest-control rule. The redesign does not use their AI as a skill che
 player can route them deliberately against the ambush.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Gaffgarion story ally | `74/55` | Story ally pressure without making his later betrayal/boss forms inherit an overtuned value. |
+| Agrias story ally | `76/65` | Physical Holy Knight ally; enough Faith for support magic interaction without turning enemy magic into a coin flip. |
+
 ## Proposed Composition (New Game++ Merchant Dorter v2)
 
 Keep the original six and add one Knight captain (7 enemies). The enemy side is complete, but
@@ -143,15 +151,15 @@ still readable:
 2 fast charm/flank threats
 ```
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Street Captain (NEW) | Knight | `102` | Frontline wall; slows the rush without adding hard control. |
-| n | Rooftop Archer | Archer | `101` | Elevated ranged pressure; the classic Dorter menace. |
-| n | Rooftop Archer | Archer | `100` | Second elevated bow; covers the other approach. |
-| n | Fast Black Mage | Black Mage | `102` | Swiftness caster; makes the first AoE race real. |
-| n | Power Black Mage | Black Mage | `101` | Arcane Strength caster; punishes clumped targets. |
-| n | Thief (charm) | Thief | `100` | Steal Heart pressure + fast harassment. |
-| n | Thief (charm) | Thief | `100` | Second charm threat; splits the player's caution. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Street Captain (NEW) | Knight | `102` | `76/48` | Frontline wall; slows the rush without adding hard control. |
+| n | Rooftop Archer | Archer | `101` | `74/50` | Elevated ranged pressure; the classic Dorter menace. |
+| n | Rooftop Archer | Archer | `100` | `74/50` | Second elevated bow; covers the other approach. |
+| n | Fast Black Mage | Black Mage | `102` | `55/76` | Swiftness caster; makes the first AoE race real. |
+| n | Power Black Mage | Black Mage | `101` | `55/76` | Arcane Strength caster; punishes clumped targets. |
+| n | Thief (charm) | Thief | `100` | `78/48` | Steal Heart pressure + fast harassment. |
+| n | Thief (charm) | Thief | `100` | `78/48` | Second charm threat; splits the player's caution. |
 
 Reasoning:
 

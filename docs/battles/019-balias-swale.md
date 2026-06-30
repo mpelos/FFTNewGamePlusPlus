@@ -153,20 +153,27 @@ Her strong guest kit keeps the objective from failing instantly, but enemy press
 so the player still has to coordinate the split deployment instead of relying on Agrias AI.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Agrias | `76/65` | Protected Holy Knight ally; physical pressure with moderate Faith so healing/support remain meaningful. |
+
 ## Proposed Composition (New Game++ Balias Swale v2)
 
 Use seven enemies: 2 Knights, 2 Archers, 2 Black Mages, and 1 Geomancer. This is one extra active
 enemy over the shipped v1 data and keeps the fight below the boss-heavy back third.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Route Anchor | Knight | `101` | Holds the main crossing lane; Battle Skill is incidental, not the headline. |
-| n | Backstop Knight | Knight | `100` | Protects the firing line and slows a straight rush. |
-| n | Lead Archer | Archer | `101` | Lane cover; pressures split units that overextend. |
-| n | Flank Archer | Archer | `100` | Covers the second approach and keeps both player teams relevant. |
-| n | Fast Storm Mage | Black Mage | `102` | Faster rain-Thunder cast; priority target. |
-| n | Power Storm Mage | Black Mage | `101` | Harder rain-Thunder cast; punishes clumping. |
-| n | Swale Geomancer | Geomancer | `101` | Delayed terrain pressure on the crossing; Geomancer debut. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Route Anchor | Knight | `101` | `76/48` | Holds the main crossing lane; Battle Skill is incidental, not the headline. |
+| n | Backstop Knight | Knight | `100` | `76/48` | Protects the firing line and slows a straight rush. |
+| n | Lead Archer | Archer | `101` | `74/50` | Lane cover; pressures split units that overextend. |
+| n | Flank Archer | Archer | `100` | `74/50` | Covers the second approach and keeps both player teams relevant. |
+| n | Fast Storm Mage | Black Mage | `102` | `55/76` | Faster rain-Thunder cast; priority target. |
+| n | Power Storm Mage | Black Mage | `101` | `55/76` | Harder rain-Thunder cast; punishes clumping. |
+| n | Swale Geomancer | Geomancer | `101` | `62/68` | Delayed terrain pressure on the crossing; Geomancer debut. |
 
 Reasoning:
 

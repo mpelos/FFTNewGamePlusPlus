@@ -101,15 +101,15 @@ complicate the boss kill, not to become separate hard-lock engines.
 
 Accepted redesign: **v2 no-reward surge race elite screen**.
 
-| Slot | Role | Job | Level | Purpose |
-|---:|---|---|---:|---|
-| 0 | Boss objective | Cletienne / Sorcerer | 105 | Magick Surge comeback mage; Silence/burst target. |
-| 1 | Soft tempo | Time Mage | 104 | Slow/Haste lane, but not hard control. |
-| 2 | Soft tempo | Time Mage | 104 | Secondary tempo caster; together they create one effective Slow lane. |
-| 3 | Flanker | Ninja | 104 | Fast pressure on exposed casters and stalled boss rushes. |
-| 4 | Flanker | Ninja | 104 | Second flank route; punishes slow formation. |
-| 5 | AoE pressure | Samurai | 104 | Draw Out/Iaido space pressure; no hard lock. |
-| 6 | AoE pressure | Samurai | 104 | Second Samurai; makes the screen real. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ---: | --- | --- | ---: | --- | --- |
+| 0 | Boss objective | Cletienne / Sorcerer | 105 | `65/88` | Magick Surge comeback mage; Silence/burst target. |
+| 1 | Soft tempo | Time Mage | 104 | `62/80` | Slow/Haste lane, but not hard control. |
+| 2 | Soft tempo | Time Mage | 104 | `62/80` | Secondary tempo caster; together they create one effective Slow lane. |
+| 3 | Flanker | Ninja | 104 | `90/35` | Fast pressure on exposed casters and stalled boss rushes. |
+| 4 | Flanker | Ninja | 104 | `90/35` | Second flank route; punishes slow formation. |
+| 5 | AoE pressure | Samurai | 104 | `88/60` | Draw Out/Iaido space pressure; no hard lock. |
+| 6 | AoE pressure | Samurai | 104 | `88/60` | Second Samurai; makes the screen real. |
 
 Why this works:
 

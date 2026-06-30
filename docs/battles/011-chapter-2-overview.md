@@ -126,6 +126,25 @@ RULE OF THUMB:
 Each battle doc with a boss includes a **"Boss rare loot"** line naming the item, why it fits,
 and confirming it is mid-tier (not reserved-for-Ch4).
 
+## Brave/Faith tuning policy (Chapter 2)
+
+Brave/Faith is now part of the encounter design surface, not an implementation afterthought. Battle
+docs use a `Br/Fa` column for fixed enemy and active guest/story slots. These are target ENTD values
+for Bravery (`0x06`) and Faith (`0x07`) during implementation. Player-deployed units are not fixed by
+the encounter doc because their Brave/Faith are part of the player's build.
+
+Chapter 2 uses Brave/Faith as a preview lever:
+
+| Archetype | Target Br/Fa | Why |
+|-----------|--------------|-----|
+| Knights / Dragoons / physical anchors | `76/45-48` | Higher Brave makes physical pressure and reactions relevant without Chapter-3 elite values. |
+| Archers / ranged physical | `74/50` | Reliable ranged chip, still vulnerable to magic and status planning. |
+| Thieves / charm flankers | `78/48` | Faster, high-Brave harassment while keeping Steal Heart as the real threat. |
+| Black Mage / Summoner | `55/76` | High Faith makes their magic matter and keeps them burstable by magic. |
+| Time Mage / support caster | `58-62/68-72` | Tempo and support should function, but not become a high-Faith nuke. |
+| Monsters / undead | `78-80/35` | Aggressive monster bodies with low Faith so monster fights stay physical/innate. |
+| Active guests | role-specific | Guests are documented per battle; guest AI is not a skill check. |
+
 ## Difficulty budget per battle (Chapter 2)
 
 Level bands creep slightly above Chapter 1; bosses are the spikes. Generics `100–102`,

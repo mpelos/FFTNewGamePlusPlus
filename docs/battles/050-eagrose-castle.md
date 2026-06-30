@@ -193,21 +193,21 @@ fairness around break count, guest control, reward handling, and phase separatio
 
 ### Phase 1 - Dycedarg + High-Stair Wall
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s0 | Allied guest/story unit | Guest record | `103` | Player-controlled ally if active; not a failure condition engine. |
-| s1 | Boss / phase trigger | Dycedarg | `104` | High-stair anchor; defeat triggers Lucavi phase; reward payload. |
-| s2 | Breaker 1 / reward payload | Knight body | `103` | Effective break source 1; Grand Helm spoil. |
-| s3 | Breaker 2 / reward payload | Knight body | `103` | Effective break source 2; Venetian Shield spoil. |
-| s4 | Heavy guard | Non-break effective stair guard | `103` | Body pressure without break-lock. |
-| s5 | Heavy guard | Non-break effective stair guard | `103` | Second guard; preserves wall. |
-| s6 | Heavy guard | Non-break effective stair guard | `103` | Third guard; blocks route without extra Rend pressure. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s0 | Allied guest/story unit | Guest record | `103` | `70/65` | Player-controlled ally if active; not a failure condition engine. |
+| s1 | Boss / phase trigger | Dycedarg | `104` | `88/60` | High-stair anchor; defeat triggers Lucavi phase; reward payload. |
+| s2 | Breaker 1 / reward payload | Knight body | `103` | `88/42` | Effective break source 1; Grand Helm spoil. |
+| s3 | Breaker 2 / reward payload | Knight body | `103` | `88/42` | Effective break source 2; Venetian Shield spoil. |
+| s4 | Heavy guard | Non-break effective stair guard | `103` | `84/55` | Body pressure without break-lock. |
+| s5 | Heavy guard | Non-break effective stair guard | `103` | `84/55` | Second guard; preserves wall. |
+| s6 | Heavy guard | Non-break effective stair guard | `103` | `84/55` | Third guard; blocks route without extra Rend pressure. |
 
 ### Phase 2 - Adramelk / Adrammelech
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s7 | Lucavi boss | Adramelk / Adrammelech | `105` | Sequential transform spike; spaceable summon-AoE + resistable status. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s7 | Lucavi boss | Adramelk / Adrammelech | `105` | `92/86` | Sequential transform spike; spaceable summon-AoE + resistable status. |
 
 Script placeholders to preserve:
 

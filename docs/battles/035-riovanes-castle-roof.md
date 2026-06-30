@@ -138,12 +138,12 @@ treasure, not boss loot; leave it as-is.
 
 Keep the exact trio. Elmdor `104`; Celia/Lettie `103`; Rapha controlled by the player.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| s0 | Rapha (protected ally) | Skyseer (41) | `100` | Player-controlled objective; survive and help create the burst line. |
-| s3 | Elmdor | Ark Knight (27) | `104` | Debuff/teleport noise; ignore unless he blocks the race. Escapes. |
-| s4 | Celia | Assassin (45) | `103` | Teleporting killer; one valid focus target. Critical HP ends fight. |
-| s5 | Lettie | Assassin (46) | `103` | Second teleporting killer; other valid focus target. Critical HP ends fight. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| s0 | Rapha (protected ally) | Skyseer (41) | `100` | `65/75` | Player-controlled objective; survive and help create the burst line. |
+| s3 | Elmdor | Ark Knight (27) | `104` | `90/65` | Debuff/teleport noise; ignore unless he blocks the race. Escapes. |
+| s4 | Celia | Assassin (45) | `103` | `90/60` | Teleporting killer; one valid focus target. Critical HP ends fight. |
+| s5 | Lettie | Assassin (46) | `103` | `90/60` | Second teleporting killer; other valid focus target. Critical HP ends fight. |
 
 Reasoning:
 

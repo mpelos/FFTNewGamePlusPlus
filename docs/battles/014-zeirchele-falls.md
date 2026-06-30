@@ -197,20 +197,28 @@ If Gaffgarion is controllable before the betrayal phase, that control is allowed
 still an ally. After betrayal he is an enemy sub-boss and must keep the scripted retreat behavior.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Ovelia | `61/78` | Keep the confirmed Brave 61 Mana Shield proc target; high Faith supports her defensive-magic identity. |
+| Agrias | `76/65` | Controlled Holy Knight ally; durable physical ally with moderate magic interaction. |
+
 ## Proposed Composition (New Game++ Zeirchele v2)
 
 Use seven enemies: Gaffgarion, 4 Knights, 1 Archer, 1 White Mage. Gaffgarion stays sub-boss tier
 (`103`); the Knight captain reaches `102`; the ranged/support units sit at `101`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | **Gaffgarion (betrayer)** | Dark Knight / Fell Knight | `103` | Draining sword-skill pressure; retreats at low HP. Strip-his-gear neuters him. |
-| n | Knight Captain | Knight | `102` | Lead wall; contests the crossing and protects the medic. |
-| n | Knight | Knight | `101` | Second wall; presses the bridge. |
-| n | Knight | Knight | `101` | Bank guard; stops a free rush to the backline. |
-| n | Knight | Knight | `100` | Body; reinforces the push. |
-| n | Archer | Archer | `101` | One line-of-sight threat; prevents a pure bridge turtle. |
-| n | Field Medic (NEW) | White Mage | `101` | Sustain/revive pressure; forces target priority. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | **Gaffgarion (betrayer)** | Dark Knight / Fell Knight | `103` | `82/60` | Draining sword-skill pressure; retreats at low HP. Strip-his-gear neuters him. |
+| n | Knight Captain | Knight | `102` | `76/48` | Lead wall; contests the crossing and protects the medic. |
+| n | Knight | Knight | `101` | `76/48` | Second wall; presses the bridge. |
+| n | Knight | Knight | `101` | `76/48` | Bank guard; stops a free rush to the backline. |
+| n | Knight | Knight | `100` | `76/48` | Body; reinforces the push. |
+| n | Archer | Archer | `101` | `74/50` | One line-of-sight threat; prevents a pure bridge turtle. |
+| n | Field Medic (NEW) | White Mage | `101` | `55/76` | Sustain/revive pressure; forces target priority. |
 
 Reasoning:
 

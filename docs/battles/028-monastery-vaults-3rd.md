@@ -155,14 +155,14 @@ Keep the exact roster; Izlude is the elevated sub-boss spike. Izlude `103`; Knig
 Summoner `101`; Archers `100`–`101`. The v2 increase is **completeness and coordination**, not
 body count.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Izlude (SUB-BOSS, NEW caste) | Knights Templar | `103` | Dual-wield + Mighty-Sword breaks from the shelves; defeating him ENDS the fight. Reflect Mail. |
-| n | Knight (Rend) | Knight | `101` | Screens the climb to Izlude; the only generic break source. |
-| n | Knight (bodyguard) | Knight | `101` | Second body; contests the vertical lane without Rend. |
-| n | Archer (shelf cover) | Archer | `101` | Ranged punishment on the climbers. |
-| n | Archer (lane cover) | Archer | `100` | Covers the other shelf lane without creating a hard ranged lock. |
-| n | Summoner | Summoner | `101` | Mid-tier AoE shelling the approach; raises the cost of clumping but stays raceable. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Izlude (SUB-BOSS, NEW caste) | Knights Templar | `103` | `86/55` | Dual-wield + Mighty-Sword breaks from the shelves; defeating him ENDS the fight. Reflect Mail. |
+| n | Knight (Rend) | Knight | `101` | `86/55` | Screens the climb to Izlude; the only generic break source. |
+| n | Knight (bodyguard) | Knight | `101` | `84/45` | Second body; contests the vertical lane without Rend. |
+| n | Archer (shelf cover) | Archer | `101` | `80/45` | Ranged punishment on the climbers. |
+| n | Archer (lane cover) | Archer | `100` | `80/45` | Covers the other shelf lane without creating a hard ranged lock. |
+| n | Summoner | Summoner | `101` | `58/78` | Mid-tier AoE shelling the approach; raises the cost of clumping but stays raceable. |
 
 Reasoning:
 

@@ -132,20 +132,27 @@ fully geared, and player-controlled. His role becomes a controllable gunner/recr
 fight, not a reckless AI unit the player must babysit.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Mustadio | `70/55` | Controlled Machinist recruit; physical gun utility, not a high-Faith caster. |
+
 ## Proposed Composition (New Game++ Zaland v2)
 
 Use seven enemies: 1 Knight, 2 Dragoons, 2 Archers, 2 optimized Black Mages. The map's high walls
 become the primary challenge.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Anchor | Knight | `101` | Ground wall; contests the approach and the gate. |
-| n | Skyfall Captain | Dragoon | `102` | Primary Jump threat; crosses walls into the backline. |
-| n | Skyfall | Dragoon | `101` | Second Jump threat; prevents one-body screening. |
-| n | Wall Archer | Archer | `101` | Elevated ranged pressure from the high walls. |
-| n | Archer | Archer | `100` | Second bow; covers the long way around. |
-| n | Fast Black Mage | Black Mage | `102` | Swiftness caster; punishes clustered routes. |
-| n | Power Black Mage | Black Mage | `101` | Arcane Strength caster; priority kill, per the walkthrough. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Anchor | Knight | `101` | `76/48` | Ground wall; contests the approach and the gate. |
+| n | Skyfall Captain | Dragoon | `102` | `76/45` | Primary Jump threat; crosses walls into the backline. |
+| n | Skyfall | Dragoon | `101` | `76/45` | Second Jump threat; prevents one-body screening. |
+| n | Wall Archer | Archer | `101` | `74/50` | Elevated ranged pressure from the high walls. |
+| n | Archer | Archer | `100` | `74/50` | Second bow; covers the long way around. |
+| n | Fast Black Mage | Black Mage | `102` | `55/76` | Swiftness caster; punishes clustered routes. |
+| n | Power Black Mage | Black Mage | `101` | `55/76` | Arcane Strength caster; priority kill, per the walkthrough. |
 
 Reasoning:
 

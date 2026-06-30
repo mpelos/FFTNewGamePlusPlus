@@ -158,16 +158,16 @@ Keep the count (8) and the objective-map shape; one Black Mage becomes the Slow 
 human has a complete but constrained kit. Modest Ch4 levels — no `103` spike (no boss; large screen).
 Casters `102`; Knights `102`/`102`/`101`/`101`; Archers `102`/`101`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Black Mage | Black Mage | `102` | AoE on the high ground near the levers — priority kill. |
-| n | Time Mage (NEW) | Time Mage | `102` | Slows the player's lever-runner — the objective-tempo wrinkle. |
-| n | Kaiser Knight | Knight | `102` | Gate wall; Rend source 1; visible Kaiser Shield pressure. |
-| n | Knight | Knight | `102` | Gate wall; Rend (break source 2 — cap reached). |
-| n | Knight | Knight | `101` | Gate wall; NO Rend (cap kept). |
-| n | Knight | Knight | `101` | Gate wall; NO Rend (cap kept). |
-| n | Archer | Archer | `102` | Ranged chip over the approach to the levers. |
-| n | Archer | Archer | `101` | Second archer; covers the lever lanes. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Black Mage | Black Mage | `102` | `60/84` | AoE on the high ground near the levers — priority kill. |
+| n | Time Mage (NEW) | Time Mage | `102` | `62/80` | Slows the player's lever-runner — the objective-tempo wrinkle. |
+| n | Kaiser Knight | Knight | `102` | `88/42` | Gate wall; Rend source 1; visible Kaiser Shield pressure. |
+| n | Knight | Knight | `102` | `88/42` | Gate wall; Rend (break source 2 — cap reached). |
+| n | Knight | Knight | `101` | `88/42` | Gate wall; NO Rend (cap kept). |
+| n | Knight | Knight | `101` | `88/42` | Gate wall; NO Rend (cap kept). |
+| n | Archer | Archer | `102` | `82/45` | Ranged chip over the approach to the levers. |
+| n | Archer | Archer | `101` | `82/45` | Second archer; covers the lever lanes. |
 
 Reasoning:
 

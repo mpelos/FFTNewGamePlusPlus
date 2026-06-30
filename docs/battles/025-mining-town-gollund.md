@@ -146,19 +146,26 @@ player tool; the enemy design assumes the player can reposition Orran rather tha
 choose for him.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Orran | `65/75` | Controlled support VIP; high enough Faith for support identity, moderate Brave because he is not the damage check. |
+
 ## Proposed Composition (New Game++ Gollund v2)
 
 Keep the exact roster; this is a low-lethality, high-denial opener. The Orator anchors at `102`;
 Thieves `100`–`101`; Chemists `101`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Orator (anchor, NEW caste) | Orator | `102` | Status/charm utility; the new wrinkle. Pressures Orran + your line. |
-| n | Thief (charm) | Thief | `101` | Fast; Steal Heart + steal gear; rushes Orran. |
-| n | Thief (charm) | Thief | `101` | Second charm/steal threat on the other roof lane. |
-| n | Thief | Thief | `100` | Third fast body; flanks toward Orran. |
-| n | Chemist | Chemist | `101` | Heal/revive sustain — punishes a slow kill. |
-| n | Chemist | Chemist | `101` | Second medic; keeps the band standing. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Orator (anchor, NEW caste) | Orator | `102` | `65/72` | Status/charm utility; the new wrinkle. Pressures Orran + your line. |
+| n | Thief (charm) | Thief | `101` | `84/42` | Fast; Steal Heart + steal gear; rushes Orran. |
+| n | Thief (charm) | Thief | `101` | `84/42` | Second charm/steal threat on the other roof lane. |
+| n | Thief | Thief | `100` | `84/42` | Third fast body; flanks toward Orran. |
+| n | Chemist | Chemist | `101` | `68/64` | Heal/revive sustain — punishes a slow kill. |
+| n | Chemist | Chemist | `101` | `68/64` | Second medic; keeps the band standing. |
 
 Reasoning:
 

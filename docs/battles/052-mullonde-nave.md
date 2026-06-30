@@ -175,12 +175,12 @@ PRESERVE:
 
 Keep the local three-boss roster. Folmarv is `105`; Loffrey and Cletienne are `104`.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s0 | Leader / intended target / reward payload | Folmarv, Divine Knight | `105` | Break source 1; active Chaos Blade; focus target. |
-| s1 | Pincer breaker / reward payload | Loffrey, Divine Knight | `104` | Break source 2; pressures gear and positioning; Escutcheon spoil. |
-| s2 | Caster / reward payload | Cletienne, Sorcerer | `104` | Ranged magic pressure; no break; Lordly Robe spoil. |
-| s3 | Script placeholder | Job-39 clone | `65` | Preserve unless proven active. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s0 | Leader / intended target / reward payload | Folmarv, Divine Knight | `105` | `90/55` | Break source 1; active Chaos Blade; focus target. |
+| s1 | Pincer breaker / reward payload | Loffrey, Divine Knight | `104` | `90/55` | Break source 2; pressures gear and positioning; Escutcheon spoil. |
+| s2 | Caster / reward payload | Cletienne, Sorcerer | `104` | `65/88` | Ranged magic pressure; no break; Lordly Robe spoil. |
+| s3 | Script placeholder | Job-39 clone | `65` | preserve | Preserve unless proven active. |
 
 Reasoning:
 

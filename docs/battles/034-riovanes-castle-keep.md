@@ -151,18 +151,18 @@ Two phases. Wiegraf `104`; Belias `105`; Archaeodaemons `103`/`103`/`102`.
 
 ### Phase 1 — Solo Duel
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| s0 | Wiegraf (duel boss) | Holy Knight (40) | `104` | Complete 1v1 skill check; Defender steal target; no hard lock. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| s0 | Wiegraf (duel boss) | Holy Knight (40) | `104` | `88/60` | Complete 1v1 skill check; Defender steal target; no hard lock. |
 
 ### Phase 2 — Belias + Three Adds
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| s5 | Belias / Velius | Lucavi (60) | `105` | Army-of-one demon; one telegraphed mass source. Gravity is the answer. |
-| s6 | Archaeodaemon | Archaeodaemon (153) | `103` | Demon add; screens Belias and pressures spacing. |
-| s7 | Archaeodaemon | Archaeodaemon (153) | `103` | Second add; flanks and punishes clumping. |
-| s8 | Archaeodaemon | Archaeodaemon (153) | `102` | Third add; enough swarm without exhausting the Roof chain. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| s5 | Belias / Velius | Lucavi (60) | `105` | `88/82` | Army-of-one demon; one telegraphed mass source. Gravity is the answer. |
+| s6 | Archaeodaemon | Archaeodaemon (153) | `103` | `84/72` | Demon add; screens Belias and pressures spacing. |
+| s7 | Archaeodaemon | Archaeodaemon (153) | `103` | `84/72` | Second add; flanks and punishes clumping. |
+| s8 | Archaeodaemon | Archaeodaemon (153) | `102` | `84/72` | Third add; enough swarm without exhausting the Roof chain. |
 
 Reasoning:
 

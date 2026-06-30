@@ -159,14 +159,14 @@ Keep the count (6) and the 4/5★ vertical-skirmish feel; one Thief remains swap
 Every active human has a complete kit. Band `101`–`103` (terrain carries the difficulty). Ninjas are
 the threats; Archers chip; Thief harasses.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Apex Ninja | Ninja | `103` | Apex wall-climber / Throw; legal Ninja Gear/Koga/Iga pressure if available. |
-| n | Ninja | Ninja | `102` | Second climber; legal ninja arsenal pressure if available. |
-| n | Thief | Thief | `101` | Fast Steal harass using the ledges. |
-| n | Archer | Archer | `102` | Ranged chip from the high plateau. |
-| n | Archer | Archer | `101` | Second archer; covers a second tier. |
-| n | Archer | Archer | `101` | Third archer; crossfire over the climb. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Apex Ninja | Ninja | `103` | `90/35` | Apex wall-climber / Throw; legal Ninja Gear/Koga/Iga pressure if available. |
+| n | Ninja | Ninja | `102` | `90/35` | Second climber; legal ninja arsenal pressure if available. |
+| n | Thief | Thief | `101` | `88/38` | Fast Steal harass using the ledges. |
+| n | Archer | Archer | `102` | `82/45` | Ranged chip from the high plateau. |
+| n | Archer | Archer | `101` | `82/45` | Second archer; covers a second tier. |
+| n | Archer | Archer | `101` | `82/45` | Third archer; crossfire over the climb. |
 
 Reasoning:
 

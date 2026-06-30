@@ -74,6 +74,19 @@ drop is deferred to where they die — often Chapter 4). The very best gear (Exc
 Chaos Blade, Masamune, Save the Queen, Genji, Ribbon, best robes/shields) stays reserved for Ch4.
 ```
 
+## Brave/Faith audit
+
+```text
+PASS (docs). Every Chapter 3 battle doc (`025`-`035`) now records Br/Fa for each fixed active enemy
+in the proposed composition. Active protected/support guests outside the enemy composition are
+documented in the Guest handling block. Player-deployed units remain player-build data and are not
+fixed by encounter docs.
+
+Design intent: Chapter 3 makes Brave/Faith part of the complete setup. Elite physical units and
+bosses run higher Brave; casters and support units carry high-enough Faith for their role; undead
+stay low-Faith; Lucavi/demon bodies get higher Faith where magic/status identity matters.
+```
+
 ## Design-exception log
 
 | Exception | Where | Why | Guardrail |

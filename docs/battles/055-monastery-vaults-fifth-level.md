@@ -156,14 +156,14 @@ Keep standard/vanilla loot and buried Elixirs only.
 
 Keep six active enemies. Loffrey `105`; casters `103`.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| 0 | Boss objective | Loffrey, Divine Knight | `105` | One break source; disarm/burst target. |
-| 1 | AoE caster | Black Mage | `103` | Heavy magic from one flank. |
-| 2 | AoE caster | Black Mage | `103` | Second Black Mage; crossfire pressure. |
-| 3 | AoE caster | Summoner | `103` | Summon AoE with charge-time counterplay. |
-| 4 | AoE caster | Summoner | `103` | Second summon line; widens killzone. |
-| 5 | Tempo caster | Time Mage | `103` | Slow/Haste-style tempo pressure; no hard lock. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| 0 | Boss objective | Loffrey, Divine Knight | `105` | `90/55` | One break source; disarm/burst target. |
+| 1 | AoE caster | Black Mage | `103` | `60/84` | Heavy magic from one flank. |
+| 2 | AoE caster | Black Mage | `103` | `60/84` | Second Black Mage; crossfire pressure. |
+| 3 | AoE caster | Summoner | `103` | `60/84` | Summon AoE with charge-time counterplay. |
+| 4 | AoE caster | Summoner | `103` | `60/84` | Second summon line; widens killzone. |
+| 5 | Tempo caster | Time Mage | `103` | `62/80` | Slow/Haste-style tempo pressure; no hard lock. |
 
 Rejected variants:
 

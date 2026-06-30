@@ -145,16 +145,16 @@ Celebrant's Miter) is existing map treasure, not boss loot; leave it as-is.
 Keep the confirmed TIC/v1 count (8); swap one of the four Knights for a Templar. Marach `103`;
 Templar `102`; Knights `101`; Archers `100`–`102` (one elevated anchor at `102`).
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Marach (BOSS) | Heaven/Nether line | `103` | Advances over the bridge; boss pressure. Survives (no drop). |
-| n | Templar (NEW swap) | Knights Templar | `102` | Mighty-Sword ranged breaks — makes Safeguard a must on the crossing. |
-| n | Knight (Rend) | Knight | `101` | Bridge body; melee break-wall. |
-| n | Knight | Knight | `101` | Second body; contests the chokepoint. |
-| n | Knight | Knight | `101` | Third body from TIC; blocks without adding Rend. |
-| n | Archer (high) | Archer | `102` | Elevated anchor; commands the bridge with bowfire. |
-| n | Archer (high) | Archer | `101` | Second elevated bow; crossfire on the crossing. |
-| n | Archer | Archer | `100` | Third bow; covers a flank lane. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Marach (BOSS) | Heaven/Nether line | `103` | `78/72` | Advances over the bridge; boss pressure. Survives (no drop). |
+| n | Templar (NEW swap) | Knights Templar | `102` | `84/45` | Mighty-Sword ranged breaks — makes Safeguard a must on the crossing. |
+| n | Knight (Rend) | Knight | `101` | `84/45` | Bridge body; melee break-wall. |
+| n | Knight | Knight | `101` | `84/45` | Second body; contests the chokepoint. |
+| n | Knight | Knight | `101` | `84/45` | Third body from TIC; blocks without adding Rend. |
+| n | Archer (high) | Archer | `102` | `80/45` | Elevated anchor; commands the bridge with bowfire. |
+| n | Archer (high) | Archer | `101` | `80/45` | Second elevated bow; crossfire on the crossing. |
+| n | Archer | Archer | `100` | `80/45` | Third bow; covers a flank lane. |
 
 Reasoning:
 

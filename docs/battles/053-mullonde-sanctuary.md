@@ -183,12 +183,12 @@ PRESERVE:
 
 Keep the local boss + demon screen roster. Zalbaag is `105`; demons are `103`.
 
-| Slot | Role | Unit type | Level | Purpose |
-|------|------|-----------|-------|---------|
-| s1 | Boss / objective / reward payload | Zalbaag, undead Ark Knight | `105` | Sole vampirism source; Runeblade break; defeat ends fight; Ragnarok spoil. |
-| s2 | Undead screen / reward payload | Archaeodaemon | `103` | Reraise/drain pressure; Ribbon spoil. |
-| s3 | Undead screen / minor reward | Archaeodaemon | `103` | Second undead screen body; Elixir/minor spoil. |
-| s4 | Demon pressure | Ultima Demon | `103` | Telegraphed Ultima pressure; optional target. |
+| Slot | Role | Unit type | Level | Br/Fa | Purpose |
+| ------ | ------ | ----------- | ------- | --- | --------- |
+| s1 | Boss / objective / reward payload | Zalbaag, undead Ark Knight | `105` | `90/78` | Sole vampirism source; Runeblade break; defeat ends fight; Ragnarok spoil. |
+| s2 | Undead screen / reward payload | Archaeodaemon | `103` | `88/76` | Reraise/drain pressure; Ribbon spoil. |
+| s3 | Undead screen / minor reward | Archaeodaemon | `103` | `88/76` | Second undead screen body; Elixir/minor spoil. |
+| s4 | Demon pressure | Ultima Demon | `103` | `88/76` | Telegraphed Ultima pressure; optional target. |
 
 Script placeholders to preserve:
 

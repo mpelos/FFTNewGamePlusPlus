@@ -173,14 +173,14 @@ does not re-pay the gun identity.
 Keep the count (6) and the open-desert gun-duel shape; make every active human a complete Chapter-4
 unit. Boss `104`; Knights `102`; Archers `102`/`101`; Black Mage `102`.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Barich (BOSS) | Knights Templar (machinist) | `104` | Glacial-Gun ranged ice nukes; objective; gun is visible steal-bait. |
-| n | Knight | Knight | `102` | Front-line screen; Rend (break source 1). |
-| n | Knight | Knight | `102` | Second screen; Rend (break source 2 — cap reached). |
-| n | Lane Archer | Archer | `102` | Ranged chip across the open dunes; complete utility kit. |
-| n | Lane Archer | Archer | `101` | Second archer; covers the approach lanes; complete utility kit. |
-| n | Black Mage | Black Mage | `102` | AoE caster; punishes clumping while crossing; no Time Magic engine. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Barich (BOSS) | Knights Templar (machinist) | `104` | `84/55` | Glacial-Gun ranged ice nukes; objective; gun is visible steal-bait. |
+| n | Knight | Knight | `102` | `88/42` | Front-line screen; Rend (break source 1). |
+| n | Knight | Knight | `102` | `88/42` | Second screen; Rend (break source 2 — cap reached). |
+| n | Lane Archer | Archer | `102` | `82/45` | Ranged chip across the open dunes; complete utility kit. |
+| n | Lane Archer | Archer | `101` | `82/45` | Second archer; covers the approach lanes; complete utility kit. |
+| n | Black Mage | Black Mage | `102` | `60/84` | AoE caster; punishes clumping while crossing; no Time Magic engine. |
 
 Reasoning:
 

@@ -103,6 +103,20 @@ payloads at Nave before the point of no return. The final gauntlet carries no us
 stays with Orlandeau (the player's holy blade) — never on an enemy.
 ```
 
+## Brave/Faith audit
+
+```text
+PASS (docs). Every Chapter 4 battle doc (`038`-`058`) now records Br/Fa for each fixed active enemy
+or active story/guest record in the proposed composition / enemy-party escalation table. Script
+placeholders are marked `preserve` instead of receiving fake active values. Player-deployed units
+remain player-build data and are not fixed by encounter docs.
+
+Design intent: Chapter 4 uses Brave/Faith as a puzzle lever. Physical elites and bosses carry high
+Brave; casters carry high Faith; undead and apex monsters intentionally keep low Faith unless their
+Lucavi/demon identity needs magic/status interaction. The final gauntlet documents no-reward pressure
+and no hidden Brave/Faith assumptions.
+```
+
 ## Design-exception log
 
 | Exception | Where | Why | Guardrail |

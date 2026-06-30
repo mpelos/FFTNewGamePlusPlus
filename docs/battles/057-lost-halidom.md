@@ -98,14 +98,14 @@ hardest fight before Ultima, but every pressure point must be visible and answer
 
 Accepted redesign: **v2 no-reward apex monster pit**.
 
-| Slot | Role | Job / Unit | Level | Purpose |
-|---:|---|---|---:|---|
-| 0 | Boss objective | Barich / Machinist | 105 | One Disable/Immobilize control source; defeat ends the fight. |
-| 1 | Sustain | Chemist | 104 | Heals/revives or stabilizes the monster line, but must be raceable. |
-| 2 | Breath lane | Monster job 139 | 105 | Apex monster body; overlapping breath/space pressure. |
-| 3 | Breath lane | Monster job 140 | 105 | Second monster lane; pressures a different approach. |
-| 4 | Breath lane | Monster job 141 | 105 | Third monster lane; reinforces the 5-star peak. |
-| 5 | Breath lane | Monster job 135 | 105 | Fourth monster body; closes the pit without sealing Barich. |
+| Slot | Role | Job / Unit | Level | Br/Fa | Purpose |
+| ---: | --- | --- | ---: | --- | --- |
+| 0 | Boss objective | Barich / Machinist | 105 | `84/55` | One Disable/Immobilize control source; defeat ends the fight. |
+| 1 | Sustain | Chemist | 104 | `72/68` | Heals/revives or stabilizes the monster line, but must be raceable. |
+| 2 | Breath lane | Monster job 139 | 105 | `90/30` | Apex monster body; overlapping breath/space pressure. |
+| 3 | Breath lane | Monster job 140 | 105 | `90/30` | Second monster lane; pressures a different approach. |
+| 4 | Breath lane | Monster job 141 | 105 | `90/30` | Third monster lane; reinforces the 5-star peak. |
+| 5 | Breath lane | Monster job 135 | 105 | `90/30` | Fourth monster body; closes the pit without sealing Barich. |
 
 Why this works:
 

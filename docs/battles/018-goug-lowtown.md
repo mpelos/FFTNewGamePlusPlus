@@ -138,20 +138,27 @@ In NG+ it should be scaled and player-controlled. The enemy design does not rely
 or uncontrolled.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| cid 0x16 ally | `68/60` | Unconfirmed active ally; neutral guest target until identity is verified, with no AI-survival dependency. |
+
 ## Proposed Composition (New Game++ Goug v2)
 
 Use seven enemies: 2 Summoners, 1 Time Mage, 2 Archers, 2 Thieves. This is not a body-count
 increase over the current active v1 read; it is a cleanup of the intended tempo/charm package.
 
-| Slot | Role | Job | Level | Purpose |
-|------|------|-----|-------|---------|
-| n | Fast Summoner | Summoner | `102` | Priority AoE; Haste target, faster clock. |
-| n | Power Summoner | Summoner | `101` | Second summon threat from elevation. |
-| n | Tempo | Time Mage | `102` | Hastes Summoners / Slows player; no hard-lock. |
-| n | Archer | Archer | `101` | Ranged pressure; punishes the rush to the casters. |
-| n | Archer | Archer | `100` | Second bow; covers an urban lane. |
-| n | Thief (charm) | Thief | `101` | Fast harasser; Steal Heart pressure on the approach. |
-| n | Thief (charm) | Thief | `100` | Second charm/flank threat; no extra status source beyond Steal Heart. |
+| Slot | Role | Job | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ------- | --- | --------- |
+| n | Fast Summoner | Summoner | `102` | `55/76` | Priority AoE; Haste target, faster clock. |
+| n | Power Summoner | Summoner | `101` | `55/76` | Second summon threat from elevation. |
+| n | Tempo | Time Mage | `102` | `55/76` | Hastes Summoners / Slows player; no hard-lock. |
+| n | Archer | Archer | `101` | `74/50` | Ranged pressure; punishes the rush to the casters. |
+| n | Archer | Archer | `100` | `74/50` | Second bow; covers an urban lane. |
+| n | Thief (charm) | Thief | `101` | `78/48` | Fast harasser; Steal Heart pressure on the approach. |
+| n | Thief (charm) | Thief | `100` | `78/48` | Second charm/flank threat; no extra status source beyond Steal Heart. |
 
 Reasoning:
 

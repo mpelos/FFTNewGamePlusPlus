@@ -133,20 +133,27 @@ player control for Boco without broad charId rules, because his generic monster 
 enemy monster ids.
 ```
 
+
+Fixed encounter Brave/Faith targets:
+
+| Unit | Br/Fa | Rationale |
+|------|-------|-----------|
+| Boco | `72/40` | Controlled monster guest; enough Brave to act aggressively, low Faith because chocobo value is physical/support, not magic scaling. |
+
 ## Proposed Composition (New Game++ Araguay v2)
 
 Use seven monsters: 4 Goblins, 2 Black Goblins, 1 Red Panther. The fight remains a goblin rescue,
 but the pack now has a durable center and a single fast hunter.
 
-| Slot | Monster | Level | Purpose |
-|------|---------|-------|---------|
-| n | Goblin | `100` | Basic swarm body; Ice-weak teaching target. |
-| n | Goblin | `100` | Swarm body; pressures the front. |
-| n | Goblin | `100` | Swarm body; flanks toward Boco. |
-| n | Goblin | `100` | Swarm body; second flank. |
-| n | Black Goblin | `101` | Tougher goblin; the durable melee of the pack. |
-| n | Black Goblin | `102` | Second durable body; keeps the center from folding instantly. |
-| n | Red Panther (NEW) | `101` | Fast poison beast; threatens flanks and retreat lanes. |
+| Slot | Monster | Level | Br/Fa | Purpose |
+| ------ | --------- | ------- | --- | --------- |
+| n | Goblin | `100` | `78/35` | Basic swarm body; Ice-weak teaching target. |
+| n | Goblin | `100` | `78/35` | Swarm body; pressures the front. |
+| n | Goblin | `100` | `78/35` | Swarm body; flanks toward Boco. |
+| n | Goblin | `100` | `78/35` | Swarm body; second flank. |
+| n | Black Goblin | `101` | `78/35` | Tougher goblin; the durable melee of the pack. |
+| n | Black Goblin | `102` | `78/35` | Second durable body; keeps the center from folding instantly. |
+| n | Red Panther (NEW) | `101` | `78/35` | Fast poison beast; threatens flanks and retreat lanes. |
 
 Reasoning:
 
