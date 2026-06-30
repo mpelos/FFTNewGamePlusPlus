@@ -103,6 +103,10 @@ attached to the slot, independent of what the unit equips.
 | 400 | Fovoham Windflats | High Potion |
 | 401 | Ziekden Fortress | (none) |
 
+NG++ override now applied for Gariland (`388`): Mythril Knife + Phoenix Down + Potion becomes
+**Air Knife + Phoenix Down + X-Potion**, preserving the original categories while moving the reward
+to the Chapter-1 post-game floor.
+
 Across all four ENTD files: **42 of 512 entries** carry at least one spoils item
 (items-per-battle distribution: 1 item → 24 battles, 2 → 13, 3 → 5). The table mixes consumables
 (Potion 240 / High Potion 241 / Ether 243 / Phoenix Down 253) with low-tier gear — clearly an

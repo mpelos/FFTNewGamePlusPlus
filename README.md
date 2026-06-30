@@ -202,13 +202,65 @@ Known useful unit fields from the binary:
 | `0x03` | Level |
 | `0x06` | Bravery |
 | `0x07` | Faith |
-| `0x08` | Job unlock |
-| `0x09` | Job level |
+| `0x08` | `JobUnlock` / roster JP target index. Do not treat it as a visible rank. |
+| `0x09` | `JobLevel` seed for the job selected by `0x08` |
 | `0x0A` | Main job |
 | `0x0B` | Secondary skillset |
 | `0x0C` | Reaction ability, 2 bytes |
 | `0x0E` | Support ability, 2 bytes |
 | `0x10` | Movement ability, 2 bytes |
+| `0x18` | Control/team flags; OR with `0x08` to make an allied guest player-controllable while preserving the other bits |
+
+Guest handling:
+
+```text
+The runtime guest scaler applies to known guest charIds where mainJob == charId. It sets party-level
+scaling and 0x18 |= 0x08 so allied guests are player-controllable globally.
+The prologue Orbonne entry (global 387) is explicitly skipped, so Gaffgarion/Agrias remain vanilla
+AI there. Enemy/boss forms with reused charIds are skipped by the mainJob == charId guard or by the
+enemy-team bit.
+
+Important implementation detail: do this for full ENTD reads and partial ENTD reads. Some event/join
+code can read only the slice it needs; if guest scaling only runs when `sectorOffset == 0` and
+`size == 0x14000`, a joined guest such as pre-Gariland Delita can still be cached into the save at
+the vanilla level.
+```
+
+Roster Job Level / save-cache caveat:
+
+```text
+Once a guest has joined the roster, visible Job Level and JP live in the saved roster cache, not
+only in ENTD. ENTD byte 0x09 can seed a job level at join time, but it does not repair a guest who
+is already cached into the save.
+
+Do not patch joined guests by blind live-memory scanning. A short-lived scanner experiment was
+removed because the target structure was not validated. Do not reuse the old guessed roster offsets
+(`level +0x02`, `job +0x03`, `first job JP +0xF0`) unless they are independently revalidated from
+decoded save data.
+
+The confirmed join-time ENTD source for Chapter-1 Delita is battle_entd4_ent.bin entry 392 slot 1,
+which controls his character level before Gariland. This must be patched on both full ENTD reads and
+partial ENTD reads, because join/event code can cache a guest before the first battle load.
+
+2026-06-29 finding: setting entry 392 slot 1 `0x08=7, 0x09=8` made Delita receive Time Mage
+Job Level 8, while Squire stayed Job Level 1. Therefore `0x08` is a job/JP target index, not a
+zero-based rank. Vanilla Delita/Argath Squire records use `0x08=1, 0x09=1`; the current test build
+uses `0x08=1, 0x09=8` for the known Chapter-1 Squire guest join records.
+
+2026-06-29 autosave confirmation: the bad cached Delita record can be repaired safely from the
+decoded save. In the active autosave, Delita's Brave/Faith fingerprint `47 37` was found in
+`resume_enwm_main.sav`/`resume_enbtl_world.sav` at `0x7BCA` and in battle-state resumes at
+`0x8CB7A`. From that fingerprint:
+
+- packed visible job levels start at `br_fa + 0x56`
+- job JP u16 table starts at `br_fa + 0x62`
+- bad bytes `12 11 11 38 ...` mean Squire Lv1 / Chemist Lv2 / ... / Black Mage Lv3 / Time Mage Lv8
+- fixed bytes `82 11 11 31 ...` mean Squire Lv8 / Chemist Lv2 / ... / Black Mage Lv3 / Time Mage Lv1
+
+`tools/fft_save_patch_delita.py` performs this narrow repair on `autoenhanced.png` with a backup:
+
+python tools/fft_save_patch_delita.py "<save dir>\autoenhanced.png" --in-place
+```
 
 ## First Confirmed Battle: Gariland
 

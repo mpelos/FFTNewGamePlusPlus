@@ -50,8 +50,14 @@ public class Program : IMod
     private const int SLOT_SIZE = 0x28;
     private const int SLOT_CHARID = 0x00; // unit/character id (named chars low; generics 0x80+)
     private const int SLOT_LEVEL = 0x03;  // level (>99 = party level + value-100; 100 = party level)
+    private const int SLOT_JOB_UNLOCK = 0x08; // roster job/JP target index; 7 maps to Time Mage, not rank 8
+    private const int SLOT_JOB_LEVEL = 0x09;  // level to seed for the job selected by SLOT_JOB_UNLOCK
     private const int SLOT_JOB = 0x0A;    // main job id; ally guests keep job == charId (4/7)
+    private const int SLOT_CONTROL_FLAGS = 0x18; // team/control flags; 0x08 makes allied guests controllable
     private const byte LEVEL_PARTY = 100;
+    private const byte PLAYER_CONTROL_BIT = 0x08;
+    private const byte ENEMY_TEAM_BIT = 0x10;
+    private const int PROLOGUE_ORBONNE_ENTRY = 387;
 
     // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
     // playthrough harder (the party is low level early, so the guest just matches the team). This
@@ -384,6 +390,7 @@ public class Program : IMod
             Log("[spoils-probe] DEBUG observe-only memory-diff probe ENABLED -> spoilsprobe_log.txt (set DEBUG_SPOILS_PROBE=false for release).");
             new System.Threading.Thread(SpoilsProbeLoop) { IsBackground = true, Name = "ngplus-spoils-probe" }.Start();
         }
+
     }
 
     private unsafe int FileReadRequestOffsetImpl(int fileIndex, long sectorOffset, long size, void* outputPointer)
@@ -412,28 +419,33 @@ public class Program : IMod
             if (DEBUG_FORCE_NGPLUS) _isNgPlus = true; // TEST: force the battle swap on any save
             SyncMapItems(); // re-assert treasures at battle entry (covers a direct battle load w/o world map)
 
-            // The game reads the whole ENTD file in one shot (sectorOffset 0, size == file length).
+            // Battle entry usually reads the whole ENTD file in one shot, but event/join code can read
+            // slices. Delita's pre-Gariland join uses such cached data, so partial reads must receive
+            // the same guest scaling or he can still be saved at his vanilla level.
             bool fullRead = sectorOffset == 0 && size == ENTD_FILE_SIZE;
+            bool validSlice = IsValidEntdSlice(sectorOffset, size);
             bool haveMod = _moddedEntd.TryGetValue(fileIndex, out byte[]? modded);
 
-            // Layer 1 (NG+ only): swap the whole modded file (enemies + composition + guests).
-            if (_isNgPlus && fullRead && haveMod && modded!.Length == size)
+            // Layer 1 (NG+ only): swap the modded ENTD bytes for full reads and partial reads.
+            if (_isNgPlus && validSlice && haveMod && modded!.Length == ENTD_FILE_SIZE)
             {
-                Marshal.Copy(modded!, 0, (IntPtr)outputPointer, modded!.Length);
-                Log($"[swap] ENTD index={fileIndex} -> MODDED ({modded.Length} bytes) [NG+]");
+                Marshal.Copy(modded!, (int)sectorOffset, (IntPtr)outputPointer, (int)size);
+                string kind = fullRead ? "full" : "slice";
+                Log($"[swap] ENTD index={fileIndex} off=0x{sectorOffset:X} size=0x{size:X} -> MODDED {kind} [NG+]");
             }
             else
             {
                 string why = !_isNgPlus ? "normal play"
                            : !haveMod ? "no modded file"
-                           : !fullRead ? $"partial read (off=0x{sectorOffset:X} size=0x{size:X})"
+                           : !validSlice ? $"out-of-range read (off=0x{sectorOffset:X} size=0x{size:X})"
                            : "size mismatch";
                 Log($"[pass] ENTD index={fileIndex} size=0x{size:X} -> vanilla enemies ({why})");
             }
 
-            // Layer 2 (ALWAYS): scale guests to party level, in NG+ and normal alike. Runs after the
-            // swap so it's a no-op on a modded file (guests already 100) and the fix on vanilla.
-            if (fullRead) ScaleGuestsAlways(outputPointer, size);
+            // Layer 2 (ALWAYS except the scripted prologue): scale guests to party level and make allied
+            // guest slots controllable. Runs after the swap, so embedded NG++ ENTD and vanilla passthrough
+            // both get the same guest policy.
+            if (validSlice) ScaleGuestsAlways(outputPointer, size, fileIndex, sectorOffset, haveMod ? modded : null);
         }
         return ret;
     }
@@ -464,25 +476,87 @@ public class Program : IMod
     }
 
     /// <summary>
-    /// Force every guest slot (charId in GuestCharIds) to party level (LEVEL_PARTY). The ENTD buffer
-    /// is a flat grid of 0x28-byte slots, so each slot-aligned offset's first byte is its charId.
+    /// Force every guest slot (charId in GuestCharIds) to party level (LEVEL_PARTY) and player
+    /// control for allied guest slots. The ENTD buffer is a flat grid of 0x28-byte slots, so each
+    /// slot-aligned offset's first byte is its charId.
     /// </summary>
-    private unsafe void ScaleGuestsAlways(void* buffer, long size)
+    private unsafe void ScaleGuestsAlways(void* buffer, long size, int fileIndex, long sectorOffset, byte[]? reference)
     {
         byte* p = (byte*)buffer;
         int patched = 0;
-        for (long off = 0; off + SLOT_SIZE <= size; off += SLOT_SIZE)
+        long readEnd = sectorOffset + size;
+        for (long off = 0; off + SLOT_SIZE <= ENTD_FILE_SIZE; off += SLOT_SIZE)
         {
+            if (off >= readEnd || off + SLOT_SIZE <= sectorOffset) continue;
+
+            int globalEntry = ((fileIndex - ENTD_INDEX_MIN) * 128) + (int)(off / (SLOT_SIZE * 16));
+            if (globalEntry == PROLOGUE_ORBONNE_ENTRY) continue;
+
             // Only the genuine ally guest (job == charId). Skips the Ziekden boss (Argath re-jobbed
             // to Knight), so his designed level stands and a normal playthrough's finale isn't broken.
-            if (GuestCharIds.Contains(p[off + SLOT_CHARID]) && p[off + SLOT_JOB] == p[off + SLOT_CHARID]
-                && p[off + SLOT_LEVEL] != LEVEL_PARTY)
-            {
-                p[off + SLOT_LEVEL] = LEVEL_PARTY;
-                patched++;
-            }
+            if (!TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_CHARID, out byte charId)) continue;
+            if (!TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_JOB, out byte job)) continue;
+            bool isKnownGuest = GuestCharIds.Contains(charId) && job == charId;
+            if (!isKnownGuest) continue;
+
+            TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_CONTROL_FLAGS, out byte flags);
+            bool isEnemyTeam = (flags & ENEMY_TEAM_BIT) != 0;
+
+            bool changed = false;
+            changed |= PatchEntdByteIfCovered(p, size, sectorOffset, off + SLOT_LEVEL, LEVEL_PARTY);
+            if (!isEnemyTeam)
+                changed |= OrEntdByteIfCovered(p, size, sectorOffset, off + SLOT_CONTROL_FLAGS, PLAYER_CONTROL_BIT);
+            if (changed) patched++;
         }
-        if (patched > 0) Log($"[guest] scaled {patched} guest slot(s) to party level");
+        if (patched > 0)
+            Log($"[guest] scaled/controlled {patched} guest slot(s) in ENTD index={fileIndex} off=0x{sectorOffset:X} size=0x{size:X}");
+    }
+
+    private static bool IsValidEntdSlice(long sectorOffset, long size)
+        => sectorOffset >= 0 && size > 0 && sectorOffset <= ENTD_FILE_SIZE && size <= ENTD_FILE_SIZE - sectorOffset;
+
+    private static unsafe bool TryReadEntdByte(byte* buffer, long size, long sectorOffset, byte[]? reference, long absoluteOffset, out byte value)
+    {
+        if (reference is not null && absoluteOffset >= 0 && absoluteOffset < reference.Length)
+        {
+            value = reference[(int)absoluteOffset];
+            return true;
+        }
+
+        long rel = absoluteOffset - sectorOffset;
+        if (rel >= 0 && rel < size)
+        {
+            value = buffer[(int)rel];
+            return true;
+        }
+
+        value = 0;
+        return false;
+    }
+
+    private static unsafe bool PatchEntdByteIfCovered(byte* buffer, long size, long sectorOffset, long absoluteOffset, byte value)
+    {
+        long rel = absoluteOffset - sectorOffset;
+        if (rel < 0 || rel >= size) return false;
+
+        int index = (int)rel;
+        if (buffer[index] == value) return false;
+
+        buffer[index] = value;
+        return true;
+    }
+
+    private static unsafe bool OrEntdByteIfCovered(byte* buffer, long size, long sectorOffset, long absoluteOffset, byte mask)
+    {
+        long rel = absoluteOffset - sectorOffset;
+        if (rel < 0 || rel >= size) return false;
+
+        int index = (int)rel;
+        byte value = (byte)(buffer[index] | mask);
+        if (buffer[index] == value) return false;
+
+        buffer[index] = value;
+        return true;
     }
 
     /// <summary>

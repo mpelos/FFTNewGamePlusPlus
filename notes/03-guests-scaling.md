@@ -275,3 +275,30 @@ joins via event or as a generic monster; investigate if guest chocobo scaling is
 - Level relative encoding (>99 = party level + value-100): https://ffhacktics.com/wiki/ENTD
 - Local data: extracted/enhanced_0002_selected/fftpack/battle_entd4_ent.bin (entry 388),
   work/enhanced_0004.sqlite
+
+## ROOT CAUSE of the wrong-job JobLevel seed (2026-06-29) — byte 0x08 = job-seed INDEX
+
+The join JobLevel (byte **0x09**) is paired with byte **0x08 = the GENERIC JOB INDEX** it applies to.
+Proven by the generic-enemy data across entd4: a generic unit's `0x08 == (mainJob 0x0A) - 0x4A`, i.e.
+Squire(0x4A)=0, Chemist=1, Knight=2, Archer=3, Monk=4, WhiteMage=5, BlackMage=6, TimeMage=7 … — the
+SAME indexing as the save's per-job level/JP arrays (see `tools/fft_save_patch_delita.py`).
+
+For a NAMED guest, `0x08 = 0` makes the JobLevel apply to the unit's **main/displayed job**. EVERY
+working named guest uses `0x08 = 0`: Ovelia `0x08=0 / 0x09=6` → "Princess Lv6" (confirmed in-game);
+Gaffgarion, Agrias, Mustadio all `0x08=0`. **Delita was the lone exception** — his `0x08` had been set
+to `1` (Chemist) [earlier `7` = Time Mage], so the Lv8 seed landed on Chemist/Time Mage, never Squire.
+
+**FIX (Claude, 2026-06-29):** Delita join records (entries **388 s0, 389 s0, 392 s1**) byte `0x08`
+set `1 → 0` (keep `0x09 = 8`). His JobLevel 8 now applies to his main Squire job (`0x0A = 4`), like
+Ovelia's. ✅ CONFIRMED in-game 2026-06-29 (tested from a pre-join save / new game — Delita joins **Squire Lv8**); originally written as PENDING playtest from a **pre-join save / new game** (save-cache-on-join: a Delita already
+in the save keeps the old bugged data — this is why the autosave-edit test "did nothing").
+
+**Open items:**
+- **NG+-only.** The seed rides the Layer-1 `.bin` swap (incl. the slice reads for Delita's join),
+  which is NG+-gated. The always-on `ScaleGuestsAlways` sets level + control bit but NOT the job seed
+  (the `Program.cs` constants `SLOT_JOB_UNLOCK=0x08` / `SLOT_JOB_LEVEL=0x09` are defined but UNUSED).
+  To give Delita Squire Lv8 in normal play too, wire those into `ScaleGuestsAlways` (set 0x08=0,
+  0x09=8 for the ally guest), same as the level/control patch.
+- **Argath (charId 0x07 @ entry 389 s1) has the identical `0x08=1` bug** — not yet fixed.
+- The `tools/fft_save_patch_delita.py` band-aid (retro-fix an already-joined Delita in the save PNG)
+  is moot for new playthroughs once the join seed is correct.

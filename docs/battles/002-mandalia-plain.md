@@ -86,7 +86,9 @@ Guest handling:
 ```text
 Slot 1 Argath (0x07) is the first application of the Chapter-1 guest-control rule.
 NG+ ENTD patch:
-- JobLevel stays 8 so his guest job has all available primary skills unlocked.
+- Visible Job Level uses the runtime/save rank derived from slot byte 0x08; set 0x08 = 7
+  so the UI shows Job Level 8.
+- Slot byte 0x09 also stays 8 so his guest job has the full primary kit/tier.
 - Control byte at slot offset 0x18 changed 0x84 -> 0x8C, enabling player control while preserving
   his existing ally/guest bits.
 - Level remains 100 via the runtime guest-scaling policy.
@@ -271,8 +273,8 @@ Notes / known risks:
 - Job conversion (s6 Squire→Archer) changed only `mainJob` (0x0A); `x08` left as vanilla
   (it varies independently of job and is duplicated across slots, so it is not job/sprite/id
   critical). If the Archer renders or behaves wrong in-game, set `x08`=3 as Gariland did.
-- Argath's guest slot is player-controlled in NG+ (`raw_tail` control byte `0x84 -> 0x8C`) and
-  remains JobLevel 8 so his primary guest-job skills are fully available.
+- Argath's guest slot is player-controlled in NG+ (`raw_tail` control byte `0x84 -> 0x8C`).
+  Its visible Job Level is now forced with `0x08=7`, and its kit tier remains `0x09=8`.
 - Thief secondary left as none (v1, per design). Archer secondary = Fundaments (matches the
   verified Gariland archer).
 - Positions kept vanilla; the open-field placement plan above is a future-tuning option.
@@ -285,7 +287,8 @@ Notes / known risks:
 - [x] Verify Archer/Thief/Squire item IDs (reused Gariland's in-game-validated IDs).
 - [x] Set levels: leader `102`, Squires `100`, Thief/Archer/Panther `101`.
 - [x] Set JobLevel `8` on all active enemy slots.
-- [x] Set Argath guest JobLevel `8` and make him player-controlled in NG+ (slot 1 control byte
+- [x] Set Argath guest visible Job Level to `8` (`0x08=7`), kit tier to `8` (`0x09=8`),
+  and make him player-controlled in NG+ (slot 1 control byte
   `0x84 -> 0x8C`).
 - [x] Convert one Squire (s6) → Archer in place (no slot added; 6 already present).
 - [x] Apply gear + R/S/M per builds above.

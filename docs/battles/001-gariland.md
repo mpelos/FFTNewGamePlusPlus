@@ -39,6 +39,17 @@ No treasure chest rewards
 Listed spoils include gil, Phoenix Down, Potion, and Mythril Knife
 ```
 
+NG++ spoils applied:
+
+```text
+Air Knife (9)
+Phoenix Down (253)
+X-Potion (242)
+```
+
+This preserves the original reward categories: Mythril Knife -> Air Knife, Phoenix Down stays
+Phoenix Down, Potion -> X-Potion.
+
 Design reading:
 
 Gariland is not supposed to be a boss fight. It is a street fight against low-grade thieves
@@ -95,10 +106,20 @@ before Gariland, using the confirmed fingerprint record at entry 392 slot 1.
 
 Entry 392 slot 1:
 - Level already scales at 100.
-- JobLevel is now 8 (byte 0x01431 changed 1 -> 8).
+- Squire Job Level test now keeps `JobUnlock` on Squire (`0x01430` / slot byte `0x08 = 1`)
+  and raises the seeded JobLevel (`0x01431` / slot byte `0x09 = 8`).
+- Prior test with `0x08 = 7, 0x09 = 8` gave Delita Time Mage Job Level 8, proving `0x08`
+  is a job/JP target index, not a visible rank.
 
 As with the level fix, this only applies when testing from a save before Delita joins or from a
 fresh New Game+ start. Saves where Delita already joined keep the old cached JobLevel.
+
+Autosave repair for the bad cached test:
+- Delita's cached job levels are packed nibbles at `br_fa + 0x56`; job JP u16s start at
+  `br_fa + 0x62`.
+- Bad cached state: Squire Lv1 JP28, Time Mage Lv8 JP1172.
+- Repaired state: Squire Lv8 JP1172, Time Mage Lv1 JP28.
+- Use `tools/fft_save_patch_delita.py <autoenhanced.png> --in-place`; it creates a backup first.
 ```
 
 ## New Game++ Design Goal
@@ -450,8 +471,10 @@ slow chase.
 - Upgrade all active enemy equipment to final-shop v1. Done.
 - Add explicit reaction/support/movement skills. Done.
 - Keep slot 4 as Chemist.
-- Leave slot 0 untouched.
-- Set Delita's pre-Gariland join record (`entry 392`, slot `1`) to JobLevel `8`. Done.
+- Slot 0 Delita: keep level `100`; for Squire Job Level testing, keep `0x08=1` and set `0x09=8`.
+- Set Delita's pre-Gariland join record (`entry 392`, slot `1`) to `0x08=1`, `0x09=8`.
+  Needs in-game confirmation from a save before Delita joins.
+- Upgrade Gariland spoils from vanilla to Air Knife + Phoenix Down + X-Potion. Done.
 - Re-dump entry `388` after patch. Done.
 - Compare binary diff; expected changes should be small and intentional. Done.
 - Install updated `New Game++` mod into `C:\Reloaded-II\Mods`. Done.

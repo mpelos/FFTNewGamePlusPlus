@@ -6,6 +6,7 @@ tools/*
 !tools/entd_tool.py
 !tools/guest_scan.py
 !tools/fft_save_decode.py
+!tools/fft_save_patch_delita.py
 
 # === Unpacked game data (copyrighted, regenerated) ===
 work/modded_unpack/

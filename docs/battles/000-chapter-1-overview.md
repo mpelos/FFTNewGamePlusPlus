@@ -157,6 +157,15 @@ From Chapter 1 onward, in New Game++:
   battle/slot or a similarly safe identifier instead of a broad monster charId rule.
 ```
 
+Implementation note:
+
+```text
+Guest-form slots are made controllable by setting control byte 0x18 |= 0x08. The runtime guest
+scaler applies this globally to known guest charIds when mainJob == charId, which catches true
+ally guests and skips boss/enemy forms such as Argath at Ziekden (charId 0x07, job 76). Prologue
+Orbonne remains out of scope for the guest scaler.
+```
+
 ### Chapter 2+ challenge philosophy: tuned players, not first clears
 
 Chapter 1 is intentionally a New Game+ presentation chapter. It proves the promise ("story
