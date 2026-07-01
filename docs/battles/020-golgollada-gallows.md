@@ -1,9 +1,17 @@
 # 020 - Golgollada Gallows
 
-Status: ✅ implemented (v1, entry 414) — Gaffgarion sub-boss is the built-in escalation. **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 414, 2026-07-01) — Gaffgarion gallows sub-boss redesign applied.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 19 (after Balias Swale)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py golgollada`.
+
+- Gaffgarion is tuned to level `103` with Brave/Faith `82/60`, Move +2, and a strippable Runeblade while preserving his retreat/script identity.
+- Enemy support is 3 Knights, 2 Archers, and 2 Time Mages.
+- Time Mages are capped at JobLevel `4`; Knights/Archers use complete Chapter-2 shop-tier kits and matching job-rank seeds.
 ENTD: global entry **414** (battle_entd4, local entry 30) — confirmed by composition (3K/2A/2TM + boss)
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -312,7 +320,7 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later implementation pass to tune movement/support roles, verify the
 Time Mage command filter/cap, and re-check the disarm window in game.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Golgollada ENTD entry (414); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Gaffgarion + 3 Knight + 2 Archer + 2 Time Mage.
@@ -325,7 +333,7 @@ Time Mage command filter/cap, and re-check the disarm window in game.
 - [ ] Verify Time Mages only use Haste/Slow/Float-tier tools; no hard-lock spells.
 - [ ] Preserve Gaffgarion's job/secondary -> retreat + Drain scripting intact.
 - [ ] Preserve split deployment and retreat threshold; no rare item/drop here.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py golgollada`.
 - [ ] Re-dump and diff; changes small and intentional.
 - [ ] Playtest from a NG+ save; confirm disarm shuts off sustain and he retreats (no death/drop).
 

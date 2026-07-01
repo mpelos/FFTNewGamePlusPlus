@@ -3,6 +3,8 @@ Publish/
 
 # === Third-party tools / downloads (large, not our source) ===
 tools/*
+!tools/battle_patch.py
+!tools/validate_ch2_v2.py
 !tools/entd_tool.py
 !tools/guest_scan.py
 !tools/fft_save_decode.py

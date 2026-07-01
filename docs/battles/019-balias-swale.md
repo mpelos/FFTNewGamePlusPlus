@@ -1,9 +1,17 @@
 # 019 - Balias Swale (Bariaus Valley)
 
-Status: ✅ implemented (v1, entry 413); Geomancer add deferred; Agrias scaled + equipped for survival (2026-06-27). **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 413, 2026-07-01) — Agrias runtime guest handling retained; Geomancer storm-cell slot-add applied.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 18 (after Goug Lowtown)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py balias_swale`.
+
+- Agrias remains handled by the runtime guest scaler/control path (`cid 0x1e`), with ENTD Brave/Faith support only.
+- Enemy roster is 2 Knights, 2 Archers, 2 Black Mages, and a new Geomancer.
+- The Geomancer is a plain static ENTD slot-add in `s7` with UnitID `0x86`, First Strike, Attack Boost, Move +1, Runeblade, and Chapter-2 shop-tier armor.
 ENTD: global entry **413** (battle_entd4, local entry 29) — confirmed by composition + Agrias guest
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -331,7 +339,7 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later implementation pass to add the Geomancer, tune caster/route
 placement, complete final ability/equipment mapping, and confirm Agrias player control.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Balias Swale ENTD entry (413); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Knights + Archers + Black Mages + Agrias.
@@ -344,7 +352,7 @@ placement, complete final ability/equipment mapping, and confirm Agrias player c
 - [ ] Tune Black Mage spell access toward Thunder/Thundara; avoid unrelated control.
 - [ ] Confirm Agrias is player-controlled in NG+ in addition to being scaled/equipped.
 - [ ] Preserve Agrias's protected slot, split deployment zones, and RAIN flag.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py balias_swale`.
 - [ ] Re-dump and diff; changes small and intentional.
 - [ ] Playtest from a NG+ save; confirm Save-Agrias + split work; verify Agrias survives because
   the player can act, not because enemy focus is toothless.

@@ -9,7 +9,10 @@ the battle that validated the technique end-to-end: Merchant Dorter (Chapter 2 o
 For battles that are **not** event-scripted — the new unit just needs to be present at battle
 start — do not use this recipe. Use the plain ENTD job-swap/new-slot technique described in
 [06-job-swap-fallback-and-battle-inventory.md](06-job-swap-fallback-and-battle-inventory.md)
-instead; it is simpler and carries none of the risk discussed below.
+instead; it is simpler and carries none of the risk discussed below. If the battle is static but a
+high ENTD slot is ignored because the `OverrideEntryData` formation rows stop before that slot, use
+the Zeirchele-style NXD expansion documented in
+[08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md).
 
 ## The core fact: three coherent layers, not one
 

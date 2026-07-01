@@ -1,9 +1,17 @@
 # 016 - Balias Tor (Bariaus Hill)
 
-Status: ✅ implemented (v1, entry 409) — Summoner job is the built-in escalation. **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 409, 2026-07-01) — first Summoner-race redesign applied.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 15 (after Castled City of Zaland)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py balias_tor`.
+
+- Enemy roster is 2 Summoners, 2 Knights, 2 Archers, and a new Chemist field support.
+- The Chemist is a plain static ENTD slot-add in `s8` with UnitID `0x86`, Auto-Potion, Throw Items, Move +1, and Mythril Gun.
+- Summoners split into a faster `Swiftspell` caster and a `Magick Boost` caster; Knights and Archers use complete Chapter-2 shop-tier kits.
 ENTD: global entry **409** (battle_entd4, local entry 25) — confirmed by sequence + composition
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -278,7 +286,7 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later ENTD implementation pass to add the Chemist and tune the Summoners'
 support/gear without changing first-playthrough behavior.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Balias Tor ENTD entry (409); fill "Local Data Confirmed".
 - [x] Dump original entry; verify 2 Summoner + 2 Knight + 2 Archer.
@@ -290,7 +298,7 @@ support/gear without changing first-playthrough behavior.
 - [ ] Set JobLevel `8` on all active enemy slots.
 - [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
 - [ ] Keep exactly two Summoners; do not add Time Mage tempo here.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py balias_tor`.
 - [ ] Re-dump and diff; changes small and intentional.
 - [ ] Playtest from a NG+ save; verify summons are scary but race-able; check summon tier.
 

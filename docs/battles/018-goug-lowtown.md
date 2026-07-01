@@ -1,9 +1,17 @@
 # 018 - Goug Lowtown (Goug Machine City)
 
-Status: ✅ implemented (v1, entry 411) — Thief→Time Mage escalation done inline. **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 411, 2026-07-01) — Goug tempo/charm redesign applied; active ally handled by runtime scaler/control.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 17 (after Tchigolith Fenlands)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py goug`.
+
+- The active `cid 0x16` ally is now covered by `GuestCharIds` in `Program.cs`, so NG++ runtime scaling/control applies. ENTD only tunes Brave/Faith.
+- Enemy roster remains 7 active enemies: 2 Summoners, 1 Time Mage, 2 Archers, and 2 Thieves. No new slot-add is used here.
+- Time Mage is capped at JobLevel `4` for Haste/Slow tempo without hard-lock escalation; generic job-rank bytes are seeded to match visible jobs.
 ENTD: global entry **411** (battle_entd4, local entry 27) — confirmed by composition (2nd Summoner fight)
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -79,16 +87,13 @@ active Thieves (not 2), plus an anomalous lvl-1 thief (s10) left untouched. The 
 is **JobLevel-capped to 4** (Lenalian precedent) to bias toward Haste/Slow and keep Stop/Immobilize
 off. Steal Heart stays innate on the remaining Thieves (job 83 at jl8).
 
-### Goug ally guest (cid 0x16) — v2 requires scale/control
+### Goug ally guest (cid 0x16) — implemented scale/control
 
 The guest here is **cid 0x16 (job 22 == cid, flags 0x91 = ally)** — NOT Mustadio (cid 0x22), who is a
-party member by now. Its identity is unconfirmed, so unlike Mustadio at Zaland it was NOT added to
-GuestCharIds; it stays at lvl 12. Its death is explicitly NOT a Game Over here, so a weak guest is
-non-blocking. PLAYTEST: confirm who it is and, if it's a beneficial ally, add cid 0x16 to GuestCharIds.
-
-For v2, "death is not a Game Over" is not enough. The global guest rule applies to every active
-guest: identify cid `0x16`, scale it safely, and make it player-controlled in NG+ unless playtest
-proves the slot is not an active ally.
+party member by now. The v2 implementation adds `0x16` to `GuestCharIds` in `Program.cs`, so the
+same runtime guest-scaler/control path used by Mustadio and Agrias now applies here. Its death is
+explicitly NOT a Game Over, but the global NG++ rule still applies: active guests should be
+controlled by the player, not left as an AI liability.
 
 ## Enemy Party Escalation (Chapter 2 redesign)
 
@@ -301,7 +306,7 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later implementation pass to tune the Summoners/Time Mage and resolve cid
 0x16 guest scaling/control.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Goug ENTD entry (411); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Summoners + Archers + Thieves (+ guest, disabled slots).
@@ -313,7 +318,7 @@ this pass; it requires a later implementation pass to tune the Summoners/Time Ma
 - [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
 - [ ] Verify guest cid `0x16`; scale/control it in NG+ if active.
 - [ ] Keep anomalous lvl-1 thief (s10) untouched unless playtest proves it is active.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py goug`.
 - [ ] Re-dump and diff; changes small and intentional.
 - [ ] Playtest from a NG+ save; verify Haste speeds the race fairly; confirm guest cid 0x16 identity.
 

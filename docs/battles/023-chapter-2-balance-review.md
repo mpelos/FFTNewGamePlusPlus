@@ -27,7 +27,7 @@ The curve is carried by **composition + terrain + mechanics + complete R/S/M set
 | # | Battle | Doc | Enemies | New demand / enemy-party escalation | Terrain | Tier |
 |---|--------|-----|---------|------------------------------|---------|------|
 | 11 | Merchant Dorter | `012` | 7 (2 Archer + 2 Black Mage + 2 Thief + **+1 Knight anchor**) | harder Dorter rematch; charm-Thieves | rooftops | ▃ moderate |
-| 12 | Araguay Woods | `013` | 7 (4 Goblin + 2 Black Goblin + **1 Red Panther**) | controlled Boco through a faster monster route | woods | ▃ moderate |
+| 12 | Araguay Woods | `013` | 7 (4 Black Goblin + 2 Gobbledygook + **1 Coeurl**) | controlled Boco through promoted monster tiers | woods | ▃ moderate+ |
 | 13 | Zeirchele Falls | `014` | Gaffgarion (turncoat) + 4 Knight + 1 Archer + 1 White Mage | controlled Ovelia/Agrias; **betrayal bridge** | falls | ▅ hard |
 | 14 | Zaland | `015` | 7 (1 Knight + 2 Dragoon + 2 Archer + 2 Black Mage) | controlled Mustadio; **Dragoon** vertical pressure | castle city | ▅ hard |
 | 15 | Balias Tor | `016` | 7 (2 **Summoner** + 2 Knight + 2 Archer + 1 Chemist) | **Summoner debut**: race the summon through sustain | hill | ▆ harder |
@@ -114,7 +114,7 @@ Every fight states which slot(s) changed job and confirms the original strategy 
 
 ```text
 Merchant Dorter (012) : 2 Archer + 2 Black Mage + 2 Thief + 1 Knight anchor -> rooftop pressure + charm
-Araguay Woods   (013) : 4 Goblin + 2 Black Goblin + 1 Red Panther           -> controlled Boco route pressure
+Araguay Woods   (013) : 4 Black Goblin + 2 Gobbledygook + 1 Coeurl          -> controlled Boco route pressure
 Zeirchele Falls (014) : Gaffgarion + 4 Knight + Archer + White Mage         -> bridge betrayal, not Ovelia AI
 Zaland          (015) : 1 Knight + 2 Dragoon + 2 Archer + 2 Black Mage       -> controlled Mustadio under vertical pressure
 Balias Tor      (016) : 2 Summoner + 2 Knight + 2 Archer + Chemist           -> first summon race through sustain
@@ -192,7 +192,7 @@ See memory note [[fft-tic-rewards-ngplus]].
 ```text
 Confirmed & reused identically: Archer 77, Thief 83 (and Squire 74 / Chemist 75 where present).
 TBD (verify on Windows, used by name): Knight, Black Mage, Summoner, Time Mage, Geomancer,
-  Dragoon, Dark Knight (Gaffgarion), the monsters (Goblin, Black Goblin, Red Panther, Ghoul,
+  Dragoon, Dark Knight (Gaffgarion), the monsters (Black Goblin, Gobbledygook, Coeurl, Ghoul,
   Skeleton, Bonesnatch, Malboro, Floating Eye), and Cúchulainn (Lucavi).
 Boss scripting to preserve: Gaffgarion betrayal (014), retreat threshold (020), death + drop (021);
   Cúchulainn transform/solo (022); Ovelia/Agrias/Mustadio guest/escort flags (014/015/018/019).
@@ -264,7 +264,7 @@ from a New Game+ save and record results back in the doc. Test the Gate→Orator
 ## Status
 
 ```text
-Design phase: v2 COMPLETE for all 11 Chapter 2 battle docs (012-022); implementation pending.
+Design phase: v2 COMPLETE for all 11 Chapter 2 battle docs (012-022); implementation applied for all Chapter 2 entries.
 Consistency: audited; exceptions logged; enemy-party escalation and rare-loot ledgers updated.
 Curve: passes on paper; clearly above Chapter 1, capping at the Cúchulainn solo finale; risk items
   above to confirm in-game (boss-dense back third + chain-aware solo-demon tuning are the key watches).

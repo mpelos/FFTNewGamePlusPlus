@@ -1,9 +1,23 @@
 # 014 - Zeirchele Falls (Zirekile Falls)
 
-Status: ✅ implemented (v1, entry 405) — Knight→Archer escalation done inline; Ovelia survival = JOB-INNATE Mana Shield + Manafont (Princess job 12 via FFTIVC/tables/enhanced/JobData.xml) layered over gear Always-Protect (Sortilège) + Brave 61 (2026-06-28; earlier evasion + ENTD-R/S/M passes both failed — see "Ovelia survivability"). ✅ CONFIRMED in-game 2026-06-28 — Mana Shield + Move-MP Up both active. **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 405, 2026-07-01) — betrayal bridge redesign applied; Ovelia survival fix retained.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 13 (after Araguay Woods)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py zeirchele`.
+
+- Gaffgarion is tuned as the level `103` betrayal sub-boss while preserving his identity/job/script behavior.
+- Active enemy line is 4 Knights plus 1 Archer, with the White Mage field medic added as `s11`
+  (UnitID `0x87`).
+- Ovelia keeps the previously confirmed survival package: Princess job innate fix in `JobData.xml`, Brave `61`, Faith `78`, Sortilège, Gold Hairpin, Luminous Robe, and Golden Staff.
+- The `0xFE` Knight placeholders in `s2` and `s3` remain vanilla intro corpse actors; `event129.e`
+  removes them during the story scene before tactical control starts.
+- The first high-slot `s11` attempt was ignored because Zeirchele's `OverrideEntryData` layer only
+  carried rows through `s10`. The working implementation adds row `Key=405, Key2=11` and moves the
+  row marker `Unknown9C=150` from `s10` to `s11`, matching the Merchant Dorter slot-add pattern.
 ENTD: global entry **405** (battle_entd4, local entry 21) — confirmed by sequence + composition
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -65,15 +79,16 @@ break the sustain, and exploit the strip-his-gear counter.**
 slot  cid    name  flags  job        role                          action
 s0    0x05   5     0x80   5          Gaffgarion (betrayer, ENEMY)  SCALE -> L103 (job/sec kept)
 s1    0x0c   12    0x51   12         Ovelia (VIP ally)            EQUIP survival kit; lvl via scaler->100
-s2    0x80   255   0x80   76 Knight  reinforcement (lvl 254)       LEAVE (spawn scripting)
-s3    0x80   255   0x80   76 Knight  reinforcement (lvl 254)       LEAVE (spawn scripting)
-s4    0x80   255   0x80   76 Knight  escort wall (lead)            SCALE -> L101
+s2    0x80   255   0x80   76 Knight  intro corpse actor (lvl 254)  LEAVE (cutscene placeholder)
+s3    0x80   255   0x80   76 Knight  intro corpse actor (lvl 254)  LEAVE (cutscene placeholder)
+s4    0x80   255   0x80   76 Knight  escort wall (captain)         SCALE -> L102
 s5    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L101
-s6    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L100
+s6    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L101
 s7    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L100
 s8    0x80   255   0x80   76 Knight  -> ARCHER (escalation swap)   SCALE -> L101, re-job 77
 s9    0x17   23    0x88   23         Agrias (ally, lvl 254)        LEAVE
 s10   0x34   52    0x49   52         named story unit (lvl 254)    LEAVE
+s11   0x80   255   0x80   79 WMage   NEW field medic               SCALE -> L101, re-job 79 (ctrl 0x90)
 ```
 
 Gaffgarion is on the **enemy team** (flags 0x80) in the base ENTD; his ally→betray phase is pure
@@ -82,9 +97,9 @@ preserves his identity bytes. **Job 5 = his dark-sword skillset (Drain/Shadowbla
 secondary are KEPT, so his skills and the betray/auto-retreat link (event-keyed on unit id, not
 level/gear) stay intact. His Runeblade is non-unique and STRIPPABLE — the canonical counter survives.
 
-PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit), and decide whether the
-lvl-254 reinforcement Knights (s2/s3) should be scaled too (left untouched to avoid disturbing their
-spawn scripting).
+PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit). Do not scale `s2` or
+`s3`: they are vanilla intro corpse actors/placeholders, not active battle enemies. The White Mage
+must be the separate `s11/uid 0x87` unit.
 
 ### Ovelia survivability (four passes; landed on JOB-INNATE Mana Shield + Manafont over gear Always-Protect, 2026-06-28)
 
@@ -348,42 +363,47 @@ Use one White Mage field medic as the v2 escalation. Do not add a second Archer.
 must be player-controlled in NG+, while Gaffgarion remains weapon-dependent and scripted to retreat.
 ```
 
-## Current Implementation (v1, entry 405 — superseded by v2 design)
+## Current Implementation (v2, entry 405)
 
 Applied with `python tools/battle_patch.py zeirchele`; diff contained to local entry 21 (global 405),
-65 bytes. Unlike Merchant Dorter / Araguay, the Chapter-2 escalation here was a **job SWAP** (Knight
-→ Archer on s8), so it was done inline — no slot-add deferral needed.
+and the active battle roster follows the v2 design: Gaffgarion, four Knights, one Archer, and one
+White Mage field medic. The first implementation tried a plain high-slot add (`s11`, UnitID `0x87`),
+but in-game testing showed Zeirchele ignored that slot and stayed at six enemies. The working v2
+candidate keeps the ENTD `s11` White Mage and also patches `OverrideEntryData` so Zeirchele's
+formation layer includes `Key2=11`.
 
 ```text
 s0  Gaffgarion  L103 jl8  (job 5 + secondary KEPT)  R Counter  S Atk-Boost  M +1  heavy kit + Runeblade(strippable) + Shield
-s4  Knight      L101 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
+s4  Knight      L102 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
 s5  Knight      L101 jl8  (same kit)
-s6  Knight      L100 jl8  (same kit)
+s6  Knight      L101 jl8  (same kit)
 s7  Knight      L100 jl8  (same kit)
 s8  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
+s11 White Mage  L101 jl8  R Mana Shield  S Defense Boost  M +1  Mage Hat / Luminous Robe / Featherweave / Golden Staff
 ```
 
-This implementation remains the shipped v1 data. The v2 redesign above is **documentation only** in
-this pass; it requires a later ENTD/table implementation pass to add the White Mage, verify/apply
-Ovelia/Agrias player control, and keep Gaffgarion's betrayal/retreat scripting intact.
+`s2` and `s3` remain vanilla level-`0xFE` intro corpse actors. The NXD patch moves Zeirchele's
+`OverrideEntryData` end marker from `s10` to a new `s11` row, mirroring the proven Merchant Dorter
+slot-add marker pattern.
 
-## Future Implementation Checklist (v2)
+## V2 Implementation Checklist
 
 - [x] Identify Zeirchele ENTD entry (405); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Gaffgarion + 5 Knight + Agrias + Ovelia slots.
 - [x] Preserve Gaffgarion's job/secondary + identity (betray/auto-retreat link untouched).
 - [x] Keep his gear strippable + non-unique (Runeblade).
 - [x] Swap one Knight -> Archer (re-job s8); Archer build applied.
-- [ ] Add one White Mage field medic in a verified reachable backline slot.
-- [ ] Set levels: Gaffgarion `103`; Knight captain `102`; two Knights + Archer + White Mage `101`;
+- [x] Add one White Mage field medic as `s11` (UnitID `0x87`) after adding the matching
+  `OverrideEntryData` row.
+- [x] Set levels: Gaffgarion `103`; Knight captain `102`; two Knights + Archer + White Mage `101`;
   last Knight `100`.
-- [ ] Set JobLevel `8` on all active enemy slots; Knights have no secondary.
-- [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
-- [ ] Set Ovelia and Agrias player-controlled in NG+; do not rely on guest AI.
+- [x] Set JobLevel `8` on all active enemy slots; Knights have no secondary.
+- [x] Give every active human enemy complete equipment plus intentional reaction/support/movement.
+- [x] Set Ovelia and Agrias player-controlled in NG+ via the runtime guest scaler; do not rely on guest AI.
 - [x] Equip Ovelia for survival (playtest fix): endgame job-legal kit; level left to the scaler. See "Ovelia survivability".
-- [ ] Patch the embedded ENTD/table data in a later implementation pass; no binary/data change in this doc pass.
-- [ ] Re-dump and diff; changes small and intentional; named links intact.
-- [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; decide on s2/s3.
+- [x] Patch the embedded ENTD/table data via `tools/battle_patch.py zeirchele`.
+- [x] Re-dump and diff; active roster is v2 and `s2/s3` remain vanilla intro placeholders.
+- [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; confirm the White Mage appears as the seventh enemy.
 
 ## Test Questions
 

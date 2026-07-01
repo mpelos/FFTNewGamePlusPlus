@@ -1,9 +1,17 @@
 # 022 - Lionel Castle Oratory — Cúchulainn (Lionel Castle Keep)
 
-Status: ✅ implemented (v1, entry 425) — CHAPTER 2 COMPLETE (rare loot deferred to reward table). **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 425, 2026-07-01) — Cúchulainn solo finale and 108 Gems/Japa Mala spoil applied.
 Chapter: 2 — "The Manipulator and the Subservient" (CHAPTER FINALE)
 Battle order: Battle 21 (after Lionel Castle Gate)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py cuchulainn`.
+
+- Cúchulainn remains the sole active enemy in `s9`, tuned to level `104`, JobLevel `8`, Brave/Faith `88/82`.
+- 108 Gems is TIC item `226` (`Japa Mala`) and is now written through the ENTD Spoils of War byte (`0x1e`) on Cúchulainn's active slot.
+- The monster/Lucavi equipment slots remain untouched; the reward is not faked as equipment.
 ENTD: global entry **425** (battle_entd4, local entry 41) — confirmed: sole demon, job 60 (Gigas/Demon)
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -79,12 +87,13 @@ Nightmare (mass Doom/Sleep) + run-up execute, Holy weakness, dark/poison absorb,
 his JobLevel 8 are preserved intact. The Cardinal/guards/Ramza/chocobo are disabled cutscene
 placeholders (the Cardinal transforms into the demon via scripting), all left at lvl 254.
 
-### Rare loot (108 Gems) — deferred to a reward-table pass
+### Rare loot (108 Gems / Japa Mala) — implemented through ENTD Spoils of War
 
 Cúchulainn's job (60) is **Unarmed — it has no equipment slot**, so 108 Gems cannot be set on his
-ENTD slot. A guaranteed drop/treasure lives in a separate reward table (not the ENTD), which this
-`.bin` patcher does not touch. The rare loot is therefore deferred to a future reward-table pass;
-the boss scaling and all his mechanics are fully implemented.
+equipment bytes. The project later confirmed that ENTD slot offset `0x1e` is the Spoils of War item
+byte, so the v2 implementation writes item `226` there on the active Cúchulainn slot (`s9`). TIC's
+English item name for this id is `Japa Mala`; the design docs refer to the classic `108 Gems` name.
+The monster/Lucavi equipment bytes remain untouched.
 
 ## Enemy Party Escalation (Chapter 2 redesign)
 
@@ -166,7 +175,8 @@ PRESERVE: Holy weakness, dark/poison ABSORB (heal-from-dark), Nightmare (Doom/Sl
   and any Blood Suck / drain in his kit. These ARE the fight.
 DO NOT: add minions, add a second mass-status source, make Nightmare instant, or remove the Holy
   weakness (that weakness is the intended "bring Agrias/Holy" counter and keeps the spike fair).
-Assign the rare (108 Gems) as his drop/steal if the slot allows; else as a guaranteed reward.
+Assign the rare (108 Gems / Japa Mala, item `226`) through the ENTD Spoils of War byte (`0x1e`) on
+the active Lucavi slot.
 Verify HP is high enough to threaten a level-104-scaled party of 5 arriving from Lionel Gate, but
   not so high that a Holy-leaning party can't win in a reasonable number of turns.
 ```
@@ -227,17 +237,17 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later implementation pass to test the Gate->Oratory chain as a chain and
 wire the 108 Gems reward through the reward-table path.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Oratory/Keep ENTD entry (425); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Cúchulainn is the SOLE active enemy (s9) + disabled cutscene actors.
 - [x] Confirm demon job (60); Holy weakness + dark-absorb + Nightmare + run-up preserved (level-only edit).
 - [ ] Keep Level `104`; test from the Lionel Gate no-resupply chain, not from a fresh save.
 - [ ] Preserve canonical innate skillset / JobLevel 8 / Brave.
-- [ ] Assign 108 Gems — DEFERRED: Unarmed monster has no gear slot; needs the reward table (not ENTD).
+- [x] Assign 108 Gems / Japa Mala — implemented as ENTD Spoils of War item `226` on slot `s9`.
 - [ ] Keep one mass-status source (the boss); no minions/second disruptor added.
 - [ ] Preserve small-arena geometry (terrain not in ENTD slot data).
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py cuchulainn`.
 - [ ] Re-dump and diff; change should remain minimal; kit intact.
 - [ ] Playtest from a NG+ save (arriving from the Gate, no resupply); confirm Holy is decisive and
       Nightmare is survivable with spacing/cleansing.

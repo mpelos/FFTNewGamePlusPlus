@@ -1,9 +1,17 @@
 # 015 - Castled City of Zaland
 
-Status: ✅ implemented (v1, entry 407) — Knight→Dragoon escalation done inline; Mustadio auto-scaled + endgame gear (2026-06-27). **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 407, 2026-07-01) — Mustadio runtime guest handling retained; vertical-pressure redesign applied.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 14 (after Zeirchele Falls)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py zaland`.
+
+- Mustadio remains handled by the runtime guest scaler/control path (`cid 0x22`), with ENTD gear/Brave/Faith support only.
+- Enemy roster is 1 Knight, 2 Dragoons, 2 Black Mages, and 2 Archers. The second Dragoon is a plain static ENTD slot-add in `s8` with UnitID `0x86`.
+- Generic human job-rank bytes are seeded to match their jobs, including Dragoon `13`, Black Mage `6`, Archer `3`, and Knight `2`.
 ENTD: global entry **407** (battle_entd4, local entry 23) — confirmed by sequence + composition
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -290,7 +298,7 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later ENTD implementation pass to add the second Dragoon, tune the Black
 Mages, and verify/apply Mustadio player control.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Zaland ENTD entry (407); fill "Local Data Confirmed".
 - [x] Dump original entry; verify 2 Knight + 2 Archer + 2 Black Mage + Mustadio slot.
@@ -303,7 +311,7 @@ Mages, and verify/apply Mustadio player control.
 - [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
 - [x] Mustadio handled via the runtime guest-scaler (cid 0x22 added to GuestCharIds); slot untouched.
 - [ ] Verify/apply Mustadio player control in NG+.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py zaland`.
 - [ ] Re-dump and diff; changes small and intentional.
 - [ ] Playtest BOTH objectives (clear vs Mustadio survival) from a NG+ save; confirm Mustadio scales
   and is controllable by the player.

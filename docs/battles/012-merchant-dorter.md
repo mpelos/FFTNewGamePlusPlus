@@ -367,7 +367,7 @@ Pending NG+ in-game test:
 3. BM threat at scale; charm fairness with two Thieves restored.
 ```
 
-## Future Implementation Checklist (v2)
+## V2 Implementation Checklist (implemented; placement playtest open)
 
 - [x] Identify Merchant Dorter ENTD entry (403) on Windows data; fill "Local Data Confirmed".
 - [x] Dump original entry; verify 2 Archer + 2 Black Mage + 2 Thief + ally slots.

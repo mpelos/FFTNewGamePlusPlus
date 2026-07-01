@@ -22,6 +22,7 @@ and not durable documentation.
 | [05-ruled-out-techniques.md](05-ruled-out-techniques.md) | Approaches that were tested and confirmed **not** to work for adding a new event-spawned unit, and why — so they aren't re-attempted. Includes native runtime-hooking constraints. |
 | [06-job-swap-fallback-and-battle-inventory.md](06-job-swap-fallback-and-battle-inventory.md) | The job-swap technique (re-theming an existing slot), plain new ENTD slots for static rosters, and the current inventory of battles that want an extra body. |
 | [07-diagnostics-and-logging.md](07-diagnostics-and-logging.md) | How to temporarily enable the project's diagnostic logs and Reloaded-II file-access logging, where to read the logs, and when to turn each signal back off. |
+| [08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md) | The Zeirchele Falls technique for adding a new enemy to a static roster whose high ENTD slot is ignored until `OverrideEntryData` and `root.nxl` are expanded. |
 
 ## State of the world
 
@@ -40,6 +41,11 @@ from battle start), choose between a job-swap and a plain new ENTD slot: job-swa
 choice when the design only needs a different role in an existing body; a plain new ENTD slot is the
 right tool when the design truly needs one more body and the battle is not script-gating that unit's
 arrival. See [06-job-swap-fallback-and-battle-inventory.md](06-job-swap-fallback-and-battle-inventory.md).
+If a plain high-slot ENTD add is ignored and the battle's `OverrideEntryData` rows stop before that
+slot, use the Zeirchele formation-gated static recipe in
+[08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md).
+That path is still a static-roster solution: it expands the NXD formation layer and does not use
+event-script choreography or `AddUnit` registration.
 
 ## Technique selection quick reference
 
@@ -47,6 +53,7 @@ arrival. See [06-job-swap-fallback-and-battle-inventory.md](06-job-swap-fallback
 |---|---|---|
 | Same enemy count, but a different job/role is desired | Job-swap an existing ENTD slot | Keeps the battle's existing spawn timing, event-script activation, sprite preload, team flags, and unit ids intact. |
 | Static roster, true enemy-count increase | Plain new ENTD slot | No mid-battle registration/choreography layer exists, so the ENTD slot itself is enough once the position, flags, and visual preload constraints are valid. |
+| Static roster, high ENTD slot ignored, `OverrideEntryData` rows stop before the new slot | Formation-gated static slot-add | Add the ENTD slot and expand `OverrideEntryData`/`root.nxl`; no event choreography or `AddUnit` registration is needed. |
 | Event-scripted wave, same enemy count | Job-swap one of the existing scripted wave slots | The existing slot is already registered and choreographed by the correct script. |
 | Event-scripted wave, true enemy-count increase | Full three-layer event-spawned recipe | The new unit needs an ENTD slot, a copied/retargeted choreography block, and a matching `AddUnit` registration entry in the script actually loaded at the wave trigger. |
 | Unsure which `.e` file drives a wave | Temporary Reloaded-II file-access logging | NXD joins can point at a real but irrelevant script; the runtime file-open log is the reliable source. |

@@ -1,9 +1,17 @@
 # 021 - Lionel Castle Gate
 
-Status: ✅ implemented (v1, entry 415) — Gaffgarion boss + first rare boss loot (Blood Sword). **v2 redesign documented only** (implementation pending).
+Status: v2 implemented (entry 415, 2026-07-01) — Gaffgarion final boss redesign and Blood Sword loot applied.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 20 (after Golgollada Gallows)
 Target version: Enhanced v1.5.0
+
+## V2 Implementation Update (2026-07-01)
+
+Implemented with `python tools/battle_patch.py lionel_gate`.
+
+- Gaffgarion is the level `103` boss with Blood Sword equipped in the right hand and two-hand marker in the left-hand byte, preserving the disarm/steal counterplay.
+- Enemy support is 3 Knights, 2 Archers, and 1 Summoner with complete kits and matching job-rank seeds.
+- No Time Mage and no second Summoner are added, preserving the no-resupply chain into Cúchulainn.
 ENTD: global entry **415** (battle_entd4, local entry 31) — confirmed by composition + cid 0x11 (Gaffgarion)
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -310,7 +318,7 @@ This implementation remains the shipped v1 data. The v2 redesign above is **docu
 this pass; it requires a later implementation pass to tune Gaffgarion's movement, the outside
 gate-team roles, and the Summoner pressure while preserving the Blood Sword steal/break answer.
 
-## Future Implementation Checklist (v2)
+## Original V2 Implementation Checklist (historical)
 
 - [x] Identify Lionel Gate ENTD entry (415); fill "Local Data Confirmed".
 - [x] Dump original entry; verify Gaffgarion + 3 Knight + 2 Archer + 1 Summoner.
@@ -323,7 +331,7 @@ gate-team roles, and the Summoner pressure while preserving the Blood Sword stea
 - [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
 - [ ] Preserve Gaffgarion's job/secondary -> Drain + death scripting; two-phase/lever is event data.
 - [ ] Preserve no-resupply chain balance into Cúchulainn; no Time Mage and no second Summoner.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
+- [x] Patch the embedded ENTD via `tools/battle_patch.py lionel_gate`.
 - [ ] Re-dump and diff; changes small and intentional.
 - [ ] Playtest from a NG+ save; confirm Steal Weapon (Blood Sword) shuts off Drain and he dies/drops it.
 

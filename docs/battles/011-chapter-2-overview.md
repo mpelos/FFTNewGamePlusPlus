@@ -32,17 +32,17 @@ Chapter 1 (doc `001` = Battle 2, so the offset is the same established pattern: 
 
 | Doc | Battle | Location | Role in story | New element | Status |
 |-----|--------|----------|---------------|-------------|--------|
-| `012` | 11 | Merchant City of Dorter | Mercenary work; "kill them all" | revisit Dorter, rooftop pressure + charm | ✅ v1 implemented; **v2 documented only** |
-| `013` | 12 | Araguay Woods | Rescue Boco the chocobo vs Goblins | controlled Boco + faster monster route pressure | ✅ v1 implemented; **v2 documented only** |
-| `014` | 13 | Zeirchele Falls | Protect Ovelia; **Gaffgarion betrays** | controlled Ovelia/Agrias + betrayal bridge control | ✅ v1 implemented; **v2 documented only** |
-| `015` | 14 | Castled City of Zaland | Save Mustadio from bounty hunters | controlled Mustadio + vertical assassin pressure | ✅ v1 implemented; **v2 documented only** |
-| `016` | 15 | Balias Tor | Defeat enemy **Summoners** + support | first Summoner race + sustain screen | ✅ v1 implemented; **v2 documented only** |
-| `017` | 16 | Tchigolith Fenlands | Swamp; **undead / dark** enemies | undead attrition + one status monster | ✅ v1 implemented; **v2 documented only** |
-| `018` | 17 | Goug Lowtown | Summoners; active guest slot | second Summoner fight + Time-Mage tempo/charm | ✅ v1 implemented; **v2 documented only** |
-| `019` | 18 | Balias Swale | Split-team; rain-boosted Thunder | controlled Agrias + route-biased storm cell | ✅ v1 implemented; **v2 documented only** |
-| `020` | 19 | Golgollada Gallows | **Gaffgarion** as a major threat | Dark Knight sub-boss (Drain/disarm) | ✅ v1 implemented; **v2 documented only** |
-| `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + Blood Sword rare loot | ✅ v1 implemented; **v2 documented only** |
-| `022` | 21 | Lionel Castle Oratory | **Cúchulainn**, first Lucavi demon | solo Lucavi `104`, chain-aware + 108 Gems reward | ✅ v1 implemented; **v2 documented only** |
+| `012` | 11 | Merchant City of Dorter | Mercenary work; "kill them all" | revisit Dorter, rooftop pressure + charm | v2 implemented/tested |
+| `013` | 12 | Araguay Woods | Rescue Boco the chocobo vs Goblins | controlled Boco + promoted monster tiers | v2 implemented |
+| `014` | 13 | Zeirchele Falls | Protect Ovelia; **Gaffgarion betrays** | controlled Ovelia/Agrias + betrayal bridge control | v2 implemented |
+| `015` | 14 | Castled City of Zaland | Save Mustadio from bounty hunters | controlled Mustadio + vertical assassin pressure | v2 implemented |
+| `016` | 15 | Balias Tor | Defeat enemy **Summoners** + support | first Summoner race + sustain screen | v2 implemented |
+| `017` | 16 | Tchigolith Fenlands | Swamp; **undead / dark** enemies | undead attrition + one status monster | v2 implemented |
+| `018` | 17 | Goug Lowtown | Summoners; active guest slot | second Summoner fight + Time-Mage tempo/charm | v2 implemented |
+| `019` | 18 | Balias Swale | Split-team; rain-boosted Thunder | controlled Agrias + route-biased storm cell | v2 implemented |
+| `020` | 19 | Golgollada Gallows | **Gaffgarion** as a major threat | Dark Knight sub-boss (Drain/disarm) | v2 implemented |
+| `021` | 20 | Lionel Castle Gate | Two-part; **Gaffgarion boss** (dies) | boss + Blood Sword rare loot | v2 implemented |
+| `022` | 21 | Lionel Castle Oratory | **Cúchulainn**, first Lucavi demon | solo Lucavi `104`, chain-aware + 108 Gems reward | v2 implemented |
 | `023` | — | Chapter 2 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done (all 11) |
 
 ## Carried-over rules (from Chapter 1)
@@ -155,7 +155,7 @@ raising the chapter cap.
 | Battle | Target feel | Level band | New wrinkle / boss loot |
 |--------|-------------|------------|--------------------------|
 | Merchant Dorter (11) | Harder Dorter rematch | 100–102 | tougher mage/archer/thief mix; revisit the rooftops |
-| Araguay Woods (12) | Controlled Boco through a pack | 100–101 | monster pack + route pressure |
+| Araguay Woods (12) | Controlled Boco through a pack | 100–102 | promoted Black Goblin/Gobbledygook pack + Coeurl flank |
 | Zeirchele Falls (13) | Defend Ovelia; betrayal turn | 100–103 | Agrias ally; Gaffgarion turncoat pressure |
 | Zaland (14) | Save Mustadio under fire | 100–102 | controlled Mustadio + vertical/ranged pressure |
 | Balias Tor (15) | First Summoner fight | 100–102 | **Summoner** AoE pressure |
@@ -164,7 +164,7 @@ raising the chapter cap.
 | Balias Swale (18) | Split-team in the rain | 100–102 | controlled Agrias + route-biased rain-Thunder |
 | Golgollada Gallows (19) | Gaffgarion looms | sub-boss 103, adds 100–102 | Dark Knight sub-boss (Drain) |
 | Lionel Gate (20) | Gaffgarion boss, two-part | boss 103, adds 100–102 | **boss + rare loot**; disarm him |
-| Lionel Oratory (21) | First Lucavi demon | boss 104 | **Cúchulainn + reward-table rare**; Holy weakness |
+| Lionel Oratory (21) | First Lucavi demon | boss 104 | **Cúchulainn + 108 Gems/Japa Mala ENTD spoil**; Holy weakness |
 
 ## Workflow per battle (same as Chapter 1)
 
