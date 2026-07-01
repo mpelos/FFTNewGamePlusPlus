@@ -1,6 +1,6 @@
 # 012 - Merchant City of Dorter (Chapter 2)
 
-Status: ✅ implemented (v1, entry 403) + **v2 redesign documented only** (implementation pending)
+Status: ⏳ v2 applied (entry 403) — BM fast/power split live; true slot-add 7th enemy validated in-game via `event119.e`; pending NG+ placement check for the new Knight
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 11 (Chapter 2 opener)
 Target version: Enhanced v1.5.0
@@ -294,25 +294,97 @@ s1  Thief      L100 jl8  R First Strike  S Atk-Boost  M +2  Thief's Cap / Black 
 s6  Thief      L100 jl8  (same kit)  — Steal Heart innate to the Thief job
 ```
 
-This implementation remains the shipped v1 data. The v2 redesign above is **documentation only** in
-this pass; it requires a later ENTD implementation pass to add the Knight captain, tune the two
-Black Mages, and set the NG+ player-control flags for Gaffgarion/Agrias.
+## v2 Implementation (entry 403)
+
+Applied in-place to the embedded `battle_entd4_ent.bin` via `tools/battle_patch.py merchant_dorter`
+(NG+-only via the code mod's .bin swap). The two Archers (s4/s5) and two Thieves (s1/s6) already
+matched the v2 builds, so the live changes are the Black Mage split + the new 7th-enemy Knight. The
+doc's "id TBD" were resolved against the installed loader tables:
+
+```text
+Swiftness      = Swiftspell 482   (魔法詠唱短縮 / Short-Charge — fast caster support)
+Arcane Strength = Magick Boost 467 (魔法攻撃アップ / MA-up)
+Defense Boost  = 466,  Mana Shield = 445,  Counter = 442,  Reflexes = 449,  Movement +1 = 486
+Knight 76 / Black Mage 80; Heavy Helm 154 / Heavy Armor 182 / Bracers 218 / Runeblade 30 /
+Crystal Shield 139; Mage Hat 167 / Luminous Robe 206 / Featherweave 234 / shop Rod 56.
+```
+
+Builds:
+
+```text
+s7 Fast Black Mage  -> L102 jl8  R Mana Shield(445)  S Swiftspell(482)   M +1  Mage Hat/Robe/Featherweave/Rod
+s8 Power Black Mage -> L101 jl8  R Reflexes(449)     S Magick Boost(467) M +1  Mage Hat/Robe/Featherweave/Rod
+s1/s6 Thieves       -> L100 jl8  R First Strike(453) S Attack Boost(465) M +2  Thief's Cap/Black Garb/Germinas/Air Knife
+s9 Street Captain   -> L102 jl8  R Counter(442)      S Defense Boost(466) M +1
+   Heavy Helm/Heavy Armor/Bracers/Runeblade/Crystal Shield; secondary none.
+```
+
+### The 7th-enemy Knight: first attempt, root cause, and the fix
+
+> 2026-06-30 correction: the earlier "slot-add is impossible" conclusion was wrong. The validated
+> rule for this event-scripted battle is three-layer authoring: ENTD slot + copied/retargeted
+> `event119.e` spawn block + adding the new uid to the script's late `45` list. With `45 86 00 01`
+> added after `45 84`/`45 85`, s9/uid `0x86` became a real active enemy in-game
+> (`st=0x09`, `aux1b5=0x01`). The temporary s6 Thief -> Knight job-swap is reverted; s6 is again a
+> Thief, and s9 is the only Knight captain. Current tuning is placement only: first successful s9
+> spawn landed on the roof at `(7,10)`; `(6,9)` and `(5,9)` were valid ground but still behind/side
+> of the nearby Archer, so the next test moves him to `(5,7)` to stand in front of her.
+
+The first v2 build added the Knight by cloning the Ch1 Dorter Knight (385 s3) onto s9 at tile (2,5).
+In-game it failed four ways: on a rooftop, **a Thief portrait**, facing backward, and **present during
+the story intro** (before the other enemies arrive). Investigation (2026-06-30) found the real cause —
+and disproved two earlier guesses:
+
+```text
+NOT a sprite/VRAM cap: a census of all 512 vanilla ENTD entries shows battles routinely load 7-16
+  distinct sprites (entry 383 loads 16). Vanilla 403 uses 6; a 7th is well within range.
+NOT OverrideEntryData: entry 403's NXD OverrideEntryData rows (work/enhanced_0004.sqlite) are ALL
+  sentinel (Spriteset 0, MainJob 0, Level -1, Present 255, Pos -1). Spriteset is set in only 4 rows
+  in the whole game. So the .bin is authoritative for 403 — the override layer is not gating sprites.
+ROOT CAUSE = the ENTD flags byte (0x18). The cloned 385 s3 is a LoadFormation unit (bit 0x80,
+  flags 0x90) = present in the tactical-view intro. During that intro only the intro's sprite set is
+  loaded, so the Knight fell back to an already-loaded sprite (the Thief = problem #2). The real
+  Dorter enemies (s4-s8) are REINFORCEMENTS (flags 0x10, NO LoadFormation): they appear AFTER the
+  intro, so their sprites load with the battle proper.
+```
+
+First fix tried (s9 as a `0x10` reinforcement, cloned from s8, unique unit-id, ground tile (4,1)):
+**ENTD-only did not spawn it.** That proved the enemy wave is event-scripted, but not that slot-add
+is impossible.
+
+Final fix (`merchant_dorter()` + `event119.e`): deliver the Knight as a true slot-add. The ENTD
+creates s9/uid `0x86`; `event119.e` copies and retargets the uid `0x85` wave block to uid `0x86`;
+and the late event-script list includes `45 86 00 01`. Cost: one external script override plus the
+embedded ENTD update. Result: **7 enemies**, with s6 restored to Thief and s9 as the only Knight.
+
+Guest control (Gaffgarion `0x24` / Agrias `0x17`) is handled by the runtime scaler
+(`Program.cs` `GuestCharIds` + non-enemy-team guard), **not** by ENTD flag edits.
+
+Pending NG+ in-game test:
+```text
+1. Does the s9 Knight render as a real Knight and start on a valid ground tile at (5,7), directly in front of the nearby Archer?
+2. Does the full 7-enemy formation preserve the intended pressure: 2 Archer / 2 Black Mage / 2 Thief / 1 Knight?
+3. BM threat at scale; charm fairness with two Thieves restored.
+```
 
 ## Future Implementation Checklist (v2)
 
 - [x] Identify Merchant Dorter ENTD entry (403) on Windows data; fill "Local Data Confirmed".
 - [x] Dump original entry; verify 2 Archer + 2 Black Mage + 2 Thief + ally slots.
 - [x] Confirm Black Mage / Archer / Thief job IDs and legal equipment.
-- [ ] Add one Knight captain in a verified walkable/frontline slot.
-- [ ] Set levels: Knight `102`, fast Black Mage `102`, power Black Mage + lead Archer `101`,
+- [x] Knight captain delivered as a true 7th enemy: s9/uid `0x86` in ENTD + retargeted `event119.e`
+  spawn block + `45 86 00 01` in the late event-script list. First at-start clone of 385 s3 had failed
+  on rooftop / Thief sprite / backward / intro.
+- [x] Set levels: Knight `102`, fast Black Mage `102`, power Black Mage + lead Archer `101`,
   second Archer + Thieves `100`.
-- [ ] Set JobLevel `8` on all active enemy slots.
-- [ ] Keep Steal Heart on exactly the two canonical Thieves; add no other charm source.
-- [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
-- [ ] Set Gaffgarion and Agrias player-controlled in NG+; do not rely on guest AI.
-- [ ] Patch the embedded ENTD in a later implementation pass; no binary/data change in this doc pass.
-- [ ] Re-dump and diff; confirm changes are contained to entry 403 and any deliberate guest-control bytes.
-- [ ] Install mod and test from a New Game+ save.
+- [x] Set JobLevel `8` on all active enemy slots.
+- [x] Keep Steal Heart on exactly the two canonical Thieves; add no other charm source.
+- [x] Give every active human enemy complete equipment plus intentional reaction/support/movement.
+- [x] Set Gaffgarion and Agrias player-controlled in NG+ (runtime scaler / `GuestCharIds`; not ENTD edits).
+- [x] Patch the embedded ENTD (entry 403, slots s1/s6/s7/s8/s9) and `event119.e`.
+- [x] Re-dump and diff; confirm changes are contained to entry 403.
+- [x] Build/deploy with the game closed (verified in the embedded DLL + external `event119.e`).
+- [ ] NG+ in-game test: s9 Knight starts on valid ground at `(5,7)` in front of the nearby Archer; BM threat at scale; charm fairness with two Thieves restored.
 
 ## Test Questions
 

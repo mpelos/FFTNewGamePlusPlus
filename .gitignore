@@ -15,6 +15,9 @@ work/modded_unpack/
 extracted/
 backups/
 
+# === Scratch reverse-engineering workspace ===
+work/
+
 # === Large derived data dumps (regenerated from the game) ===
 work/*.sqlite
 

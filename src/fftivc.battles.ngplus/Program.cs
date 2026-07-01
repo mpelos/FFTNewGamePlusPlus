@@ -9,6 +9,7 @@ using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
 
+using fftivc.utility.modloader.Interfaces;
 using fftivc.utility.modloader.Interfaces.Tables;
 using fftivc.utility.modloader.Interfaces.Tables.Models;
 using fftivc.utility.modloader.Interfaces.Tables.Structures;
@@ -41,6 +42,12 @@ public class Program : IMod
 
     private unsafe delegate int FileReadRequestOffsetDelegate(int fileIndex, long sectorOffset, long size, void* outputPointer);
     private IHook<FileReadRequestOffsetDelegate>? _entdReadHook;
+    private unsafe delegate nint EventResolveActorDelegate(int unitId, int* statusOut);
+    private delegate int EventGetActorSlotDelegate(int actorIndex);
+    private delegate long TransitionIntoBattleDelegate(long a1, long a2, long a3, long a4);
+    private IHook<EventResolveActorDelegate>? _eventResolveActorHook;
+    private IHook<EventGetActorSlotDelegate>? _eventGetActorSlotHook;
+    private IHook<TransitionIntoBattleDelegate>? _transitionIntoBattleHook;
 
     private const int ENTD_INDEX_MIN = 224;
     private const int ENTD_INDEX_MAX = 227;
@@ -125,16 +132,42 @@ public class Program : IMod
     private const int BATTLE_ENTRY_ID_OFFSET = 0x16C;
     private static readonly string[] BattleIdResumeFiles =
         { "resume_enbtl_main.sav", "resume_enbtl_attack.sav", "resume_enbtl_fturn.sav" };
-    // Diagnostic: log the battle ENTD entry id read from the save. Set false once Ch1 is mapped.
-    private const bool DIAG_LOG_BATTLE_ID = true;
+    // Flip this to true when investigating battle-entry ids, event-script slot-adds, or Merchant
+    // Dorter actor-table behavior. Keep false for normal playtests; it is intentionally noisy.
+    private static readonly bool ENABLE_BATTLE_DIAGNOSTIC_LOGS = false;
+
+    // Diagnostic: log the battle ENTD entry id read from the save.
+    private static readonly bool DIAG_LOG_BATTLE_ID = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
+    // Diagnostic: trace Merchant Dorter entry 403 after the ENTD read/swap path. This is observe-only
+    // and answers whether slot 9 reaches the final buffer the game receives.
+    private static readonly bool DIAG_TRACE_MERCHANT_DORTER_ENTD = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
+    private static readonly bool DIAG_TRACE_EVENT_ACTORS = false;
+    private static readonly bool DIAG_TRACE_MERCHANT_ACTOR_TABLE = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
+    private static readonly bool DIAG_TRACE_TRANSITION_INTO_BATTLE = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
+    private static readonly bool DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8 = false;
+    private static readonly bool DIAG_TRACE_MODLOADER_FILE_REGISTRATION = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
+    private const int MERCHANT_DORTER_ENTRY = 403;
+    private const int MERCHANT_DORTER_FILE_INDEX = 227;
+    private const long EVENT_RESOLVE_ACTOR_RVA = 0x272684;
+    private const long EVENT_GET_ACTOR_SLOT_RVA = 0x273108;
+    private const long ACTOR_TABLE_RVA = 0x1853CE0;
+    private const int ACTOR_TABLE_ENTRY_SIZE = 0x200;
+    private const int ACTOR_TABLE_COUNT = 0x15;
+    private const int ACTOR_UNIT_ID_OFFSET = 0x191;
     // resume_enwm_main.sav (world-map state of the LOADED game) is the freshest at battle-load time;
     // resume_enbtl_world lags (still the previous battle). Prefer enwm_main.
     private static readonly string[] ResumePreference = { "resume_enwm_main.sav", "resume_enbtl_world.sav" };
 
     private const string SIG_FILE_READ_REQUEST_OFFSET =
         "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC ?? 80 3D ?? ?? ?? ?? ?? 4C 89 CE";
+    private const string SIG_TRANSITION_INTO_BATTLE_CALL =
+        "E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 85 C9 74 ?? E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74";
 
     private volatile bool _isNgPlus;
+    private DateTime _lastMerchantDorterEntdTraceUtc = DateTime.MinValue;
+    private long _merchantActorTableProbeUntilTicks;
+    private int _transitionIntoBattleFireCount;
+    private int _merchantA9ActivationAttempted;
 
     // TEST TOGGLE — set true to force the battle ENTD swap (Layer 1) ON for EVERY save, so the NG+
     // battle reworks can be verified on a normal (non-NG+) Chapter-4 save without grinding a full NG+
@@ -353,6 +386,7 @@ public class Program : IMod
         if (_scanner is null) { Log("ERROR: IStartupScanner unavailable."); return; }
 
         LoadModdedEntd();
+        StartModloaderFileRegistrationTrace();
 
         _modLoader.GetController<IFFTOItemDataManager>()?.TryGetTarget(out _itemMgr!);
         Log(_itemMgr is null
@@ -361,6 +395,8 @@ public class Program : IMod
 
         nint baseAddr = Process.GetCurrentProcess().MainModule!.BaseAddress;
         _moduleBase = baseAddr;
+        InstallEventActorTraceHooks(baseAddr);
+        InstallTransitionIntoBattleTraceHook(baseAddr);
         _scanner.AddMainModuleScan(SIG_FILE_READ_REQUEST_OFFSET, result =>
         {
             if (!result.Found) { Log("ERROR: fileReadRequestOffset signature NOT found."); return; }
@@ -389,6 +425,11 @@ public class Program : IMod
         {
             Log("[spoils-probe] DEBUG observe-only memory-diff probe ENABLED -> spoilsprobe_log.txt (set DEBUG_SPOILS_PROBE=false for release).");
             new System.Threading.Thread(SpoilsProbeLoop) { IsBackground = true, Name = "ngplus-spoils-probe" }.Start();
+        }
+        if (DIAG_TRACE_MERCHANT_ACTOR_TABLE)
+        {
+            Log("[merchant-actor-table] observe-only memory probe ENABLED -> ngplus_battletrace.log");
+            new System.Threading.Thread(MerchantActorTableProbeLoop) { IsBackground = true, Name = "ngplus-merchant-actor-table-probe" }.Start();
         }
 
     }
@@ -446,8 +487,88 @@ public class Program : IMod
             // guest slots controllable. Runs after the swap, so embedded NG++ ENTD and vanilla passthrough
             // both get the same guest policy.
             if (validSlice) ScaleGuestsAlways(outputPointer, size, fileIndex, sectorOffset, haveMod ? modded : null);
+            if (validSlice) TraceMerchantDorterEntd(outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
         }
         return ret;
+    }
+
+    private unsafe void InstallEventActorTraceHooks(nint baseAddr)
+    {
+        if (!DIAG_TRACE_EVENT_ACTORS) return;
+        try
+        {
+            nint resolveAddr = baseAddr + (nint)EVENT_RESOLVE_ACTOR_RVA;
+            nint getSlotAddr = baseAddr + (nint)EVENT_GET_ACTOR_SLOT_RVA;
+            _eventResolveActorHook = _hooks!.CreateHook<EventResolveActorDelegate>(EventResolveActorImpl, resolveAddr).Activate();
+            _eventGetActorSlotHook = _hooks!.CreateHook<EventGetActorSlotDelegate>(EventGetActorSlotImpl, getSlotAddr).Activate();
+            TraceLog($"[event-actor] diagnostic hooks ON resolve=0x{resolveAddr:X} getSlot=0x{getSlotAddr:X} create=OFF");
+        }
+        catch (Exception ex)
+        {
+            Log($"ERROR: event actor diagnostic hooks failed: {ex.Message}");
+        }
+    }
+
+    private void InstallTransitionIntoBattleTraceHook(nint baseAddr)
+    {
+        if (!DIAG_TRACE_TRANSITION_INTO_BATTLE) return;
+
+        _scanner!.AddMainModuleScan(SIG_TRANSITION_INTO_BATTLE_CALL, result =>
+        {
+            if (!result.Found)
+            {
+                Log("ERROR: TransitionIntoBattle call signature NOT found.");
+                return;
+            }
+
+            try
+            {
+                nint callSite = baseAddr + result.Offset;
+                int rel = Marshal.ReadInt32(callSite + 1);
+                nint target = callSite + 5 + rel;
+                _transitionIntoBattleHook = _hooks!.CreateHook<TransitionIntoBattleDelegate>(TransitionIntoBattleImpl, target).Activate();
+                TraceLog($"[transition] hook ON callSite=0x{callSite:X} target=0x{target:X} rel=0x{rel:X}");
+            }
+            catch (Exception ex)
+            {
+                Log($"ERROR: TransitionIntoBattle hook failed: {ex.Message}");
+            }
+        });
+    }
+
+    private long TransitionIntoBattleImpl(long a1, long a2, long a3, long a4)
+    {
+        long ret = _transitionIntoBattleHook!.OriginalFunction(a1, a2, a3, a4);
+        int count = System.Threading.Interlocked.Increment(ref _transitionIntoBattleFireCount);
+        TraceLog($"[transition] fired count={count} ret=0x{ret:X} a1=0x{a1:X} a2=0x{a2:X} a3=0x{a3:X} a4=0x{a4:X}");
+        return ret;
+    }
+
+    private bool ShouldTraceEventActors()
+    {
+        return DIAG_TRACE_EVENT_ACTORS &&
+               (DateTime.UtcNow - _lastMerchantDorterEntdTraceUtc).TotalSeconds <= 120;
+    }
+
+    private static bool IsInterestingEventActor(int value) => value >= 0x80 && value <= 0x8F;
+
+    private unsafe nint EventResolveActorImpl(int unitId, int* statusOut)
+    {
+        nint result = _eventResolveActorHook!.OriginalFunction(unitId, statusOut);
+        if (ShouldTraceEventActors() && IsInterestingEventActor(unitId))
+        {
+            int status = statusOut == null ? int.MinValue : *statusOut;
+            TraceLog($"[event-actor] resolve unit=0x{unitId:X2} status={status} ptr=0x{result:X}");
+        }
+        return result;
+    }
+
+    private int EventGetActorSlotImpl(int actorIndex)
+    {
+        int result = _eventGetActorSlotHook!.OriginalFunction(actorIndex);
+        if (ShouldTraceEventActors() && actorIndex >= 0 && actorIndex <= 0x14)
+            TraceLog($"[event-actor] get-slot actorIndex={actorIndex} -> {result}");
+        return result;
     }
 
     /// <summary>Load every embedded modded ENTD (entd\battle_entdN_ent.bin) into the index map.</summary>
@@ -474,6 +595,113 @@ public class Program : IMod
         }
         if (_moddedEntd.Count == 0) Log("[init] WARNING: no modded ENTD embedded; will pass through vanilla.");
     }
+
+    private void StartModloaderFileRegistrationTrace()
+    {
+        if (!DIAG_TRACE_MODLOADER_FILE_REGISTRATION) return;
+
+        new System.Threading.Thread(() =>
+        {
+            int[] delaysMs = { 1000, 4000, 9000 };
+            int elapsedMs = 0;
+            for (int i = 0; i < delaysMs.Length; i++)
+            {
+                int sleepMs = Math.Max(0, delaysMs[i] - elapsedMs);
+                if (sleepMs > 0) System.Threading.Thread.Sleep(sleepMs);
+                elapsedMs = delaysMs[i];
+                TraceModloaderFileRegistration(i + 1);
+            }
+        })
+        { IsBackground = true, Name = "ngplus-modloader-file-registration-trace" }.Start();
+    }
+
+    private void TraceModloaderFileRegistration(int attempt)
+    {
+        string[] targets = { "script/enhanced/event119.e", "script/enhanced/event298.e" };
+        try
+        {
+            IFFTOModPackManager? packMgr = null;
+            var ctrl = _modLoader.GetController<IFFTOModPackManager>();
+            if (ctrl is null || !ctrl.TryGetTarget(out packMgr) || packMgr is null)
+            {
+                TraceLog($"[modloader-files] attempt={attempt} IFFTOModPackManager unavailable");
+                return;
+            }
+
+            bool baseExists = false;
+            string baseExistsNote = "";
+            try
+            {
+                baseExists = targets.All(target => packMgr.FileExists(packMgr.GameMode, target));
+            }
+            catch (Exception ex)
+            {
+                baseExistsNote = $" baseExistsError={ex.GetType().Name}:{ex.Message}";
+            }
+
+            int totalFiles = 0;
+            int scriptFiles = 0;
+            var matches = targets.ToDictionary(target => target, _ => new List<string>());
+            try
+            {
+                foreach (var kv in packMgr.ModdedFiles)
+                {
+                    totalFiles++;
+                    var file = kv.Value;
+                    string key = kv.Key ?? "";
+                    string gamePath = file.GamePath ?? "";
+                    string localPath = file.LocalPath ?? "";
+                    string owner = file.ModIdOwner ?? "";
+                    string mode = Convert.ToString(file.GameMode) ?? "";
+
+                    if (LooksLikeScriptPath(key) || LooksLikeScriptPath(gamePath) || LooksLikeScriptPath(localPath))
+                        scriptFiles++;
+
+                    foreach (string target in targets)
+                    {
+                        if (PathLooksLikeTarget(key, target) || PathLooksLikeTarget(gamePath, target) || PathLooksLikeTarget(localPath, target))
+                            matches[target].Add($"key={key} owner={owner} mode={mode} game={gamePath} local={localPath}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                foreach (string target in targets)
+                    matches[target].Add($"moddedFilesError={ex.GetType().Name}:{ex.Message}");
+            }
+
+            string matchSummary = string.Join(" ", targets.Select(target => $"{Path.GetFileNameWithoutExtension(target)}Matches={matches[target].Count}"));
+            TraceLog($"[modloader-files] attempt={attempt} initialized={packMgr.Initialized} mode={packMgr.GameMode} baseExistsAll={baseExists}{baseExistsNote} total={totalFiles} scripts={scriptFiles} {matchSummary} temp={packMgr.TempFolder} data={packMgr.DataDirectory}");
+            foreach (string target in targets)
+                foreach (string match in matches[target].Take(8))
+                    TraceLog($"[modloader-files] {Path.GetFileNameWithoutExtension(target)} {match}");
+        }
+        catch (Exception ex)
+        {
+            TraceLog($"[modloader-files] attempt={attempt} error {ex.GetType().Name}: {ex.Message}");
+        }
+    }
+
+    private static bool LooksLikeScriptPath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        string norm = NormalizeModPath(path);
+        return norm.Contains("/script/", StringComparison.OrdinalIgnoreCase)
+            || norm.StartsWith("script/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool PathLooksLikeTarget(string? path, string target)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        string norm = NormalizeModPath(path);
+        string fileName = Path.GetFileName(target);
+        return norm.Contains(fileName, StringComparison.OrdinalIgnoreCase)
+            || norm.Equals(target, StringComparison.OrdinalIgnoreCase)
+            || norm.EndsWith("/" + target, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string NormalizeModPath(string path)
+        => path.Replace('\\', '/').TrimStart('/');
 
     /// <summary>
     /// Force every guest slot (charId in GuestCharIds) to party level (LEVEL_PARTY) and player
@@ -514,6 +742,59 @@ public class Program : IMod
 
     private static bool IsValidEntdSlice(long sectorOffset, long size)
         => sectorOffset >= 0 && size > 0 && sectorOffset <= ENTD_FILE_SIZE && size <= ENTD_FILE_SIZE - sectorOffset;
+
+    private unsafe void TraceMerchantDorterEntd(
+        void* buffer,
+        long size,
+        int fileIndex,
+        long sectorOffset,
+        bool isNgPlus,
+        bool haveMod,
+        bool fullRead)
+    {
+        if (!DIAG_TRACE_MERCHANT_DORTER_ENTD) return;
+        if (fileIndex != MERCHANT_DORTER_FILE_INDEX) return;
+
+        long entryOffset = (MERCHANT_DORTER_ENTRY - 384L) * 16L * SLOT_SIZE;
+        long entryEnd = entryOffset + 16L * SLOT_SIZE;
+        long readEnd = sectorOffset + size;
+        if (entryOffset >= readEnd || entryEnd <= sectorOffset) return;
+
+        _lastMerchantDorterEntdTraceUtc = DateTime.UtcNow;
+        if (DIAG_TRACE_MERCHANT_ACTOR_TABLE)
+            System.Threading.Volatile.Write(ref _merchantActorTableProbeUntilTicks, DateTime.UtcNow.AddSeconds(45).Ticks);
+        if (DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8)
+            System.Threading.Interlocked.Exchange(ref _merchantA9ActivationAttempted, 0);
+
+        byte* p = (byte*)buffer;
+        var sb = new System.Text.StringBuilder();
+        sb.Append($"[merchant-entd] file={fileIndex} off=0x{sectorOffset:X} size=0x{size:X} ");
+        sb.Append($"full={fullRead} NG+={isNgPlus} haveMod={haveMod} entry={MERCHANT_DORTER_ENTRY}");
+
+        for (int slot = 0; slot <= 9; slot++)
+        {
+            long slotOffset = entryOffset + slot * SLOT_SIZE;
+            if (slotOffset < sectorOffset || slotOffset + SLOT_SIZE > readEnd)
+            {
+                sb.Append($" | s{slot}=not-covered");
+                continue;
+            }
+
+            byte cid = p[slotOffset - sectorOffset + SLOT_CHARID];
+            byte lvl = p[slotOffset - sectorOffset + SLOT_LEVEL];
+            byte jobUnlock = p[slotOffset - sectorOffset + SLOT_JOB_UNLOCK];
+            byte jobLevel = p[slotOffset - sectorOffset + SLOT_JOB_LEVEL];
+            byte job = p[slotOffset - sectorOffset + SLOT_JOB];
+            byte flags = p[slotOffset - sectorOffset + SLOT_CONTROL_FLAGS];
+            byte formation = p[slotOffset - sectorOffset + 0x19];
+            byte uid = p[slotOffset - sectorOffset + 0x20];
+
+            sb.Append($" | s{slot}:cid=0x{cid:X2} lvl={lvl} ju={jobUnlock} jl={jobLevel} job={job} ");
+            sb.Append($"flags=0x{flags:X2} form=0x{formation:X2} uid=0x{uid:X2}");
+        }
+
+        TraceLog(sb.ToString());
+    }
 
     private static unsafe bool TryReadEntdByte(byte* buffer, long size, long sectorOffset, byte[]? reference, long absoluteOffset, out byte value)
     {
@@ -732,6 +1013,115 @@ public class Program : IMod
         catch { return 0; }
     }
 
+    private void MerchantActorTableProbeLoop()
+    {
+        string lastSnapshot = "";
+        while (true)
+        {
+            System.Threading.Thread.Sleep(250);
+            long untilTicks = System.Threading.Volatile.Read(ref _merchantActorTableProbeUntilTicks);
+            if (untilTicks <= DateTime.UtcNow.Ticks) continue;
+
+            try
+            {
+                if (DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8)
+                    TryActivateMerchantA9AfterA8();
+
+                string snapshot = BuildMerchantActorTableSnapshot();
+                if (snapshot.Length > 0 && snapshot != lastSnapshot)
+                {
+                    TraceLog(snapshot);
+                    lastSnapshot = snapshot;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceLog($"[merchant-actor-table] probe error: {ex.Message}");
+                System.Threading.Volatile.Write(ref _merchantActorTableProbeUntilTicks, 0);
+            }
+        }
+    }
+
+    private void TryActivateMerchantA9AfterA8()
+    {
+        if (System.Threading.Volatile.Read(ref _merchantA9ActivationAttempted) != 0) return;
+
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        int readable = ReadableExtent(table, length);
+        if (readable < length) return;
+
+        nint a8 = table + 8 * ACTOR_TABLE_ENTRY_SIZE;
+        nint a9 = table + 9 * ACTOR_TABLE_ENTRY_SIZE;
+
+        byte a8Uid = SafeReadByte(a8 + ACTOR_UNIT_ID_OFFSET);
+        byte a9Uid = SafeReadByte(a9 + ACTOR_UNIT_ID_OFFSET);
+        if (a8Uid != 0x85 || a9Uid != 0x86) return;
+
+        byte a8State = SafeReadByte(a8 + 0x01);
+        byte a8Aux = SafeReadByte(a8 + 0x1B5);
+        byte a9State = SafeReadByte(a9 + 0x01);
+        byte a9Aux = SafeReadByte(a9 + 0x1B5);
+        if (a8State != 0x08 || a8Aux != 0x01 || a9State != 0xFF || a9Aux != 0x00) return;
+
+        if (System.Threading.Interlocked.CompareExchange(ref _merchantA9ActivationAttempted, 1, 0) != 0) return;
+
+        try
+        {
+            Marshal.WriteByte(a9 + 0x01, 0x09);
+            Marshal.WriteByte(a9 + 0x1B5, 0x01);
+
+            byte postState = SafeReadByte(a9 + 0x01);
+            byte postAux = SafeReadByte(a9 + 0x1B5);
+            TraceLog($"[merchant-activate-a9] wrote table=0x{table:X} a8=st0x{a8State:X2}/aux0x{a8Aux:X2} a9 0x01:0x{a9State:X2}->0x{postState:X2} 0x1B5:0x{a9Aux:X2}->0x{postAux:X2}");
+        }
+        catch (Exception ex)
+        {
+            TraceLog($"[merchant-activate-a9] write failed: {ex.Message}");
+        }
+    }
+
+    private string BuildMerchantActorTableSnapshot()
+    {
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        int readable = ReadableExtent(table, length);
+        if (readable < length)
+            return $"[merchant-actor-table] unreadable table=0x{table:X} readable=0x{readable:X}/0x{length:X}";
+
+        byte[] data = new byte[length];
+        Marshal.Copy(table, data, 0, length);
+
+        var sb = new System.Text.StringBuilder();
+        int interesting = 0;
+        bool has86 = false;
+        bool has87 = false;
+        sb.Append($"[merchant-actor-table] table=0x{table:X}");
+
+        for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+        {
+            int b = i * ACTOR_TABLE_ENTRY_SIZE;
+            byte uid = data[b + ACTOR_UNIT_ID_OFFSET];
+            byte state = data[b + 0x01];
+            if (uid == 0x86) has86 = true;
+            if (uid == 0x87) has87 = true;
+
+            bool nonEmpty = state != 0x00 || uid != 0x00;
+            bool focus = uid >= 0x80 && uid <= 0x8F;
+            if (!nonEmpty && !focus && i > 10) continue;
+
+            interesting++;
+            sb.Append($" | a{i}:uid=0x{uid:X2} st=0x{state:X2}");
+            sb.Append($" b0=0x{data[b + 0x00]:X2} f61=0x{data[b + 0x61]:X2} f62=0x{data[b + 0x62]:X2}");
+            sb.Append($" c4f=0x{data[b + 0x4F]:X2} c50=0x{data[b + 0x50]:X2} c51=0x{data[b + 0x51]:X2}");
+            sb.Append($" p18f=0x{data[b + 0x18F]:X2} p190=0x{data[b + 0x190]:X2}");
+            sb.Append($" aux1b5=0x{data[b + 0x1B5]:X2}");
+        }
+
+        sb.Append($" | interesting={interesting} has86={has86} has87={has87}");
+        return sb.ToString();
+    }
+
     /// <summary>Decode the live autosave (non-locking) and read the NG+ flag (byte 0x3F).</summary>
     private void DetectNgPlus()
     {
@@ -792,6 +1182,21 @@ public class Program : IMod
     }
 
     private void Log(string msg) => _logger.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [{_modConfig.ModId}] {msg}");
+
+    private void TraceLog(string msg)
+    {
+        Log(msg);
+        try
+        {
+            string dir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule!.FileName!)!;
+            File.AppendAllText(Path.Combine(dir, "ngplus_battletrace.log"),
+                $"[{DateTime.Now:HH:mm:ss.fff}] [{_modConfig.ModId}] {msg}{Environment.NewLine}");
+        }
+        catch
+        {
+            // Reloaded logger already received the line; file logging is best-effort only.
+        }
+    }
 
     // ---- SPOILS PROBE IMPLEMENTATION (DEBUG, observe-only) ----
 
