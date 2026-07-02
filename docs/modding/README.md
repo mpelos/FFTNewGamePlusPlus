@@ -23,6 +23,7 @@ and not durable documentation.
 | [06-job-swap-fallback-and-battle-inventory.md](06-job-swap-fallback-and-battle-inventory.md) | The job-swap technique (re-theming an existing slot), plain new ENTD slots for static rosters, and the current inventory of battles that want an extra body. |
 | [07-diagnostics-and-logging.md](07-diagnostics-and-logging.md) | How to temporarily enable the project's diagnostic logs and Reloaded-II file-access logging, where to read the logs, and when to turn each signal back off. |
 | [08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md) | The Zeirchele Falls technique for adding a new enemy to a static roster whose high ENTD slot is ignored until `OverrideEntryData` and `root.nxl` are expanded. |
+| [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md) | The per-battle unique-spritesheet budget: the palette-corruption symptom, what counts against the budget, the `tools/sprite_budget.py` pre-playtest analyzer, design mitigations, and the future path to raising the engine limit. |
 
 ## State of the world
 
@@ -47,6 +48,13 @@ slot, use the Zeirchele formation-gated static recipe in
 That path is still a static-roster solution: it expands the NXD formation layer and does not use
 event-script choreography or `AddUnit` registration.
 
+One constraint cuts across all of these techniques: the per-battle **sprite-sheet budget**
+([09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)). Any edit that makes a battle need a
+spritesheet it did not already load — a new generic job, a new named unit — spends budget, and going
+over corrupts the sprite/portrait of the last-allocated unit (typically an event-added guest) while
+leaving it fully functional. The validated design rule is net +1 unique sheet over vanilla per
+battle; check with `python tools/sprite_budget.py <entry>` before playtesting.
+
 ## Technique selection quick reference
 
 | Situation | Use | Why |
@@ -58,3 +66,4 @@ event-script choreography or `AddUnit` registration.
 | Event-scripted wave, true enemy-count increase | Full three-layer event-spawned recipe | The new unit needs an ENTD slot, a copied/retargeted choreography block, and a matching `AddUnit` registration entry in the script actually loaded at the wave trigger. |
 | Unsure which `.e` file drives a wave | Temporary Reloaded-II file-access logging | NXD joins can point at a real but irrelevant script; the runtime file-open log is the reliable source. |
 | Need only a decorative cutscene sprite, not a combatant | `AddGhostUnit`/presentation-layer work | `AddGhostUnit` creates a display entity, not a targetable unit with turns, HP, AI, or victory-condition participation. |
+| A unit renders with palette-garbage sprite/portrait but plays normally | Sprite-sheet budget check (`tools/sprite_budget.py`) | The battle exceeds its unique-spritesheet budget; reduce or reuse sheets — see [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md). |

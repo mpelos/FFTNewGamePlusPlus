@@ -38,6 +38,11 @@ Job-swap deliberately leaves alone:
 - **Character id and unit id** — the slot keeps its original identifiers; only the job/equipment/
   level fields layered on top of them change.
 
+One caveat applies even to job-swap: if the new job is a spritesheet the battle does not already
+load, the swap consumes one unit of the battle's sprite-sheet budget exactly like a slot-add would
+(see [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)). The swap itself is still safe — the
+budget constrains which JOB to pick, not the technique.
+
 This is what makes job-swap safe in every case: it is a pure ENTD-byte edit confined to a single
 slot's existing fields. It never touches the event-script/activation layer — no choreography block,
 no `AddUnit`-family registration entry, no interaction with the two-stage actor-activation model.
@@ -66,7 +71,9 @@ Plain slot-add deliberately does **not** add event-script records:
   formation.
 
 The main checks are local to the ENTD and the map: free slot, free UnitID, legal job/equipment,
-enemy-side flags, non-overlapping coordinates, and a visual test that the unit renders correctly.
+enemy-side flags, non-overlapping coordinates, the sprite-sheet budget
+([09-sprite-sheet-budget.md](09-sprite-sheet-budget.md) — run `tools/sprite_budget.py` before
+picking the new unit's job), and a visual test that the unit renders correctly.
 If the battle has a pre-battle tactical-view intro, also check the sprite preload behavior described
 in [05-ruled-out-techniques.md](05-ruled-out-techniques.md#a-static-always-present-extra-entd-slot).
 For a fully static battle this is still much simpler than the event-spawned recipe; the extra
@@ -106,8 +113,11 @@ Job-swap is the technique used for every unit-identity change shipped across thi
 implemented battles to date except explicit enemy-count increases: Merchant Dorter's 7th-enemy Knight, which was delivered as a
 genuine new ENTD slot via the three-layer event-spawned-enemy recipe once that recipe was worked out
 (see [04-adding-event-spawned-enemies.md](04-adding-event-spawned-enemies.md)), and Zeirchele Falls's
-7th-enemy White Mage, which was delivered through the formation-gated static recipe (see
-[08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md)). Every other
+7th enemy, which was delivered through the formation-gated static recipe (see
+[08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md)) — the
+added slot is a Knight (reusing an already-loaded sheet) while the battle's new job, the White Mage
+field medic, is a job-swap of vanilla slot `s7`, a split forced by the sprite-sheet budget
+([09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)). Every other
 implemented battle that escalated, re-cast, or re-themed a unit's identity — across all four chapters
 — did so by re-tuning an existing slot rather than adding one. Examples include Mount Germinas's "2nd
 Ninja," Poeskas Lake's "2nd Mystic," Fort Besselat Sluice's "Time Mage," and Dugeura Pass's "Time
@@ -131,17 +141,19 @@ event-script bytes the way Merchant Dorter's was.
 | Merchant Dorter (Ch2 opener, `012`) | Yes — Knight captain, 7th enemy | Yes — `event119.e` delayed wave | Event-spawned-enemy recipe (`04`). Implemented: ENTD slot `s9`/uid `0x86` + retargeted choreography block + `45 86 00 01` registration entry. |
 | Balias Swale (Ch2, `019`) | Yes — Geomancer, 7th enemy | No — fully static roster | Plain new ENTD slot. Implemented in entry `413`, slot `s7`, UnitID `0x86`. |
 | Araguay Woods (Ch2, `013`) | Yes — Coeurl, 7th monster; vanilla monster tiers promoted | No — fully static roster | Plain new ENTD slot. Implemented in entry `404`, slot `s9`, UnitID `0x87`. |
-| Zeirchele Falls (Ch2, `014`) | Yes — White Mage field medic, 7th enemy | Formation-gated static roster; high-slot `s11` requires an `OverrideEntryData` row | Formation-gated static slot-add (`08`). Implemented in entry `405`, slot `s11`, UnitID `0x87`; `OverrideEntryData` row `405/11` added; vanilla corpse placeholders `s2/s3` remain untouched. |
+| Zeirchele Falls (Ch2, `014`) | Yes — 7th enemy (Knight), plus a White Mage field medic via job-swap of `s7` | Formation-gated static roster; high-slot `s11` requires an `OverrideEntryData` row | Formation-gated static slot-add (`08`) + job-swap. Implemented in entry `405`: slot `s11`/UnitID `0x87` is a Knight (sheet reuse forced by the sprite-sheet budget, `09`); `OverrideEntryData` row `405/11` added; vanilla corpse placeholders `s2/s3` untouched. |
 | Balias Tor (Ch2, `016`) | Yes — Chemist, 7th enemy (tagged "(NEW)" in the composition table) | No — fully static roster | Plain new ENTD slot. Implemented in entry `409`, slot `s8`, UnitID `0x86`. |
 | Tchigolith Fenlands (Ch2, `017`) | Yes — 2nd Bonesnatch, 8th monster | No — fully static roster (the in-combat teleport some enemies use is movement, not a scripted arrival) | Plain new ENTD slot. Implemented in entry `410`, slot `s9`, UnitID `0x86`. |
 
 Most non-Merchant entries are Chapter 2 battles implemented with plain ENTD slot-adds. Zeirchele is
 the exception: the battle is not a delayed wave like Merchant Dorter, but its `OverrideEntryData`
 rows originally ended at `s10`, so an ENTD-only `s11` add was ignored. The working path keeps the
-vanilla intro corpse placeholders (`s2/s3`) untouched, adds the White Mage in `s11`, and adds a
-matching `OverrideEntryData` `Key=405, Key2=11` row while moving Zeirchele's end marker
-`Unknown9C=150` from `s10` to `s11`. Merchant Dorter remains the only entry in this table whose
-roster delivery is event-scripted and needs the full three-layer recipe.
+vanilla intro corpse placeholders (`s2/s3`) untouched, adds a Knight in `s11` (sheet reuse — see
+[09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)), job-swaps the White Mage into vanilla slot
+`s7`, and adds a matching `OverrideEntryData` `Key=405, Key2=11` row shaped like the battle's
+active-enemy rows, leaving all vanilla rows (including their `Unknown9C` values) untouched. Merchant
+Dorter remains the only entry in this table whose roster delivery is event-scripted and needs the
+full three-layer recipe.
 
 ### Battles with dormant placeholder slots (excluded from the table above)
 

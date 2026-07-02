@@ -386,6 +386,17 @@ s11 White Mage  L101 jl8  R Mana Shield  S Defense Boost  M +1  Mage Hat / Lumin
 `OverrideEntryData` end marker from `s10` to a new `s11` row, mirroring the proven Merchant Dorter
 slot-add marker pattern.
 
+Placement polish after the first successful in-game test:
+
+```text
+s7  Knight      moved to (3,9)
+s8  Archer      moved to (5,9), swapping with the high-left Knight near the stone
+s11 White Mage  moved to (6,8), two tiles on the side axis toward the mountain-edge high ground
+```
+
+Playtest correction: `(4,6)` was rejected because it moved the White Mage toward the water instead
+of toward the mountain. The corrected high-ground test coordinate is `(6,8)`.
+
 ## V2 Implementation Checklist
 
 - [x] Identify Zeirchele ENTD entry (405); fill "Local Data Confirmed".

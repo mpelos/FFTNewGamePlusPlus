@@ -28,6 +28,11 @@ def field(data: bytes, entry: int, slot_no: int, offset: int) -> int:
     return slot(data, entry, slot_no)[offset]
 
 
+def field16(data: bytes, entry: int, slot_no: int, offset: int) -> int:
+    row = slot(data, entry, slot_no)
+    return int.from_bytes(row[offset : offset + 2], "little")
+
+
 def roster(data: bytes, entry: int, slots: list[int], offset: int) -> list[int]:
     return [field(data, entry, slot_no, offset) for slot_no in slots]
 
@@ -90,8 +95,13 @@ def run() -> int:
     check("404 roster levels", roster(entd, 404, [1, 2, 3, 4, 5, 6, 9], 0x03) == [100, 100, 101, 102, 100, 100, 101])
     check("405 intro corpse s2 untouched", slot(entd, 405, 2) == slot(vanilla, 405, 2))
     check("405 intro corpse s3 untouched", slot(entd, 405, 3) == slot(vanilla, 405, 3))
-    check("405 white mage slot s11 uid 0x87", field(entd, 405, 11, 0x0A) == 79 and field(entd, 405, 11, 0x20) == 0x87)
-    check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 100, 101, 101])
+    check("405 white mage low slot s7", field(entd, 405, 7, 0x0A) == 79 and field(entd, 405, 7, 0x20) == 0x85)
+    check("405 extra knight slot s11 uid 0x87", field(entd, 405, 11, 0x0A) == 76 and field(entd, 405, 11, 0x20) == 0x87)
+    check("405 single new sheet: s8 reverted to Knight", field(entd, 405, 8, 0x0A) == 76)
+    check("405 s8 crossbow-knight kit", field16(entd, 405, 8, 0x0C) == 449 and field16(entd, 405, 8, 0x0E) == 469 and field16(entd, 405, 8, 0x10) == 486 and roster(entd, 405, [8], 0x12) == [154] and roster(entd, 405, [8], 0x13) == [184] and roster(entd, 405, [8], 0x14) == [218] and roster(entd, 405, [8], 0x15) == [82] and roster(entd, 405, [8], 0x16) == [139])
+    check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 101, 101, 100])
+    check("405 knight/extra-knight placement polish", (field(entd, 405, 8, 0x19), field(entd, 405, 8, 0x1A), field(entd, 405, 11, 0x19), field(entd, 405, 11, 0x1A)) == (5, 9, 3, 9))
+    check("405 white mage high-ground placement", (field(entd, 405, 7, 0x19), field(entd, 405, 7, 0x1A)) == (6, 8))
     check("405 OverrideEntryData row count updated for s11", "overrideentrydata,96,518,3" in root_nxl)
     check("407 second dragoon", field(entd, 407, 8, 0x0A) == 87 and field(entd, 407, 8, 0x20) == 0x86)
     check("407 levels", roster(entd, 407, [1, 2, 3, 4, 5, 6, 8], 0x03) == [101, 102, 101, 102, 101, 100, 101])

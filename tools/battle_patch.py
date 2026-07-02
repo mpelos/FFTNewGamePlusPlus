@@ -151,6 +151,11 @@ def set_player_control(data, global_entry, slot):
     data[b + CONTROL_OFFSET] |= PLAYER_CONTROL_BIT
 
 
+def set_control_flags(data, global_entry, slot, flags):
+    b = (global_entry % 128) * ENTRY + slot * SLOT
+    data[b + CONTROL_OFFSET] = flags
+
+
 def clone_slot(data, global_entry, src_slot, dst_slot, *, unitid, x=None, y=None, facing=None,
                clear_spoil=True):
     base = (global_entry % 128) * ENTRY
@@ -166,6 +171,16 @@ def clone_slot(data, global_entry, src_slot, dst_slot, *, unitid, x=None, y=None
         data[dst + 0x1B] = facing
     if clear_spoil:
         data[dst + SPOILS_OFFSET] = 0
+
+
+def set_position(data, global_entry, slot, *, x=None, y=None, facing=None):
+    b = (global_entry % 128) * ENTRY + slot * SLOT
+    if x is not None:
+        data[b + 0x19] = x
+    if y is not None:
+        data[b + 0x1A] = y
+    if facing is not None:
+        data[b + 0x1B] = facing
 
 
 def restore_vanilla_slot(data, global_entry, slot):
@@ -540,8 +555,12 @@ def araguay(data):
 # Per docs/battles/014-zeirchele-falls.md.
 #   - Gaffgarion's kit is strong but NON-unique and STRIPPABLE (Runeblade) — the canonical
 #     strip-his-gear counter survives; his rare drop is reserved for Lionel Gate (doc 021).
-#   - ESCALATION uses a job-swap (s8 Knight -> Archer) plus a formation-gated static slot-add
-#     (s11 White Mage) so the player must manage line of sight and sustain, not just block the bridge.
+#   - ESCALATION: one vanilla active Knight slot (s7) becomes the White Mage sustain target and the
+#     formation-gated static slot-add (s11) supplies an extra Knight body. The Archer escalation was
+#     dropped: Zeirchele's non-player side already carries 4 special sprites (2x Gaffgarion 0x05+0x17,
+#     Agrias 0x34, Ovelia 0x0C) plus the Knight sheet, and adding TWO new generic sheets (Archer +
+#     White Mage) with full 4-player deployment corrupts Agrias's sprite/palette. One new sheet
+#     matches the +1-sheet pattern of every other Ch2 battle that passed playtest clean.
 #   - PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit). Do NOT scale s2/s3:
 #     they are intro corpse placeholders, not active enemies.
 def zeirchele(data):
@@ -550,18 +569,26 @@ def zeirchele(data):
     set_slot(data, E, 0, level=103, joblevel=8, brave=82, faith=60,
              reaction=COUNTER, support=ATK_BOOST, movement=MV1,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    # 4 Knights: s4 L101 (lead), s5 L101, s6 L100, s7 L100 — the wall that drives at Ovelia.
-    for s, lvl in ((4, 102), (5, 101), (6, 101), (7, 100)):
+    # 3 vanilla-slot melee Knights: s4 captain L102, s5/s6 L101. The 5th Knight is the added s11 below.
+    for s, lvl in ((4, 102), (5, 101), (6, 101)):
         set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT, secondary=0,
                  brave=76, faith=48,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    # ESCALATION (job swap): s8 Knight -> Archer L101 — ranged pressure on Ovelia's line of sight.
-    set_slot(data, E, 8, level=101, jobrank=generic_job_rank(ARCHER), joblevel=8,
-             job=ARCHER, secondary=0,
-             brave=74, faith=50,
+    # s8 was the Archer before the sprite-budget fix. Keep the Knight sheet, but restore the ranged
+    # role with an ENTD-forced crossbow kit: best buyable crossbow + Archer-style R/S/M.
+    set_slot(data, E, 8, level=101, jobrank=generic_job_rank(KNIGHT), joblevel=8,
+             job=KNIGHT, secondary=0, brave=74, faith=50,
              reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+             head=HEAVY_HELM, body=MIRROR_MAIL, acc=BRACERS, rh=GASTROPHETES, lh=CRYSTAL_SHIELD)
+    # Field Medic — the ONLY new generic sprite sheet in this battle (see escalation note above).
+    set_slot(data, E, 7, level=101, jobrank=generic_job_rank(WMAGE), joblevel=8,
+             job=WMAGE, secondary=0, brave=55, faith=76,
+             reaction=MANA_SHIELD, support=DEFENSE_BOOST, movement=MV1,
+             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
+    # Placement polish: White Mage on high-ground mountain start; s8 Knight keeps the high-left line.
+    set_position(data, E, 7, x=6, y=8, facing=0)
+    set_position(data, E, 8, x=5, y=9, facing=0)
     # Ovelia (VIP ally s1, job 12 == cid 0x0c; runtime guest-scaler gives PARTY LEVEL — do NOT set
     # level/job). Her death = Game Over. She is a NAMED GUEST: the engine sources her command +
     # reaction/support/movement from her JOB TEMPLATE, not from the ENTD R/S/M bytes (those are ignored
@@ -582,14 +609,20 @@ def zeirchele(data):
     restore_vanilla_slot(data, E, 2)
     restore_vanilla_slot(data, E, 3)
 
-    # Field Medic — true 7th enemy in s11/uid 0x87. Zeirchele also needs an OverrideEntryData row
-    # for Key=405/Key2=11 with the end marker moved from s10 to s11; otherwise the high-slot ENTD
-    # data is valid but not materialized by this battle's formation layer.
-    clone_slot(data, E, 8, 11, unitid=0x87, x=4, y=8, facing=0)
-    set_slot(data, E, 11, level=101, jobrank=generic_job_rank(WMAGE), joblevel=8,
-             job=WMAGE, secondary=0, brave=55, faith=76,
-             reaction=MANA_SHIELD, support=DEFENSE_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
+    # 5th Knight — true 7th enemy in s11/uid 0x87. Zeirchele also needs an OverrideEntryData row
+    # for Key=405/Key2=11 (shaped like the battle's active-enemy rows, Unknown64=[60,60,60]);
+    # otherwise the high-slot ENTD data is valid but not materialized by this battle's formation
+    # layer. (Unknown9C is NOT an end marker — vanilla keeps 150 on s10 and the s11 row uses 0 like
+    # every combat knight row; verified in-game.)
+    # Use a Knight here because the Knight sprite already exists in the vanilla battle. Program.cs
+    # currently runs a targeted diagnostic that temporarily suppresses uid 0x87 during the intro
+    # actor peak; do not remove story actors from event129.e.
+    clone_slot(data, E, 4, 11, unitid=0x87, x=3, y=9, facing=0)
+    set_control_flags(data, E, 11, 0x90)
+    set_slot(data, E, 11, level=100, jobrank=generic_job_rank(KNIGHT), joblevel=8,
+             job=KNIGHT, secondary=0, brave=76, faith=48,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
 
     set_slot(data, E, 1, brave=61, faith=78, head=GOLD_HAIRPIN, body=LIGHT_ROBE,
              acc=SORTILEGE, rh=GOLDEN_STAFF)

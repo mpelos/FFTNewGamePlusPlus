@@ -97,6 +97,11 @@ Use project diagnostics for these questions:
 | Did an event-spawned unit activate or remain dormant? | Actor-table state (`st`) and activation flag (`aux1b5`) |
 | Did choreography run without activation? | Actor-table position fields (`c4f`/`c50`) changed while `st=0xFF` |
 | Is a safe once-per-battle native hook firing? | Transition-into-battle trace |
+| What are a specific battle's ENTD bytes before/after the guest-scaling pass, and its live actor states? | Targeted battle trace (`DIAG_TRACE_ZEIRCHELE_ENTD` pattern: ENTD slot dump on read + a time-boxed observe-only actor-table probe) |
+
+The targeted-battle trace pattern carries a `variant=` label in every log line; the label is
+compiled into the DLL, so after data-only (loose-file) changes the logs keep reporting the label of
+the last DLL build, not the current experiment.
 
 After changing `Program.cs`, rebuild and deploy the DLL before expecting the switch to affect the
 game. If `FFT_enhanced.exe` is running, Windows will usually lock the deployed DLL under
@@ -109,11 +114,17 @@ These are intentionally not part of normal diagnostics:
 ```csharp
 private static readonly bool DIAG_TRACE_EVENT_ACTORS = false;
 private static readonly bool DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8 = false;
+private static readonly bool DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_INTRO = false;
 ```
 
 `DIAG_TRACE_EVENT_ACTORS` touches the hot event actor/native dispatch neighborhood that has
 reproducibly crashed even under observe-only hooks. `DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8` is a
-mutating experiment, not a passive log. Do not enable either during routine battle work.
+mutating experiment, not a passive log. `DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_INTRO` is a retired
+mutating experiment that temporarily deactivated a unit's actor-table state during the battle
+intro; it proved irrelevant to its target problem (sprite corruption is sheet-budget pressure, see
+[09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)), and suspending an actor before the
+formation screen freezes that unit's idle animation during deployment. Do not enable any of these
+during routine battle work.
 
 ## File-only script overrides
 

@@ -13,7 +13,7 @@ patch is `tools/battle_patch.py`; the patched embedded ENTD is
 |---|---:|---|---|---|
 | `012` Merchant City of Dorter | `403` | `merchant` | ENTD retune + event-spawned slot-add | Knight captain slot `s9` UnitID `0x86`; `event119.e` contains `45 86 00 01` registration and `5f 86 00` choreography block. |
 | `013` Araguay Woods | `404` | `araguay` | ENTD direct scale + plain static slot-add | Boco level/control; roster jobs `98,98,99,99,98,98,104`; Coeurl slot `s9` UnitID `0x87`. |
-| `014` Zeirchele Falls | `405` | `zeirchele` | ENTD retune + NXD row for true static slot-add | White Mage slot `s11` UnitID `0x87`; intro corpses `s2/s3` untouched; `OverrideEntryData` row count `518` with `405/11`; enemy levels applied; Ovelia survival gear/Faith applied. |
+| `014` Zeirchele Falls | `405` | `zeirchele` | ENTD retune + NXD row for true static slot-add | White Mage slot `s11` UnitID `0x87`; intro corpses `s2/s3` untouched; `OverrideEntryData` row count `518` with `405/11`; enemy levels applied; Ovelia survival gear/Faith applied; placement polish checks `s7=(3,9)`, `s8=(5,9)`, `s11=(6,8)`. |
 | `015` Castled City of Zaland | `407` | `zaland` | ENTD retune + plain static slot-add | Second Dragoon slot `s8` UnitID `0x86`; Dragoon/Black Mage/Archer levels and job-rank seeds applied. |
 | `016` Balias Tor | `409` | `balias_tor` | ENTD retune + plain static slot-add | Chemist slot `s8` UnitID `0x86`; Summoner/Knight/Archer levels and support kits applied. |
 | `017` Tchigolith Fenlands | `410` | `tchigolith` | ENTD monster retune + plain static slot-add | Second Bonesnatch slot `s9` UnitID `0x86`; monster jobs and levels applied. |
@@ -47,10 +47,11 @@ Post-patch binary validation was run against
 - Boco player-control bit;
 - Zeirchele's vanilla intro corpse placeholders `s2/s3` remain byte-for-byte untouched;
 - Zeirchele's `root.nxl` `OverrideEntryData` count includes the new `s11` row;
+- Zeirchele's placement polish keeps the Archer/Knight swap and White Mage high-ground coordinate;
 - Lionel Gate Blood Sword equipment;
 - Cuchulainn's 108 Gems/Japa Mala Spoils byte.
 
-Latest local result from `python tools/validate_ch2_v2.py`: `76/76 checks passed`.
+Latest local result from `python tools/validate_ch2_v2.py`: `78/78 checks passed`.
 
 Build/deploy validation:
 

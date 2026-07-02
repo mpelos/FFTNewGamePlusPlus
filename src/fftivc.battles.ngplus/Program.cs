@@ -65,6 +65,9 @@ public class Program : IMod
     private const byte PLAYER_CONTROL_BIT = 0x08;
     private const byte ENEMY_TEAM_BIT = 0x10;
     private const int PROLOGUE_ORBONNE_ENTRY = 387;
+    private const int ZEIRCHELE_FALLS_ENTRY = 405;
+    private const byte ZEIRCHELE_GAFFGARION_ESCORT_CHARID = 0x17;
+    private const byte ZEIRCHELE_AGRIAS_CHARID = 0x34;
 
     // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
     // playthrough harder (the party is low level early, so the guest just matches the team). This
@@ -98,14 +101,13 @@ public class Program : IMod
     // appearances; job==charId guard holds: job 0x24). His tuned ENEMY/BOSS fights use DIFFERENT cids
     // (0x05 Zeirchele betrayer, 0x11 Golgollada/Lionel) which are deliberately NOT in this set, so those
     // stay at their designed ~L103 — per the "keep the bosses strong" decision.
-    // 0x34 and 0x17=Agrias's escort-guest cids in early Chapter 2 (she also uses 0x1e, already handled
-    // above, for her Balias Swale join). 0x17 is a shared/ambiguous guest cid for the Gaffgarion/Agrias
-    // escort party; scaling it is desired whichever it is. Agrias is never a tuned boss, so no boss-cid
-    // collision. (Any incidental enemy form of 0x24/0x34/0x17 the guard catches is untuned and merely
-    // gets pulled to party level = our standard "NG+ enemies at party level" behaviour, never weaker.)
+    // 0x17 is Zeirchele's Gaffgarion escort/story form, not the controllable Agrias guest there.
+    // 0x34 is Agrias's Zeirchele actor and must be player-controlled in that battle only; it is handled
+    // by a targeted exception in ScaleGuestsAlways instead of being added globally, because 0x34 also
+    // appears as recurring story/cutscene slots in other Chapter 2 maps.
     // --- Whole-game guest sweep (Ch2-Ch4 stragglers). Derived by scanning every ENTD slot: a cid is
     // SAFE to add iff it has a guest form (named, job==charId, ally) AND NONE of its enemy appearances
-    // are real combatants (all at level 254 = disabled cutscene actor). That rule, applied across all 4
+    // are real combatants or story-only actors that become visible if promoted. That rule, applied across all 4
     // ENTD files, auto-EXCLUDES every tuned boss (Wiegraf, Elmdor, the 5 Lucavi, Dycedarg, Zalbag,
     // Marach 0x1A, Gaffgarion-boss 0x11, etc.) because bosses always carry real combat levels. Crucially,
     // recruitable characters use SEPARATE cids for their guest vs boss/enemy form, so we scale the guest
@@ -116,7 +118,7 @@ public class Program : IMod
     // doc's "not Mustadio" guest), 0x1F=Beowulf, 0x2A=Meliadoul, 0x32=Cloud, 0x48=Reis.
     private static readonly HashSet<byte> GuestCharIds = new()
     {
-        0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19, 0x24, 0x34, 0x17,
+        0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19, 0x24, 0x17,
         0x0c, 0x0d, 0x16, 0x1f, 0x2a, 0x32, 0x48,
     };
 
@@ -141,6 +143,12 @@ public class Program : IMod
     // Diagnostic: trace Merchant Dorter entry 403 after the ENTD read/swap path. This is observe-only
     // and answers whether slot 9 reaches the final buffer the game receives.
     private static readonly bool DIAG_TRACE_MERCHANT_DORTER_ENTD = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
+    private static readonly bool DIAG_TRACE_ZEIRCHELE_ENTD = true;
+    private const string ZEIRCHELE_DIAG_VARIANT = "no-suspend-clean-v1";
+    // The intro suspension experiment is retired: the Agrias corruption was sprite-sheet budget
+    // (fixed in the ENTD composition — see battle_patch.py zeirchele notes), and suspending the
+    // actor before formation froze its idle animation during the deployment screen.
+    private static readonly bool DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_INTRO = false;
     private static readonly bool DIAG_TRACE_EVENT_ACTORS = false;
     private static readonly bool DIAG_TRACE_MERCHANT_ACTOR_TABLE = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
     private static readonly bool DIAG_TRACE_TRANSITION_INTO_BATTLE = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
@@ -165,9 +173,12 @@ public class Program : IMod
 
     private volatile bool _isNgPlus;
     private DateTime _lastMerchantDorterEntdTraceUtc = DateTime.MinValue;
+    private long _zeircheleActorTableProbeUntilTicks;
     private long _merchantActorTableProbeUntilTicks;
     private int _transitionIntoBattleFireCount;
     private int _merchantA9ActivationAttempted;
+    private int _zeirchele87Suppressed;
+    private int _zeirchele87Restored;
 
     // TEST TOGGLE — set true to force the battle ENTD swap (Layer 1) ON for EVERY save, so the NG+
     // battle reworks can be verified on a normal (non-NG+) Chapter-4 save without grinding a full NG+
@@ -431,6 +442,11 @@ public class Program : IMod
             Log("[merchant-actor-table] observe-only memory probe ENABLED -> ngplus_battletrace.log");
             new System.Threading.Thread(MerchantActorTableProbeLoop) { IsBackground = true, Name = "ngplus-merchant-actor-table-probe" }.Start();
         }
+        if (DIAG_TRACE_ZEIRCHELE_ENTD)
+        {
+            Log($"[zeirchele-diag] targeted ENTD + actor-table diagnostics ENABLED variant={ZEIRCHELE_DIAG_VARIANT} -> ngplus_battletrace.log");
+            new System.Threading.Thread(ZeircheleActorTableProbeLoop) { IsBackground = true, Name = "ngplus-zeirchele-actor-table-probe" }.Start();
+        }
 
     }
 
@@ -486,7 +502,9 @@ public class Program : IMod
             // Layer 2 (ALWAYS except the scripted prologue): scale guests to party level and make allied
             // guest slots controllable. Runs after the swap, so embedded NG++ ENTD and vanilla passthrough
             // both get the same guest policy.
+            if (validSlice) TraceZeircheleEntd("before-scale", outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
             if (validSlice) ScaleGuestsAlways(outputPointer, size, fileIndex, sectorOffset, haveMod ? modded : null);
+            if (validSlice) TraceZeircheleEntd("after-scale", outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
             if (validSlice) TraceMerchantDorterEntd(outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
         }
         return ret;
@@ -724,10 +742,31 @@ public class Program : IMod
             // to Knight), so his designed level stands and a normal playthrough's finale isn't broken.
             if (!TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_CHARID, out byte charId)) continue;
             if (!TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_JOB, out byte job)) continue;
-            bool isKnownGuest = GuestCharIds.Contains(charId) && job == charId;
+            TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_LEVEL, out byte level);
+            TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_CONTROL_FLAGS, out byte flags);
+
+            int slot = (int)((off / SLOT_SIZE) % 16);
+            bool isZeircheleGaffgarionEscortStorySlot =
+                globalEntry == ZEIRCHELE_FALLS_ENTRY &&
+                charId == ZEIRCHELE_GAFFGARION_ESCORT_CHARID &&
+                job == charId;
+            if (isZeircheleGaffgarionEscortStorySlot)
+            {
+                if (DIAG_TRACE_ZEIRCHELE_ENTD)
+                    TraceLog($"[guest-scaler] SKIP Zeirchele e{globalEntry} s{slot} cid=0x{charId:X2} job=0x{job:X2} lvl=0x{level:X2} flags=0x{flags:X2} reason=story-actor-context");
+                continue;
+            }
+
+            bool isZeircheleAgriasGuestSlot =
+                globalEntry == ZEIRCHELE_FALLS_ENTRY &&
+                charId == ZEIRCHELE_AGRIAS_CHARID &&
+                job == charId;
+            bool isKnownGuest = (GuestCharIds.Contains(charId) || isZeircheleAgriasGuestSlot) && job == charId;
+            if (DIAG_TRACE_ZEIRCHELE_ENTD && globalEntry == ZEIRCHELE_FALLS_ENTRY &&
+                (charId == 0x0C || charId == ZEIRCHELE_GAFFGARION_ESCORT_CHARID || charId == ZEIRCHELE_AGRIAS_CHARID))
+                TraceLog($"[guest-scaler] CHECK Zeirchele e{globalEntry} s{slot} cid=0x{charId:X2} job=0x{job:X2} lvl=0x{level:X2} flags=0x{flags:X2} known={isKnownGuest}");
             if (!isKnownGuest) continue;
 
-            TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_CONTROL_FLAGS, out byte flags);
             bool isEnemyTeam = (flags & ENEMY_TEAM_BIT) != 0;
 
             bool changed = false;
@@ -791,6 +830,64 @@ public class Program : IMod
 
             sb.Append($" | s{slot}:cid=0x{cid:X2} lvl={lvl} ju={jobUnlock} jl={jobLevel} job={job} ");
             sb.Append($"flags=0x{flags:X2} form=0x{formation:X2} uid=0x{uid:X2}");
+        }
+
+        TraceLog(sb.ToString());
+    }
+
+    private unsafe void TraceZeircheleEntd(
+        string stage,
+        void* buffer,
+        long size,
+        int fileIndex,
+        long sectorOffset,
+        bool isNgPlus,
+        bool haveMod,
+        bool fullRead)
+    {
+        if (!DIAG_TRACE_ZEIRCHELE_ENTD) return;
+        if (fileIndex != MERCHANT_DORTER_FILE_INDEX) return; // entd4, same file index as Merchant Dorter
+
+        long entryOffset = (ZEIRCHELE_FALLS_ENTRY - 384L) * 16L * SLOT_SIZE;
+        long entryEnd = entryOffset + 16L * SLOT_SIZE;
+        long readEnd = sectorOffset + size;
+        if (entryOffset >= readEnd || entryEnd <= sectorOffset) return;
+
+        if (stage == "before-scale")
+        {
+            System.Threading.Volatile.Write(ref _zeirchele87Suppressed, 0);
+            System.Threading.Volatile.Write(ref _zeirchele87Restored, 0);
+        }
+        System.Threading.Volatile.Write(ref _zeircheleActorTableProbeUntilTicks, DateTime.UtcNow.AddSeconds(90).Ticks);
+
+        byte* p = (byte*)buffer;
+        var sb = new System.Text.StringBuilder();
+        sb.Append($"[zeirchele-entd-{stage}] variant={ZEIRCHELE_DIAG_VARIANT} file={fileIndex} off=0x{sectorOffset:X} size=0x{size:X} ");
+        sb.Append($"full={fullRead} NG+={isNgPlus} haveMod={haveMod} entry={ZEIRCHELE_FALLS_ENTRY}");
+
+        foreach (int slot in new[] { 0, 1, 7, 8, 9, 10, 11 })
+        {
+            long slotOffset = entryOffset + slot * SLOT_SIZE;
+            if (slotOffset < sectorOffset || slotOffset + SLOT_SIZE > readEnd)
+            {
+                sb.Append($" | s{slot}=not-covered");
+                continue;
+            }
+
+            int rel = (int)(slotOffset - sectorOffset);
+            byte cid = p[rel + SLOT_CHARID];
+            byte name = p[rel + 0x01];
+            byte lvl = p[rel + SLOT_LEVEL];
+            byte job = p[rel + SLOT_JOB];
+            byte flags = p[rel + SLOT_CONTROL_FLAGS];
+            byte x = p[rel + 0x19];
+            byte y = p[rel + 0x1A];
+            byte uid = p[rel + 0x20];
+            byte tail35 = p[rel + 0x23];
+            byte tail36 = p[rel + 0x24];
+
+            sb.Append($" | s{slot}:cid=0x{cid:X2} name=0x{name:X2} lvl=0x{lvl:X2} job=0x{job:X2} ");
+            sb.Append($"flags=0x{flags:X2} pos=({x},{y}) uid=0x{uid:X2} tail23=0x{tail35:X2} tail24=0x{tail36:X2}");
         }
 
         TraceLog(sb.ToString());
@@ -1042,6 +1139,35 @@ public class Program : IMod
         }
     }
 
+    private void ZeircheleActorTableProbeLoop()
+    {
+        string lastSnapshot = "";
+        while (true)
+        {
+            System.Threading.Thread.Sleep(250);
+            long untilTicks = System.Threading.Volatile.Read(ref _zeircheleActorTableProbeUntilTicks);
+            if (untilTicks <= DateTime.UtcNow.Ticks) continue;
+
+            try
+            {
+                if (DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_INTRO)
+                    TrySuspendZeircheleExtraUnitDuringIntro();
+
+                string snapshot = BuildZeircheleActorTableSnapshot();
+                if (snapshot.Length > 0 && snapshot != lastSnapshot)
+                {
+                    TraceLog(snapshot);
+                    lastSnapshot = snapshot;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceLog($"[zeirchele-actor-table] probe error: {ex.Message}");
+                System.Threading.Volatile.Write(ref _zeircheleActorTableProbeUntilTicks, 0);
+            }
+        }
+    }
+
     private void TryActivateMerchantA9AfterA8()
     {
         if (System.Threading.Volatile.Read(ref _merchantA9ActivationAttempted) != 0) return;
@@ -1079,6 +1205,103 @@ public class Program : IMod
         {
             TraceLog($"[merchant-activate-a9] write failed: {ex.Message}");
         }
+    }
+
+    private void TrySuspendZeircheleExtraUnitDuringIntro()
+    {
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        int readable = ReadableExtent(table, length);
+        if (readable < length) return;
+
+        int idx17 = -1, idx34 = -1, idx80 = -1, idx81 = -1, idx87 = -1;
+        int active = 0;
+
+        for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+        {
+            nint actor = table + i * ACTOR_TABLE_ENTRY_SIZE;
+            byte uid = SafeReadByte(actor + ACTOR_UNIT_ID_OFFSET);
+            byte state = SafeReadByte(actor + 0x01);
+            byte aux = SafeReadByte(actor + 0x1B5);
+            if (state != 0xFF && aux == 0x01)
+                active++;
+
+            if (uid == 0x17) idx17 = i;
+            else if (uid == 0x34) idx34 = i;
+            else if (uid == 0x80) idx80 = i;
+            else if (uid == 0x81) idx81 = i;
+            else if (uid == 0x87) idx87 = i;
+        }
+
+        if (idx87 < 0) return;
+
+        nint a87 = table + idx87 * ACTOR_TABLE_ENTRY_SIZE;
+        byte wState = SafeReadByte(a87 + 0x01);
+        byte wAux = SafeReadByte(a87 + 0x1B5);
+        bool wActive = wState != 0xFF && wAux == 0x01;
+
+        bool active17 = IsActorActive(table, idx17);
+        bool active34 = IsActorActive(table, idx34);
+        bool corpse80Gone = IsActorGone(table, idx80);
+        bool corpse81Gone = IsActorGone(table, idx81);
+
+        if (System.Threading.Volatile.Read(ref _zeirchele87Suppressed) == 0 &&
+            System.Threading.Volatile.Read(ref _zeirchele87Restored) == 0 &&
+            wActive && !active17 && !active34)
+        {
+            if (System.Threading.Interlocked.CompareExchange(ref _zeirchele87Suppressed, 1, 0) != 0)
+                return;
+
+            try
+            {
+                Marshal.WriteByte(a87 + 0x01, 0xFF);
+                Marshal.WriteByte(a87 + 0x1B5, 0x00);
+                byte postState = SafeReadByte(a87 + 0x01);
+                byte postAux = SafeReadByte(a87 + 0x1B5);
+                TraceLog($"[zeirchele-extra87-suspend] variant={ZEIRCHELE_DIAG_VARIANT} table=0x{table:X} a{idx87} active={active} state 0x{wState:X2}->0x{postState:X2} aux 0x{wAux:X2}->0x{postAux:X2} active17={active17} active34={active34}");
+            }
+            catch (Exception ex)
+            {
+                TraceLog($"[zeirchele-extra87-suspend] write failed: {ex.Message}");
+            }
+
+            return;
+        }
+
+        if (System.Threading.Volatile.Read(ref _zeirchele87Suppressed) != 0 &&
+            System.Threading.Volatile.Read(ref _zeirchele87Restored) == 0 &&
+            !wActive && active17 && corpse80Gone && corpse81Gone)
+        {
+            if (System.Threading.Interlocked.CompareExchange(ref _zeirchele87Restored, 1, 0) != 0)
+                return;
+
+            try
+            {
+                Marshal.WriteByte(a87 + 0x01, 0x0B);
+                Marshal.WriteByte(a87 + 0x1B5, 0x01);
+                byte postState = SafeReadByte(a87 + 0x01);
+                byte postAux = SafeReadByte(a87 + 0x1B5);
+                TraceLog($"[zeirchele-extra87-restore] variant={ZEIRCHELE_DIAG_VARIANT} table=0x{table:X} a{idx87} active={active} state 0x{wState:X2}->0x{postState:X2} aux 0x{wAux:X2}->0x{postAux:X2} active17={active17} active34={active34} corpse80Gone={corpse80Gone} corpse81Gone={corpse81Gone}");
+            }
+            catch (Exception ex)
+            {
+                TraceLog($"[zeirchele-extra87-restore] write failed: {ex.Message}");
+            }
+        }
+    }
+
+    private static bool IsActorActive(nint table, int index)
+    {
+        if (index < 0) return false;
+        nint actor = table + index * ACTOR_TABLE_ENTRY_SIZE;
+        return SafeReadByte(actor + 0x01) != 0xFF && SafeReadByte(actor + 0x1B5) == 0x01;
+    }
+
+    private static bool IsActorGone(nint table, int index)
+    {
+        if (index < 0) return false;
+        nint actor = table + index * ACTOR_TABLE_ENTRY_SIZE;
+        return SafeReadByte(actor + 0x01) == 0xFF && SafeReadByte(actor + 0x1B5) == 0x00;
     }
 
     private string BuildMerchantActorTableSnapshot()
@@ -1119,6 +1342,68 @@ public class Program : IMod
         }
 
         sb.Append($" | interesting={interesting} has86={has86} has87={has87}");
+        return sb.ToString();
+    }
+
+    private string BuildZeircheleActorTableSnapshot()
+    {
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        int readable = ReadableExtent(table, length);
+        if (readable < length)
+            return $"[zeirchele-actor-table] unreadable table=0x{table:X} readable=0x{readable:X}/0x{length:X}";
+
+        byte[] data = new byte[length];
+        Marshal.Copy(table, data, 0, length);
+
+        var sb = new System.Text.StringBuilder();
+        int interesting = 0;
+        int active = 0;
+        bool has17 = false;
+        bool active17 = false;
+        bool has34 = false;
+        bool active34 = false;
+        bool has87 = false;
+        bool active87 = false;
+        sb.Append($"[zeirchele-actor-table] variant={ZEIRCHELE_DIAG_VARIANT} table=0x{table:X}");
+
+        for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+        {
+            int b = i * ACTOR_TABLE_ENTRY_SIZE;
+            byte uid = data[b + ACTOR_UNIT_ID_OFFSET];
+            byte state = data[b + 0x01];
+            byte aux = data[b + 0x1B5];
+            if (state != 0xFF && aux == 0x01)
+                active++;
+            if (uid == 0x17)
+            {
+                has17 = true;
+                active17 = state != 0xFF && aux == 0x01;
+            }
+            if (uid == 0x34)
+            {
+                has34 = true;
+                active34 = state != 0xFF && aux == 0x01;
+            }
+            if (uid == 0x87)
+            {
+                has87 = true;
+                active87 = state != 0xFF && aux == 0x01;
+            }
+
+            bool focus = uid is 0x05 or 0x0C or 0x17 or 0x34 or 0x80 or 0x81 or 0x82 or 0x83 or 0x84 or 0x85 or 0x86 or 0x87;
+            bool nonEmpty = state != 0x00 || uid != 0x00;
+            if (!focus && !nonEmpty && i > 10) continue;
+
+            interesting++;
+            sb.Append($" | a{i}:uid=0x{uid:X2} st=0x{state:X2}");
+            sb.Append($" b0=0x{data[b + 0x00]:X2} f61=0x{data[b + 0x61]:X2} f62=0x{data[b + 0x62]:X2}");
+            sb.Append($" c4f=0x{data[b + 0x4F]:X2} c50=0x{data[b + 0x50]:X2} c51=0x{data[b + 0x51]:X2}");
+            sb.Append($" p18f=0x{data[b + 0x18F]:X2} p190=0x{data[b + 0x190]:X2}");
+            sb.Append($" aux1b5=0x{aux:X2}");
+        }
+
+        sb.Append($" | active={active} interesting={interesting} has17={has17} active17={active17} has34={has34} active34={active34} has87={has87} active87={active87}");
         return sb.ToString();
     }
 
