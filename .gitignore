@@ -11,6 +11,7 @@ tools/*
 !tools/fft_save_patch_delita.py
 !tools/sprite_budget.py
 !tools/patch_event140_zaland.py
+!tools/patch_event167_goug.py
 
 # === Unpacked game data (copyrighted, regenerated) ===
 work/modded_unpack/

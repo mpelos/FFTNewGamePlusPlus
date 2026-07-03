@@ -784,10 +784,12 @@ def tchigolith(data):
 # Thieves (job 83); s5,s6 Archers (cid 0x81); s7,s8 Summoners (job 82); s4 = disabled Thief (lvl 254).
 # Per docs/battles/018-goug-lowtown.md. TIC has 4 active Thieves (vs the walkthrough's 2); s10 is an
 # anomalous lvl-1/jl-0 thief — LEFT untouched (likely special/scripted; harmless free kill if not).
-#   - ESCALATION (job swap, not a slot-add): s2 Thief -> Time Mage to Haste the Summoners (faster
-#     summon clock) / Slow the player. JobLevel CAPPED to 4 (Lenalian precedent) to bias toward
-#     Haste/Slow and keep Stop/Immobilize off the table.
-#   - Steal Heart stays innate on the remaining Thieves (job 83 at jl8).
+#   - s2 stays the original active Thief. The prior s9 Thief path did not materialize in-game as
+#     the second thief, so it is not counted as an active combatant here.
+#   - ESCALATION (script-managed slot-add): s11 Time Mage uid 0x89 is registered/choreographed in
+#     event167.e alongside the two Summoners (uids 0x86/0x88). JobLevel CAPPED to 4 (Lenalian
+#     precedent) to bias toward Haste/Slow and keep Stop/Immobilize off the table.
+#   - Steal Heart stays innate on the two active Thieves (job 83 at jl8).
 #   - cid 0x16 is now in GuestCharIds, so the runtime scaler handles level/control for this ally.
 def goug(data):
     E = 411
@@ -807,17 +809,20 @@ def goug(data):
                  brave=74, faith=50,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
-    # ESCALATION (job swap): s2 Thief -> Time Mage L101, jl CAPPED to 4 (Haste/Slow, no hard lock).
-    set_slot(data, E, 2, level=102, joblevel=4, job=TMAGE, secondary=0,
-             brave=55, faith=76,
-             reaction=REFLEXES, support=SWIFTSPELL, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    # 2 charm Thieves L100 (s3,s9) — fast harassers; Steal Heart innate to the Thief job at jl8.
-    for s, lvl in ((3, 101), (9, 100)):
+    # 2 charm Thieves (s2,s3) - fast harassers; Steal Heart innate to the Thief job at jl8.
+    for s, lvl in ((2, 100), (3, 101)):
         set_slot(data, E, s, level=lvl, joblevel=8, job=THIEF, secondary=0,
                  brave=78, faith=48,
                  reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=AIR_KNIFE, lh=LH_TWOHAND)
+    # Extra tempo unit: wave-scripted Time Mage revealed with the Summoners. Clone a Summoner wave
+    # sibling so flags/visual convention match, then retune the role and position.
+    clone_slot(data, E, 8, 11, unitid=0x89, x=0, y=5)
+    set_control_flags(data, E, 11, 0x10)
+    set_slot(data, E, 11, level=102, joblevel=4, job=TMAGE, secondary=0,
+             brave=55, faith=76,
+             reaction=REFLEXES, support=SWIFTSPELL, movement=MV1,
+             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     return [E]
 
 

@@ -17,6 +17,7 @@ ENTD = Path("src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin")
 VANILLA_ENTD = Path("extracted/enhanced_0002_selected/fftpack/battle_entd4_ent.bin")
 EVENT119 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event119.e")
 EVENT140 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event140.e")
+EVENT167 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event167.e")
 ROOT_NXL = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/nxd/root.nxl")
 
 
@@ -47,6 +48,7 @@ def run() -> int:
     vanilla = VANILLA_ENTD.read_bytes()
     event119 = EVENT119.read_bytes()
     event140 = EVENT140.read_bytes()
+    event167 = EVENT167.read_bytes()
     root_nxl = ROOT_NXL.read_text(encoding="utf-8")
     checks: list[tuple[str, bool]] = []
 
@@ -78,7 +80,7 @@ def run() -> int:
         405: [4, 5, 6, 7, 8, 11],
         407: [1, 2, 3, 4, 5, 6, 8],
         409: [2, 3, 4, 5, 6, 7, 8],
-        411: [2, 3, 5, 6, 7, 8, 9],
+        411: [2, 3, 5, 6, 7, 8, 11],
         413: [1, 2, 3, 4, 5, 6, 7],
         414: [1, 2, 3, 4, 5, 6, 7],
         415: [1, 2, 3, 4, 5, 6],
@@ -104,7 +106,7 @@ def run() -> int:
     check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 101, 101, 100])
     check("405 knight/extra-knight placement polish", (field(entd, 405, 8, 0x19), field(entd, 405, 8, 0x1A), field(entd, 405, 11, 0x19), field(entd, 405, 11, 0x1A)) == (5, 9, 3, 9))
     check("405 white mage high-ground placement", (field(entd, 405, 7, 0x19), field(entd, 405, 7, 0x1A)) == (6, 8))
-    check("OverrideEntryData row count updated through 410/s10", "overrideentrydata,96,522,3" in root_nxl)
+    check("OverrideEntryData row count updated through 411/s11", "overrideentrydata,96,523,3" in root_nxl)
     check("407 second dragoon", field(entd, 407, 8, 0x0A) == 87 and field(entd, 407, 8, 0x20) == 0x86)
     check("407 second dragoon placement", (field(entd, 407, 8, 0x19), field(entd, 407, 8, 0x1A)) == (0, 10))
     # Zaland's enemies are script-managed (0xD0 + event140.e AddUnit); the added s8 mirrors its
@@ -130,8 +132,13 @@ def run() -> int:
     check("410 old third pool slot cleared", slot(entd, 410, 8) == bytes.fromhex("00 00 ff fe fe fe fe fe 00 00 00 00 fe 01 fe 01 fe 01 fe fe fe fe fe 00 00 00 00 00 fe ff 00 00 ff 00 00 00 00 00 00 00"))
     check("410 fixed ochu slot", field(entd, 410, 10, 0x0A) == 131 and field(entd, 410, 10, 0x20) == 0x87 and field(entd, 410, 10, 0x18) == 0x90)
     check("410 monster jobs", roster(entd, 410, [1, 2, 3, 4, 5, 6, 7, 9, 10], 0x0A) == [111, 110, 110, 114, 114, 117, 123, 111, 131])
-    check("411 roles", roster(entd, 411, [2, 3, 5, 6, 7, 8, 9], 0x0A) == [81, 83, 77, 77, 82, 82, 83])
-    check("411 levels", roster(entd, 411, [2, 3, 5, 6, 7, 8, 9], 0x03) == [102, 101, 101, 100, 102, 101, 100])
+    check("411 roles", roster(entd, 411, [2, 3, 5, 6, 7, 8, 11], 0x0A) == [83, 83, 77, 77, 82, 82, 81])
+    check("411 levels", roster(entd, 411, [2, 3, 5, 6, 7, 8, 11], 0x03) == [100, 101, 101, 100, 102, 101, 102])
+    check("411 extra Time Mage uid/position", field(entd, 411, 11, 0x20) == 0x89 and (field(entd, 411, 11, 0x19), field(entd, 411, 11, 0x1A)) == (0, 5))
+    check("event167 has one 45 89 00 01 registration", event167.count(bytes.fromhex("45890001")) == 1)
+    check("event167 has one 5f 89 00 warp to (0,5)", event167.count(bytes.fromhex("5f890000050003")) == 1)
+    check("event167 has idle pose for uid 0x89", event167.count(bytes.fromhex("118900020000")) == 1)
+    check("event167 patched size 0xf74", len(event167) == 0xF74)
     check("413 geomancer slot", field(entd, 413, 7, 0x0A) == 86 and field(entd, 413, 7, 0x20) == 0x86)
     check("413 levels", roster(entd, 413, [1, 2, 3, 4, 5, 6, 7], 0x03) == [101, 101, 100, 100, 102, 101, 101])
     check("414 gallows levels", roster(entd, 414, [0, 1, 2, 3, 4, 5, 6, 7], 0x03) == [103, 101, 102, 101, 101, 100, 102, 101])
