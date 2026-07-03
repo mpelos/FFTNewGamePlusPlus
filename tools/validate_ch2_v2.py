@@ -104,7 +104,7 @@ def run() -> int:
     check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 101, 101, 100])
     check("405 knight/extra-knight placement polish", (field(entd, 405, 8, 0x19), field(entd, 405, 8, 0x1A), field(entd, 405, 11, 0x19), field(entd, 405, 11, 0x1A)) == (5, 9, 3, 9))
     check("405 white mage high-ground placement", (field(entd, 405, 7, 0x19), field(entd, 405, 7, 0x1A)) == (6, 8))
-    check("OverrideEntryData row count updated for 405/s11, 407/s8, and 409/s8", "overrideentrydata,96,520,3" in root_nxl)
+    check("OverrideEntryData row count updated for 405/s11, 407/s8, 409/s8, and 410/s9", "overrideentrydata,96,521,3" in root_nxl)
     check("407 second dragoon", field(entd, 407, 8, 0x0A) == 87 and field(entd, 407, 8, 0x20) == 0x86)
     check("407 second dragoon placement", (field(entd, 407, 8, 0x19), field(entd, 407, 8, 0x1A)) == (0, 10))
     # Zaland's enemies are script-managed (0xD0 + event140.e AddUnit); the added s8 mirrors its
@@ -120,6 +120,7 @@ def run() -> int:
     check("event140 patched size 0x581", len(event140) == 0x581)
     check("407 levels", roster(entd, 407, [1, 2, 3, 4, 5, 6, 8], 0x03) == [101, 102, 101, 102, 101, 100, 101])
     check("409 chemist slot", field(entd, 409, 8, 0x0A) == 75 and field(entd, 409, 8, 0x20) == 0x86)
+    check("409 chemist placement", (field(entd, 409, 8, 0x19), field(entd, 409, 8, 0x1A)) == (13, 4))
     check("409 levels", roster(entd, 409, [2, 3, 4, 5, 6, 7, 8], 0x03) == [101, 101, 100, 102, 101, 101, 101])
     check("410 second bonesnatch", field(entd, 410, 9, 0x0A) == 110 and field(entd, 410, 9, 0x20) == 0x86)
     check("410 monster jobs", roster(entd, 410, [1, 2, 3, 4, 5, 6, 7, 9], 0x0A) == [110, 109, 109, 112, 112, 115, 130, 110])

@@ -726,7 +726,7 @@ def balias_tor(data):
                  brave=74, faith=50,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
-    clone_slot(data, E, 3, 8, unitid=0x86, x=10, y=4)
+    clone_slot(data, E, 3, 8, unitid=0x86, x=13, y=4)
     set_slot(data, E, 8, level=101, jobrank=generic_job_rank(CHEMIST), joblevel=8,
              job=CHEMIST, secondary=0, brave=64, faith=60,
              reaction=AUTO_POTION, support=THROW_ITEMS, movement=MV1,
