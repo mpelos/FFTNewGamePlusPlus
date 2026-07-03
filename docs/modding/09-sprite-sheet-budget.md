@@ -67,8 +67,14 @@ snapshot of the implemented battles:
 | 403 Merchant Dorter | 6 | 7 | +1 |
 | 404 Araguay Woods | 5 | 6 | +1 (swapped one monster job out) |
 | 405 Zeirchele Falls | 5 | 6 | +1 (the +2 composition corrupted Agrias) |
-| 407 Zaland / 409 Balias Tor | 5 | 6 | +1 |
-| 410 / 415 / 425 | — | — | +0 |
+| 407 Zaland | 5 | 6 | +1 |
+| 409 Balias Tor | 5 | 6 | +1 |
+| 410 Tchigolith Fenlands | 7 | 7 | +0 |
+| 411 Goug Lowtown | 5 | 6 | +1 |
+| 413 Balias Swale | 4 | 5 | +1 |
+| 414 Golgollada Gallows | 4 | 4 | +0 |
+| 415 Lionel Castle Gate | 4 | 4 | +0 |
+| 425 Lionel Castle Oratory | 5 | 5 | +0 |
 
 Known limitations of the analyzer: it does not split generic sheets by gender, does not know each
 map's deploy capacity (add it manually when judging absolute headroom), cannot tell whether two
@@ -86,8 +92,8 @@ Ordered by cost, when a design wants more unit variety than the budget allows:
    it lets the design keep the new role.
 2. **Deliver the role through equipment instead of a job.** ENTD-forced gear works on any job, so
    ranged pressure can come from a crossbow on a Knight (one-handed, shield-compatible) rather than
-   an Archer sheet. Untested in this project as of this writing, but it is a plain ENTD gear byte
-   with no new failure mode.
+   an Archer sheet. This is implemented in Zeirchele as the budget-safe ranged role; still verify
+   in-game behavior after each battle revision.
 3. **Swap a sheet out to fund a sheet in.** Net-zero job substitutions (Araguay dropped one vanilla
    monster job while adding two others, landing at net +1) keep totals flat.
 4. **`OverrideEntryData.Spriteset` (research lead).** The formation-layer table has a per-slot

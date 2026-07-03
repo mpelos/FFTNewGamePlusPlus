@@ -654,7 +654,14 @@ def zaland(data):
              brave=76, faith=45,
              reaction=COUNTER, support=ATK_BOOST, movement=MV2,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GERMINAS, rh=PARTISAN, lh=LH_EMPTY)
-    clone_slot(data, E, 4, 8, unitid=0x86, x=6, y=9)
+    clone_slot(data, E, 4, 8, unitid=0x86, x=0, y=10)
+    # Flags history (both states playtested 2026-07-02): 0xD0 (clone of s4) alone -> the unit
+    # NEVER materializes; 0x90 -> spawns, but stands outside the intro choreography (walk-anim
+    # from frame 0). Zaland's six 0xD0 enemies are SCRIPT-MANAGED: event140.e AddUnit-registers
+    # and choreographs them. So the full sibling-parity fix is 0xD0 + registering/choreographing
+    # uid 0x86 in event140.e (tools/patch_event140_zaland.py). If the Dragoon is ever absent
+    # again, event140.e stopped being the loaded script — revert this byte to 0x90 as fallback.
+    set_control_flags(data, E, 8, 0xD0)
     set_slot(data, E, 8, level=101, jobrank=generic_job_rank(LANCER), joblevel=8,
              job=LANCER, secondary=0,
              brave=76, faith=45,

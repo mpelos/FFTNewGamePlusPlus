@@ -16,6 +16,7 @@ SLOT = 0x28
 ENTD = Path("src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin")
 VANILLA_ENTD = Path("extracted/enhanced_0002_selected/fftpack/battle_entd4_ent.bin")
 EVENT119 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event119.e")
+EVENT140 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event140.e")
 ROOT_NXL = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/nxd/root.nxl")
 
 
@@ -45,6 +46,7 @@ def run() -> int:
     entd = ENTD.read_bytes()
     vanilla = VANILLA_ENTD.read_bytes()
     event119 = EVENT119.read_bytes()
+    event140 = EVENT140.read_bytes()
     root_nxl = ROOT_NXL.read_text(encoding="utf-8")
     checks: list[tuple[str, bool]] = []
 
@@ -102,8 +104,20 @@ def run() -> int:
     check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 101, 101, 100])
     check("405 knight/extra-knight placement polish", (field(entd, 405, 8, 0x19), field(entd, 405, 8, 0x1A), field(entd, 405, 11, 0x19), field(entd, 405, 11, 0x1A)) == (5, 9, 3, 9))
     check("405 white mage high-ground placement", (field(entd, 405, 7, 0x19), field(entd, 405, 7, 0x1A)) == (6, 8))
-    check("405 OverrideEntryData row count updated for s11", "overrideentrydata,96,518,3" in root_nxl)
+    check("OverrideEntryData row count updated for 405/s11 and 407/s8", "overrideentrydata,96,519,3" in root_nxl)
     check("407 second dragoon", field(entd, 407, 8, 0x0A) == 87 and field(entd, 407, 8, 0x20) == 0x86)
+    check("407 second dragoon placement", (field(entd, 407, 8, 0x19), field(entd, 407, 8, 0x1A)) == (0, 10))
+    # Zaland's enemies are script-managed (0xD0 + event140.e AddUnit); the added s8 mirrors its
+    # siblings: 0xD0 in the ENTD plus registration/choreography in event140.e
+    # (tools/patch_event140_zaland.py). 0xD0 without the script patch never materializes;
+    # 0x90 materializes but stays outside the intro choreography (both playtested 2026-07-02).
+    check("407 s8 flags 0xD0 (script-managed, like siblings)", field(entd, 407, 8, 0x18) == 0xD0)
+    check("event140 has one 45 86 00 01 registration", event140.count(bytes.fromhex("45860001")) == 1)
+    check("event140 has one 5f 86 00 warp to (0,10)", event140.count(bytes.fromhex("5f8600000a0000")) == 1)
+    check("event140 has alert+idle poses for uid 0x86",
+          event140.count(bytes.fromhex("118600030000")) == 1
+          and event140.count(bytes.fromhex("118600020000")) == 1)
+    check("event140 patched size 0x581", len(event140) == 0x581)
     check("407 levels", roster(entd, 407, [1, 2, 3, 4, 5, 6, 8], 0x03) == [101, 102, 101, 102, 101, 100, 101])
     check("409 chemist slot", field(entd, 409, 8, 0x0A) == 75 and field(entd, 409, 8, 0x20) == 0x86)
     check("409 levels", roster(entd, 409, [2, 3, 4, 5, 6, 7, 8], 0x03) == [101, 101, 100, 102, 101, 101, 101])

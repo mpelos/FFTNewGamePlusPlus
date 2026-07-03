@@ -1,6 +1,6 @@
 # 015 - Castled City of Zaland
 
-Status: v2 implemented (entry 407, 2026-07-01) — Mustadio runtime guest handling retained; vertical-pressure redesign applied.
+Status: v2 implemented and PLAYTESTED (entry 407, 2026-07-02) — 7 enemies confirmed in-game, including the added s8 Dragoon. The s8 add required flags `0x90`: cloning s4 copied flags `0xD0`, whose `0x40` bit kept the unit from ever materializing (see `docs/modding/10-event-scripts-and-the-e-files.md`). Known cosmetic quirk: during the intro the added Dragoon is the only unit playing its walk animation (the intro script only poses vanilla uids); combat is normal.
 Chapter: 2 — "The Manipulator and the Subservient"
 Battle order: Battle 14 (after Zeirchele Falls)
 Target version: Enhanced v1.5.0
@@ -10,7 +10,7 @@ Target version: Enhanced v1.5.0
 Implemented with `python tools/battle_patch.py zaland`.
 
 - Mustadio remains handled by the runtime guest scaler/control path (`cid 0x22`), with ENTD gear/Brave/Faith support only.
-- Enemy roster is 1 Knight, 2 Dragoons, 2 Black Mages, and 2 Archers. The second Dragoon is a plain static ENTD slot-add in `s8` with UnitID `0x86`.
+- Enemy roster is 1 Knight, 2 Dragoons, 2 Black Mages, and 2 Archers. The second Dragoon is a static ENTD slot-add in `s8` with UnitID `0x86`, **flags forced to `0x90`** after cloning s4 (the copied `0xD0` never materialized — its `0x40` bit is the blocker; validated in-game 2026-07-02), plus an `OverrideEntryData` row `(407,8)` and the matching `root.nxl` count (row necessity not isolated; it shipped in both the failing and the working test).
 - Generic human job-rank bytes are seeded to match their jobs, including Dragoon `13`, Black Mage `6`, Archer `3`, and Knight `2`.
 ENTD: global entry **407** (battle_entd4, local entry 23) — confirmed by sequence + composition
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
@@ -304,15 +304,16 @@ Mages, and verify/apply Mustadio player control.
 - [x] Dump original entry; verify 2 Knight + 2 Archer + 2 Black Mage + Mustadio slot.
 - [x] Confirm Knight / Black Mage / Dragoon job IDs and legal equipment (Dragoon = Partisan spear).
 - [x] Swap one Knight -> Dragoon (re-job s4); give it reach (Move +2).
-- [ ] Add or convert one more enemy into a second Dragoon; do not add a Time Mage.
-- [ ] Set levels: Dragoon captain + fast Black Mage `102`; second Dragoon + wall Archer + power
+- [x] Add or convert one more enemy into a second Dragoon; do not add a Time Mage. (s8 slot-add,
+  uid 0x86, flags forced `0x90` — the clone-copied `0xD0` never materialized; in-game 2026-07-02.)
+- [x] Set levels: Dragoon captain + fast Black Mage `102`; second Dragoon + wall Archer + power
   Black Mage + Knight `101`; second Archer `100`.
-- [ ] Set JobLevel `8` on all active enemy slots; Knight has no secondary.
-- [ ] Give every active human enemy complete equipment plus intentional reaction/support/movement.
+- [x] Set JobLevel `8` on all active enemy slots; Knight has no secondary.
+- [x] Give every active human enemy complete equipment plus intentional reaction/support/movement.
 - [x] Mustadio handled via the runtime guest-scaler (cid 0x22 added to GuestCharIds); slot untouched.
 - [ ] Verify/apply Mustadio player control in NG+.
 - [x] Patch the embedded ENTD via `tools/battle_patch.py zaland`.
-- [ ] Re-dump and diff; changes small and intentional.
+- [x] Re-dump and diff; changes small and intentional (flags experiment: 1 byte, entry 407 only).
 - [ ] Playtest BOTH objectives (clear vs Mustadio survival) from a NG+ save; confirm Mustadio scales
   and is controllable by the player.
 

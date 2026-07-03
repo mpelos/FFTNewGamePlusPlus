@@ -192,12 +192,28 @@ Confirmed bits:
 | 3 | `0x08` | PlayerControl | Unit is player-controlled. This project's `ScaleGuestsAlways()` ORs this bit on for guest slots that are not on the enemy team, making them controllable without disturbing any other bit. |
 | 0 | `0x01` | (seen set on some player/ally-initialized slots) | Observed set on the player-controlled init slot and on at least one scripted-ally slot; not independently decoded beyond "appears on player/ally-side units in some configurations." |
 
-Bits `0x20`/`0x40`/`0x02`/`0x04` are not confirmed for this binary's layout. (Classic PSX-era FFT
-documentation describes a richer team scheme at this general position — `0x40` Randomly Present,
-team pairs `0x20`/`0x10` for Blue/Green/LightBlue/Red, `0x04` Immortal — but this project's own
-empirical byte scans across this binary format have only independently confirmed `0x80`
-(AlwaysPresent), `0x10`, `0x08`, and `0x01` as listed above; treat the classic-FFT bit names beyond
-those four as an unverified cross-reference, not a confirmed fact about this specific binary.)
+Bits `0x20`/`0x40`/`0x02`/`0x04` are not fully decoded for this binary's layout. (Classic PSX-era
+FFT documentation describes a richer team scheme at this general position — `0x40` Randomly
+Present, team pairs `0x20`/`0x10` for Blue/Green/LightBlue/Red, `0x04` Immortal — but this
+project's own empirical byte scans across this binary format have only independently confirmed
+`0x80` (AlwaysPresent), `0x10`, `0x08`, and `0x01` as listed above; treat the classic-FFT bit
+names beyond those four as an unverified cross-reference, not a confirmed fact about this
+specific binary.)
+
+One empirical fact about `0x40` IS confirmed (in-game, Zaland entry 407 s8, 2026-07-02): **a
+MODDED, newly-added slot whose flags carry `0x40` never materializes in battle** — the same slot
+byte-identical except flags `0xD0 → 0x90` spawns normally. The best-supported reading of WHY
+(supersedes the classic "Randomly Present" cross-reference, which the data initially resembled) is
+**script-managed presence**: every `0xD0` unit in Zaland (407) is `AddUnit`-registered and
+choreographed by that battle's intro script `event140.e` (two registration brackets, warp →
+fade-in → pose records), so a `0x40`-flagged unit exists only if the battle's `.e` file registers
+its uid — which a modded uid never is until the script is patched. Vanilla distribution fits:
+`0xD0` is a minority value on units with staged entrances (385 s4–s6, 397 s5, 401 s6–s7);
+Tchigolith 410's uid-sharing variant slots are `0x50`. Consequence for adds: either avoid `0x40`
+entirely (a `0x90` static add — spawns, but stands outside any intro choreography), or match the
+siblings' `0xD0` AND register/choreograph the new uid in the right `.e`
+(the full-parity route; Zaland implementation pending playtest). See
+[10-event-scripts-and-the-e-files.md](10-event-scripts-and-the-e-files.md).
 
 ### Caution: `0x10` ("enemy team bit") is not a clean enemy/ally discriminator
 

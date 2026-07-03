@@ -66,8 +66,6 @@ public class Program : IMod
     private const byte ENEMY_TEAM_BIT = 0x10;
     private const int PROLOGUE_ORBONNE_ENTRY = 387;
     private const int ZEIRCHELE_FALLS_ENTRY = 405;
-    private const byte ZEIRCHELE_GAFFGARION_ESCORT_CHARID = 0x17;
-    private const byte ZEIRCHELE_AGRIAS_CHARID = 0x34;
 
     // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
     // playthrough harder (the party is low level early, so the guest just matches the team). This
@@ -101,13 +99,18 @@ public class Program : IMod
     // appearances; job==charId guard holds: job 0x24). His tuned ENEMY/BOSS fights use DIFFERENT cids
     // (0x05 Zeirchele betrayer, 0x11 Golgollada/Lionel) which are deliberately NOT in this set, so those
     // stay at their designed ~L103 — per the "keep the bosses strong" decision.
-    // 0x17 is Zeirchele's Gaffgarion escort/story form, not the controllable Agrias guest there.
-    // 0x34 is Agrias's Zeirchele actor and must be player-controlled in that battle only; it is handled
-    // by a targeted exception in ScaleGuestsAlways instead of being added globally, because 0x34 also
-    // appears as recurring story/cutscene slots in other Chapter 2 maps.
+    // 0x17 and 0x34 = the two early-Ch2 escort-guest cids (Agrias and Gaffgarion escort forms). BOTH
+    // belong in this global set: they are real ally guests at Merchant Dorter (403 s2/s3) and Araguay
+    // (404 s7/s8), and 0x34 is the ally guest at Zeirchele (405 s10). At Zeirchele 0x17 carries the
+    // enemy-team bit, so the control bit is never applied to it there — no carve-out needed.
+    // HISTORY NOTE: 0x34 was briefly removed from this set during the Zeirchele sprite investigation,
+    // blamed for a "bugged Agrias-looking unit with wrong portrait". That was a misdiagnosis: the bug
+    // was the per-battle sprite-sheet budget (docs/modding/09-sprite-sheet-budget.md) — it persisted
+    // with 0x34 removed and was fixed by the ENTD sheet composition with 0x34 still removed. The
+    // removal itself broke Agrias's guest control/scaling at 403/404. Do not remove it again.
     // --- Whole-game guest sweep (Ch2-Ch4 stragglers). Derived by scanning every ENTD slot: a cid is
     // SAFE to add iff it has a guest form (named, job==charId, ally) AND NONE of its enemy appearances
-    // are real combatants or story-only actors that become visible if promoted. That rule, applied across all 4
+    // are real combatants (all at level 254 = disabled cutscene actor). That rule, applied across all 4
     // ENTD files, auto-EXCLUDES every tuned boss (Wiegraf, Elmdor, the 5 Lucavi, Dycedarg, Zalbag,
     // Marach 0x1A, Gaffgarion-boss 0x11, etc.) because bosses always carry real combat levels. Crucially,
     // recruitable characters use SEPARATE cids for their guest vs boss/enemy form, so we scale the guest
@@ -118,7 +121,7 @@ public class Program : IMod
     // doc's "not Mustadio" guest), 0x1F=Beowulf, 0x2A=Meliadoul, 0x32=Cloud, 0x48=Reis.
     private static readonly HashSet<byte> GuestCharIds = new()
     {
-        0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19, 0x24, 0x17,
+        0x04, 0x07, 0x22, 0x1e, 0x15, 0x30, 0x19, 0x24, 0x34, 0x17,
         0x0c, 0x0d, 0x16, 0x1f, 0x2a, 0x32, 0x48,
     };
 
@@ -144,7 +147,7 @@ public class Program : IMod
     // and answers whether slot 9 reaches the final buffer the game receives.
     private static readonly bool DIAG_TRACE_MERCHANT_DORTER_ENTD = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
     private static readonly bool DIAG_TRACE_ZEIRCHELE_ENTD = true;
-    private const string ZEIRCHELE_DIAG_VARIANT = "no-suspend-clean-v1";
+    private const string ZEIRCHELE_DIAG_VARIANT = "guest-control-restore-v1";
     // The intro suspension experiment is retired: the Agrias corruption was sprite-sheet budget
     // (fixed in the ENTD composition — see battle_patch.py zeirchele notes), and suspending the
     // actor before formation froze its idle animation during the deployment screen.
@@ -746,24 +749,9 @@ public class Program : IMod
             TryReadEntdByte(p, size, sectorOffset, reference, off + SLOT_CONTROL_FLAGS, out byte flags);
 
             int slot = (int)((off / SLOT_SIZE) % 16);
-            bool isZeircheleGaffgarionEscortStorySlot =
-                globalEntry == ZEIRCHELE_FALLS_ENTRY &&
-                charId == ZEIRCHELE_GAFFGARION_ESCORT_CHARID &&
-                job == charId;
-            if (isZeircheleGaffgarionEscortStorySlot)
-            {
-                if (DIAG_TRACE_ZEIRCHELE_ENTD)
-                    TraceLog($"[guest-scaler] SKIP Zeirchele e{globalEntry} s{slot} cid=0x{charId:X2} job=0x{job:X2} lvl=0x{level:X2} flags=0x{flags:X2} reason=story-actor-context");
-                continue;
-            }
-
-            bool isZeircheleAgriasGuestSlot =
-                globalEntry == ZEIRCHELE_FALLS_ENTRY &&
-                charId == ZEIRCHELE_AGRIAS_CHARID &&
-                job == charId;
-            bool isKnownGuest = (GuestCharIds.Contains(charId) || isZeircheleAgriasGuestSlot) && job == charId;
+            bool isKnownGuest = GuestCharIds.Contains(charId) && job == charId;
             if (DIAG_TRACE_ZEIRCHELE_ENTD && globalEntry == ZEIRCHELE_FALLS_ENTRY &&
-                (charId == 0x0C || charId == ZEIRCHELE_GAFFGARION_ESCORT_CHARID || charId == ZEIRCHELE_AGRIAS_CHARID))
+                (charId == 0x0C || charId == 0x17 || charId == 0x34))
                 TraceLog($"[guest-scaler] CHECK Zeirchele e{globalEntry} s{slot} cid=0x{charId:X2} job=0x{job:X2} lvl=0x{level:X2} flags=0x{flags:X2} known={isKnownGuest}");
             if (!isKnownGuest) continue;
 

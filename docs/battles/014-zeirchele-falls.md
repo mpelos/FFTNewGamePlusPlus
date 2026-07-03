@@ -10,14 +10,14 @@ Target version: Enhanced v1.5.0
 Implemented with `python tools/battle_patch.py zeirchele`.
 
 - Gaffgarion is tuned as the level `103` betrayal sub-boss while preserving his identity/job/script behavior.
-- Active enemy line is 4 Knights plus 1 Archer, with the White Mage field medic added as `s11`
-  (UnitID `0x87`).
+- Active enemy line is Gaffgarion, four melee Knights, one crossbow Knight, and one White Mage
+  field medic. This keeps only one new generic spritesheet versus vanilla.
 - Ovelia keeps the previously confirmed survival package: Princess job innate fix in `JobData.xml`, Brave `61`, Faith `78`, Sortilège, Gold Hairpin, Luminous Robe, and Golden Staff.
 - The `0xFE` Knight placeholders in `s2` and `s3` remain vanilla intro corpse actors; `event129.e`
   removes them during the story scene before tactical control starts.
 - The first high-slot `s11` attempt was ignored because Zeirchele's `OverrideEntryData` layer only
-  carried rows through `s10`. The working implementation adds row `Key=405, Key2=11` and moves the
-  row marker `Unknown9C=150` from `s10` to `s11`, matching the Merchant Dorter slot-add pattern.
+  carried rows through `s10`. The working implementation adds row `Key=405, Key2=11`, shaped like
+  the active-enemy rows. `Unknown9C` is not an end marker and is left untouched on vanilla rows.
 ENTD: global entry **405** (battle_entd4, local entry 21) — confirmed by sequence + composition
 File: `entd/battle_entd4_ent.bin` (embedded; swapped only in NG+ by the code mod)
 
@@ -84,11 +84,11 @@ s3    0x80   255   0x80   76 Knight  intro corpse actor (lvl 254)  LEAVE (cutsce
 s4    0x80   255   0x80   76 Knight  escort wall (captain)         SCALE -> L102
 s5    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L101
 s6    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L101
-s7    0x80   255   0x80   76 Knight  escort wall                   SCALE -> L100
-s8    0x80   255   0x80   76 Knight  -> ARCHER (escalation swap)   SCALE -> L101, re-job 77
-s9    0x17   23    0x88   23         Agrias (ally, lvl 254)        LEAVE
-s10   0x34   52    0x49   52         named story unit (lvl 254)    LEAVE
-s11   0x80   255   0x80   79 WMage   NEW field medic               SCALE -> L101, re-job 79 (ctrl 0x90)
+s7    0x80   255   0x80   76 Knight  -> WHITE MAGE sustain         SCALE -> L101, re-job 79
+s8    0x80   255   0x80   76 Knight  crossbow ranged Knight        SCALE -> L101, keep job 76
+s9    0x17   23    0x88   23         Gaffgarion escort/story form  LEAVE
+s10   0x34   52    0x49   52         Agrias (ally, lvl 254)        Zeirchele-targeted guest control
+s11   0x80   255   0x80   76 Knight  NEW Knight body               SCALE -> L100 (ctrl 0x90)
 ```
 
 Gaffgarion is on the **enemy team** (flags 0x80) in the base ENTD; his ally→betray phase is pure
@@ -99,7 +99,7 @@ level/gear) stay intact. His Runeblade is non-unique and STRIPPABLE — the cano
 
 PLAYTEST: confirm s0 is the active Gaffgarion (vs a betrayal-spawned unit). Do not scale `s2` or
 `s3`: they are vanilla intro corpse actors/placeholders, not active battle enemies. The White Mage
-must be the separate `s11/uid 0x87` unit.
+uses vanilla active slot `s7`; the separate `s11/uid 0x87` unit is the extra Knight body.
 
 ### Ovelia survivability (four passes; landed on JOB-INNATE Mana Shield + Manafont over gear Always-Protect, 2026-06-28)
 
@@ -113,7 +113,7 @@ defense was.
 Luminous Robe / **Featherweave Cloak** 40/30 evade / Golden Staff). It did NOT save her, because of a
 hard engine rule: **a charging unit has 0 evasion from every side AND takes +50% physical damage**
 (only Blade Grasp bypasses this). Ovelia's AI hangs back and casts defensive magic, so she is almost
-always mid-charge when the adjacent Knight/Archer reach her — at which point her evasion is *zero* and
+always mid-charge when adjacent enemies reach her — at which point her evasion is *zero* and
 the incoming hit is *amplified*: a guaranteed one-shot. **Evasion is the wrong stat for a unit that
 lives in the charge state.**
 
@@ -173,11 +173,11 @@ ability slots, not the ENTD.
 ```text
 VANILLA SPIRIT: Gaffgarion betrays at the river crossing while an Order Knight escort pushes toward
   Ovelia.
-CHAPTER-2 UPGRADE: keep Gaffgarion's gear-dependent drain threat, keep four Knights and one Archer,
-  and add one White Mage field medic behind the escort.
-WHY: a second Archer was rejected because it over-focuses Ovelia's line-of-sight and feels cheap.
-  A White Mage instead creates target priority: if the player ignores the medic, Gaffgarion and the
-  Knights get sustain; if the player overcommits to the medic, Gaffgarion punishes the line.
+CHAPTER-2 UPGRADE: keep Gaffgarion's gear-dependent drain threat, keep the Knight escort identity,
+  add one White Mage field medic, and preserve one ranged lane through a crossbow Knight.
+WHY: the earlier Archer + White Mage draft exceeded Zeirchele's sprite-sheet budget and corrupted
+  Agrias. The White Mage is the only new generic sheet; the ranged role is delivered by equipment
+  on a Knight sheet already loaded by vanilla.
 WHAT IS NOT CHANGED: Gaffgarion remains strippable/breakable, retreats instead of dying, Ovelia is
   still the VIP objective, and the map still reads as a bridge betrayal.
 ```
@@ -222,7 +222,8 @@ Fixed encounter Brave/Faith targets:
 
 ## Proposed Composition (New Game++ Zeirchele v2)
 
-Use seven enemies: Gaffgarion, 4 Knights, 1 Archer, 1 White Mage. Gaffgarion stays sub-boss tier
+Use seven enemies: Gaffgarion, 5 Knights, and 1 White Mage. One Knight carries a crossbow kit to
+preserve the old Archer lane without adding an Archer spritesheet. Gaffgarion stays sub-boss tier
 (`103`); the Knight captain reaches `102`; the ranged/support units sit at `101`.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
@@ -231,17 +232,18 @@ Use seven enemies: Gaffgarion, 4 Knights, 1 Archer, 1 White Mage. Gaffgarion sta
 | n | Knight Captain | Knight | `102` | `76/48` | Lead wall; contests the crossing and protects the medic. |
 | n | Knight | Knight | `101` | `76/48` | Second wall; presses the bridge. |
 | n | Knight | Knight | `101` | `76/48` | Bank guard; stops a free rush to the backline. |
-| n | Knight | Knight | `100` | `76/48` | Body; reinforces the push. |
-| n | Archer | Archer | `101` | `74/50` | One line-of-sight threat; prevents a pure bridge turtle. |
+| n | Knight | Knight | `100` | `76/48` | Added body; reinforces the push while reusing the Knight sheet. |
+| n | Crossbow Knight | Knight | `101` | `74/50` | Former Archer role: one line-of-sight threat without adding an Archer sheet. |
 | n | Field Medic (NEW) | White Mage | `101` | `55/76` | Sustain/revive pressure; forces target priority. |
 
 Reasoning:
 
 The faithful move is to **scale the betrayal and bridge pressure**, not turn Ovelia into a coin-flip
 liability. Gaffgarion at `103` with draining dark sword skills is a genuine menace, but his power
-is still in his strippable weapon. Four Knights keep the Order escort identity. One Archer prevents
-a pure turtle. The White Mage is the v2 escalation: sustain makes target priority matter without
-adding hard status or a second cheap line-of-sight attacker.
+is still in his strippable weapon. The Knight bodies keep the Order escort identity. One crossbow
+Knight prevents a pure turtle without spending a second new generic sheet. The White Mage is the v2
+escalation: sustain makes target priority matter without adding hard status or a second cheap
+line-of-sight attacker.
 
 ## Builds (final-shop quality; Gaffgarion gear-dependent and strippable)
 
@@ -273,7 +275,7 @@ Role: the betrayer. Drains HP off the party with his sword skills, but a player 
 his gear (or breaks it) defangs him — exactly the original lesson. NON-unique kit (his rare
 drop is reserved for Lionel Gate).
 
-### Knight x4 (Lv 102 / 101 / 101 / 100)
+### Melee Knight x4 (Lv 102 / 101 / 101 / 100)
 
 ```text
 Job: Knight (id TBD)   JobLevel: 8   Secondary: none (NO Break)
@@ -287,17 +289,18 @@ Right hand: Runeblade (30) or Icebrand (29)   Left hand: shop shield (id TBD)
 Role: the wall that controls the crossing. No Rend here; the fight's gear lesson is Gaffgarion's
 weapon, not generic equipment break pressure.
 
-### Archer (Lv 101)
+### Crossbow Knight (Lv 101)
 
 ```text
-Job: Archer (77)   JobLevel: 8   Secondary: none
+Job: Knight (76)   JobLevel: 8   Secondary: none
 Reaction: Reflexes (449)   Support: Concentration (469)   Movement: Movement +1 (486)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
-Right hand: Windslash Bow (87)   Left hand: none / two-hand marker (254)
+Head: Crystal Helm (154)   Body: Reflect Mail / Mirror Mail (184)
+Accessory: Bracers (218)
+Right hand: Gastrophetes (82)   Left hand: Crystal Shield (139)
 ```
 
-Role: the ranged screen. Positioned to punish a bridge turtle, not to create unavoidable shots on
-Ovelia before the player can respond.
+Role: the ranged screen formerly carried by the Archer draft. The Knight sheet is already loaded
+by vanilla, so this preserves line pressure without spending a second new generic spritesheet.
 
 ### Field Medic — White Mage (Lv 101) — NEW
 
@@ -319,8 +322,8 @@ or bursting Gaffgarion through the sustain.
 ```text
 Gaffgarion starts on the party's side or the bridge (per his betray scripting) — when he turns,
   he pressures the player's line and drives toward Ovelia.
-The four Knights start across/at the bridge, pushing toward Ovelia's hang-back position.
-The Archer starts on elevation or the far bank with a sightline to the approach lane — pressure,
+The four melee Knights start across/at the bridge, pushing toward Ovelia's hang-back position.
+The crossbow Knight starts on elevation or the far bank with a sightline to the approach lane — pressure,
   not unavoidable VIP sniping.
 The White Mage starts behind the Knight line, close enough to heal Gaffgarion/Knights but reachable
   by a committed push or ranged answer.
@@ -329,7 +332,7 @@ Preserve Ovelia's protected position, Agrias's ally slot, and Gaffgarion's betra
 ```
 
 The map should read: "a draining traitor and a Knight wall drive across the bridge at the
-princess, with one archer and one medic forcing target priority." Control Ovelia, strip the
+princess, with one crossbow marksman and one medic forcing target priority." Control Ovelia, strip the
 traitor, break the sustain, hold the crossing.
 
 ## Simulation Plan and Results
@@ -351,47 +354,50 @@ Iteration results:
 
 | Candidate | Enemies | Enemy actions | Action ratio | Pressure | Delta vs v1 | Result |
 |-----------|---------|---------------|--------------|----------|-------------|--------|
-| v1 current: Gaffgarion, 4 Knight, 1 Archer | 6 | 22.2 | 0.92 | 52.4 | 0.0% | Baseline |
+| pre-budget draft: Gaffgarion, 4 Knight, 1 Archer | 6 | 22.2 | 0.92 | 52.4 | 0.0% | Baseline |
 | Add second Archer LoS | 7 | 26.2 | 1.09 | 60.8 | +16.0% | Rejected: too much VIP LoS |
 | Ovelia durable but not controlled | 7 | 25.6 | 1.07 | 61.2 | +16.8% | Rejected: guest-AI framing |
-| Gaffgarion, 4 Knight, 1 Archer, 1 White Mage | 7 | 25.6 | 1.07 | 61.2 | +16.8% | Accepted |
+| Gaffgarion, 5 Knight (one crossbow), 1 White Mage | 7 | 25.6 | 1.07 | 61.2 | +16.8% | Accepted after sprite-budget revision |
 
 Decision:
 
 ```text
-Use one White Mage field medic as the v2 escalation. Do not add a second Archer. Ovelia and Agrias
-must be player-controlled in NG+, while Gaffgarion remains weapon-dependent and scripted to retreat.
+Use one White Mage field medic as the v2 escalation. Do not add an Archer spritesheet in this map:
+ranged pressure is delivered by a crossbow Knight so the battle stays at net +1 unique sheet.
+Ovelia and Agrias must be player-controlled in NG+, while Gaffgarion remains weapon-dependent and
+scripted to retreat.
 ```
 
 ## Current Implementation (v2, entry 405)
 
 Applied with `python tools/battle_patch.py zeirchele`; diff contained to local entry 21 (global 405),
-and the active battle roster follows the v2 design: Gaffgarion, four Knights, one Archer, and one
-White Mage field medic. The first implementation tried a plain high-slot add (`s11`, UnitID `0x87`),
-but in-game testing showed Zeirchele ignored that slot and stayed at six enemies. The working v2
-candidate keeps the ENTD `s11` White Mage and also patches `OverrideEntryData` so Zeirchele's
-formation layer includes `Key2=11`.
+and the active battle roster follows the sprite-budget-safe v2 design: Gaffgarion, four melee
+Knights, one crossbow Knight, and one White Mage field medic. The first implementation tried a
+plain high-slot add (`s11`, UnitID `0x87`), but in-game testing showed Zeirchele ignored that slot
+and stayed at six enemies. The working v2 candidate adds the `s11` Knight and also patches
+`OverrideEntryData` so Zeirchele's formation layer includes `Key2=11`.
 
 ```text
 s0  Gaffgarion  L103 jl8  (job 5 + secondary KEPT)  R Counter  S Atk-Boost  M +1  heavy kit + Runeblade(strippable) + Shield
 s4  Knight      L102 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
 s5  Knight      L101 jl8  (same kit)
 s6  Knight      L101 jl8  (same kit)
-s7  Knight      L100 jl8  (same kit)
-s8  Archer      L101 jl8  R Reflexes  S Concentration  M +1  Thief's Cap / Black Garb / Bracers + Windslash Bow
-s11 White Mage  L101 jl8  R Mana Shield  S Defense Boost  M +1  Mage Hat / Luminous Robe / Featherweave / Golden Staff
+s7  White Mage  L101 jl8  R Mana Shield  S Defense Boost  M +1  Mage Hat / Luminous Robe / Featherweave / Golden Staff
+s8  Knight      L101 jl8  R Reflexes  S Concentration  M +1  Crystal Helm / Reflect Mail / Bracers + Gastrophetes + Crystal Shield
+s11 Knight      L100 jl8  R Counter  S Atk-Boost  M +1  heavy shop kit + Runeblade + Shield
 ```
 
-`s2` and `s3` remain vanilla level-`0xFE` intro corpse actors. The NXD patch moves Zeirchele's
-`OverrideEntryData` end marker from `s10` to a new `s11` row, mirroring the proven Merchant Dorter
-slot-add marker pattern.
+`s2` and `s3` remain vanilla level-`0xFE` intro corpse actors. The NXD patch adds a new
+`OverrideEntryData` row for `Key=405, Key2=11`, shaped like the active enemy rows. `Unknown9C` is
+not an end marker and vanilla rows are left untouched; the new combat row uses the battle's combat
+row convention.
 
 Placement polish after the first successful in-game test:
 
 ```text
-s7  Knight      moved to (3,9)
-s8  Archer      moved to (5,9), swapping with the high-left Knight near the stone
-s11 White Mage  moved to (6,8), two tiles on the side axis toward the mountain-edge high ground
+s7  White Mage      moved to (6,8), two tiles on the side axis toward the mountain-edge high ground
+s8  Crossbow Knight stays on the high-left line at (5,9)
+s11 Knight          added at (3,9)
 ```
 
 Playtest correction: `(4,6)` was rejected because it moved the White Mage toward the water instead
@@ -403,18 +409,20 @@ of toward the mountain. The corrected high-ground test coordinate is `(6,8)`.
 - [x] Dump original entry; verify Gaffgarion + 5 Knight + Agrias + Ovelia slots.
 - [x] Preserve Gaffgarion's job/secondary + identity (betray/auto-retreat link untouched).
 - [x] Keep his gear strippable + non-unique (Runeblade).
-- [x] Swap one Knight -> Archer (re-job s8); Archer build applied.
-- [x] Add one White Mage field medic as `s11` (UnitID `0x87`) after adding the matching
-  `OverrideEntryData` row.
-- [x] Set levels: Gaffgarion `103`; Knight captain `102`; two Knights + Archer + White Mage `101`;
-  last Knight `100`.
+- [x] Convert vanilla active slot `s7` into the White Mage field medic.
+- [x] Keep `s8` as a Knight but give it the crossbow kit and Archer-style R/S/M.
+- [x] Add one Knight body as `s11` (UnitID `0x87`) after adding the matching `OverrideEntryData`
+  row.
+- [x] Set levels: Gaffgarion `103`; Knight captain `102`; two melee Knights + crossbow Knight +
+  White Mage `101`; last Knight `100`.
 - [x] Set JobLevel `8` on all active enemy slots; Knights have no secondary.
 - [x] Give every active human enemy complete equipment plus intentional reaction/support/movement.
 - [x] Set Ovelia and Agrias player-controlled in NG+ via the runtime guest scaler; do not rely on guest AI.
 - [x] Equip Ovelia for survival (playtest fix): endgame job-legal kit; level left to the scaler. See "Ovelia survivability".
 - [x] Patch the embedded ENTD/table data via `tools/battle_patch.py zeirchele`.
 - [x] Re-dump and diff; active roster is v2 and `s2/s3` remain vanilla intro placeholders.
-- [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; confirm the White Mage appears as the seventh enemy.
+- [ ] Playtest from a NG+ save; confirm Ovelia-protect + Gaffgarion-retreat work; confirm seven
+  enemies, normal Agrias sprite/control, and crossbow-Knight ranged pressure.
 
 ## Test Questions
 
@@ -422,7 +430,7 @@ of toward the mountain. The corrected high-ground test coordinate is `(6,8)`.
 - Does Gaffgarion feel like a dangerous betrayer, while the strip-his-gear counter still defangs him?
 - Does his auto-retreat-at-low-HP still trigger (he must NOT be killable here)?
 - Does the White Mage create meaningful target priority without making the fight a slog?
-- Does the single Archer prevent bridge turtling without creating unavoidable VIP snipes?
+- Does the crossbow Knight prevent bridge turtling without creating unavoidable VIP snipes?
 - Does Agrias as an ally offset the difficulty as intended?
 - Is it harder than Araguay but not yet a Gaffgarion/Cúchulainn-tier boss wall, per the curve?
 - Does it still read as the riverbank betrayal, not a designed arena?

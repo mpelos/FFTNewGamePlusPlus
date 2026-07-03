@@ -13,7 +13,7 @@ patch is `tools/battle_patch.py`; the patched embedded ENTD is
 |---|---:|---|---|---|
 | `012` Merchant City of Dorter | `403` | `merchant` | ENTD retune + event-spawned slot-add | Knight captain slot `s9` UnitID `0x86`; `event119.e` contains `45 86 00 01` registration and `5f 86 00` choreography block. |
 | `013` Araguay Woods | `404` | `araguay` | ENTD direct scale + plain static slot-add | Boco level/control; roster jobs `98,98,99,99,98,98,104`; Coeurl slot `s9` UnitID `0x87`. |
-| `014` Zeirchele Falls | `405` | `zeirchele` | ENTD retune + NXD row for true static slot-add | White Mage slot `s11` UnitID `0x87`; intro corpses `s2/s3` untouched; `OverrideEntryData` row count `518` with `405/11`; enemy levels applied; Ovelia survival gear/Faith applied; placement polish checks `s7=(3,9)`, `s8=(5,9)`, `s11=(6,8)`. |
+| `014` Zeirchele Falls | `405` | `zeirchele` | ENTD retune + NXD row for true static slot-add | White Mage in vanilla slot `s7`; crossbow Knight in `s8`; added Knight slot `s11` UnitID `0x87`; intro corpses `s2/s3` untouched; `OverrideEntryData` row count `518` with `405/11`; enemy levels applied; Ovelia survival gear/Faith applied; placement polish checks `s7=(6,8)`, `s8=(5,9)`, `s11=(3,9)`. |
 | `015` Castled City of Zaland | `407` | `zaland` | ENTD retune + plain static slot-add | Second Dragoon slot `s8` UnitID `0x86`; Dragoon/Black Mage/Archer levels and job-rank seeds applied. |
 | `016` Balias Tor | `409` | `balias_tor` | ENTD retune + plain static slot-add | Chemist slot `s8` UnitID `0x86`; Summoner/Knight/Archer levels and support kits applied. |
 | `017` Tchigolith Fenlands | `410` | `tchigolith` | ENTD monster retune + plain static slot-add | Second Bonesnatch slot `s9` UnitID `0x86`; monster jobs and levels applied. |
@@ -47,28 +47,30 @@ Post-patch binary validation was run against
 - Boco player-control bit;
 - Zeirchele's vanilla intro corpse placeholders `s2/s3` remain byte-for-byte untouched;
 - Zeirchele's `root.nxl` `OverrideEntryData` count includes the new `s11` row;
-- Zeirchele's placement polish keeps the Archer/Knight swap and White Mage high-ground coordinate;
+- Zeirchele's placement polish keeps the White Mage high-ground coordinate, the crossbow Knight line,
+  and the added Knight body;
 - Lionel Gate Blood Sword equipment;
 - Cuchulainn's 108 Gems/Japa Mala Spoils byte.
 
-Latest local result from `python tools/validate_ch2_v2.py`: `78/78 checks passed`.
+Latest local result from `python tools/validate_ch2_v2.py`: `81/81 checks passed`.
 
 Build/deploy validation:
 
 ```powershell
-$env:RELOADEDIIMODS='C:/Reloaded-II/Mods'
+$env:RELOADEDIIMODS='D:/Projects/FFTModNewGame++/tmp/deploy-check'
 dotnet build src\fftivc.battles.ngplus\fftivc.battles.ngplus.csproj -c Release
 ```
 
-Latest deploy result: build succeeded with `0 Warning(s)` and `0 Error(s)`, outputting the DLL to
-`C:\Reloaded-II\Mods\fftivc.battles.ngplus\fftivc.battles.ngplus.dll`.
+Latest audit build result: build succeeded with `0 Warning(s)` and `0 Error(s)`, outputting the DLL
+to `tmp/deploy-check/fftivc.battles.ngplus/fftivc.battles.ngplus.dll`.
 
 ## Remaining Playtest Questions
 
 The binary implementation is complete, but in-game balance still needs human playtest feedback:
 
 - whether Araguay's promoted monster pack and Coeurl pressure are fair with controlled Boco;
-- whether Zeirchele's `s11` White Mage support appears as the seventh enemy and makes Ovelia protection tense without dragging the fight;
+- whether Zeirchele's `s7` White Mage support, `s8` crossbow Knight, and `s11` added Knight appear
+  correctly and make Ovelia protection tense without dragging the fight;
 - whether Zaland's two Dragoons pressure Mustadio without creating an unfair opener;
 - whether Balias Tor and Goug Summoner tempo remains race-able;
 - whether the Lionel Gate -> Cuchulainn no-resupply chain taxes resources without item starvation.

@@ -28,7 +28,7 @@ The curve is carried by **composition + terrain + mechanics + complete R/S/M set
 |---|--------|-----|---------|------------------------------|---------|------|
 | 11 | Merchant Dorter | `012` | 7 (2 Archer + 2 Black Mage + 2 Thief + **+1 Knight anchor**) | harder Dorter rematch; charm-Thieves | rooftops | ▃ moderate |
 | 12 | Araguay Woods | `013` | 7 (4 Black Goblin + 2 Gobbledygook + **1 Coeurl**) | controlled Boco through promoted monster tiers | woods | ▃ moderate+ |
-| 13 | Zeirchele Falls | `014` | Gaffgarion (turncoat) + 4 Knight + 1 Archer + 1 White Mage | controlled Ovelia/Agrias; **betrayal bridge** | falls | ▅ hard |
+| 13 | Zeirchele Falls | `014` | Gaffgarion (turncoat) + 5 Knight (one crossbow) + 1 White Mage | controlled Ovelia/Agrias; **betrayal bridge** | falls | ▅ hard |
 | 14 | Zaland | `015` | 7 (1 Knight + 2 Dragoon + 2 Archer + 2 Black Mage) | controlled Mustadio; **Dragoon** vertical pressure | castle city | ▅ hard |
 | 15 | Balias Tor | `016` | 7 (2 **Summoner** + 2 Knight + 2 Archer + 1 Chemist) | **Summoner debut**: race the summon through sustain | hill | ▆ harder |
 | 16 | Tchigolith Fenlands | `017` | 8 (2 Ghoul + 2 Skeleton + 2 Bonesnatch + Malboro + Floating Eye) | **undead** attrition + one mass-status monster | swamp | ▆ harder |
@@ -39,7 +39,7 @@ The curve is carried by **composition + terrain + mechanics + complete R/S/M set
 | 21 | Lionel Castle Oratory | `022` | **Cúchulainn** (lone Lucavi demon, `104`) | **demon finale**: mass-status + **Holy weakness**; reward-table rare | small arena | █ finale |
 
 Reading: the front third (11–14) escalates the *generic* roster into real NG+ parties (Knight
-anchor → faster beasts → betrayal/Archer/medic → Dragoon pressure) while making every active guest
+anchor → faster beasts → betrayal/crossbow/medic → Dragoon pressure) while making every active guest
 player-controlled. The middle (15–18)
 introduces the chapter's marquee *castes* — Summoners, the undead, tempo Time-Mages, the Geomancer
 — each a new tactical caste, not just a bigger number. The back third (19–21) is the **boss
@@ -115,7 +115,7 @@ Every fight states which slot(s) changed job and confirms the original strategy 
 ```text
 Merchant Dorter (012) : 2 Archer + 2 Black Mage + 2 Thief + 1 Knight anchor -> rooftop pressure + charm
 Araguay Woods   (013) : 4 Black Goblin + 2 Gobbledygook + 1 Coeurl          -> controlled Boco route pressure
-Zeirchele Falls (014) : Gaffgarion + 4 Knight + Archer + White Mage         -> bridge betrayal, not Ovelia AI
+Zeirchele Falls (014) : Gaffgarion + 5 Knight (one crossbow) + White Mage   -> bridge betrayal, not Ovelia AI
 Zaland          (015) : 1 Knight + 2 Dragoon + 2 Archer + 2 Black Mage       -> controlled Mustadio under vertical pressure
 Balias Tor      (016) : 2 Summoner + 2 Knight + 2 Archer + Chemist           -> first summon race through sustain
 Tchigolith      (017) : undead pack + one Malboro + one Eye                  -> attrition/status without spam

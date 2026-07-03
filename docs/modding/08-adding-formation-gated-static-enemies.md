@@ -28,6 +28,17 @@ If the ENTD contains a valid new high slot but `OverrideEntryData` rows stop bef
 game can ignore the new unit. In Zeirchele, the ENTD `s11` unit was valid but the battle stayed at
 six enemies until the NXD table gained row `Key=405, Key2=11`.
 
+Two caveats added after the Zaland (407 s8) add, 2026-07-02:
+
+- **The NXD row is NOT sufficient if the added slot's flags carry bit `0x40`.** Zaland's add,
+  cloned from a `0xD0`-flagged sibling, had its row in place and still never appeared; forcing
+  flags to `0x90` (one byte) made it spawn. Check the flags BEFORE reaching for this recipe — see
+  [10-event-scripts-and-the-e-files.md](10-event-scripts-and-the-e-files.md).
+- **The row's necessity has not been isolated.** In both Zeirchele and Zaland the row was present
+  in every decisive test, so "row required" rests on pre-journal iterations with concurrent
+  variables. Shipping the row remains current practice; a row-removal test on a working add would
+  settle whether it is load-bearing.
+
 This is not the Merchant Dorter event-spawn problem. There is no copied choreography block and no
 `AddUnit` registration entry. The roster is static, but the static formation is gated by NXD.
 
@@ -168,6 +179,7 @@ Agrias renders normally, and the vanilla intro corpses remain normal story scene
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| Added unit absent although ENTD AND its NXD row are correct | Added slot's flags carry bit `0x40` (clone-copied from a `0xD0` sibling) | Force the flags to `0x90`-style values — validated on Zaland 407 s8; see [10-event-scripts-and-the-e-files.md](10-event-scripts-and-the-e-files.md). |
 | ENTD `s11` looks correct but battle still has old enemy count | `OverrideEntryData` rows stop before `s11` | Add a matching NXD row (active-enemy shape) and update `root.nxl`. |
 | A cutscene corpse/body changes job but disappears before combat | Repurposed a story placeholder slot | Restore the placeholder and add a separate combat slot. |
 | New unit appears in intro scenery or wrong timing | Used an always-present/intro slot when the battle actually needs an event wave | Reclassify as event-spawned and use doc `04`. |
