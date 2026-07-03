@@ -104,7 +104,7 @@ def run() -> int:
     check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 101, 101, 100])
     check("405 knight/extra-knight placement polish", (field(entd, 405, 8, 0x19), field(entd, 405, 8, 0x1A), field(entd, 405, 11, 0x19), field(entd, 405, 11, 0x1A)) == (5, 9, 3, 9))
     check("405 white mage high-ground placement", (field(entd, 405, 7, 0x19), field(entd, 405, 7, 0x1A)) == (6, 8))
-    check("OverrideEntryData row count updated for 405/s11, 407/s8, 409/s8, and 410/s9", "overrideentrydata,96,521,3" in root_nxl)
+    check("OverrideEntryData row count updated through 410/s10", "overrideentrydata,96,522,3" in root_nxl)
     check("407 second dragoon", field(entd, 407, 8, 0x0A) == 87 and field(entd, 407, 8, 0x20) == 0x86)
     check("407 second dragoon placement", (field(entd, 407, 8, 0x19), field(entd, 407, 8, 0x1A)) == (0, 10))
     # Zaland's enemies are script-managed (0xD0 + event140.e AddUnit); the added s8 mirrors its
@@ -122,8 +122,14 @@ def run() -> int:
     check("409 chemist slot", field(entd, 409, 8, 0x0A) == 75 and field(entd, 409, 8, 0x20) == 0x86)
     check("409 chemist placement", (field(entd, 409, 8, 0x19), field(entd, 409, 8, 0x1A)) == (13, 4))
     check("409 levels", roster(entd, 409, [2, 3, 4, 5, 6, 7, 8], 0x03) == [101, 101, 100, 102, 101, 101, 101])
-    check("410 second bonesnatch", field(entd, 410, 9, 0x0A) == 110 and field(entd, 410, 9, 0x20) == 0x86)
-    check("410 monster jobs", roster(entd, 410, [1, 2, 3, 4, 5, 6, 7, 9], 0x0A) == [110, 109, 109, 112, 112, 115, 130, 110])
+    check("410 second skeletal fiend", field(entd, 410, 9, 0x0A) == 111 and field(entd, 410, 9, 0x20) == 0x86)
+    check("410 variant pool is plague horror or wild boar",
+          field(entd, 410, 6, 0x0A) == 117 and field(entd, 410, 6, 0x18) == 0x50
+          and field(entd, 410, 7, 0x0A) == 123 and field(entd, 410, 7, 0x18) == 0x90
+          and field(entd, 410, 6, 0x20) == 0x85 and field(entd, 410, 7, 0x20) == 0x85)
+    check("410 old third pool slot cleared", slot(entd, 410, 8) == bytes.fromhex("00 00 ff fe fe fe fe fe 00 00 00 00 fe 01 fe 01 fe 01 fe fe fe fe fe 00 00 00 00 00 fe ff 00 00 ff 00 00 00 00 00 00 00"))
+    check("410 fixed ochu slot", field(entd, 410, 10, 0x0A) == 131 and field(entd, 410, 10, 0x20) == 0x87 and field(entd, 410, 10, 0x18) == 0x90)
+    check("410 monster jobs", roster(entd, 410, [1, 2, 3, 4, 5, 6, 7, 9, 10], 0x0A) == [111, 110, 110, 114, 114, 117, 123, 111, 131])
     check("411 roles", roster(entd, 411, [2, 3, 5, 6, 7, 8, 9], 0x0A) == [81, 83, 77, 77, 82, 82, 83])
     check("411 levels", roster(entd, 411, [2, 3, 5, 6, 7, 8, 9], 0x03) == [102, 101, 101, 100, 102, 101, 100])
     check("413 geomancer slot", field(entd, 413, 7, 0x0A) == 86 and field(entd, 413, 7, 0x20) == 0x86)

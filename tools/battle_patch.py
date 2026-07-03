@@ -106,7 +106,11 @@ ROBE_OF_LORDS = 207  # Tier-S robe (Lordly Robe, Unknown20 best) — Cletienne (
 CHOCOBO, BLACK_CHOCOBO, RED_CHOCOBO, PIG = 94, 95, 96, 121
 GOBLIN, BLACK_GOBLIN, GOBBLEDYGOOK = 97, 98, 99
 RED_PANTHER, COEURL, VAMPIRE_CAT = 103, 104, 105
-SKELETON, BONESNATCH, GHOUL, FLOATING_EYE, MALBORO = 109, 110, 112, 115, 130
+SKELETON, BONESNATCH, SKELETAL_FIEND = 109, 110, 111
+GHOUL, GHAST, REVENANT = 112, 113, 114
+FLOATING_EYE, PLAGUE_HORROR = 115, 117
+WILD_BOAR = 123
+MALBORO, OCHU = 130, 131
 
 
 def generic_job_rank(job):
@@ -187,6 +191,12 @@ def restore_vanilla_slot(data, global_entry, slot):
     base = (global_entry % 128) * ENTRY
     off = base + slot * SLOT
     data[off:off + SLOT] = VANILLA.read_bytes()[off:off + SLOT]
+
+
+def clear_slot(data, global_entry, slot):
+    base = (global_entry % 128) * ENTRY
+    off = base + slot * SLOT
+    data[off:off + SLOT] = EMPTY_SLOT
 
 
 def chapter1_guest_control(data):
@@ -736,10 +746,12 @@ def balias_tor(data):
 
 # ---------------------------------------------------------------------------
 # Battle 016 — Tchigolith Fenlands (entry 410): undead-swamp horror; all-monster status/attrition.
-# Vanilla 410: s0 = Mustadio (cid 0x22, lvl 254, disabled — LEFT alone); s1-s7 = 7 active monsters;
-# s8 = monster job 121 at lvl 254 (disabled — LEFT alone). Active roster:
-#   s2,s3 = Skeleton (job 109), s1 = Bonesnatch (job 110), s4,s5 = Ghoul (job 112),
-#   s6 = Floating Eye (job 115), s7 = Malboro (job 130). Per docs/battles/017-tchigolith-fenlands.md.
+# Vanilla 410: s0 = Mustadio (cid 0x22, lvl 254, disabled — LEFT alone); s1-s5 = fixed monsters;
+# s6/s7/s8 share UnitID 0x85 and position, forming the vanilla variant pool.
+# Active roster:
+#   fixed: 2 Revenants, 2 Bonesnatches, 2 Skeletal Fiends, 1 Ochu.
+#   pool 0x85: Plague Horror or Wild Boar.
+#   Per docs/battles/017-tchigolith-fenlands.md.
 #   - The UNDEAD + status-swamp mechanic IS the Chapter-2 escalation — no job add.
 #   - Scale Level + JobLevel ONLY (no gear, no R-S-M, no job change) exactly like Ch1 Sweegy/Araguay.
 #     This PRESERVES the undead flags (reraise / heal-damages-undead / Phoenix-Down-instakill, which
@@ -747,14 +759,21 @@ def balias_tor(data):
 #   - One mass-status disruptor only (the Malboro); no extra status monster added (project rule).
 def tchigolith(data):
     E = 410
-    set_slot(data, E, 1, level=102, joblevel=8, job=BONESNATCH, brave=80, faith=35)
-    set_slot(data, E, 3, level=101, joblevel=8, job=SKELETON, brave=80, faith=35)
-    set_slot(data, E, 7, level=102, joblevel=8, job=MALBORO, brave=78, faith=35)
-    for s, job in ((2, SKELETON), (4, GHOUL), (5, GHOUL)):
+    set_slot(data, E, 1, level=102, joblevel=8, job=SKELETAL_FIEND, brave=80, faith=35)
+    set_slot(data, E, 3, level=101, joblevel=8, job=BONESNATCH, brave=80, faith=35)
+    for s, job in ((2, BONESNATCH), (4, REVENANT), (5, REVENANT)):
         set_slot(data, E, s, level=100, joblevel=8, job=job, brave=80, faith=35)
-    set_slot(data, E, 6, level=100, joblevel=8, job=FLOATING_EYE, brave=78, faith=35)
+    # Keep the shared-uid variant logic, but make the pool exactly Plague Horror / Wild Boar.
+    # This mirrors the two-entry random pools seen in Finnath: 0x50 variant followed by 0x90 base.
+    set_slot(data, E, 6, level=100, joblevel=8, job=PLAGUE_HORROR, brave=78, faith=35)
+    set_slot(data, E, 7, level=100, joblevel=8, job=WILD_BOAR, brave=78, faith=35)
+    set_control_flags(data, E, 7, 0x90)
+    clear_slot(data, E, 8)
     clone_slot(data, E, 1, 9, unitid=0x86, x=7, y=4)
-    set_slot(data, E, 9, level=101, joblevel=8, job=BONESNATCH, brave=80, faith=35)
+    set_slot(data, E, 9, level=101, joblevel=8, job=SKELETAL_FIEND, brave=80, faith=35)
+    clone_slot(data, E, 7, 10, unitid=0x87, x=9, y=8)
+    set_control_flags(data, E, 10, 0x90)
+    set_slot(data, E, 10, level=102, joblevel=8, job=OCHU, brave=78, faith=35)
     return [E]
 
 
