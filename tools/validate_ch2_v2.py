@@ -18,6 +18,7 @@ VANILLA_ENTD = Path("extracted/enhanced_0002_selected/fftpack/battle_entd4_ent.b
 EVENT119 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event119.e")
 EVENT140 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event140.e")
 EVENT167 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event167.e")
+EVENT176 = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/script/enhanced/event176.e")
 ROOT_NXL = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/nxd/root.nxl")
 
 
@@ -49,6 +50,7 @@ def run() -> int:
     event119 = EVENT119.read_bytes()
     event140 = EVENT140.read_bytes()
     event167 = EVENT167.read_bytes()
+    event176 = EVENT176.read_bytes()
     root_nxl = ROOT_NXL.read_text(encoding="utf-8")
     checks: list[tuple[str, bool]] = []
 
@@ -106,7 +108,7 @@ def run() -> int:
     check("405 enemy levels", roster(entd, 405, [0, 4, 5, 6, 7, 8, 11], 0x03) == [103, 102, 101, 101, 101, 101, 100])
     check("405 knight/extra-knight placement polish", (field(entd, 405, 8, 0x19), field(entd, 405, 8, 0x1A), field(entd, 405, 11, 0x19), field(entd, 405, 11, 0x1A)) == (5, 9, 3, 9))
     check("405 white mage high-ground placement", (field(entd, 405, 7, 0x19), field(entd, 405, 7, 0x1A)) == (6, 8))
-    check("OverrideEntryData row count updated through 411/s11", "overrideentrydata,96,523,3" in root_nxl)
+    check("OverrideEntryData row count updated through 413/s7", "overrideentrydata,96,524,3" in root_nxl)
     check("407 second dragoon", field(entd, 407, 8, 0x0A) == 87 and field(entd, 407, 8, 0x20) == 0x86)
     check("407 second dragoon placement", (field(entd, 407, 8, 0x19), field(entd, 407, 8, 0x1A)) == (0, 10))
     # Zaland's enemies are script-managed (0xD0 + event140.e AddUnit); the added s8 mirrors its
@@ -141,6 +143,13 @@ def run() -> int:
     check("event167 patched size 0xf74", len(event167) == 0xF74)
     check("413 geomancer slot", field(entd, 413, 7, 0x0A) == 86 and field(entd, 413, 7, 0x20) == 0x86)
     check("413 levels", roster(entd, 413, [1, 2, 3, 4, 5, 6, 7], 0x03) == [101, 101, 100, 100, 102, 101, 101])
+    check("413 s7 flags 0xD0 (Balias intro-managed convention)", field(entd, 413, 7, 0x18) == 0xD0)
+    check("event176 has one 5f 86 00 warp to (1,6)", event176.count(bytes.fromhex("5f860001060000")) == 1)
+    check("event176 has Black-Mage-parallel 0x86 entrance move",
+          event176.count(bytes.fromhex("3b8600d2ff0000000000010100")) == 1)
+    check("event176 has one 44 86 00 draw", event176.count(bytes.fromhex("448600")) == 1)
+    check("event176 has uid 0x86 idle pose", event176.count(bytes.fromhex("118600020000")) == 1)
+    check("event176 patched size 0x660", len(event176) == 0x660)
     check("414 gallows levels", roster(entd, 414, [0, 1, 2, 3, 4, 5, 6, 7], 0x03) == [103, 101, 102, 101, 101, 100, 102, 101])
     check("415 gate levels", roster(entd, 415, [0, 1, 2, 3, 4, 5, 6], 0x03) == [103, 101, 100, 102, 101, 101, 102])
     check("415 blood sword equipped", field(entd, 415, 0, 0x15) == 23)

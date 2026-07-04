@@ -53,6 +53,20 @@ the relevant chapter overview:
   Chapter 4 -> 037-chapter-4-overview.md
 ```
 
+Before changing any code, patch script, binary game data, NXD table, event script, runtime hook,
+or deployed mod artifact, also read:
+
+```text
+docs/modding/10-event-scripts-and-the-e-files.md
+```
+
+This read is mandatory for implementation work because battle changes can live in several
+different layers: ENTD slots, `OverrideEntryData`/`root.nxl`, `.e` event scripts, sprite-sheet
+budget, runtime hooks, and deploy verification. Use doc `10` to classify the change before
+editing: job-swap, static add, formation-gated static add, or script-managed/wave add. Do not
+patch gameplay data by intuition when doc `10` says the unit's existence may depend on event
+registration, choreography, NXD rows, or sprite-budget limits.
+
 Read additionally when relevant:
 
 ```text
