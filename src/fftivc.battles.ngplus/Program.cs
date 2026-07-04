@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
@@ -45,9 +46,13 @@ public class Program : IMod
     private unsafe delegate nint EventResolveActorDelegate(int unitId, int* statusOut);
     private delegate int EventGetActorSlotDelegate(int actorIndex);
     private delegate long TransitionIntoBattleDelegate(long a1, long a2, long a3, long a4);
+    private delegate long CuchulainnDamageTraceCallback(long targetPtr, long statePtr, long hookStackPtr);
     private IHook<EventResolveActorDelegate>? _eventResolveActorHook;
     private IHook<EventGetActorSlotDelegate>? _eventGetActorSlotHook;
     private IHook<TransitionIntoBattleDelegate>? _transitionIntoBattleHook;
+    private Reloaded.Hooks.Definitions.IAsmHook? _cuchulainnDamageTraceHook;
+    private CuchulainnDamageTraceCallback? _cuchulainnDamageTraceCallback;
+    private Reloaded.Hooks.Definitions.IReverseWrapper<CuchulainnDamageTraceCallback>? _cuchulainnDamageTraceCallbackWrapper;
 
     private const int ENTD_INDEX_MIN = 224;
     private const int ENTD_INDEX_MAX = 227;
@@ -67,6 +72,7 @@ public class Program : IMod
     private const int PROLOGUE_ORBONNE_ENTRY = 387;
     private const int ZEIRCHELE_FALLS_ENTRY = 405;
     private const int GOLGOLLADA_GALLOWS_ENTRY = 414;
+    private const int LIONEL_ORATORY_ENTRY = 425;
 
     // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
     // playthrough harder (the party is low level early, so the guest just matches the team). This
@@ -147,13 +153,16 @@ public class Program : IMod
     // Diagnostic: trace Merchant Dorter entry 403 after the ENTD read/swap path. This is observe-only
     // and answers whether slot 9 reaches the final buffer the game receives.
     private static readonly bool DIAG_TRACE_MERCHANT_DORTER_ENTD = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
-    private static readonly bool DIAG_TRACE_ZEIRCHELE_ENTD = true;
+    private static readonly bool DIAG_TRACE_ZEIRCHELE_ENTD = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
     private const string ZEIRCHELE_DIAG_VARIANT = "guest-control-restore-v1";
     // The intro suspension experiment is retired: the Agrias corruption was sprite-sheet budget
     // (fixed in the ENTD composition — see battle_patch.py zeirchele notes), and suspending the
     // actor before formation froze its idle animation during the deployment screen.
     private static readonly bool DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_INTRO = false;
     private static readonly bool DIAG_TRACE_EVENT_ACTORS = false;
+    private static readonly bool ENABLE_CUCHULAINN_PRECLAMP_HP_SYNC = true;
+    private static readonly bool DIAG_TRACE_CUCHULAINN_RUNTIME = false;
+    private static readonly bool DIAG_TRACE_CUCHULAINN_DAMAGE = false;
     private static readonly bool DIAG_TRACE_MERCHANT_ACTOR_TABLE = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
     private static readonly bool DIAG_TRACE_TRANSITION_INTO_BATTLE = ENABLE_BATTLE_DIAGNOSTIC_LOGS;
     private static readonly bool DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8 = false;
@@ -162,6 +171,11 @@ public class Program : IMod
     private const int MERCHANT_DORTER_FILE_INDEX = 227;
     private const long EVENT_RESOLVE_ACTOR_RVA = 0x272684;
     private const long EVENT_GET_ACTOR_SLOT_RVA = 0x273108;
+    private const long PRECLAMP_DAMAGE_RVA = 0x30A66F;
+    private const int PRECLAMP_ACTOR_UNIT_OFFSET = 0x148;
+    private const int PRECLAMP_ACTOR_ACTION_ID_OFFSET = 0x142;
+    private const int PRECLAMP_STACK_SCAN_BYTES = 0x100;
+    private const int CUCHULAINN_DAMAGE_TRACE_MAX_LOGS = 200;
     private const long ACTOR_TABLE_RVA = 0x1853CE0;
     private const int ACTOR_TABLE_ENTRY_SIZE = 0x200;
     private const int ACTOR_TABLE_COUNT = 0x15;
@@ -169,11 +183,24 @@ public class Program : IMod
     private const int UNIT_CHAR_ID_OFFSET = 0x00;
     private const int UNIT_JOB_ID_OFFSET = 0x03;
     private const int UNIT_LEVEL_OFFSET = 0x29;
+    private const int UNIT_CURRENT_HP_OFFSET = 0x30;
     private const int UNIT_MAX_HP_OFFSET = 0x32;
     private const int UNIT_RAW_PA_OFFSET = 0x38;
+    private const int UNIT_RAW_SPEED_OFFSET = 0x3A;
     private const int UNIT_EFFECTIVE_PA_OFFSET = 0x3E;
+    private const int UNIT_EFFECTIVE_SPEED_OFFSET = 0x40;
+    private const int UNIT_CT_OFFSET = 0x41;
     private const byte GOLGOLLADA_GAFFGARION_CHAR_ID = 0x11;
     private const byte GOLGOLLADA_GAFFGARION_JOB_ID = 17;
+    private const byte CUCHULAINN_ENTD_CHAR_ID = 0x3C;
+    private const byte CUCHULAINN_RUNTIME_CHAR_ID = 0x43;
+    private const byte CUCHULAINN_GIGAS_JOB_ID = 60;
+    private const byte CUCHULAINN_IMPURE_JOB_ID = 67;
+    private const int CUCHULAINN_HP_PER_LEVEL = 50;
+    private const int CUCHULAINN_HP_LEVEL_OFFSET = 20;
+    private const ushort CUCHULAINN_MIN_HP = 500;
+    private const int CUCHULAINN_ENTD_LEVEL_OFFSET = 4;
+    private const byte CUCHULAINN_MIN_SPEED = 15;
     // resume_enwm_main.sav (world-map state of the LOADED game) is the freshest at battle-load time;
     // resume_enbtl_world lags (still the previous battle). Prefer enwm_main.
     private static readonly string[] ResumePreference = { "resume_enwm_main.sav", "resume_enbtl_world.sav" };
@@ -188,12 +215,17 @@ public class Program : IMod
     private long _zeircheleActorTableProbeUntilTicks;
     private long _merchantActorTableProbeUntilTicks;
     private long _golgolladaPaPatchUntilTicks;
+    private long _cuchulainnHpPatchUntilTicks;
     private int _transitionIntoBattleFireCount;
     private int _merchantA9ActivationAttempted;
     private int _zeirchele87Suppressed;
     private int _zeirchele87Restored;
     private int _golgolladaGaffPaPatched;
     private int _golgolladaGaffLastPatchedRawPa = -1;
+    private int _cuchulainnHpPatched;
+    private int _cuchulainnCurrentHpLateSynced;
+    private long _cuchulainnHpNextTraceTicks;
+    private int _cuchulainnDamageTraceLogs;
 
     // TEST TOGGLE — set true to force the battle ENTD swap (Layer 1) ON for EVERY save, so the NG+
     // battle reworks can be verified on a normal (non-NG+) Chapter-4 save without grinding a full NG+
@@ -423,6 +455,7 @@ public class Program : IMod
         _moduleBase = baseAddr;
         InstallEventActorTraceHooks(baseAddr);
         InstallTransitionIntoBattleTraceHook(baseAddr);
+        InstallCuchulainnDamageTraceHook(baseAddr);
         _scanner.AddMainModuleScan(SIG_FILE_READ_REQUEST_OFFSET, result =>
         {
             if (!result.Found) { Log("ERROR: fileReadRequestOffset signature NOT found."); return; }
@@ -463,6 +496,7 @@ public class Program : IMod
             new System.Threading.Thread(ZeircheleActorTableProbeLoop) { IsBackground = true, Name = "ngplus-zeirchele-actor-table-probe" }.Start();
         }
         new System.Threading.Thread(GolgolladaGaffPaPatchLoop) { IsBackground = true, Name = "ngplus-golgollada-gaff-pa-patch" }.Start();
+        new System.Threading.Thread(CuchulainnHpPatchLoop) { IsBackground = true, Name = "ngplus-cuchulainn-hp-patch" }.Start();
 
     }
 
@@ -524,6 +558,8 @@ public class Program : IMod
             if (validSlice) TraceMerchantDorterEntd(outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
             if (_isNgPlus && haveMod && validSlice && SliceCoversEntdEntry(fileIndex, sectorOffset, size, GOLGOLLADA_GALLOWS_ENTRY))
                 ArmGolgolladaGaffPaPatch();
+            if (_isNgPlus && haveMod && validSlice && SliceCoversEntdEntry(fileIndex, sectorOffset, size, LIONEL_ORATORY_ENTRY))
+                ArmCuchulainnHpPatch();
         }
         return ret;
     }
@@ -578,6 +614,403 @@ public class Program : IMod
         int count = System.Threading.Interlocked.Increment(ref _transitionIntoBattleFireCount);
         TraceLog($"[transition] fired count={count} ret=0x{ret:X} a1=0x{a1:X} a2=0x{a2:X} a3=0x{a3:X} a4=0x{a4:X}");
         return ret;
+    }
+
+    private readonly record struct DamageTraceUnit(
+        nint Ptr,
+        byte CharId,
+        byte Job,
+        byte Level,
+        byte Team,
+        byte Flags,
+        ushort Hp,
+        ushort MaxHp,
+        byte Speed);
+
+    private void InstallCuchulainnDamageTraceHook(nint baseAddr)
+    {
+        if (!ENABLE_CUCHULAINN_PRECLAMP_HP_SYNC && !DIAG_TRACE_CUCHULAINN_DAMAGE) return;
+        if (_hooks is null) return;
+
+        nint address = baseAddr + (nint)PRECLAMP_DAMAGE_RVA;
+        if (!ExpectedBytesMatch(address, 0x0F, 0xBF, 0x45, 0x06))
+        {
+            if (DIAG_TRACE_CUCHULAINN_DAMAGE)
+                TraceLog($"[cuchulainn-damage] hook skipped rva=0x{PRECLAMP_DAMAGE_RVA:X}: expected bytes not found");
+            return;
+        }
+
+        try
+        {
+            _cuchulainnDamageTraceCallback = CuchulainnDamageTraceCallbackImpl;
+            _cuchulainnDamageTraceCallbackWrapper = _hooks.CreateReverseWrapper(_cuchulainnDamageTraceCallback);
+            if (_cuchulainnDamageTraceCallbackWrapper is null ||
+                _cuchulainnDamageTraceCallbackWrapper.WrapperPointer == 0)
+            {
+                if (DIAG_TRACE_CUCHULAINN_DAMAGE)
+                    TraceLog("[cuchulainn-damage] hook skipped: reverse wrapper unavailable");
+                return;
+            }
+
+            _cuchulainnDamageTraceHook = _hooks
+                .CreateAsmHook(BuildCuchulainnDamageTraceAsm(), address, AsmHookBehaviour.ExecuteFirst)
+                .Activate();
+            if (DIAG_TRACE_CUCHULAINN_DAMAGE)
+                TraceLog($"[cuchulainn-damage] pre-clamp trace hook ON rva=0x{PRECLAMP_DAMAGE_RVA:X} addr=0x{address:X}");
+        }
+        catch (Exception ex)
+        {
+            if (DIAG_TRACE_CUCHULAINN_DAMAGE)
+                TraceLog($"[cuchulainn-damage] hook failed: {ex.GetType().Name}: {ex.Message}");
+        }
+    }
+
+    private string[] BuildCuchulainnDamageTraceAsm()
+    {
+        string callback = $"0{_cuchulainnDamageTraceCallbackWrapper!.WrapperPointer:X}h";
+        return
+        [
+            "use64",
+            "push rax",
+            "push rcx",
+            "push rdx",
+            "push r8",
+            "push r9",
+            "push r10",
+            "push r11",
+            "pushfq",
+            // Generic Chronicle's pre-clamp finding: rdi = target unit, rbp = staged HP state.
+            // Pass the hook-save stack too; actor wrappers can be found from saved registers/stack.
+            "mov rcx, rdi",
+            "mov rdx, rbp",
+            "mov r8, rsp",
+            "sub rsp, 80h",
+            "movdqu [rsp+20h], xmm0",
+            "movdqu [rsp+30h], xmm1",
+            "movdqu [rsp+40h], xmm2",
+            "movdqu [rsp+50h], xmm3",
+            "movdqu [rsp+60h], xmm4",
+            "movdqu [rsp+70h], xmm5",
+            $"mov r11, {callback}",
+            "call r11",
+            "movdqu xmm0, [rsp+20h]",
+            "movdqu xmm1, [rsp+30h]",
+            "movdqu xmm2, [rsp+40h]",
+            "movdqu xmm3, [rsp+50h]",
+            "movdqu xmm4, [rsp+60h]",
+            "movdqu xmm5, [rsp+70h]",
+            "add rsp, 80h",
+            "popfq",
+            "pop r11",
+            "pop r10",
+            "pop r9",
+            "pop r8",
+            "pop rdx",
+            "pop rcx",
+            "pop rax",
+        ];
+    }
+
+    private long CuchulainnDamageTraceCallbackImpl(long targetPtrRaw, long statePtrRaw, long hookStackPtrRaw)
+    {
+        try
+        {
+            nint targetPtr = (nint)targetPtrRaw;
+            nint statePtr = (nint)statePtrRaw;
+            nint hookStackPtr = (nint)hookStackPtrRaw;
+            if (targetPtr == 0 || statePtr == 0)
+                return 0;
+
+            if (!TryReadDamageTraceUnit(targetPtr, out var defender))
+                return 0;
+
+            if (!TryReadLiveS16(statePtr + 0x06, out short debit) ||
+                !TryReadLiveS16(statePtr + 0x08, out short credit))
+                return 0;
+
+            bool defenderIsCuchulainn = IsCuchulainnTraceUnit(defender);
+            string hpSyncText = "";
+            if (defenderIsCuchulainn &&
+                TryLateSyncCuchulainnCurrentHp(targetPtr, defender, out var syncedDefender, out hpSyncText))
+            {
+                defender = syncedDefender;
+            }
+
+            if (!DIAG_TRACE_CUCHULAINN_DAMAGE)
+                return 0;
+
+            bool hasAttacker = TryResolvePreClampTraceActor(
+                targetPtr,
+                hookStackPtr,
+                out var attacker,
+                out nint attackerActor,
+                out int actionId,
+                out string actorVerdict);
+
+            bool attackerIsCuchulainn = hasAttacker && IsCuchulainnTraceUnit(attacker);
+            if (!defenderIsCuchulainn && !attackerIsCuchulainn)
+                return 0;
+
+            int logCount = System.Threading.Interlocked.Increment(ref _cuchulainnDamageTraceLogs);
+            if (logCount > CUCHULAINN_DAMAGE_TRACE_MAX_LOGS)
+                return 0;
+
+            int hpAfter = Math.Clamp(defender.Hp + credit - debit, 0, defender.MaxHp);
+            string attackerText = hasAttacker
+                ? $"attacker=0x{attacker.Ptr:X}/id=0x{attacker.CharId:X2}/job={attacker.Job}/lv={attacker.Level}/team={attacker.Team}/hp={attacker.Hp}/{attacker.MaxHp}/spd={attacker.Speed} actor=0x{attackerActor:X} actionId={actionId}"
+                : $"attacker=unknown actionId=-1";
+
+            TraceLog(
+                $"[cuchulainn-damage] event={logCount} verdict={actorVerdict} " +
+                $"defender=0x{defender.Ptr:X}/id=0x{defender.CharId:X2}/job={defender.Job}/lv={defender.Level}/team={defender.Team}/hp={defender.Hp}/{defender.MaxHp}/spd={defender.Speed} " +
+                $"debit={debit} credit={credit} hpAfterEst={hpAfter}/{defender.MaxHp}{hpSyncText} {attackerText}");
+        }
+        catch (Exception ex)
+        {
+            if (!DIAG_TRACE_CUCHULAINN_DAMAGE)
+                return 0;
+
+            int logCount = System.Threading.Interlocked.Increment(ref _cuchulainnDamageTraceLogs);
+            if (logCount <= CUCHULAINN_DAMAGE_TRACE_MAX_LOGS)
+                TraceLog($"[cuchulainn-damage] callback error: {ex.GetType().Name}: {ex.Message}");
+        }
+
+        return 0;
+    }
+
+    private bool TryLateSyncCuchulainnCurrentHp(
+        nint unitPtr,
+        DamageTraceUnit defender,
+        out DamageTraceUnit syncedDefender,
+        out string hpSyncText)
+    {
+        syncedDefender = defender;
+        hpSyncText = "";
+        if (System.Threading.Volatile.Read(ref _cuchulainnCurrentHpLateSynced) != 0)
+            return false;
+
+        if (!TryGetCuchulainnTargetLevel(out byte scaledLevel))
+            return false;
+
+        byte targetLevel = defender.Level < scaledLevel ? scaledLevel : defender.Level;
+        if (defender.Level != targetLevel)
+            Marshal.WriteByte(unitPtr + UNIT_LEVEL_OFFSET, targetLevel);
+
+        ushort targetHp = CalculateCuchulainnHp(targetLevel);
+        if (defender.Hp >= targetHp || defender.Hp == 0)
+            return false;
+
+        // The transformation/load path can reset current HP back to the vanilla value while
+        // leaving max HP scaled. Only repair that pre-first-damage state; never top off a real
+        // mid-fight HP loss.
+        int suspiciousResetCeiling = Math.Max(700, targetHp * 3 / 5);
+        if (defender.MaxHp >= targetHp && defender.Hp > suspiciousResetCeiling)
+            return false;
+
+        ushort oldHp = defender.Hp;
+        ushort oldMaxHp = defender.MaxHp;
+        if (defender.MaxHp < targetHp)
+            Marshal.WriteInt16(unitPtr + UNIT_MAX_HP_OFFSET, unchecked((short)targetHp));
+        Marshal.WriteInt16(unitPtr + UNIT_CURRENT_HP_OFFSET, unchecked((short)targetHp));
+        System.Threading.Interlocked.Exchange(ref _cuchulainnCurrentHpLateSynced, 1);
+
+        if (!TryReadDamageTraceUnit(unitPtr, out syncedDefender))
+            syncedDefender = defender with { Hp = targetHp, MaxHp = Math.Max(defender.MaxHp, targetHp) };
+
+        hpSyncText = $" hpSync={oldHp}/{oldMaxHp}->{syncedDefender.Hp}/{syncedDefender.MaxHp} level={defender.Level}->{targetLevel}";
+        if (DIAG_TRACE_CUCHULAINN_RUNTIME || DIAG_TRACE_CUCHULAINN_DAMAGE)
+            TraceLog($"[cuchulainn-hp] late current sync before damage id=0x{defender.CharId:X2} job={defender.Job} level={defender.Level}->{targetLevel} HP {oldHp}/{oldMaxHp}->{syncedDefender.Hp}/{syncedDefender.MaxHp}");
+        return true;
+    }
+
+    private bool TryResolvePreClampTraceActor(
+        nint targetPtr,
+        nint hookStackPtr,
+        out DamageTraceUnit attacker,
+        out nint actorBase,
+        out int actionId,
+        out string verdict)
+    {
+        attacker = default;
+        actorBase = 0;
+        actionId = -1;
+        verdict = "no-hook-stack";
+        if (hookStackPtr == 0)
+            return false;
+
+        var seenRoots = new HashSet<nint>();
+        var casterUnits = new Dictionary<nint, (DamageTraceUnit unit, nint actor, int action)>();
+        var selfUnits = new Dictionary<nint, (DamageTraceUnit unit, nint actor, int action)>();
+
+        void VisitRoot(nint root)
+        {
+            if (root == 0 || !seenRoots.Add(root))
+                return;
+
+            // If the root is already a unit struct, it is not the actor wrapper we need.
+            if (TryReadDamageTraceUnit(root, out _))
+                return;
+
+            if (!TryReadLivePtr(root + PRECLAMP_ACTOR_UNIT_OFFSET, out nint linkedUnit))
+                return;
+            if (!TryReadDamageTraceUnit(linkedUnit, out var unit))
+                return;
+
+            int liveActionId = TryReadLiveU16(root + PRECLAMP_ACTOR_ACTION_ID_OFFSET, out ushort aid)
+                ? aid
+                : -1;
+
+            if (linkedUnit != targetPtr)
+                casterUnits.TryAdd(linkedUnit, (unit, root, liveActionId));
+            else if (liveActionId > 0)
+                selfUnits.TryAdd(linkedUnit, (unit, root, liveActionId));
+        }
+
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 56)); // original rax
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 48)); // original rcx
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 40)); // original rdx
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 32)); // original r8
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 24)); // original r9
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 16)); // original r10
+        VisitRoot(ReadPtrOrZero(hookStackPtr + 8));  // original r11
+
+        nint originalStack = hookStackPtr + 64;
+        for (int offset = 0; offset + IntPtr.Size <= PRECLAMP_STACK_SCAN_BYTES; offset += IntPtr.Size)
+            VisitRoot(ReadPtrOrZero(originalStack + offset));
+
+        if (casterUnits.Count == 1)
+        {
+            var value = casterUnits.Values.First();
+            attacker = value.unit;
+            actorBase = value.actor;
+            actionId = value.action;
+            verdict = "resolved";
+            return true;
+        }
+
+        if (casterUnits.Count == 0 && selfUnits.Count == 1)
+        {
+            var value = selfUnits.Values.First();
+            attacker = value.unit;
+            actorBase = value.actor;
+            actionId = value.action;
+            verdict = "resolved-self";
+            return true;
+        }
+
+        verdict = casterUnits.Count == 0 ? "no-caster-actor" : $"ambiguous-{casterUnits.Count}";
+        return false;
+    }
+
+    private nint ReadPtrOrZero(nint address)
+        => TryReadLivePtr(address, out nint value) ? value : 0;
+
+    private static bool IsCuchulainnTraceUnit(DamageTraceUnit unit)
+        => IsCuchulainnRuntimeIdentity(unit.CharId) ||
+           unit.Job == CUCHULAINN_GIGAS_JOB_ID ||
+           unit.Job == CUCHULAINN_IMPURE_JOB_ID;
+
+    private static bool TryReadDamageTraceUnit(nint ptr, out DamageTraceUnit unit)
+    {
+        unit = default;
+        if (ptr == 0 || ReadableExtent(ptr, 0x44) < 0x44)
+            return false;
+
+        try
+        {
+            byte charId = Marshal.ReadByte(ptr + UNIT_CHAR_ID_OFFSET);
+            byte job = Marshal.ReadByte(ptr + UNIT_JOB_ID_OFFSET);
+            byte level = Marshal.ReadByte(ptr + UNIT_LEVEL_OFFSET);
+            byte team = Marshal.ReadByte(ptr + 0x04);
+            byte flags = Marshal.ReadByte(ptr + 0x05);
+            ushort hp = (ushort)Marshal.ReadInt16(ptr + UNIT_CURRENT_HP_OFFSET);
+            ushort maxHp = (ushort)Marshal.ReadInt16(ptr + UNIT_MAX_HP_OFFSET);
+            byte speed = Marshal.ReadByte(ptr + UNIT_EFFECTIVE_SPEED_OFFSET);
+
+            if (level is < 1 or > 120)
+                return false;
+            if (team > 16)
+                return false;
+            if (maxHp is < 1 or > 9999 || hp > maxHp)
+                return false;
+
+            unit = new DamageTraceUnit(ptr, charId, job, level, team, flags, hp, maxHp, speed);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static bool TryReadLivePtr(nint address, out nint value)
+    {
+        value = 0;
+        if (address == 0 || ReadableExtent(address, IntPtr.Size) < IntPtr.Size)
+            return false;
+        try
+        {
+            value = Marshal.ReadIntPtr(address);
+            return true;
+        }
+        catch
+        {
+            value = 0;
+            return false;
+        }
+    }
+
+    private static bool TryReadLiveU16(nint address, out ushort value)
+    {
+        value = 0;
+        if (address == 0 || ReadableExtent(address, 2) < 2)
+            return false;
+        try
+        {
+            value = (ushort)Marshal.ReadInt16(address);
+            return true;
+        }
+        catch
+        {
+            value = 0;
+            return false;
+        }
+    }
+
+    private static bool TryReadLiveS16(nint address, out short value)
+    {
+        value = 0;
+        if (address == 0 || ReadableExtent(address, 2) < 2)
+            return false;
+        try
+        {
+            value = Marshal.ReadInt16(address);
+            return true;
+        }
+        catch
+        {
+            value = 0;
+            return false;
+        }
+    }
+
+    private static bool ExpectedBytesMatch(nint address, params byte[] expected)
+    {
+        if (address == 0 || expected.Length == 0 || ReadableExtent(address, expected.Length) < expected.Length)
+            return false;
+        try
+        {
+            for (int i = 0; i < expected.Length; i++)
+            {
+                if (Marshal.ReadByte(address + i) != expected[i])
+                    return false;
+            }
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private bool ShouldTraceEventActors()
@@ -870,6 +1303,227 @@ public class Program : IMod
 
         return false;
     }
+
+    private void ArmCuchulainnHpPatch()
+    {
+        System.Threading.Interlocked.Exchange(ref _cuchulainnHpPatched, 0);
+        System.Threading.Interlocked.Exchange(ref _cuchulainnCurrentHpLateSynced, 0);
+        System.Threading.Volatile.Write(ref _cuchulainnHpNextTraceTicks, DateTime.UtcNow.Ticks);
+        System.Threading.Volatile.Write(ref _cuchulainnHpPatchUntilTicks, DateTime.UtcNow.AddMinutes(5).Ticks);
+        if (DIAG_TRACE_CUCHULAINN_RUNTIME)
+            TraceLog($"[cuchulainn-hp] armed entry={LIONEL_ORATORY_ENTRY} formula=max({CUCHULAINN_HP_PER_LEVEL}*(level-{CUCHULAINN_HP_LEVEL_OFFSET}),0)+{CUCHULAINN_MIN_HP} minSpeed={CUCHULAINN_MIN_SPEED}");
+    }
+
+    private void CuchulainnHpPatchLoop()
+    {
+        while (true)
+        {
+            System.Threading.Thread.Sleep(250);
+            long untilTicks = System.Threading.Volatile.Read(ref _cuchulainnHpPatchUntilTicks);
+            if (untilTicks <= DateTime.UtcNow.Ticks) continue;
+            if (System.Threading.Volatile.Read(ref _cuchulainnHpPatched) != 0) continue;
+
+            try
+            {
+                if (TryPatchCuchulainnHp())
+                    System.Threading.Volatile.Write(ref _cuchulainnHpPatchUntilTicks, 0);
+            }
+            catch (Exception ex)
+            {
+                if (DIAG_TRACE_CUCHULAINN_RUNTIME)
+                    TraceLog($"[cuchulainn-hp] patch error: {ex.Message}");
+                System.Threading.Volatile.Write(ref _cuchulainnHpPatchUntilTicks, 0);
+            }
+        }
+    }
+
+    private bool TryPatchCuchulainnHp()
+    {
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        int readable = ReadableExtent(table, length);
+        if (readable < length) return false;
+
+        for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+        {
+            nint unit = table + i * ACTOR_TABLE_ENTRY_SIZE;
+            byte state = SafeReadByte(unit + 0x01);
+            byte charId = SafeReadByte(unit + UNIT_CHAR_ID_OFFSET);
+            byte mirroredId = SafeReadByte(unit + ACTOR_UNIT_ID_OFFSET);
+            if (!IsCuchulainnRuntimeIdentity(charId) && !IsCuchulainnRuntimeIdentity(mirroredId))
+                continue;
+
+            byte job = SafeReadByte(unit + UNIT_JOB_ID_OFFSET);
+            if (job != CUCHULAINN_GIGAS_JOB_ID && job != CUCHULAINN_IMPURE_JOB_ID)
+                continue;
+
+            if (state == 0xFF)
+                continue;
+
+            byte level = SafeReadByte(unit + UNIT_LEVEL_OFFSET);
+            if (level is < 1 or > 120)
+                continue;
+
+            ushort currentHp = SafeReadU16(unit + UNIT_CURRENT_HP_OFFSET);
+            ushort maxHp = SafeReadU16(unit + UNIT_MAX_HP_OFFSET);
+            if (maxHp < 100 || currentHp == 0 || currentHp > maxHp)
+                continue;
+
+            byte rawSpeed = SafeReadByte(unit + UNIT_RAW_SPEED_OFFSET);
+            byte effectiveSpeed = SafeReadByte(unit + UNIT_EFFECTIVE_SPEED_OFFSET);
+            byte ct = SafeReadByte(unit + UNIT_CT_OFFSET);
+            if (rawSpeed is > 60 || effectiveSpeed is > 60)
+                continue;
+
+            if (!TryGetCuchulainnTargetLevel(out byte scaledLevel))
+                return false;
+
+            byte oldLevel = level;
+            if (level < scaledLevel)
+            {
+                Marshal.WriteByte(unit + UNIT_LEVEL_OFFSET, scaledLevel);
+                level = scaledLevel;
+            }
+
+            ushort targetHp = CalculateCuchulainnHp(level);
+            bool hpReady = maxHp >= targetHp;
+            bool speedReady = effectiveSpeed >= CUCHULAINN_MIN_SPEED;
+            ushort newCurrentHp = currentHp;
+            ushort newMaxHp = maxHp;
+            byte newRawSpeed = rawSpeed;
+            byte newEffectiveSpeed = effectiveSpeed;
+
+            if (!hpReady && currentHp == maxHp)
+            {
+                Marshal.WriteInt16(unit + UNIT_MAX_HP_OFFSET, unchecked((short)targetHp));
+                Marshal.WriteInt16(unit + UNIT_CURRENT_HP_OFFSET, unchecked((short)targetHp));
+                newCurrentHp = targetHp;
+                newMaxHp = targetHp;
+                hpReady = true;
+            }
+
+            if (!speedReady)
+            {
+                int speedDelta = CUCHULAINN_MIN_SPEED - effectiveSpeed;
+                newRawSpeed = (byte)Math.Min(99, rawSpeed + speedDelta);
+                newEffectiveSpeed = CUCHULAINN_MIN_SPEED;
+                Marshal.WriteByte(unit + UNIT_RAW_SPEED_OFFSET, newRawSpeed);
+                Marshal.WriteByte(unit + UNIT_EFFECTIVE_SPEED_OFFSET, newEffectiveSpeed);
+                speedReady = true;
+            }
+
+            if (!hpReady)
+            {
+                if (DIAG_TRACE_CUCHULAINN_RUNTIME)
+                {
+                    long now = DateTime.UtcNow.Ticks;
+                    long next = System.Threading.Volatile.Read(ref _cuchulainnHpNextTraceTicks);
+                    if (now >= next)
+                    {
+                        System.Threading.Volatile.Write(ref _cuchulainnHpNextTraceTicks, DateTime.UtcNow.AddSeconds(5).Ticks);
+                        TraceLog($"[cuchulainn-hp] partial Cuchulainn a{i} state=0x{state:X2} char=0x{charId:X2} uid=0x{mirroredId:X2} HP {currentHp}/{maxHp} target={targetHp} rawSpd {rawSpeed}->{newRawSpeed} spd {effectiveSpeed}->{newEffectiveSpeed} ct={ct} job={job} level={oldLevel}->{level}; waiting HP-safe window");
+                    }
+                }
+                return false;
+            }
+
+            System.Threading.Interlocked.Exchange(ref _cuchulainnHpPatched, 1);
+            if (DIAG_TRACE_CUCHULAINN_RUNTIME)
+                TraceLog($"[cuchulainn-hp] patched Cuchulainn a{i} state=0x{state:X2} char=0x{charId:X2} uid=0x{mirroredId:X2} HP {currentHp}/{maxHp}->{newCurrentHp}/{newMaxHp} target={targetHp} formula=max({CUCHULAINN_HP_PER_LEVEL}*(level-{CUCHULAINN_HP_LEVEL_OFFSET}),0)+{CUCHULAINN_MIN_HP} rawSpd {rawSpeed}->{newRawSpeed} spd {effectiveSpeed}->{newEffectiveSpeed} ct={ct} job={job} level={oldLevel}->{level}");
+            return true;
+        }
+
+        if (DIAG_TRACE_CUCHULAINN_RUNTIME)
+            TraceCuchulainnHpScanIfDue(table, length);
+        return false;
+    }
+
+    private static bool IsCuchulainnRuntimeIdentity(byte id)
+        => id == CUCHULAINN_ENTD_CHAR_ID || id == CUCHULAINN_RUNTIME_CHAR_ID;
+
+    private bool TryGetCuchulainnTargetLevel(out byte level)
+    {
+        level = 0;
+        int playerHighest = GetRuntimePlayerHighestLevel();
+        if (playerHighest <= 0)
+            return false;
+
+        level = (byte)Math.Min(99, playerHighest + CUCHULAINN_ENTD_LEVEL_OFFSET);
+        return true;
+    }
+
+    private int GetRuntimePlayerHighestLevel()
+    {
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        if (ReadableExtent(table, length) < length)
+            return 0;
+
+        int highest = 0;
+        for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+        {
+            nint unit = table + i * ACTOR_TABLE_ENTRY_SIZE;
+            byte state = SafeReadByte(unit + 0x01);
+            if (state == 0xFF)
+                continue;
+
+            byte team = SafeReadByte(unit + 0x04);
+            if (team != 0)
+                continue;
+
+            byte level = SafeReadByte(unit + UNIT_LEVEL_OFFSET);
+            ushort hp = SafeReadU16(unit + UNIT_CURRENT_HP_OFFSET);
+            ushort maxHp = SafeReadU16(unit + UNIT_MAX_HP_OFFSET);
+            if (level is < 1 or > 99 || maxHp == 0 || hp > maxHp)
+                continue;
+
+            highest = Math.Max(highest, level);
+        }
+
+        return highest;
+    }
+
+    private static ushort CalculateCuchulainnHp(int level)
+        => (ushort)(Math.Max(CUCHULAINN_HP_PER_LEVEL * (level - CUCHULAINN_HP_LEVEL_OFFSET), 0) + CUCHULAINN_MIN_HP);
+
+    private void TraceCuchulainnHpScanIfDue(nint table, int length)
+    {
+        long now = DateTime.UtcNow.Ticks;
+        long next = System.Threading.Volatile.Read(ref _cuchulainnHpNextTraceTicks);
+        if (now < next) return;
+        System.Threading.Volatile.Write(ref _cuchulainnHpNextTraceTicks, DateTime.UtcNow.AddSeconds(5).Ticks);
+
+        try
+        {
+            byte[] data = new byte[length];
+            Marshal.Copy(table, data, 0, length);
+            var sb = new System.Text.StringBuilder();
+            sb.Append("[cuchulainn-hp] scan no-match");
+            for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+            {
+                int b = i * ACTOR_TABLE_ENTRY_SIZE;
+                byte state = data[b + 0x01];
+                byte charId = data[b + UNIT_CHAR_ID_OFFSET];
+                byte uid = data[b + ACTOR_UNIT_ID_OFFSET];
+                byte job = data[b + UNIT_JOB_ID_OFFSET];
+                ushort hp = (ushort)(data[b + UNIT_CURRENT_HP_OFFSET] | (data[b + UNIT_CURRENT_HP_OFFSET + 1] << 8));
+                ushort maxHp = (ushort)(data[b + UNIT_MAX_HP_OFFSET] | (data[b + UNIT_MAX_HP_OFFSET + 1] << 8));
+                byte rawSpeed = data[b + UNIT_RAW_SPEED_OFFSET];
+                byte speed = data[b + UNIT_EFFECTIVE_SPEED_OFFSET];
+                byte ct = data[b + UNIT_CT_OFFSET];
+                if (state == 0xFF && charId == 0 && uid == 0) continue;
+                if (!IsCuchulainnRuntimeIdentity(charId) && !IsCuchulainnRuntimeIdentity(uid) && job != CUCHULAINN_GIGAS_JOB_ID && job != CUCHULAINN_IMPURE_JOB_ID)
+                    continue;
+                sb.Append($" | a{i}:st=0x{state:X2} char=0x{charId:X2} uid=0x{uid:X2} job={job} lv={data[b + UNIT_LEVEL_OFFSET]} hp={hp}/{maxHp} rawSpd={rawSpeed} spd={speed} ct={ct}");
+            }
+            TraceLog(sb.ToString());
+        }
+        catch (Exception ex)
+        {
+            TraceLog($"[cuchulainn-hp] scan trace error: {ex.Message}");
+        }
+    }
+
 
     private unsafe void TraceMerchantDorterEntd(
         void* buffer,
