@@ -166,7 +166,7 @@ def run() -> int:
         and field(entd, 414, 3, 0x15) == 30
     )
     check("415 gate levels", roster(entd, 415, [0, 1, 2, 3, 4, 5, 6], 0x03) == [103, 101, 100, 102, 101, 101, 102])
-    check("415 blood sword equipped", field(entd, 415, 0, 0x15) == 23)
+    check("415 Gaffgarion Defender + Parry", field(entd, 415, 0, 0x15) == 33 and field16(entd, 415, 0, 0x0C) == 447)
     check(
         "425 Cuchulainn tune + 108 Gems spoil",
         field(entd, 425, 9, 0x03) == 104

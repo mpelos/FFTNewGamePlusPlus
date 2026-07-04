@@ -51,7 +51,7 @@ MYSTIC = 85   # Oracle-equivalent — soft status; equips Hat/Robe/Clothing/Rod/
 TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged breaks; equips Helmet/Armor/
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
 # skills
-COUNTER, ATK_BOOST, MV1, MV2 = 442, 465, 486, 487
+COUNTER, PARRY, ATK_BOOST, MV1, MV2 = 442, 447, 465, 486, 487
 VIGILANCE = 426
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
@@ -920,19 +920,16 @@ def golgollada(data):
 # Vanilla 415: s0 = Gaffgarion (named cid 0x11, job 17 Fell Knight, ENEMY — the BOSS, dies here);
 # s1,s2 Archer (job 77); s3,s4,s5 Knight (job 76); s6 Summoner (job 82). Per docs/battles/021-lionel-castle-gate.md.
 #   - Gaffgarion scaled to BOSS L103, job 17 + secondary PRESERVED (Shadowblade/Drain + death
-#     scripting intact). His weapon is the BLOOD SWORD (23) — the Chapter-2 rare boss loot: an
-#     HP-drain blade that IS his Shadowblade sustain in item form, so Steal Weapon both shuts off his
-#     self-heal AND claims the prize (the doc's "Ancient Sword" role; in TIC all KnightSwords are
-#     Unknown20/Ch4-reserved, and the overview names Blood Sword as the Ch2 rare-loot weapon).
-#     Two-handed (lh 254) to maximize the drain, emphasizing the disarm puzzle over raw tankiness.
+#     scripting intact). His weapon is Defender (33), per the latest test tuning. Steal/Rend Weapon
+#     remains the readable off-switch for his weapon-tied threat.
 #   - Knights carry Rend innately (Battle Skill at jl8); Summoner mid-tier (tier = playtest item).
 #   - Job 17 (Fell Knight) equips Helmet/Armor/Shield/Sword (verified), so the heavy kit is legal.
 def lionel_gate(data):
     E = 415
-    # Gaffgarion (BOSS) L103 — KEEP job 17 + secondary. Blood Sword (rare, drain, steal target).
+    # Gaffgarion (BOSS) L103 — KEEP job 17 + secondary. Defender steal/break target.
     set_slot(data, E, 0, level=103, joblevel=8, brave=82, faith=60,
-             reaction=COUNTER, support=ATK_BOOST, movement=MV2,
-             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=BLOOD_SWORD, lh=LH_TWOHAND)
+             reaction=PARRY, support=ATK_BOOST, movement=MV2,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=DEFENDER, lh=LH_TWOHAND)
     # 3 Knights L101 (s3,s4,s5) — the gate siege; Rend innate via Battle Skill at jl8.
     for s, lvl, support in ((3, 102, DEFENSE_BOOST), (4, 101, ATK_BOOST), (5, 101, ATK_BOOST)):
         set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT, secondary=0,
