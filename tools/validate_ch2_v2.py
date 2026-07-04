@@ -150,19 +150,20 @@ def run() -> int:
     check("event176 has one 44 86 00 draw", event176.count(bytes.fromhex("448600")) == 1)
     check("event176 has uid 0x86 idle pose", event176.count(bytes.fromhex("118600020000")) == 1)
     check("event176 patched size 0x660", len(event176) == 0x660)
-    check("414 gallows levels", roster(entd, 414, [0, 1, 2, 3, 4, 5, 6, 7], 0x03) == [103, 101, 102, 101, 101, 100, 102, 101])
+    check("414 gallows levels", roster(entd, 414, [0, 1, 2, 3, 4, 5, 6, 7], 0x03) == [103, 101, 101, 101, 102, 100, 102, 101])
     check(
-        "414 Knight leader crossbow + Attack Boost",
-        field(entd, 414, 2, 0x15) == 82
-        and field(entd, 414, 2, 0x16) == 139
-        and field16(entd, 414, 2, 0x0E) == 465,
+        "414 high-side Knight leader crossbow + Vigilance + Attack Boost",
+        field(entd, 414, 4, 0x15) == 82
+        and field(entd, 414, 4, 0x16) == 139
+        and field16(entd, 414, 4, 0x0C) == 426
+        and field16(entd, 414, 4, 0x0E) == 465,
     )
     check(
         "414 common Knights Defense Boost",
-        field16(entd, 414, 3, 0x0E) == 466
-        and field16(entd, 414, 4, 0x0E) == 466
+        field16(entd, 414, 2, 0x0E) == 466
+        and field16(entd, 414, 3, 0x0E) == 466
+        and field(entd, 414, 2, 0x15) == 30
         and field(entd, 414, 3, 0x15) == 30
-        and field(entd, 414, 4, 0x15) == 30,
     )
     check("415 gate levels", roster(entd, 415, [0, 1, 2, 3, 4, 5, 6], 0x03) == [103, 101, 100, 102, 101, 101, 102])
     check("415 blood sword equipped", field(entd, 415, 0, 0x15) == 23)

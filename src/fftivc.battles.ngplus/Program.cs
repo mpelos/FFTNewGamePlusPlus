@@ -66,6 +66,7 @@ public class Program : IMod
     private const byte ENEMY_TEAM_BIT = 0x10;
     private const int PROLOGUE_ORBONNE_ENTRY = 387;
     private const int ZEIRCHELE_FALLS_ENTRY = 405;
+    private const int GOLGOLLADA_GALLOWS_ENTRY = 414;
 
     // Guests scale UNCONDITIONALLY (NG+ or not): a guest at party level never makes a first
     // playthrough harder (the party is low level early, so the guest just matches the team). This
@@ -165,6 +166,14 @@ public class Program : IMod
     private const int ACTOR_TABLE_ENTRY_SIZE = 0x200;
     private const int ACTOR_TABLE_COUNT = 0x15;
     private const int ACTOR_UNIT_ID_OFFSET = 0x191;
+    private const int UNIT_CHAR_ID_OFFSET = 0x00;
+    private const int UNIT_JOB_ID_OFFSET = 0x03;
+    private const int UNIT_LEVEL_OFFSET = 0x29;
+    private const int UNIT_MAX_HP_OFFSET = 0x32;
+    private const int UNIT_RAW_PA_OFFSET = 0x38;
+    private const int UNIT_EFFECTIVE_PA_OFFSET = 0x3E;
+    private const byte GOLGOLLADA_GAFFGARION_CHAR_ID = 0x11;
+    private const byte GOLGOLLADA_GAFFGARION_JOB_ID = 17;
     // resume_enwm_main.sav (world-map state of the LOADED game) is the freshest at battle-load time;
     // resume_enbtl_world lags (still the previous battle). Prefer enwm_main.
     private static readonly string[] ResumePreference = { "resume_enwm_main.sav", "resume_enbtl_world.sav" };
@@ -178,10 +187,13 @@ public class Program : IMod
     private DateTime _lastMerchantDorterEntdTraceUtc = DateTime.MinValue;
     private long _zeircheleActorTableProbeUntilTicks;
     private long _merchantActorTableProbeUntilTicks;
+    private long _golgolladaPaPatchUntilTicks;
     private int _transitionIntoBattleFireCount;
     private int _merchantA9ActivationAttempted;
     private int _zeirchele87Suppressed;
     private int _zeirchele87Restored;
+    private int _golgolladaGaffPaPatched;
+    private int _golgolladaGaffLastPatchedRawPa = -1;
 
     // TEST TOGGLE — set true to force the battle ENTD swap (Layer 1) ON for EVERY save, so the NG+
     // battle reworks can be verified on a normal (non-NG+) Chapter-4 save without grinding a full NG+
@@ -450,6 +462,7 @@ public class Program : IMod
             Log($"[zeirchele-diag] targeted ENTD + actor-table diagnostics ENABLED variant={ZEIRCHELE_DIAG_VARIANT} -> ngplus_battletrace.log");
             new System.Threading.Thread(ZeircheleActorTableProbeLoop) { IsBackground = true, Name = "ngplus-zeirchele-actor-table-probe" }.Start();
         }
+        new System.Threading.Thread(GolgolladaGaffPaPatchLoop) { IsBackground = true, Name = "ngplus-golgollada-gaff-pa-patch" }.Start();
 
     }
 
@@ -509,6 +522,8 @@ public class Program : IMod
             if (validSlice) ScaleGuestsAlways(outputPointer, size, fileIndex, sectorOffset, haveMod ? modded : null);
             if (validSlice) TraceZeircheleEntd("after-scale", outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
             if (validSlice) TraceMerchantDorterEntd(outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
+            if (_isNgPlus && haveMod && validSlice && SliceCoversEntdEntry(fileIndex, sectorOffset, size, GOLGOLLADA_GALLOWS_ENTRY))
+                ArmGolgolladaGaffPaPatch();
         }
         return ret;
     }
@@ -769,6 +784,92 @@ public class Program : IMod
 
     private static bool IsValidEntdSlice(long sectorOffset, long size)
         => sectorOffset >= 0 && size > 0 && sectorOffset <= ENTD_FILE_SIZE && size <= ENTD_FILE_SIZE - sectorOffset;
+
+    private static bool SliceCoversEntdEntry(int fileIndex, long sectorOffset, long size, int globalEntry)
+    {
+        int expectedFileIndex = ENTD_INDEX_MIN + globalEntry / 128;
+        if (fileIndex != expectedFileIndex) return false;
+
+        long entryOffset = (globalEntry % 128L) * 16L * SLOT_SIZE;
+        long entryEnd = entryOffset + 16L * SLOT_SIZE;
+        long readEnd = sectorOffset + size;
+        return entryOffset < readEnd && entryEnd > sectorOffset;
+    }
+
+    private void ArmGolgolladaGaffPaPatch()
+    {
+        System.Threading.Interlocked.Exchange(ref _golgolladaGaffPaPatched, 0);
+        System.Threading.Volatile.Write(ref _golgolladaPaPatchUntilTicks, DateTime.UtcNow.AddSeconds(90).Ticks);
+    }
+
+    private void GolgolladaGaffPaPatchLoop()
+    {
+        while (true)
+        {
+            System.Threading.Thread.Sleep(250);
+            long untilTicks = System.Threading.Volatile.Read(ref _golgolladaPaPatchUntilTicks);
+            if (untilTicks <= DateTime.UtcNow.Ticks) continue;
+            if (System.Threading.Volatile.Read(ref _golgolladaGaffPaPatched) != 0) continue;
+
+            try
+            {
+                if (TryPatchGolgolladaGaffPa())
+                    System.Threading.Volatile.Write(ref _golgolladaPaPatchUntilTicks, 0);
+            }
+            catch (Exception ex)
+            {
+                Log($"[golgollada-pa] patch error: {ex.Message}");
+                System.Threading.Volatile.Write(ref _golgolladaPaPatchUntilTicks, 0);
+            }
+        }
+    }
+
+    private bool TryPatchGolgolladaGaffPa()
+    {
+        nint table = _moduleBase + (nint)ACTOR_TABLE_RVA;
+        int length = ACTOR_TABLE_ENTRY_SIZE * ACTOR_TABLE_COUNT;
+        int readable = ReadableExtent(table, length);
+        if (readable < length) return false;
+
+        for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
+        {
+            nint unit = table + i * ACTOR_TABLE_ENTRY_SIZE;
+            byte charId = SafeReadByte(unit + UNIT_CHAR_ID_OFFSET);
+            byte mirroredId = SafeReadByte(unit + ACTOR_UNIT_ID_OFFSET);
+            if (charId != GOLGOLLADA_GAFFGARION_CHAR_ID && mirroredId != GOLGOLLADA_GAFFGARION_CHAR_ID)
+                continue;
+
+            byte job = SafeReadByte(unit + UNIT_JOB_ID_OFFSET);
+            byte level = SafeReadByte(unit + UNIT_LEVEL_OFFSET);
+            if (job != GOLGOLLADA_GAFFGARION_JOB_ID || level is < 1 or > 99)
+                continue;
+
+            ushort maxHp = SafeReadU16(unit + UNIT_MAX_HP_OFFSET);
+            byte rawPa = SafeReadByte(unit + UNIT_RAW_PA_OFFSET);
+            byte effectivePa = SafeReadByte(unit + UNIT_EFFECTIVE_PA_OFFSET);
+            if (maxHp < 100 || rawPa == 0 || rawPa > 125 || effectivePa == 0 || effectivePa > 125)
+                continue;
+
+            int lastPatchedRaw = System.Threading.Volatile.Read(ref _golgolladaGaffLastPatchedRawPa);
+            if (rawPa == lastPatchedRaw)
+            {
+                System.Threading.Interlocked.Exchange(ref _golgolladaGaffPaPatched, 1);
+                return true;
+            }
+
+            byte newRawPa = (byte)(rawPa + 2);
+            byte newEffectivePa = (byte)(effectivePa + 2);
+            Marshal.WriteByte(unit + UNIT_RAW_PA_OFFSET, newRawPa);
+            Marshal.WriteByte(unit + UNIT_EFFECTIVE_PA_OFFSET, newEffectivePa);
+
+            System.Threading.Volatile.Write(ref _golgolladaGaffLastPatchedRawPa, newRawPa);
+            System.Threading.Interlocked.Exchange(ref _golgolladaGaffPaPatched, 1);
+            Log($"[golgollada-pa] patched Gaffgarion a{i} rawPA {rawPa}->{newRawPa} PA {effectivePa}->{newEffectivePa}");
+            return true;
+        }
+
+        return false;
+    }
 
     private unsafe void TraceMerchantDorterEntd(
         void* buffer,

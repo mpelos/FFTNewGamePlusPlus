@@ -16,7 +16,7 @@ and not durable documentation.
 | File | Covers |
 |---|---|
 | [01-entd-binary-format.md](01-entd-binary-format.md) | The `battle_entd{1-4}_ent.bin` file format: entry/slot structure, every confirmed byte offset and its meaning, team/control flag semantics, relative level encoding, the guest-vs-enemy detection rule. |
-| [02-battle-actor-table.md](02-battle-actor-table.md) | The live, in-memory runtime structure the game uses to track battle participants: base address, stride, confirmed field layout, and the two-stage unit-activation model. |
+| [02-battle-actor-table.md](02-battle-actor-table.md) | The live, in-memory runtime structure the game uses to track battle participants: base address, stride, confirmed field layout, runtime stat offsets such as Raw PA/Effective PA, and the two-stage unit-activation model. |
 | [03-event-script-opcodes.md](03-event-script-opcodes.md) | The `.e` event-script bytecode format: file conventions and a confirmed opcode reference table (names, parameter shapes, byte structures) for the opcodes this project has decoded. |
 | [04-adding-event-spawned-enemies.md](04-adding-event-spawned-enemies.md) | The proven recipe for adding a brand-new enemy unit to an event-scripted battle wave (as opposed to a static always-present slot), with a fully worked example. |
 | [05-ruled-out-techniques.md](05-ruled-out-techniques.md) | Approaches that were tested and confirmed **not** to work for adding a new event-spawned unit, and why — so they aren't re-attempted. Includes native runtime-hooking constraints. |

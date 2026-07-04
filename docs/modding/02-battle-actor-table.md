@@ -60,9 +60,24 @@ All offsets are relative to the start of an entry (`base + index * 0x200`).
 
 | Offset | Name | Type | Confirmed semantics | Notes |
 |---|---|---|---|---|
-| `+0x00` | SpriteSet | byte | Sprite-set ID. Constant per entry once populated. | Never observed to change after initial population, including across full activation. |
+| `+0x00` | CharId / SpriteSet | byte | Character/sprite-set ID. Constant per entry once populated. | For named enemies this matches the character id used in ENTD; for generics it also determines the loaded spriteset. |
 | `+0x01` | State (`st`) | byte | **Occupancy/activation state.** `0xFF` = free/inactive sentinel. When active, equals the entry's own table index (e.g. index 4 → `0x04`, index 8 → `0x08`). | Core activation signal — see "Two-stage activation model" below. |
+| `+0x03` | JobId | byte | Main job id of the live unit. | Confirmed against named/enemy battle units and cross-checked with `FFTGenericChronicle`'s live-unit snapshot reader. |
 | `+0x05` | Control flags | byte | Bit `0x8` = player-controllable/human-control flag. Bits `0x30` = team marker (`0x10`/`0x20` distinguish the two enemy-team values). | Documented by `dicene/fftivc.unitcontrol`'s source, not independently re-derived or logged by this project's own probes. Listed here for completeness; treat as externally sourced. |
+| `+0x29` | Level | byte | Live in-battle level after ENTD relative-level expansion. | ENTD level bytes above `99` are not literal here: ENTD `103` becomes party level +3 in game, so the live byte is a normal `1..99` level. |
+| `+0x30` | Current HP | word | Live current HP. | Same offset used by `FFTGenericChronicle`'s live-unit snapshot reader. |
+| `+0x32` | Max HP | word | Live max HP. | Useful sanity guard when scanning the table for real units. |
+| `+0x34` | Current MP | word | Live current MP. | Same offset used by `FFTGenericChronicle`'s live-unit snapshot reader. |
+| `+0x36` | Max MP | word | Live max MP. | Same offset used by `FFTGenericChronicle`'s live-unit snapshot reader. |
+| `+0x38` | Raw PA | byte | **Base/pre-equipment Physical Attack.** | Validated in-game by the Golgollada Gaffgarion +2 PA patch. Cross-checked with `FFTGenericChronicle`, where this offset is exposed as `rawPa`. |
+| `+0x39` | Raw MA | byte | Base/pre-equipment Magical Attack. | Cross-checked with `FFTGenericChronicle`; not yet directly patched by this project. |
+| `+0x3A` | Raw Speed | byte | Base/pre-equipment Speed. | Cross-checked with `FFTGenericChronicle`; not yet directly patched by this project. |
+| `+0x3E` | Effective PA | byte | Final Physical Attack after equipment bonuses. | Validated in-game together with `+0x38`; patch both raw and effective values when changing a unit's PA after battle load. |
+| `+0x3F` | Effective MA | byte | Final Magical Attack after equipment bonuses. | Cross-checked with `FFTGenericChronicle`; not yet directly patched by this project. |
+| `+0x40` | Effective Speed | byte | Final Speed after equipment bonuses. | Cross-checked with `FFTGenericChronicle`; not yet directly patched by this project. |
+| `+0x41` | CT | byte | Current Charge Time. | Cross-checked with `FFTGenericChronicle`; useful for diagnostics, not a stable ownership signal. |
+| `+0x42` | Move | byte | Effective Move. | Cross-checked with `FFTGenericChronicle`. |
+| `+0x43` | Jump | byte | Effective Jump. | Cross-checked with `FFTGenericChronicle`. |
 | `+0x4F`–`+0x51` | `c4f`/`c50`/`c51` | byte ×3 | **Final tile position.** `c4f` = final tile X, `c50` = final tile Y. `c51`'s role is less certain (observed to change independently and later than `c4f`/`c50` in some entries). | See "Two-stage activation model" — these are the confirmed stage-2 fields. Directly correlated with a script-issued position-set opcode operand (worked example below). |
 | `+0x61` | Discard flag 1 | byte | Observed always `0x00` across every occupied slot in every snapshot taken, including a slot that never activates. | No variance observed; role not exhaustively tested — zero-variance data is consistent with "doesn't matter for this case" as much as "is a real discard flag that simply was never set." |
 | `+0x62` | Discard flag 2 | byte | Same as `+0x61`: observed always `0x00`, no exceptions. | Same caveat as `+0x61`. |
@@ -71,7 +86,43 @@ All offsets are relative to the start of an entry (`base + index * 0x200`).
 | `+0x1B5` | Secondary activation flag (`aux1b5`) | byte | Moves together with the state byte: `0x00` when inactive, `0x01` when active. Always observed to flip in the same write as `+0x01`. | Paired with `+0x01` as the confirmed stage-1 activation signal. Distinct from the `+0x1EE` shadow-copy field documented by `dicene/fftivc.unitcontrol` (see below) — the two are not the same field; no evidence ties them together beyond both being "redundant flag copy" style fields in a large struct. |
 | `+0x1EE` | Control-flag shadow copy | byte | A second, redundant copy of the `+0x5` control-flag bit, kept in sync with it. | Documented by `dicene/fftivc.unitcontrol`'s source, not independently re-derived or logged by this project's own probes. Listed for completeness; treat as externally sourced, not cross-validated against this project's own field set. |
 
-Fields not in this table (the remainder of each `0x200`-byte entry) have not been probed.
+Fields not in this table (the remainder of each `0x200`-byte entry) have not been probed by this
+project, though several more offsets are mapped in the neighboring `FFTGenericChronicle` project.
+
+## Runtime stat patching
+
+Use the live table for stat edits that are not representable in ENTD. ENTD controls the template
+(level encoding, job, equipment, abilities, Brave/Faith, position, flags), but it does **not** expose
+the live base PA/MA/Speed bytes directly. Once the battle has loaded, those stats live in the
+`0x200`-byte table entry above.
+
+For PA, the important invariant is:
+
+```text
+Raw PA at +0x38 + equipment PA bonuses == Effective PA at +0x3E
+```
+
+Therefore, when changing a unit's PA after battle load, patch both bytes by the same delta:
+
+```text
+unit+0x38 = oldRawPa + delta
+unit+0x3E = oldEffectivePa + delta
+```
+
+This is validated in-game by the Golgollada Gallows Gaffgarion patch: entry `414` arms a short
+runtime scan when the NG+ ENTD loads, finds the live Gaffgarion by `CharId 0x11` + `JobId 17`, then
+writes `+2` to both `Raw PA` and `Effective PA`. Filtering on ENTD level byte `103` would be wrong:
+that byte is relative-level encoding and becomes a normal live level (`1..99`) in this table.
+
+Use strong guards when applying this pattern:
+
+```text
+1. Gate by the current battle/ENTD entry before arming the scan.
+2. Match identity by CharId and JobId, not by slot index alone.
+3. Sanity-check live level, HP, and stat ranges before writing.
+4. Make the write idempotent so a second ENTD read cannot apply the same delta twice.
+5. Patch docs only after an in-game playtest confirms the stat changed as intended.
+```
 
 ## The two-stage activation model
 

@@ -52,6 +52,7 @@ TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged brea
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
 # skills
 COUNTER, ATK_BOOST, MV1, MV2 = 442, 465, 486, 487
+VIGILANCE = 426
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
 AUTO_POTION, THROW_ITEMS = 441, 474
@@ -886,16 +887,16 @@ def golgollada(data):
              reaction=COUNTER, support=ATK_BOOST, movement=MV2,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
     # 3 Knights — the screen; Rend innate via Battle Skill at jl8.
-    # s2 is the leader/sniper: best buyable crossbow, shield-compatible, Attack Boost.
-    set_slot(data, E, 2, level=102, joblevel=8, job=KNIGHT, secondary=0,
-             brave=76, faith=48,
-             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=GASTROPHETES, lh=SHOP_SHIELD)
-    for s, lvl in ((3, 101), (4, 101)):
+    # s4 is the high-side leader/sniper near the Time Mages: best buyable crossbow, shield-compatible, Attack Boost.
+    for s, lvl in ((2, 101), (3, 101)):
         set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT, secondary=0,
                  brave=76, faith=48,
                  reaction=COUNTER, support=DEFENSE_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
+    set_slot(data, E, 4, level=102, joblevel=8, job=KNIGHT, secondary=0,
+             brave=76, faith=48,
+             reaction=VIGILANCE, support=ATK_BOOST, movement=MV1,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=GASTROPHETES, lh=SHOP_SHIELD)
     # 2 Archers: s1 L101, s5 L100 — ranged punishment on the rush to Gaffgarion.
     for s, lvl in ((1, 101), (5, 100)):
         set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=0,
