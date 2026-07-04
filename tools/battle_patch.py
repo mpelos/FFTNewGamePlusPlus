@@ -885,11 +885,16 @@ def golgollada(data):
     set_slot(data, E, 0, level=103, joblevel=8, brave=82, faith=60,
              reaction=COUNTER, support=ATK_BOOST, movement=MV2,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    # 3 Knights L101 (s2,s3,s4) — the screen; Rend innate via Battle Skill at jl8.
-    for s, lvl, support in ((2, 102, DEFENSE_BOOST), (3, 101, ATK_BOOST), (4, 101, ATK_BOOST)):
+    # 3 Knights — the screen; Rend innate via Battle Skill at jl8.
+    # s2 is the leader/sniper: best buyable crossbow, shield-compatible, Attack Boost.
+    set_slot(data, E, 2, level=102, joblevel=8, job=KNIGHT, secondary=0,
+             brave=76, faith=48,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=GASTROPHETES, lh=SHOP_SHIELD)
+    for s, lvl in ((3, 101), (4, 101)):
         set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT, secondary=0,
                  brave=76, faith=48,
-                 reaction=COUNTER, support=support, movement=MV1,
+                 reaction=COUNTER, support=DEFENSE_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
     # 2 Archers: s1 L101, s5 L100 — ranged punishment on the rush to Gaffgarion.
     for s, lvl in ((1, 101), (5, 100)):
