@@ -284,6 +284,79 @@ def run() -> int:
               and roster(entd, 423, [slot_no], 0x15) == [87]
               and roster(entd, 423, [slot_no], 0x16) == [254])
 
+    # 029 - Monastery Vaults 1st Level, entry 424.
+    # s0 Wiegraf special boss flees; s1/s2 Knight; s3/s5 Archer; s4 Black Mage; s6/s7 inactive.
+    check("424 runtime target table present", "[424] = Targets(" in runtime)
+    check("424 runtime target excludes Wiegraf special", "EnemyUnit(0x28" not in runtime)
+    for uid in (0x80, 0x81, 0x82, 0x83, 0x84):
+        check(f"424 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
+
+    check("424 Wiegraf identity preserved", field(entd, 424, 0, 0x00) == 0x28 and field(entd, 424, 0, 0x0A) == 0x28)
+    check("424 Wiegraf level secondary Br/Fa",
+          field(entd, 424, 0, 0x03) == 104
+          and field(entd, 424, 0, 0x09) == 8
+          and field(entd, 424, 0, 0x0B) == 5
+          and (field(entd, 424, 0, 0x06), field(entd, 424, 0, 0x07)) == (88, 60))
+    check("424 Wiegraf disarmable boss kit",
+          field16(entd, 424, 0, 0x0C) == 442
+          and field16(entd, 424, 0, 0x0E) == 465
+          and field16(entd, 424, 0, 0x10) == 486
+          and roster(entd, 424, [0], 0x12) == [154]
+          and roster(entd, 424, [0], 0x13) == [182]
+          and roster(entd, 424, [0], 0x14) == [218]
+          and roster(entd, 424, [0], 0x15) == [30]
+          and roster(entd, 424, [0], 0x16) == [139])
+    check("424 Wiegraf no Safeguard", field16(entd, 424, 0, 0x0E) != 475)
+
+    vaults1_enemy_slots = [1, 2, 3, 4, 5]
+    check("424 roster jobs", roster(entd, 424, vaults1_enemy_slots, 0x0A) == [76, 76, 77, 80, 77])
+    check("424 roster levels", roster(entd, 424, vaults1_enemy_slots, 0x03) == [101, 101, 101, 101, 100])
+    check("424 roster secondaries", roster(entd, 424, vaults1_enemy_slots, 0x0B) == [6, 5, 5, 6, 5])
+    check("424 roster Brave", roster(entd, 424, vaults1_enemy_slots, 0x06) == [84, 84, 80, 58, 80])
+    check("424 roster Faith", roster(entd, 424, vaults1_enemy_slots, 0x07) == [45, 45, 45, 78, 45])
+    for slot_no in vaults1_enemy_slots:
+        job = field(entd, 424, slot_no, 0x0A)
+        check(f"424 s{slot_no} jobrank", field(entd, 424, slot_no, 0x08) == rank(job))
+        check(f"424 s{slot_no} JobLevel 8", field(entd, 424, slot_no, 0x09) == 8)
+
+    for slot_no in (1, 2):
+        check(f"424 s{slot_no} Knight R/S/M",
+              field16(entd, 424, slot_no, 0x0C) == 442
+              and field16(entd, 424, slot_no, 0x0E) == 465
+              and field16(entd, 424, slot_no, 0x10) == 486)
+        check(f"424 s{slot_no} Knight gear",
+              roster(entd, 424, [slot_no], 0x12) == [154]
+              and roster(entd, 424, [slot_no], 0x13) == [182]
+              and roster(entd, 424, [slot_no], 0x14) == [218]
+              and roster(entd, 424, [slot_no], 0x15) == [30]
+              and roster(entd, 424, [slot_no], 0x16) == [139])
+
+    check("424 Black Mage R/S/M",
+          field16(entd, 424, 4, 0x0C) == 449
+          and field16(entd, 424, 4, 0x0E) == 467
+          and field16(entd, 424, 4, 0x10) == 486)
+    check("424 Black Mage gear",
+          roster(entd, 424, [4], 0x12) == [167]
+          and roster(entd, 424, [4], 0x13) == [206]
+          and roster(entd, 424, [4], 0x14) == [234]
+          and roster(entd, 424, [4], 0x15) == [56]
+          and roster(entd, 424, [4], 0x16) == [255])
+
+    for slot_no in (3, 5):
+        check(f"424 s{slot_no} Archer R/S/M",
+              field16(entd, 424, slot_no, 0x0C) == 449
+              and field16(entd, 424, slot_no, 0x0E) == 469
+              and field16(entd, 424, slot_no, 0x10) == 486)
+        check(f"424 s{slot_no} Archer gear",
+              roster(entd, 424, [slot_no], 0x12) == [168]
+              and roster(entd, 424, [slot_no], 0x13) == [198]
+              and roster(entd, 424, [slot_no], 0x14) == [218]
+              and roster(entd, 424, [slot_no], 0x15) == [87]
+              and roster(entd, 424, [slot_no], 0x16) == [254])
+
+    for slot_no in (6, 7):
+        check(f"424 s{slot_no} inactive placeholder preserved", field(entd, 424, slot_no, 0x03) == 254)
+
     passed = 0
     for name, ok in checks:
         if ok:

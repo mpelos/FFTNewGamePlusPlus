@@ -56,6 +56,12 @@ public partial class Program
             EnemyUnit(0x82, "Archer shelf cover"),
             EnemyUnit(0x83, "Archer lane cover"),
             EnemyUnit(0x84, "Summoner shelling")),
+        [424] = Targets(
+            EnemyUnit(0x80, "Knight disarm-lane screen"),
+            EnemyUnit(0x81, "Knight gate body"),
+            EnemyUnit(0x82, "Archer gate cover"),
+            EnemyUnit(0x83, "Black Mage clump punish"),
+            EnemyUnit(0x84, "Archer flank cover")),
     };
 
     private enum RuntimeStatTargetKind
