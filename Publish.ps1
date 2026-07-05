@@ -264,22 +264,39 @@ function Build {
     Remove-Item $publishBuildDirectory -Recurse -ErrorAction SilentlyContinue
     New-Item $publishBuildDirectory -ItemType Directory -ErrorAction SilentlyContinue
 
-    # Build
-    dotnet restore $ProjectPath
-    dotnet clean $ProjectPath
+    # Publish must be isolated from the local Reloaded-II install even if RELOADEDIIMODS is set
+    # in the developer environment; otherwise dotnet clean can delete the installed test mod.
+    $previousReloadedIIMods = $env:RELOADEDIIMODS
+    Remove-Item Env:RELOADEDIIMODS -ErrorAction SilentlyContinue
 
-    if ($BuildR2R) {
-        dotnet publish $ProjectPath -c Release -r win-x86 --self-contained false -o "$publishBuildDirectory/x86" /p:PublishReadyToRun=true /p:OutputPath="$TempDirectoryBuild/x86"
-        dotnet publish $ProjectPath -c Release -r win-x64 --self-contained false -o "$publishBuildDirectory/x64" /p:PublishReadyToRun=true /p:OutputPath="$TempDirectoryBuild/x64"
+    try {
+        # Build
+        dotnet restore $ProjectPath
+        if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
+        dotnet clean $ProjectPath
+        if ($LASTEXITCODE -ne 0) { throw "dotnet clean failed with exit code $LASTEXITCODE" }
 
-        # Remove Redundant Files
-        Move-Item -Path "$publishBuildDirectory/x86/ModConfig.json" -Destination "$publishBuildDirectory/ModConfig.json" -ErrorAction SilentlyContinue
-        Move-Item -Path "$publishBuildDirectory/x86/Preview.png" -Destination "$publishBuildDirectory/Preview.png" -ErrorAction SilentlyContinue
-        Remove-Item "$publishBuildDirectory/x64/Preview.png" -ErrorAction SilentlyContinue
-        Remove-Item "$publishBuildDirectory/x64/ModConfig.json" -ErrorAction SilentlyContinue
+        if ($BuildR2R) {
+            dotnet publish $ProjectPath -c Release -r win-x86 --self-contained false -o "$publishBuildDirectory/x86" /p:PublishReadyToRun=true /p:OutputPath="$TempDirectoryBuild/x86"
+            if ($LASTEXITCODE -ne 0) { throw "dotnet publish x86 failed with exit code $LASTEXITCODE" }
+            dotnet publish $ProjectPath -c Release -r win-x64 --self-contained false -o "$publishBuildDirectory/x64" /p:PublishReadyToRun=true /p:OutputPath="$TempDirectoryBuild/x64"
+            if ($LASTEXITCODE -ne 0) { throw "dotnet publish x64 failed with exit code $LASTEXITCODE" }
+
+            # Remove Redundant Files
+            Move-Item -Path "$publishBuildDirectory/x86/ModConfig.json" -Destination "$publishBuildDirectory/ModConfig.json" -ErrorAction SilentlyContinue
+            Move-Item -Path "$publishBuildDirectory/x86/Preview.png" -Destination "$publishBuildDirectory/Preview.png" -ErrorAction SilentlyContinue
+            Remove-Item "$publishBuildDirectory/x64/Preview.png" -ErrorAction SilentlyContinue
+            Remove-Item "$publishBuildDirectory/x64/ModConfig.json" -ErrorAction SilentlyContinue
+        }
+        else {
+            dotnet publish $ProjectPath -c Release --self-contained false -o "$publishBuildDirectory" /p:OutputPath="$TempDirectoryBuild"
+            if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
+        }
     }
-    else {
-        dotnet publish $ProjectPath -c Release --self-contained false -o "$publishBuildDirectory" /p:OutputPath="$TempDirectoryBuild"
+    finally {
+        if ($null -ne $previousReloadedIIMods) {
+            $env:RELOADEDIIMODS = $previousReloadedIIMods
+        }
     }
 
     # Cleanup Unnecessary Files
@@ -346,7 +363,20 @@ function Publish-Common {
 	$arguments = "$(Get-Common-Publish-Args -AllowDeltas $AllowDeltas) --outputfolder `"$Directory`" --publishtarget $PublishTarget"
 	$command = "$reloadedToolPath $arguments"
 	Write-Host "$command`r`n`r`n"
-	Invoke-Expression $command
+    $previousRollForward = $env:DOTNET_ROLL_FORWARD
+    $env:DOTNET_ROLL_FORWARD = "Major"
+    try {
+        Invoke-Expression $command
+        if ($LASTEXITCODE -ne 0) { throw "Reloaded.Publisher failed with exit code $LASTEXITCODE" }
+    }
+    finally {
+        if ($null -ne $previousRollForward) {
+            $env:DOTNET_ROLL_FORWARD = $previousRollForward
+        }
+        else {
+            Remove-Item Env:DOTNET_ROLL_FORWARD -ErrorAction SilentlyContinue
+        }
+    }
 }
 
 function Publish-GameBanana {
@@ -359,6 +389,12 @@ function Publish-NuGet {
 
 function Publish-Generic {
     Publish-Common -Directory $PublishGenericDirectory -PublishTarget Default
+
+    # Reloaded's GitHubRelease config points at a stable asset name. The publisher emits a
+    # versioned archive, so also create the GitHub asset users' Reloaded instances will fetch.
+    $stableGitHubAsset = Join-Path $PublishGenericDirectory "Mod.zip"
+    Remove-Item $stableGitHubAsset -ErrorAction SilentlyContinue
+    Compress-Archive -Path "$publishBuildDirectory/*" -DestinationPath $stableGitHubAsset -Force
 }
 
 function Cleanup {

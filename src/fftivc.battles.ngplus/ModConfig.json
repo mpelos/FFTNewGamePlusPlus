@@ -1,8 +1,8 @@
 {
   "ModId": "fftivc.battles.ngplus",
   "ModName": "New Game++",
-  "ModAuthor": "mmpel",
-  "ModVersion": "0.1.5",
+  "ModAuthor": "Pélos",
+  "ModVersion": "0.2.0",
   "ModDescription": "Reworks story battles for New Game+: enemies scale to your highest party level with new compositions (NG+ only), guests always join at party level, and shops carry endgame stock in NG+.",
   "ModDll": "fftivc.battles.ngplus.dll",
   "ModIcon": "",
@@ -46,6 +46,12 @@
           "ReleaseMetadataName": "Sewer56.Update.ReleaseMetadata.json"
         }
       }
+    },
+    "GitHubRelease": {
+      "UserName": "mpelos",
+      "RepositoryName": "FFTNewGamePlusPlus",
+      "UseReleaseTag": true,
+      "AssetFileName": "Mod.zip"
     }
   },
   "IsUniversalMod": false,
@@ -58,5 +64,5 @@
   "SupportedAppId": [
     "fft_enhanced.exe"
   ],
-  "ProjectUrl": ""
+  "ProjectUrl": "https://github.com/mpelos/FFTNewGamePlusPlus"
 }
