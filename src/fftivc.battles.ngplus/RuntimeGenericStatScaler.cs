@@ -90,6 +90,8 @@ public partial class Program
             EnemyUnit(0x84, "Knight bridge body A"),
             EnemyUnit(0x85, "Knight bridge body B"),
             EnemyUnit(0x86, "Knight bridge body C")),
+        [433] = Targets(
+            GuestUnit(0x29, 0x29, 0x29, "Rapha rooftop protected guest")),
     };
 
     private enum RuntimeStatTargetKind

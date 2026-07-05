@@ -54,12 +54,16 @@ TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged brea
 # skills
 COUNTER, PARRY, ATK_BOOST, MV1, MV2 = 442, 447, 465, 486, 487
 VIGILANCE = 426
+VANISH = 425
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
+DUAL_WIELD = 477
+TELEPORT = 498
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
 MIGHTY_SWORD = 52
+IAIDO = 19
 STEAL = 14
 SPEECHCRAFT = 15
 # Argath/Ziekden crossbow-sniper kit. IDs resolved from the FFTPatcher PSX tables, which TIC
@@ -94,6 +98,7 @@ MIRROR_MAIL = 184   # auto-Reflect armor — TIC's name for the PSX "Reflect Mai
 NINJA_BLADE = 14    # Ninja Longblade — best NON-reserved ninja blade available at Yardow (Chapter3_SaveRafa)
 DEFENDER = 33       # weakest KnightSword (non-buyable) — Wiegraf's Ch3 rare at the Keep (034); the
                     # reserved best KnightSwords are 34-37 (Save the Queen/Excalibur/Ragnarok/Chaos Blade)
+KIKU_ICHIMONJI = 45  # best buyable non-rare katana below Masamune; safe for fleeing Ch3 Elmdor
 # --- Chapter 4 best-in-slot rares (Unknown20-reserved tier, unlocked tiered in Ch4 per docs/037) ---
 SAVE_THE_QUEEN = 34  # Tier-A KnightSword — Meliadoul (039). Best KnightSword below the Tier-S pair.
 MASAMUNE = 46        # Tier-A Katana — Elmdor (048, deferred from Ch3).
@@ -1296,19 +1301,26 @@ def riovanes_keep(data):
 # Netherseer lvl-5 (Marach-class) — both lvl-5 SCRIPTING placeholders, DO NOT TOUCH; s3 = Elmdor
 # (job 27 Ark Knight); s4 = Celia (job 45 Assassin); s5 = Lettie (job 46 Assassin). All three enemies
 # FLEE on critical (none die) -> NO loot; preserve their special kits + the flee-on-critical scripting.
-#   - The 3 enemies: LEVEL ONLY (Elmdor 104, Celia/Lettie 103) — like other special bosses, preserve
-#     job/secondary/gear/jobLevel + the flee trigger + the protect-Rapha fail condition + 4-unit cap.
-#     No skillset/jl change -> no new hard lock (race stays fair; status stays vanilla-resistable).
-#   - Rapha (s0): scaled via DIRECT ENTD LEVEL (100), NOT the runtime GuestCharIds scaler: her sprite
-#     (41) collides with the enemy clone s1 (same job==charId), so the scaler guard can't tell them
-#     apart — a direct level edit touches only her slot. Her evasion gear (Elven Cloak) is preserved.
+#   - The 3 enemies: complete special kits, but no Masamune/Genji/loot and no extra bodies; preserve
+#     the flee-on-critical trigger + protect-Rapha fail condition + 4-unit cap.
+#   - Rapha (s0): controlled in NG+, direct ENTD level/control/gear, and runtime guest stat growth via
+#     UnitID 0x29 (the script clone is uid 0x80, so the runtime guard can distinguish them).
 #   - NO rare: Elmdor's Masamune/Genji are his Chapter-4 Limberry loot, not here.
 def riovanes_roof(data):
     E = 433
-    set_slot(data, E, 0, level=100)  # Rapha (protected guest) — direct level only; preserve evasion gear
-    set_slot(data, E, 3, level=104)  # Elmdor (Ark Knight) — level only; flees, no loot
-    set_slot(data, E, 4, level=103)  # Celia (Assassin) — level only; flees, no loot
-    set_slot(data, E, 5, level=103)  # Lettie (Assassin) — level only; flees, no loot
+    set_slot(data, E, 0, level=100, brave=65, faith=75, secondary=ITEMS,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
+             head=THIEFS_CAP, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=113, lh=LH_TWOHAND)
+    set_player_control(data, E, 0)
+    set_slot(data, E, 3, level=104, joblevel=8, secondary=ITEMS, brave=90, faith=65,
+             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=TELEPORT,
+             head=GOLD_HAIRPIN, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
+    for s in (4, 5):
+        set_slot(data, E, s, level=103, joblevel=8, secondary=ITEMS, brave=90, faith=60,
+                 reaction=FIRST_STRIKE, support=DUAL_WIELD, movement=TELEPORT,
+                 head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE, rh=NINJA_BLADE, lh=NINJA_BLADE)
+    for s in (3, 4, 5):
+        set_spoil(data, E, s, 0)
     return [E]
 
 

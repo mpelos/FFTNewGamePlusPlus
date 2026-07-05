@@ -703,6 +703,78 @@ def run() -> int:
               and roster(entd, 432, [slot_no], 0x15) == [254]
               and roster(entd, 432, [slot_no], 0x16) == [254])
 
+    # 035 - Riovanes Castle Roof, entry 433.
+    # s0 Rapha protected guest; s1/s2 scripting placeholders; s3 Elmdor; s4 Celia; s5 Lettie.
+    check("433 runtime target table present", "[433] = Targets(" in runtime)
+    check("433 runtime target includes Rapha guest",
+          'GuestUnit(0x29, 0x29, 0x29, "Rapha rooftop protected guest")' in runtime)
+    check("433 runtime target excludes fleeing enemies",
+          "EnemyUnit(0x1B" not in runtime and "EnemyUnit(0x2D" not in runtime and "EnemyUnit(0x2E" not in runtime)
+
+    check("433 Rapha identity preserved", field(entd, 433, 0, 0x00) == 41 and field(entd, 433, 0, 0x0A) == 41)
+    check("433 Rapha level/control Br/Fa",
+          field(entd, 433, 0, 0x03) == 100
+          and (field(entd, 433, 0, 0x18) & 0x08) == 0x08
+          and field(entd, 433, 0, 0x06) == 65
+          and field(entd, 433, 0, 0x07) == 75)
+    check("433 Rapha support kit",
+          field(entd, 433, 0, 0x0B) == 6
+          and field16(entd, 433, 0, 0x0C) == 449
+          and field16(entd, 433, 0, 0x0E) == 467
+          and field16(entd, 433, 0, 0x10) == 486
+          and roster(entd, 433, [0], 0x12) == [168]
+          and roster(entd, 433, [0], 0x13) == [206]
+          and roster(entd, 433, [0], 0x14) == [234]
+          and roster(entd, 433, [0], 0x15) == [113]
+          and roster(entd, 433, [0], 0x16) == [254])
+
+    check("433 scripting placeholders preserved",
+          field(entd, 433, 1, 0x03) == 5
+          and field(entd, 433, 1, 0x0A) == 41
+          and field(entd, 433, 2, 0x03) == 5
+          and field(entd, 433, 2, 0x0A) == 18)
+
+    check("433 Elmdor identity and level",
+          field(entd, 433, 3, 0x00) == 27
+          and field(entd, 433, 3, 0x0A) == 27
+          and field(entd, 433, 3, 0x03) == 104
+          and field(entd, 433, 3, 0x09) == 8
+          and field(entd, 433, 3, 0x06) == 90
+          and field(entd, 433, 3, 0x07) == 65)
+    check("433 Elmdor no-Limberry kit",
+          field(entd, 433, 3, 0x0B) == 6
+          and field16(entd, 433, 3, 0x0C) == 453
+          and field16(entd, 433, 3, 0x0E) == 465
+          and field16(entd, 433, 3, 0x10) == 498
+          and roster(entd, 433, [3], 0x12) == [166]
+          and roster(entd, 433, [3], 0x13) == [206]
+          and roster(entd, 433, [3], 0x14) == [234]
+          and roster(entd, 433, [3], 0x15) == [45]
+          and roster(entd, 433, [3], 0x16) == [254]
+          and field(entd, 433, 3, 0x1E) == 0)
+
+    check("433 Assassin identities and levels",
+          field(entd, 433, 4, 0x00) == 45
+          and field(entd, 433, 4, 0x0A) == 45
+          and field(entd, 433, 5, 0x00) == 46
+          and field(entd, 433, 5, 0x0A) == 46
+          and roster(entd, 433, [4, 5], 0x03) == [103, 103]
+          and roster(entd, 433, [4, 5], 0x09) == [8, 8]
+          and roster(entd, 433, [4, 5], 0x06) == [90, 90]
+          and roster(entd, 433, [4, 5], 0x07) == [60, 60])
+    for slot_no in (4, 5):
+        check(f"433 s{slot_no} Assassin race kit",
+              field(entd, 433, slot_no, 0x0B) == 6
+              and field16(entd, 433, slot_no, 0x0C) == 453
+              and field16(entd, 433, slot_no, 0x0E) == 477
+              and field16(entd, 433, slot_no, 0x10) == 498
+              and roster(entd, 433, [slot_no], 0x12) == [168]
+              and roster(entd, 433, [slot_no], 0x13) == [198]
+              and roster(entd, 433, [slot_no], 0x14) == [234]
+              and roster(entd, 433, [slot_no], 0x15) == [14]
+              and roster(entd, 433, [slot_no], 0x16) == [14]
+              and field(entd, 433, slot_no, 0x1E) == 0)
+
     passed = 0
     for name, ok in checks:
         if ok:
