@@ -69,6 +69,13 @@ public partial class Program
             EnemyUnit(0x83, "Chemist sustain B"),
             EnemyUnit(0x84, "Archer chip"),
             EnemyUnit(0x85, "Thief harass")),
+        [428] = Targets(
+            GuestUnit(0x19, 0x19, 0x19, "Rapha protected guest"),
+            EnemyUnit(0x80, "Ninja lead"),
+            EnemyUnit(0x81, "Summoner chokepoint A"),
+            EnemyUnit(0x82, "Ninja wall climber A"),
+            EnemyUnit(0x83, "Summoner chokepoint B"),
+            EnemyUnit(0x84, "Ninja wall climber B")),
     };
 
     private enum RuntimeStatTargetKind

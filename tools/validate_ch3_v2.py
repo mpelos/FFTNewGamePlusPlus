@@ -434,6 +434,77 @@ def run() -> int:
     for slot_no in (6, 7, 8):
         check(f"426 s{slot_no} inactive placeholder preserved", field(entd, 426, slot_no, 0x03) == 254)
 
+    # 031 - Walled City of Yardrow, entry 428.
+    # s0 Rapha protected guest; s1 Marach surviving boss; s2/s4/s6 Ninja; s3/s5 Summoner.
+    check("428 runtime target table present", "[428] = Targets(" in runtime)
+    check("428 runtime target includes Rapha guest", 'GuestUnit(0x19, 0x19, 0x19, "Rapha protected guest")' in runtime)
+    check("428 runtime target excludes Marach boss", "EnemyUnit(0x1A" not in runtime)
+    for uid in (0x80, 0x81, 0x82, 0x83, 0x84):
+        check(f"428 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
+
+    check("428 Rapha identity preserved", field(entd, 428, 0, 0x00) == 0x19 and field(entd, 428, 0, 0x0A) == 0x19)
+    check("428 Rapha level/control Br/Fa",
+          field(entd, 428, 0, 0x03) == 100
+          and (field(entd, 428, 0, 0x18) & 0x08) != 0
+          and (field(entd, 428, 0, 0x06), field(entd, 428, 0, 0x07)) == (65, 75))
+    check("428 Rapha gear preserved",
+          roster(entd, 428, [0], 0x12) == [168]
+          and roster(entd, 428, [0], 0x13) == [206]
+          and roster(entd, 428, [0], 0x14) == [234]
+          and roster(entd, 428, [0], 0x15) == [113]
+          and roster(entd, 428, [0], 0x16) == [254])
+
+    check("428 Marach identity preserved", field(entd, 428, 1, 0x00) == 0x1A and field(entd, 428, 1, 0x0A) == 0x1A)
+    check("428 Marach level setup Br/Fa",
+          field(entd, 428, 1, 0x03) == 103
+          and field(entd, 428, 1, 0x09) == 8
+          and field(entd, 428, 1, 0x0B) == 6
+          and (field(entd, 428, 1, 0x06), field(entd, 428, 1, 0x07)) == (78, 72))
+    check("428 Marach R/S/M and gear",
+          field16(entd, 428, 1, 0x0C) == 449
+          and field16(entd, 428, 1, 0x0E) == 467
+          and field16(entd, 428, 1, 0x10) == 486
+          and roster(entd, 428, [1], 0x12) == [167]
+          and roster(entd, 428, [1], 0x13) == [206]
+          and roster(entd, 428, [1], 0x14) == [218]
+          and roster(entd, 428, [1], 0x15) == [111]
+          and roster(entd, 428, [1], 0x16) == [254])
+
+    yardrow_enemy_slots = [2, 3, 4, 5, 6]
+    check("428 roster jobs", roster(entd, 428, yardrow_enemy_slots, 0x0A) == [89, 82, 89, 82, 89])
+    check("428 roster levels", roster(entd, 428, yardrow_enemy_slots, 0x03) == [102, 101, 101, 101, 101])
+    check("428 roster secondaries", roster(entd, 428, yardrow_enemy_slots, 0x0B) == [6, 6, 5, 6, 5])
+    check("428 roster Brave", roster(entd, 428, yardrow_enemy_slots, 0x06) == [86, 58, 90, 58, 90])
+    check("428 roster Faith", roster(entd, 428, yardrow_enemy_slots, 0x07) == [40, 78, 60, 78, 60])
+    for slot_no in yardrow_enemy_slots:
+        job = field(entd, 428, slot_no, 0x0A)
+        check(f"428 s{slot_no} jobrank", field(entd, 428, slot_no, 0x08) == rank(job))
+        check(f"428 s{slot_no} JobLevel 8", field(entd, 428, slot_no, 0x09) == 8)
+
+    for slot_no in (2, 4, 6):
+        check(f"428 s{slot_no} Ninja R/S/M",
+              field16(entd, 428, slot_no, 0x0C) == 453
+              and field16(entd, 428, slot_no, 0x0E) == 465
+              and field16(entd, 428, slot_no, 0x10) == 487)
+        check(f"428 s{slot_no} Ninja gear",
+              roster(entd, 428, [slot_no], 0x12) == [168]
+              and roster(entd, 428, [slot_no], 0x13) == [198]
+              and roster(entd, 428, [slot_no], 0x14) == [210]
+              and roster(entd, 428, [slot_no], 0x15) == [14]
+              and roster(entd, 428, [slot_no], 0x16) == [14])
+
+    for slot_no in (3, 5):
+        check(f"428 s{slot_no} Summoner R/S/M",
+              field16(entd, 428, slot_no, 0x0C) == 449
+              and field16(entd, 428, slot_no, 0x0E) == 467
+              and field16(entd, 428, slot_no, 0x10) == 486)
+        check(f"428 s{slot_no} Summoner gear",
+              roster(entd, 428, [slot_no], 0x12) == [167]
+              and roster(entd, 428, [slot_no], 0x13) == [206]
+              and roster(entd, 428, [slot_no], 0x14) == [234]
+              and roster(entd, 428, [slot_no], 0x15) == [56]
+              and roster(entd, 428, [slot_no], 0x16) == [255])
+
     passed = 0
     for name, ok in checks:
         if ok:

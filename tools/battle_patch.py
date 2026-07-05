@@ -1876,6 +1876,21 @@ def grogh_v2(data):
     return touched
 
 
+def yardrow_v2(data):
+    touched = yardrow(data)
+    E = 428
+    set_slot(data, E, 0, level=100, brave=65, faith=75)
+    set_player_control(data, E, 0)
+    set_slot(data, E, 1, joblevel=8, secondary=ITEMS, brave=78, faith=72,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1)
+    set_slot(data, E, 2, secondary=ITEMS, brave=86, faith=40)
+    for s in (4, 6):
+        set_slot(data, E, s, secondary=FUNDAMENTS, brave=90, faith=60)
+    for s in (3, 5):
+        set_slot(data, E, s, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+    return touched
+
+
 BATTLES = {
     "chapter1_guest_control": chapter1_guest_control,
     "gariland": gariland,
@@ -1904,7 +1919,7 @@ BATTLES = {
     "vaults_3rd": vaults_3rd_v2,
     "vaults_1st": vaults_1st_v2,
     "grogh": grogh_v2,
-    "yardrow": yardrow,
+    "yardrow": yardrow_v2,
     "yuguewood": yuguewood,
     "riovanes_gate": riovanes_gate,
     "riovanes_keep": riovanes_keep,
