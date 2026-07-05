@@ -161,6 +161,13 @@ relative-encoding rule applies whether the slot is read as an enemy or as a gues
 membership affects AI control and war-trophy/spoils accounting, not how the Level byte itself is
 interpreted.
 
+Important exception: scripted transform/phase bosses may not use the visible ENTD slot as the final
+fighting actor. For those battles, the ENTD slot should still carry the intended relative level for
+documentation/tooling/rewards, but the post-transform live actor can require a runtime actor-table
+level patch. See [11-transform-boss-runtime-scaling.md](11-transform-boss-runtime-scaling.md). Do
+not write ENTD syntax (`104`) into the live actor table; live level bytes are already-expanded
+`1..99` values.
+
 ### Practical consequence for guests specifically
 
 A guest slot's Level byte commonly ships as one of three patterns:

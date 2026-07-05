@@ -178,3 +178,8 @@ limitation. They are excluded from the inventory above because they are not a do
 new unit, not because the technique wouldn't apply; if a future design pass wants to add a body to
 one of these fights, the event-spawned-enemy recipe is the applicable technique, since all five are
 event-scripted.
+
+Scaling the transformed boss itself is a separate concern from adding bodies. If a transform boss
+shows its vanilla level even after the static ENTD boss slot is set to `104+`, use the runtime
+transform-boss scaling rule in
+[11-transform-boss-runtime-scaling.md](11-transform-boss-runtime-scaling.md).

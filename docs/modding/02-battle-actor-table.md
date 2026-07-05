@@ -124,6 +124,27 @@ Use strong guards when applying this pattern:
 5. Patch docs only after an in-game playtest confirms the stat changed as intended.
 ```
 
+### Runtime level patching for transform bosses
+
+Transform/phase bosses can also need a live actor-table patch, but for a different reason: the
+final combatant may be script-registered under a runtime id that is not the same as the static ENTD
+slot. Lionel Castle Oratory is the confirmed case. Entry `425` slot `s9` is the documented
+Cuchulainn slot (`CharId/UnitID 0x3c`, Job `60`, ENTD Level `104`), but the event script also
+registers uid `0x43`, and the fighting boss can appear in the actor table under that transform
+identity.
+
+For this case, patch `+0x29` with the already-expanded real level:
+
+```text
+target = min(99, runtime_player_highest_level + ENTD_offset)
+unit+0x29 = target
+```
+
+Do not write `104` to `+0x29`; `104` is ENTD-relative syntax, not a live level. Also do not treat
+HP or Speed writes as part of level scaling. Manual HP/Speed edits are separate live-stat tuning and
+must be tested separately. See
+[11-transform-boss-runtime-scaling.md](11-transform-boss-runtime-scaling.md).
+
 ## The two-stage activation model
 
 A unit occupying a table entry with valid, plausible data (SpriteSet, UnitID, pre-populated identity

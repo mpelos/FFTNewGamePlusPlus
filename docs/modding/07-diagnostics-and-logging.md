@@ -98,6 +98,8 @@ Use project diagnostics for these questions:
 | Did choreography run without activation? | Actor-table position fields (`c4f`/`c50`) changed while `st=0xFF` |
 | Is a safe once-per-battle native hook firing? | Transition-into-battle trace |
 | What are a specific battle's ENTD bytes before/after the guest-scaling pass, and its live actor states? | Targeted battle trace (`DIAG_TRACE_ZEIRCHELE_ENTD` pattern: ENTD slot dump on read + a time-boxed observe-only actor-table probe) |
+| Did a scripted transform boss get its live level patched? | Targeted runtime trace (`DIAG_TRACE_CUCHULAINN_RUNTIME` pattern: actor-table scan + one live `+0x29` level write; see doc `11`) |
+| Which attacker/defender and HP values are involved in a Cuchulainn damage event? | Targeted damage trace (`DIAG_TRACE_CUCHULAINN_DAMAGE`); use only for short investigations and turn it back off |
 
 The targeted-battle trace pattern carries a `variant=` label in every log line; the label is
 compiled into the DLL, so after data-only (loose-file) changes the logs keep reporting the label of
@@ -115,6 +117,7 @@ These are intentionally not part of normal diagnostics:
 private static readonly bool DIAG_TRACE_EVENT_ACTORS = false;
 private static readonly bool DIAG_ACTIVATE_MERCHANT_A9_AFTER_A8 = false;
 private static readonly bool DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_INTRO = false;
+private static readonly bool DIAG_TRACE_CUCHULAINN_DAMAGE = false;
 ```
 
 `DIAG_TRACE_EVENT_ACTORS` touches the hot event actor/native dispatch neighborhood that has
@@ -123,8 +126,9 @@ mutating experiment, not a passive log. `DIAG_SUSPEND_ZEIRCHELE_EXTRA87_DURING_I
 mutating experiment that temporarily deactivated a unit's actor-table state during the battle
 intro; it proved irrelevant to its target problem (sprite corruption is sheet-budget pressure, see
 [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)), and suspending an actor before the
-formation screen freezes that unit's idle animation during deployment. Do not enable any of these
-during routine battle work.
+formation screen freezes that unit's idle animation during deployment. `DIAG_TRACE_CUCHULAINN_DAMAGE`
+installs a targeted native damage hook; keep it off unless specifically investigating Cuchulainn
+damage/HP behavior. Do not enable any of these during routine battle work.
 
 ## File-only script overrides
 

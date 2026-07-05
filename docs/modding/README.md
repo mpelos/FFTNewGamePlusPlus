@@ -25,6 +25,7 @@ and not durable documentation.
 | [08-adding-formation-gated-static-enemies.md](08-adding-formation-gated-static-enemies.md) | The Zeirchele Falls technique for adding a new enemy to a static roster whose high ENTD slot is ignored until `OverrideEntryData` and `root.nxl` are expanded. |
 | [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md) | The per-battle unique-spritesheet budget: the palette-corruption symptom, what counts against the budget, the `tools/sprite_budget.py` pre-playtest analyzer, design mitigations, and the future path to raising the engine limit. |
 | [10-event-scripts-and-the-e-files.md](10-event-scripts-and-the-e-files.md) | **The enemy-add playbook — start here.** Decision tree (job-swap / static add / script-managed add), the full paths + tools maps, how to find a battle's `.e` file (uid-profile scan → numbering shortlist → authoritative file-access log), both recipes with validation status, the verify-and-deploy block, failure triage, and the per-battle track record. |
+| [11-transform-boss-runtime-scaling.md](11-transform-boss-runtime-scaling.md) | How to scale scripted transform/phase bosses whose final fighting actor is not fully controlled by the visible ENTD slot; confirmed on Lionel Castle Oratory / Cuchulainn. |
 
 ## State of the world
 
@@ -79,3 +80,4 @@ battle; check with `python tools/sprite_budget.py <entry>` before playtesting.
 | Unsure which `.e` file drives a wave | Temporary Reloaded-II file-access logging | NXD joins can point at a real but irrelevant script; the runtime file-open log is the reliable source. |
 | Need only a decorative cutscene sprite, not a combatant | `AddGhostUnit`/presentation-layer work | `AddGhostUnit` creates a display entity, not a targetable unit with turns, HP, AI, or victory-condition participation. |
 | A unit renders with palette-garbage sprite/portrait but plays normally | Sprite-sheet budget check (`tools/sprite_budget.py`) | The battle exceeds its unique-spritesheet budget; reduce or reuse sheets — see [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md). |
+| A transformed boss stays at vanilla level even though its ENTD slot is `104+` | Runtime transform-boss scaling | The final combatant may be a script-registered actor with a different runtime id; patch actor-table `+0x29` with the expanded real level, not ENTD syntax. See [11-transform-boss-runtime-scaling.md](11-transform-boss-runtime-scaling.md). |
