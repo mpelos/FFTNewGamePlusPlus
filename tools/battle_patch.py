@@ -41,6 +41,7 @@ EMPTY_SLOT = bytes.fromhex(
 # jobs
 SQUIRE, CHEMIST, ARCHER, THIEF = 74, 75, 77, 83
 KNIGHT, BMAGE, MONK, WMAGE, TMAGE = 76, 80, 78, 79, 81
+ENEMY_BMAGE, ENEMY_TMAGE = 66, 68  # Yuguewood enemy-variant casters; keep their job identities.
 LANCER = 87  # Dragoon (innate Jump command); Ch2 vertical-threat escalation
 SUMMONER = 82  # Summon command innate; Ch2 marquee caster (Balias Tor / Goug)
 ORATOR = 84   # Mediator — Ch3 charm/status caste (Gollund debut); equips Hat/Clothing/Robe/Gun/Knife
@@ -1891,6 +1892,24 @@ def yardrow_v2(data):
     return touched
 
 
+def yuguewood_v2(data):
+    touched = yuguewood(data)
+    E = 430
+    for s, lvl in ((1, 101), (3, 100)):
+        set_slot(data, E, s, level=lvl, jobrank=0, joblevel=8, job=ENEMY_BMAGE,
+                 secondary=ITEMS, brave=58, faith=78,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
+                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+    for s in (2, 4):
+        set_slot(data, E, s, level=101, jobrank=0, joblevel=4, job=ENEMY_TMAGE,
+                 secondary=ITEMS, brave=60, faith=74,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
+                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
+    for s, lvl in ((5, 100), (6, 100), (7, 101)):
+        set_slot(data, E, s, level=lvl, joblevel=8, brave=86, faith=35)
+    return touched
+
+
 BATTLES = {
     "chapter1_guest_control": chapter1_guest_control,
     "gariland": gariland,
@@ -1920,7 +1939,7 @@ BATTLES = {
     "vaults_1st": vaults_1st_v2,
     "grogh": grogh_v2,
     "yardrow": yardrow_v2,
-    "yuguewood": yuguewood,
+    "yuguewood": yuguewood_v2,
     "riovanes_gate": riovanes_gate,
     "riovanes_keep": riovanes_keep,
     "riovanes_roof": riovanes_roof,

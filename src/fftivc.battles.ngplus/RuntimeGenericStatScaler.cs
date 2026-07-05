@@ -20,7 +20,8 @@ public partial class Program
     // Chapter 3+ human runtime stat targets.
     //
     // Add entries here as battle docs are implemented. Use the ENTD global entry and the runtime
-    // UnitID (+0x191), not an actor-table index. Generic enemies use enemy-side + job 74-93 guards.
+    // UnitID (+0x191), not an actor-table index. Generic enemies use enemy-side + job 74-93 guards
+    // unless an explicit enemy job id is provided for enemy-variant human jobs.
     // Active allied guests use expected char/job + allied-side guards and the same live growth bytes.
     //
     // [426] = Targets(
@@ -76,6 +77,11 @@ public partial class Program
             EnemyUnit(0x82, "Ninja wall climber A"),
             EnemyUnit(0x83, "Summoner chokepoint B"),
             EnemyUnit(0x84, "Ninja wall climber B")),
+        [430] = Targets(
+            EnemyUnit(0x80, 0x42, "Enemy Black Mage A"),
+            EnemyUnit(0x81, 0x44, "Enemy Time Mage A"),
+            EnemyUnit(0x82, 0x42, "Enemy Black Mage B"),
+            EnemyUnit(0x83, 0x44, "Enemy Time Mage B")),
     };
 
     private enum RuntimeStatTargetKind
@@ -93,6 +99,9 @@ public partial class Program
 
     private static RuntimeGenericStatTarget EnemyUnit(byte unitId, string label)
         => new(unitId, RuntimeStatTargetKind.EnemyGenericHuman, 0, 0, label);
+
+    private static RuntimeGenericStatTarget EnemyUnit(byte unitId, byte expectedJobId, string label)
+        => new(unitId, RuntimeStatTargetKind.EnemyGenericHuman, 0, expectedJobId, label);
 
     private static RuntimeGenericStatTarget GuestUnit(byte unitId, byte expectedCharId, byte expectedJobId, string label)
         => new(unitId, RuntimeStatTargetKind.AlliedGuest, expectedCharId, expectedJobId, label);
@@ -272,8 +281,18 @@ public partial class Program
 
         if (target.Kind == RuntimeStatTargetKind.EnemyGenericHuman)
         {
-            if (!isEnemySide || jobId is < 74 or > 93)
+            if (!isEnemySide)
                 return false;
+
+            if (target.ExpectedJobId != 0)
+            {
+                if (jobId != target.ExpectedJobId)
+                    return false;
+            }
+            else if (jobId is < 74 or > 93)
+            {
+                return false;
+            }
         }
         else
         {

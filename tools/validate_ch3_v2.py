@@ -505,6 +505,62 @@ def run() -> int:
               and roster(entd, 428, [slot_no], 0x15) == [56]
               and roster(entd, 428, [slot_no], 0x16) == [255])
 
+    # 032 - The Yuguewood, entry 430.
+    # s0 Rapha placeholder inactive; s1/s3 enemy Black Mage; s2/s4 enemy Time Mage; s5-s7 undead.
+    check("430 runtime target table present", "[430] = Targets(" in runtime)
+    check("430 runtime target includes enemy Black Mage A", 'EnemyUnit(0x80, 0x42, "Enemy Black Mage A")' in runtime)
+    check("430 runtime target includes enemy Time Mage A", 'EnemyUnit(0x81, 0x44, "Enemy Time Mage A")' in runtime)
+    check("430 runtime target includes enemy Black Mage B", 'EnemyUnit(0x82, 0x42, "Enemy Black Mage B")' in runtime)
+    check("430 runtime target includes enemy Time Mage B", 'EnemyUnit(0x83, 0x44, "Enemy Time Mage B")' in runtime)
+
+    check("430 Rapha placeholder inactive", field(entd, 430, 0, 0x03) == 254)
+    yuguewood_caster_slots = [1, 2, 3, 4]
+    check("430 caster jobs", roster(entd, 430, yuguewood_caster_slots, 0x0A) == [66, 68, 66, 68])
+    check("430 caster levels", roster(entd, 430, yuguewood_caster_slots, 0x03) == [101, 101, 100, 101])
+    check("430 caster jobrank zero", roster(entd, 430, yuguewood_caster_slots, 0x08) == [0, 0, 0, 0])
+    check("430 caster JobLevels", roster(entd, 430, yuguewood_caster_slots, 0x09) == [8, 4, 8, 4])
+    check("430 caster secondaries", roster(entd, 430, yuguewood_caster_slots, 0x0B) == [6, 6, 6, 6])
+    check("430 caster Brave", roster(entd, 430, yuguewood_caster_slots, 0x06) == [58, 60, 58, 60])
+    check("430 caster Faith", roster(entd, 430, yuguewood_caster_slots, 0x07) == [78, 74, 78, 74])
+
+    for slot_no in (1, 3):
+        check(f"430 s{slot_no} Black Mage R/S/M",
+              field16(entd, 430, slot_no, 0x0C) == 449
+              and field16(entd, 430, slot_no, 0x0E) == 467
+              and field16(entd, 430, slot_no, 0x10) == 486)
+        check(f"430 s{slot_no} Black Mage gear",
+              roster(entd, 430, [slot_no], 0x12) == [167]
+              and roster(entd, 430, [slot_no], 0x13) == [206]
+              and roster(entd, 430, [slot_no], 0x14) == [234]
+              and roster(entd, 430, [slot_no], 0x15) == [56]
+              and roster(entd, 430, [slot_no], 0x16) == [255])
+
+    for slot_no in (2, 4):
+        check(f"430 s{slot_no} Time Mage R/S/M",
+              field16(entd, 430, slot_no, 0x0C) == 449
+              and field16(entd, 430, slot_no, 0x0E) == 467
+              and field16(entd, 430, slot_no, 0x10) == 486)
+        check(f"430 s{slot_no} Time Mage gear",
+              roster(entd, 430, [slot_no], 0x12) == [167]
+              and roster(entd, 430, [slot_no], 0x13) == [206]
+              and roster(entd, 430, [slot_no], 0x14) == [234]
+              and roster(entd, 430, [slot_no], 0x15) == [64]
+              and roster(entd, 430, [slot_no], 0x16) == [255])
+
+    yuguewood_undead_slots = [5, 6, 7]
+    check("430 undead jobs", roster(entd, 430, yuguewood_undead_slots, 0x0A) == [112, 113, 114])
+    check("430 undead levels", roster(entd, 430, yuguewood_undead_slots, 0x03) == [100, 100, 101])
+    check("430 undead JobLevel 8", roster(entd, 430, yuguewood_undead_slots, 0x09) == [8, 8, 8])
+    check("430 undead Brave", roster(entd, 430, yuguewood_undead_slots, 0x06) == [86, 86, 86])
+    check("430 undead Faith", roster(entd, 430, yuguewood_undead_slots, 0x07) == [35, 35, 35])
+    for slot_no in yuguewood_undead_slots:
+        check(f"430 s{slot_no} undead no gear",
+              roster(entd, 430, [slot_no], 0x12) == [254]
+              and roster(entd, 430, [slot_no], 0x13) == [254]
+              and roster(entd, 430, [slot_no], 0x14) == [254]
+              and roster(entd, 430, [slot_no], 0x15) == [254]
+              and roster(entd, 430, [slot_no], 0x16) == [254])
+
     passed = 0
     for name, ok in checks:
         if ok:
