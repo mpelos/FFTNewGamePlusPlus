@@ -50,8 +50,7 @@
     "GitHubRelease": {
       "UserName": "mpelos",
       "RepositoryName": "FFTNewGamePlusPlus",
-      "UseReleaseTag": true,
-      "AssetFileName": "Mod.zip"
+      "UseReleaseTag": true
     }
   },
   "IsUniversalMod": false,

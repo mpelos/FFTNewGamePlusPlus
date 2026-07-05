@@ -389,12 +389,6 @@ function Publish-NuGet {
 
 function Publish-Generic {
     Publish-Common -Directory $PublishGenericDirectory -PublishTarget Default
-
-    # Reloaded's GitHubRelease config points at a stable asset name. The publisher emits a
-    # versioned archive, so also create the GitHub asset users' Reloaded instances will fetch.
-    $stableGitHubAsset = Join-Path $PublishGenericDirectory "Mod.zip"
-    Remove-Item $stableGitHubAsset -ErrorAction SilentlyContinue
-    Compress-Archive -Path "$publishBuildDirectory/*" -DestinationPath $stableGitHubAsset -Force
 }
 
 function Cleanup {
