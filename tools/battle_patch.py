@@ -56,6 +56,7 @@ COUNTER, PARRY, ATK_BOOST, MV1, MV2 = 442, 447, 465, 486, 487
 DRAGONHEART = 427
 VIGILANCE = 426
 VANISH = 425
+SOULBIND = 446
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 DUAL_WIELD = 477
 TELEPORT = 498
@@ -64,6 +65,7 @@ AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
 ARTS_OF_WAR = 8
+WHITE_MAGICKS = 10
 GEOMANCY = 12
 MIGHTY_SWORD = 52
 IAIDO = 19
@@ -81,6 +83,7 @@ JUMP2 = 490
 HEADBAND, POWER_GARB, BRACERS, ICEBRAND, RUNEBLADE = 163, 195, 218, 29, 30
 THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
+MAGEPOWER_GLOVES = 217
 SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
 X_POTION, ELIXIR, PHOENIX_DOWN = 242, 245, 253
 HERMES_SHOES = 213
@@ -1906,15 +1909,23 @@ def grogh_v2(data):
 def yardrow_v2(data):
     touched = yardrow(data)
     E = 428
-    set_slot(data, E, 0, level=100, brave=65, faith=75)
+    set_slot(data, E, 0, level=100, jobrank=generic_job_rank(WMAGE), joblevel=8,
+             secondary=WHITE_MAGICKS, brave=65, faith=75,
+             reaction=MANA_SHIELD, support=DEFENSE_BOOST, movement=MOVE_MP_UP)
     set_player_control(data, E, 0)
     set_slot(data, E, 1, joblevel=8, secondary=ITEMS, brave=78, faith=72,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1)
-    set_slot(data, E, 2, secondary=ITEMS, brave=86, faith=40)
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV2,
+             acc=MAGEPOWER_GLOVES)
+    # s2 is the lead/far-edge Ninja: keep the special Ninja Blade pair here only.
+    set_slot(data, E, 2, secondary=ITEMS, brave=86, faith=40,
+             reaction=REFLEXES, movement=JUMP2)
     for s in (4, 6):
-        set_slot(data, E, s, secondary=FUNDAMENTS, brave=90, faith=60)
+        set_slot(data, E, s, secondary=ITEMS, brave=90, faith=60,
+                 reaction=REFLEXES, movement=JUMP2,
+                 acc=BRACERS, rh=AIR_KNIFE, lh=LH_EMPTY)
     for s in (3, 5):
-        set_slot(data, E, s, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+        set_slot(data, E, s, secondary=WHITE_MAGICKS, brave=58, faith=78,
+                 reaction=SOULBIND, support=SWIFTSPELL, movement=TELEPORT)
     return touched
 
 

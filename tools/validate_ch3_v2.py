@@ -8,6 +8,9 @@ a playtest task.
 
 from __future__ import annotations
 
+import shutil
+import sqlite3
+import subprocess
 from pathlib import Path
 
 
@@ -15,6 +18,9 @@ ENTRY = 0x280
 SLOT = 0x28
 ENTD = Path("src/fftivc.battles.ngplus/entd/battle_entd4_ent.bin")
 RUNTIME = Path("src/fftivc.battles.ngplus/RuntimeGenericStatScaler.cs")
+NXD_DIR = Path("src/fftivc.battles.ngplus/FFTIVC/data/enhanced/nxd")
+FF16TOOLS = Path("tools/FF16Tools.CLI-1.13.2-win-x64/win-x64/FF16Tools.CLI.exe")
+TMP_NXD = Path("tmp/validate-ch3-nxd")
 
 
 def slot(data: bytes, entry: int, slot_no: int) -> bytes:
@@ -39,9 +45,35 @@ def rank(job: int) -> int:
     return job - 0x4A
 
 
+def read_override_row(key: int, key2: int) -> dict[str, int | str | None]:
+    if TMP_NXD.exists():
+        shutil.rmtree(TMP_NXD)
+    TMP_NXD.mkdir(parents=True, exist_ok=True)
+    sqlite_path = TMP_NXD / "overrideentrydata.sqlite"
+    subprocess.run(
+        [str(FF16TOOLS), "nxd-to-sqlite", "-g", "fft", "-i", str(NXD_DIR), "-o", str(sqlite_path)],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    con = sqlite3.connect(sqlite_path)
+    con.row_factory = sqlite3.Row
+    try:
+        row = con.execute(
+            "select * from overrideentrydata where Key=? and Key2=?",
+            (key, key2),
+        ).fetchone()
+        if row is None:
+            return {}
+        return dict(row)
+    finally:
+        con.close()
+
+
 def run() -> int:
     entd = ENTD.read_bytes()
     runtime = RUNTIME.read_text(encoding="utf-8")
+    override_428_0 = read_override_row(428, 0)
     checks: list[tuple[str, bool]] = []
 
     def check(name: str, condition: bool) -> None:
@@ -447,8 +479,22 @@ def run() -> int:
     check("428 Rapha identity preserved", field(entd, 428, 0, 0x00) == 0x19 and field(entd, 428, 0, 0x0A) == 0x19)
     check("428 Rapha level/control Br/Fa",
           field(entd, 428, 0, 0x03) == 100
+          and field(entd, 428, 0, 0x08) == 5
+          and field(entd, 428, 0, 0x09) == 8
+          and field(entd, 428, 0, 0x0B) == 10
           and (field(entd, 428, 0, 0x18) & 0x08) != 0
           and (field(entd, 428, 0, 0x06), field(entd, 428, 0, 0x07)) == (65, 75))
+    check("428 Rapha R/S/M",
+          field16(entd, 428, 0, 0x0C) == 445
+          and field16(entd, 428, 0, 0x0E) == 466
+          and field16(entd, 428, 0, 0x10) == 494)
+    check("428 Rapha OverrideEntryData ability row",
+          override_428_0.get("SecondarySkillset") == 10
+          and override_428_0.get("Reaction") == 445
+          and override_428_0.get("Support") == 466
+          and override_428_0.get("Movement") == 494
+          and override_428_0.get("JobUnlock") == 5
+          and override_428_0.get("JobLevel") == 8)
     check("428 Rapha gear preserved",
           roster(entd, 428, [0], 0x12) == [168]
           and roster(entd, 428, [0], 0x13) == [206]
@@ -465,17 +511,17 @@ def run() -> int:
     check("428 Marach R/S/M and gear",
           field16(entd, 428, 1, 0x0C) == 449
           and field16(entd, 428, 1, 0x0E) == 467
-          and field16(entd, 428, 1, 0x10) == 486
+          and field16(entd, 428, 1, 0x10) == 487
           and roster(entd, 428, [1], 0x12) == [167]
           and roster(entd, 428, [1], 0x13) == [206]
-          and roster(entd, 428, [1], 0x14) == [218]
+          and roster(entd, 428, [1], 0x14) == [217]
           and roster(entd, 428, [1], 0x15) == [111]
           and roster(entd, 428, [1], 0x16) == [254])
 
     yardrow_enemy_slots = [2, 3, 4, 5, 6]
     check("428 roster jobs", roster(entd, 428, yardrow_enemy_slots, 0x0A) == [89, 82, 89, 82, 89])
     check("428 roster levels", roster(entd, 428, yardrow_enemy_slots, 0x03) == [102, 101, 101, 101, 101])
-    check("428 roster secondaries", roster(entd, 428, yardrow_enemy_slots, 0x0B) == [6, 6, 5, 6, 5])
+    check("428 roster secondaries", roster(entd, 428, yardrow_enemy_slots, 0x0B) == [6, 10, 6, 10, 6])
     check("428 roster Brave", roster(entd, 428, yardrow_enemy_slots, 0x06) == [86, 58, 90, 58, 90])
     check("428 roster Faith", roster(entd, 428, yardrow_enemy_slots, 0x07) == [40, 78, 60, 78, 60])
     for slot_no in yardrow_enemy_slots:
@@ -485,21 +531,29 @@ def run() -> int:
 
     for slot_no in (2, 4, 6):
         check(f"428 s{slot_no} Ninja R/S/M",
-              field16(entd, 428, slot_no, 0x0C) == 453
+              field16(entd, 428, slot_no, 0x0C) == 449
               and field16(entd, 428, slot_no, 0x0E) == 465
-              and field16(entd, 428, slot_no, 0x10) == 487)
+              and field16(entd, 428, slot_no, 0x10) == 490)
+
+    check("428 s2 lead Ninja gear",
+          roster(entd, 428, [2], 0x12) == [168]
+          and roster(entd, 428, [2], 0x13) == [198]
+          and roster(entd, 428, [2], 0x14) == [210]
+          and roster(entd, 428, [2], 0x15) == [14]
+          and roster(entd, 428, [2], 0x16) == [14])
+    for slot_no in (4, 6):
         check(f"428 s{slot_no} Ninja gear",
               roster(entd, 428, [slot_no], 0x12) == [168]
               and roster(entd, 428, [slot_no], 0x13) == [198]
-              and roster(entd, 428, [slot_no], 0x14) == [210]
-              and roster(entd, 428, [slot_no], 0x15) == [14]
-              and roster(entd, 428, [slot_no], 0x16) == [14])
+              and roster(entd, 428, [slot_no], 0x14) == [218]
+              and roster(entd, 428, [slot_no], 0x15) == [9]
+              and roster(entd, 428, [slot_no], 0x16) == [255])
 
     for slot_no in (3, 5):
         check(f"428 s{slot_no} Summoner R/S/M",
-              field16(entd, 428, slot_no, 0x0C) == 449
-              and field16(entd, 428, slot_no, 0x0E) == 467
-              and field16(entd, 428, slot_no, 0x10) == 486)
+              field16(entd, 428, slot_no, 0x0C) == 446
+              and field16(entd, 428, slot_no, 0x0E) == 482
+              and field16(entd, 428, slot_no, 0x10) == 498)
         check(f"428 s{slot_no} Summoner gear",
               roster(entd, 428, [slot_no], 0x12) == [167]
               and roster(entd, 428, [slot_no], 0x13) == [206]
