@@ -50,6 +50,12 @@ public partial class Program
             EnemyUnit(0x83, "Chemist sustain"),
             EnemyUnit(0x84, "Time Mage tempo A"),
             EnemyUnit(0x85, "Time Mage tempo B")),
+        [423] = Targets(
+            EnemyUnit(0x80, "Knight Rend screen"),
+            EnemyUnit(0x81, "Knight bodyguard"),
+            EnemyUnit(0x82, "Archer shelf cover"),
+            EnemyUnit(0x83, "Archer lane cover"),
+            EnemyUnit(0x84, "Summoner shelling")),
     };
 
     private enum RuntimeStatTargetKind

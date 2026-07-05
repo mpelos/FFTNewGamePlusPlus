@@ -216,6 +216,74 @@ def run() -> int:
               and roster(entd, 422, [slot_no], 0x15) == [64]
               and roster(entd, 422, [slot_no], 0x16) == [255])
 
+    # 028 - Monastery Vaults 3rd Level, entry 423.
+    # s0 Izlude special sub-boss is preserved; s1/s2 Knight; s3 Summoner; s4/s5 Archer.
+    check("423 runtime target table present", "[423] = Targets(" in runtime)
+    check("423 runtime target excludes Izlude special", "EnemyUnit(0x26" not in runtime)
+    for uid in (0x80, 0x81, 0x82, 0x83, 0x84):
+        check(f"423 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
+
+    check("423 Izlude identity preserved", field(entd, 423, 0, 0x00) == 0x26 and field(entd, 423, 0, 0x0A) == 0x26)
+    check("423 Izlude level secondary Br/Fa",
+          field(entd, 423, 0, 0x03) == 103
+          and field(entd, 423, 0, 0x09) == 8
+          and field(entd, 423, 0, 0x0B) == 52
+          and (field(entd, 423, 0, 0x06), field(entd, 423, 0, 0x07)) == (86, 55))
+    check("423 Izlude special R/S/M preserved",
+          field16(entd, 423, 0, 0x0C) == 442
+          and field16(entd, 423, 0, 0x0E) == 475
+          and field16(entd, 423, 0, 0x10) == 492)
+    check("423 Izlude Reflect Mail kit",
+          roster(entd, 423, [0], 0x13) == [184]
+          and roster(entd, 423, [0], 0x14) == [218]
+          and roster(entd, 423, [0], 0x15) == [30])
+
+    vaults3_enemy_slots = [1, 2, 3, 4, 5]
+    check("423 roster jobs", roster(entd, 423, vaults3_enemy_slots, 0x0A) == [76, 76, 82, 77, 77])
+    check("423 roster levels", roster(entd, 423, vaults3_enemy_slots, 0x03) == [101, 101, 101, 101, 100])
+    check("423 roster secondaries", roster(entd, 423, vaults3_enemy_slots, 0x0B) == [6, 5, 6, 5, 5])
+    check("423 roster Brave", roster(entd, 423, vaults3_enemy_slots, 0x06) == [86, 84, 58, 80, 80])
+    check("423 roster Faith", roster(entd, 423, vaults3_enemy_slots, 0x07) == [55, 45, 78, 45, 45])
+    for slot_no in vaults3_enemy_slots:
+        job = field(entd, 423, slot_no, 0x0A)
+        check(f"423 s{slot_no} jobrank", field(entd, 423, slot_no, 0x08) == rank(job))
+        check(f"423 s{slot_no} JobLevel 8", field(entd, 423, slot_no, 0x09) == 8)
+
+    for slot_no in (1, 2):
+        check(f"423 s{slot_no} Knight R/S/M",
+              field16(entd, 423, slot_no, 0x0C) == 442
+              and field16(entd, 423, slot_no, 0x0E) == 465
+              and field16(entd, 423, slot_no, 0x10) == 486)
+        check(f"423 s{slot_no} Knight gear",
+              roster(entd, 423, [slot_no], 0x12) == [154]
+              and roster(entd, 423, [slot_no], 0x13) == [182]
+              and roster(entd, 423, [slot_no], 0x14) == [218]
+              and roster(entd, 423, [slot_no], 0x15) == [30]
+              and roster(entd, 423, [slot_no], 0x16) == [139])
+
+    check("423 Summoner R/S/M",
+          field16(entd, 423, 3, 0x0C) == 449
+          and field16(entd, 423, 3, 0x0E) == 467
+          and field16(entd, 423, 3, 0x10) == 486)
+    check("423 Summoner gear",
+          roster(entd, 423, [3], 0x12) == [167]
+          and roster(entd, 423, [3], 0x13) == [206]
+          and roster(entd, 423, [3], 0x14) == [234]
+          and roster(entd, 423, [3], 0x15) == [56]
+          and roster(entd, 423, [3], 0x16) == [255])
+
+    for slot_no in (4, 5):
+        check(f"423 s{slot_no} Archer R/S/M",
+              field16(entd, 423, slot_no, 0x0C) == 449
+              and field16(entd, 423, slot_no, 0x0E) == 469
+              and field16(entd, 423, slot_no, 0x10) == 486)
+        check(f"423 s{slot_no} Archer gear",
+              roster(entd, 423, [slot_no], 0x12) == [168]
+              and roster(entd, 423, [slot_no], 0x13) == [198]
+              and roster(entd, 423, [slot_no], 0x14) == [218]
+              and roster(entd, 423, [slot_no], 0x15) == [87]
+              and roster(entd, 423, [slot_no], 0x16) == [254])
+
     passed = 0
     for name, ok in checks:
         if ok:

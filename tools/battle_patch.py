@@ -1840,6 +1840,18 @@ def airship_ultima(data):
     return [E]
 
 
+def vaults_3rd_v2(data):
+    touched = vaults_3rd(data)
+    E = 423
+    set_slot(data, E, 0, brave=86, faith=55)
+    set_slot(data, E, 1, secondary=ITEMS, brave=86, faith=55)
+    set_slot(data, E, 2, secondary=FUNDAMENTS, brave=84, faith=45)
+    set_slot(data, E, 3, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+    for s in (4, 5):
+        set_slot(data, E, s, brave=80, faith=45)
+    return touched
+
+
 BATTLES = {
     "chapter1_guest_control": chapter1_guest_control,
     "gariland": gariland,
@@ -1865,7 +1877,7 @@ BATTLES = {
     "gollund": gollund,
     "lesalia": lesalia,
     "vaults_2nd": vaults_2nd,
-    "vaults_3rd": vaults_3rd,
+    "vaults_3rd": vaults_3rd_v2,
     "vaults_1st": vaults_1st,
     "grogh": grogh,
     "yardrow": yardrow,
