@@ -574,20 +574,20 @@ def run() -> int:
     check("430 caster jobs", roster(entd, 430, yuguewood_caster_slots, 0x0A) == [66, 68, 66, 68])
     check("430 caster levels", roster(entd, 430, yuguewood_caster_slots, 0x03) == [101, 101, 100, 101])
     check("430 caster jobrank zero", roster(entd, 430, yuguewood_caster_slots, 0x08) == [0, 0, 0, 0])
-    check("430 caster JobLevels", roster(entd, 430, yuguewood_caster_slots, 0x09) == [8, 4, 8, 4])
-    check("430 caster secondaries", roster(entd, 430, yuguewood_caster_slots, 0x0B) == [6, 6, 6, 6])
+    check("430 caster JobLevels", roster(entd, 430, yuguewood_caster_slots, 0x09) == [8, 8, 8, 8])
+    check("430 caster secondaries", roster(entd, 430, yuguewood_caster_slots, 0x0B) == [10, 16, 10, 16])
     check("430 caster Brave", roster(entd, 430, yuguewood_caster_slots, 0x06) == [58, 60, 58, 60])
     check("430 caster Faith", roster(entd, 430, yuguewood_caster_slots, 0x07) == [78, 74, 78, 74])
 
     for slot_no in (1, 3):
         check(f"430 s{slot_no} Black Mage R/S/M",
               field16(entd, 430, slot_no, 0x0C) == 449
-              and field16(entd, 430, slot_no, 0x0E) == 467
-              and field16(entd, 430, slot_no, 0x10) == 486)
+              and field16(entd, 430, slot_no, 0x0E) == 482
+              and field16(entd, 430, slot_no, 0x10) == 487)
         check(f"430 s{slot_no} Black Mage gear",
               roster(entd, 430, [slot_no], 0x12) == [167]
               and roster(entd, 430, [slot_no], 0x13) == [206]
-              and roster(entd, 430, [slot_no], 0x14) == [234]
+              and roster(entd, 430, [slot_no], 0x14) == [217]
               and roster(entd, 430, [slot_no], 0x15) == [56]
               and roster(entd, 430, [slot_no], 0x16) == [255])
 
@@ -595,7 +595,7 @@ def run() -> int:
         check(f"430 s{slot_no} Time Mage R/S/M",
               field16(entd, 430, slot_no, 0x0C) == 449
               and field16(entd, 430, slot_no, 0x0E) == 467
-              and field16(entd, 430, slot_no, 0x10) == 486)
+              and field16(entd, 430, slot_no, 0x10) == 487)
         check(f"430 s{slot_no} Time Mage gear",
               roster(entd, 430, [slot_no], 0x12) == [167]
               and roster(entd, 430, [slot_no], 0x13) == [206]

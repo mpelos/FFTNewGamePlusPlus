@@ -66,6 +66,7 @@ FUNDAMENTS = 5
 ITEMS = 6
 ARTS_OF_WAR = 8
 WHITE_MAGICKS = 10
+MYSTIC_ARTS = 16
 GEOMANCY = 12
 MIGHTY_SWORD = 52
 IAIDO = 19
@@ -1934,13 +1935,13 @@ def yuguewood_v2(data):
     E = 430
     for s, lvl in ((1, 101), (3, 100)):
         set_slot(data, E, s, level=lvl, jobrank=0, joblevel=8, job=ENEMY_BMAGE,
-                 secondary=ITEMS, brave=58, faith=78,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+                 secondary=WHITE_MAGICKS, brave=58, faith=78,
+                 reaction=REFLEXES, support=SWIFTSPELL, movement=MV2,
+                 head=MAGE_HAT, body=SHOP_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
     for s in (2, 4):
-        set_slot(data, E, s, level=101, jobrank=0, joblevel=4, job=ENEMY_TMAGE,
-                 secondary=ITEMS, brave=60, faith=74,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
+        set_slot(data, E, s, level=101, jobrank=0, joblevel=8, job=ENEMY_TMAGE,
+                 secondary=MYSTIC_ARTS, brave=60, faith=74,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV2,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
     for s, lvl in ((5, 100), (6, 100), (7, 101)):
         set_slot(data, E, s, level=lvl, joblevel=8, brave=86, faith=35)
