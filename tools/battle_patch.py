@@ -81,6 +81,7 @@ JUMP2 = 490
 HEADBAND, POWER_GARB, BRACERS, ICEBRAND, RUNEBLADE = 163, 195, 218, 29, 30
 THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
+SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
 X_POTION, ELIXIR, PHOENIX_DOWN = 242, 245, 253
 HERMES_SHOES = 213
 SORTILEGE = 239  # reserved (Unknown20) female-only Perfume = Always Protect+Shell (EquipBonus 68); used on
@@ -1163,16 +1164,16 @@ def vaults_1st(data):
 #     no rare loot. Keep the rain flag + tight clustering geometry (untouched scripting/terrain).
 def grogh(data):
     E = 426
-    set_slot(data, E, 0, level=101, joblevel=8, job=BMAGE, secondary=0,  # NEW: rain-Thunder caster
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+    set_slot(data, E, 0, level=100, joblevel=8, job=SQUIRE, secondary=GEOMANCY,
+             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
+             head=HEADBAND, body=POWER_GARB, acc=BRACERS, rh=SLASHER, lh=LH_EMPTY)
+    set_slot(data, E, 2, level=101, joblevel=8, job=BMAGE, secondary=0,  # rain-Thunder caster, moved off intro-animated s0
+             reaction=MANA_SHIELD, support=ATK_BOOST, movement=MOVE_MP_UP,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, E, 2, level=100, joblevel=8, job=SQUIRE, secondary=0,  # weak body filling the cluster
-             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-             head=HEADBAND, body=POWER_GARB, acc=BRACERS, rh=ICEBRAND, lh=LH_EMPTY)
     for s, lvl in ((1, 101), (3, 100)):  # 2 Chemists — light heal sustain (gun = two-handed)
         set_slot(data, E, s, level=lvl, joblevel=8, job=CHEMIST,
-                 reaction=AUTO_POTION, support=THROW_ITEMS, movement=MV1,
-                 head=MAGE_HAT, body=BLACK_GARB, acc=BRACERS, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
+                 reaction=AUTO_POTION, support=THROW_ITEMS, movement=MV2,
+                 head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
     set_slot(data, E, 4, level=101, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,  # ranged chip
              reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
              head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
@@ -1865,7 +1866,7 @@ def airship_ultima(data):
 def vaults_3rd_v2(data):
     touched = vaults_3rd(data)
     E = 423
-    set_slot(data, E, 0, brave=86, faith=55, support=ATK_BOOST, rh=DEFENDER)
+    set_slot(data, E, 0, brave=86, faith=55, support=ATK_BOOST, rh=RUNEBLADE)
     set_slot(data, E, 1, secondary=GEOMANCY, brave=86, faith=55, reaction=FIRST_STRIKE, movement=MV2)
     set_slot(data, E, 2, secondary=GEOMANCY, brave=84, faith=45, reaction=FIRST_STRIKE, movement=MV2)
     set_slot(data, E, 3, secondary=ITEMS, brave=58, faith=78, support=SWIFTSPELL, movement=TELEPORT)
@@ -1877,22 +1878,26 @@ def vaults_3rd_v2(data):
 def vaults_1st_v2(data):
     touched = vaults_1st(data)
     E = 424
-    set_slot(data, E, 0, secondary=FUNDAMENTS, brave=88, faith=60, support=ATK_BOOST)
+    set_slot(data, E, 0, secondary=FUNDAMENTS, brave=88, faith=60,
+             reaction=PARRY, support=ATK_BOOST, movement=MV2, rh=DEFENDER)
     set_slot(data, E, 1, secondary=ITEMS, brave=84, faith=45)
     set_slot(data, E, 2, secondary=FUNDAMENTS, brave=84, faith=45)
-    set_slot(data, E, 4, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+    set_slot(data, E, 4, secondary=ITEMS, brave=58, faith=78,
+             support=MAGICK_BOOST, movement=TELEPORT)
     for s in (3, 5):
-        set_slot(data, E, s, brave=80, faith=45)
+        set_slot(data, E, s, brave=80, faith=45, movement=MV2)
     return touched
 
 
 def grogh_v2(data):
     touched = grogh(data)
     E = 426
-    set_slot(data, E, 0, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+    set_slot(data, E, 0, secondary=GEOMANCY, brave=70, faith=50,
+             reaction=FIRST_STRIKE, movement=MV2)
     for s in (1, 3):
         set_slot(data, E, s, secondary=FUNDAMENTS, brave=68, faith=64)
-    set_slot(data, E, 2, secondary=ITEMS, brave=70, faith=50)
+    set_slot(data, E, 2, secondary=ITEMS, brave=58, faith=78,
+             reaction=MANA_SHIELD, support=SWIFTSPELL, movement=MOVE_MP_UP)
     set_slot(data, E, 4, brave=80, faith=45)
     set_slot(data, E, 5, secondary=ITEMS, brave=84, faith=42)
     return touched

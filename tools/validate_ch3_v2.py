@@ -238,7 +238,7 @@ def run() -> int:
     check("423 Izlude Reflect Mail kit",
           roster(entd, 423, [0], 0x13) == [184]
           and roster(entd, 423, [0], 0x14) == [218]
-          and roster(entd, 423, [0], 0x15) == [33])
+          and roster(entd, 423, [0], 0x15) == [30])
 
     vaults3_enemy_slots = [1, 2, 3, 4, 5]
     check("423 roster jobs", roster(entd, 423, vaults3_enemy_slots, 0x0A) == [76, 76, 82, 77, 77])
@@ -300,13 +300,13 @@ def run() -> int:
           and field(entd, 424, 0, 0x0B) == 5
           and (field(entd, 424, 0, 0x06), field(entd, 424, 0, 0x07)) == (88, 60))
     check("424 Wiegraf disarmable boss kit",
-          field16(entd, 424, 0, 0x0C) == 442
+          field16(entd, 424, 0, 0x0C) == 447
           and field16(entd, 424, 0, 0x0E) == 465
-          and field16(entd, 424, 0, 0x10) == 486
+          and field16(entd, 424, 0, 0x10) == 487
           and roster(entd, 424, [0], 0x12) == [154]
           and roster(entd, 424, [0], 0x13) == [182]
           and roster(entd, 424, [0], 0x14) == [218]
-          and roster(entd, 424, [0], 0x15) == [30]
+          and roster(entd, 424, [0], 0x15) == [33]
           and roster(entd, 424, [0], 0x16) == [139])
     check("424 Wiegraf no Safeguard", field16(entd, 424, 0, 0x0E) != 475)
 
@@ -336,7 +336,7 @@ def run() -> int:
     check("424 Black Mage R/S/M",
           field16(entd, 424, 4, 0x0C) == 449
           and field16(entd, 424, 4, 0x0E) == 467
-          and field16(entd, 424, 4, 0x10) == 486)
+          and field16(entd, 424, 4, 0x10) == 498)
     check("424 Black Mage gear",
           roster(entd, 424, [4], 0x12) == [167]
           and roster(entd, 424, [4], 0x13) == [206]
@@ -348,7 +348,7 @@ def run() -> int:
         check(f"424 s{slot_no} Archer R/S/M",
               field16(entd, 424, slot_no, 0x0C) == 449
               and field16(entd, 424, slot_no, 0x0E) == 469
-              and field16(entd, 424, slot_no, 0x10) == 486)
+              and field16(entd, 424, slot_no, 0x10) == 487)
         check(f"424 s{slot_no} Archer gear",
               roster(entd, 424, [slot_no], 0x12) == [168]
               and roster(entd, 424, [slot_no], 0x13) == [198]
@@ -360,56 +360,56 @@ def run() -> int:
         check(f"424 s{slot_no} inactive placeholder preserved", field(entd, 424, slot_no, 0x03) == 254)
 
     # 030 - Grogh Heights, entry 426.
-    # s0 Black Mage; s1/s3 Chemist; s2 Squire; s4 Archer; s5 Thief; s6/s7/s8 inactive.
+    # s0 Squire; s1/s3 Chemist; s2 Black Mage; s4 Archer; s5 Thief; s6/s7/s8 inactive.
     check("426 runtime target table present", "[426] = Targets(" in runtime)
     check("426 runtime target excludes inactive Orran placeholder", "EnemyUnit(0x15" not in runtime)
     for uid in (0x80, 0x81, 0x82, 0x83, 0x84, 0x85):
         check(f"426 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
 
     grogh_slots = [0, 1, 2, 3, 4, 5]
-    check("426 roster jobs", roster(entd, 426, grogh_slots, 0x0A) == [80, 75, 74, 75, 77, 83])
-    check("426 roster levels", roster(entd, 426, grogh_slots, 0x03) == [101, 101, 100, 100, 101, 100])
-    check("426 roster secondaries", roster(entd, 426, grogh_slots, 0x0B) == [6, 5, 6, 5, 5, 6])
-    check("426 roster Brave", roster(entd, 426, grogh_slots, 0x06) == [58, 68, 70, 68, 80, 84])
-    check("426 roster Faith", roster(entd, 426, grogh_slots, 0x07) == [78, 64, 50, 64, 45, 42])
+    check("426 roster jobs", roster(entd, 426, grogh_slots, 0x0A) == [74, 75, 80, 75, 77, 83])
+    check("426 roster levels", roster(entd, 426, grogh_slots, 0x03) == [100, 101, 101, 100, 101, 100])
+    check("426 roster secondaries", roster(entd, 426, grogh_slots, 0x0B) == [12, 5, 6, 5, 5, 6])
+    check("426 roster Brave", roster(entd, 426, grogh_slots, 0x06) == [70, 68, 58, 68, 80, 84])
+    check("426 roster Faith", roster(entd, 426, grogh_slots, 0x07) == [50, 64, 78, 64, 45, 42])
     for slot_no in grogh_slots:
         job = field(entd, 426, slot_no, 0x0A)
         check(f"426 s{slot_no} jobrank", field(entd, 426, slot_no, 0x08) == rank(job))
         check(f"426 s{slot_no} JobLevel 8", field(entd, 426, slot_no, 0x09) == 8)
 
     check("426 Black Mage R/S/M",
-          field16(entd, 426, 0, 0x0C) == 449
-          and field16(entd, 426, 0, 0x0E) == 467
-          and field16(entd, 426, 0, 0x10) == 486)
+          field16(entd, 426, 2, 0x0C) == 445
+          and field16(entd, 426, 2, 0x0E) == 482
+          and field16(entd, 426, 2, 0x10) == 494)
     check("426 Black Mage gear",
-          roster(entd, 426, [0], 0x12) == [167]
-          and roster(entd, 426, [0], 0x13) == [206]
-          and roster(entd, 426, [0], 0x14) == [234]
-          and roster(entd, 426, [0], 0x15) == [56]
-          and roster(entd, 426, [0], 0x16) == [255])
+          roster(entd, 426, [2], 0x12) == [167]
+          and roster(entd, 426, [2], 0x13) == [206]
+          and roster(entd, 426, [2], 0x14) == [234]
+          and roster(entd, 426, [2], 0x15) == [56]
+          and roster(entd, 426, [2], 0x16) == [255])
 
     for slot_no in (1, 3):
         check(f"426 s{slot_no} Chemist R/S/M",
               field16(entd, 426, slot_no, 0x0C) == 441
               and field16(entd, 426, slot_no, 0x0E) == 474
-              and field16(entd, 426, slot_no, 0x10) == 486)
+              and field16(entd, 426, slot_no, 0x10) == 487)
         check(f"426 s{slot_no} Chemist gear",
-              roster(entd, 426, [slot_no], 0x12) == [167]
+              roster(entd, 426, [slot_no], 0x12) == [168]
               and roster(entd, 426, [slot_no], 0x13) == [198]
-              and roster(entd, 426, [slot_no], 0x14) == [218]
+              and roster(entd, 426, [slot_no], 0x14) == [234]
               and roster(entd, 426, [slot_no], 0x15) == [72]
               and roster(entd, 426, [slot_no], 0x16) == [254])
 
     check("426 Squire R/S/M",
-          field16(entd, 426, 2, 0x0C) == 442
-          and field16(entd, 426, 2, 0x0E) == 465
-          and field16(entd, 426, 2, 0x10) == 486)
+          field16(entd, 426, 0, 0x0C) == 453
+          and field16(entd, 426, 0, 0x0E) == 465
+          and field16(entd, 426, 0, 0x10) == 487)
     check("426 Squire gear",
-          roster(entd, 426, [2], 0x12) == [163]
-          and roster(entd, 426, [2], 0x13) == [195]
-          and roster(entd, 426, [2], 0x14) == [218]
-          and roster(entd, 426, [2], 0x15) == [29]
-          and roster(entd, 426, [2], 0x16) == [255])
+          roster(entd, 426, [0], 0x12) == [163]
+          and roster(entd, 426, [0], 0x13) == [195]
+          and roster(entd, 426, [0], 0x14) == [218]
+          and roster(entd, 426, [0], 0x15) == [50]
+          and roster(entd, 426, [0], 0x16) == [255])
 
     check("426 Archer R/S/M",
           field16(entd, 426, 4, 0x0C) == 449
