@@ -514,9 +514,11 @@ public partial class Program : IMod
             Log($"[zeirchele-diag] targeted ENTD + actor-table diagnostics ENABLED variant={ZEIRCHELE_DIAG_VARIANT} -> ngplus_battletrace.log");
             new System.Threading.Thread(ZeircheleActorTableProbeLoop) { IsBackground = true, Name = "ngplus-zeirchele-actor-table-probe" }.Start();
         }
+        if (DIAG_TRACE_GENERIC_RUNTIME_STATS)
+            Log("[generic-stats] runtime stat formula logs ENABLED -> ngplus_battletrace.log (set DIAG_TRACE_GENERIC_RUNTIME_STATS=false after testing).");
         new System.Threading.Thread(GolgolladaGaffPaPatchLoop) { IsBackground = true, Name = "ngplus-golgollada-gaff-pa-patch" }.Start();
         new System.Threading.Thread(CuchulainnHpPatchLoop) { IsBackground = true, Name = "ngplus-cuchulainn-hp-patch" }.Start();
-        if (GenericRuntimeStatTargetsByEntry.Count > 0)
+        if (APPLY_GENERIC_RUNTIME_STAT_PASS && GenericRuntimeStatTargetsByEntry.Count > 0)
             new System.Threading.Thread(GenericRuntimeStatPatchLoop) { IsBackground = true, Name = "ngplus-generic-runtime-stat-patch" }.Start();
 
     }

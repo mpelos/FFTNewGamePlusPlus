@@ -9,11 +9,18 @@ public partial class Program
     private const byte GENDER_FEMALE_BIT = 0x40;
     private const byte GENDER_MONSTER_BIT = 0x20;
     private const byte FOE_TEAM_BIT = 0x10;
-    private const int STAT_FIXED_POINT_SCALE = 100_000;
+    private const int STAT_FIXED_POINT_SCALE = 16_384;
+    // Disabled by default: IVC already recalculates human battle stats from the expanded ENTD level.
+    // Keep the implementation as an explicit diagnostic/edge-case tool, not a standard battle pass.
+    private static readonly bool APPLY_GENERIC_RUNTIME_STAT_PASS = false;
     private static readonly bool DIAG_TRACE_GENERIC_RUNTIME_STATS = false;
+    // +0x30/+0x32 and +0x34/+0x36 are visible current/max pools. Leave them alone until a
+    // true pre-equipment HP/MP field is mapped; PA/MA/Speed have confirmed raw/effective pairs.
+    private static readonly bool APPLY_GENERIC_RUNTIME_HP_MP_TO_VISIBLE_POOLS = false;
 
     private readonly object _genericRuntimeStatPatchLock = new();
     private readonly HashSet<int> _genericRuntimeStatPatchedKeys = new();
+    private readonly HashSet<string> _genericRuntimeStatDiagSeenGuards = new();
     private long _genericRuntimeStatPatchUntilTicks;
     private int _genericRuntimeStatActiveEntry = -1;
 
@@ -152,6 +159,9 @@ public partial class Program
 
     private void ArmGenericRuntimeStatPatchIfNeeded(int fileIndex, long sectorOffset, long size)
     {
+        if (!APPLY_GENERIC_RUNTIME_STAT_PASS)
+            return;
+
         int entry = System.Threading.Volatile.Read(ref _currentBattleEntry);
         if (entry < FIRST_CHAPTER3_ENTRY)
             return;
@@ -168,6 +178,7 @@ public partial class Program
             if (_genericRuntimeStatActiveEntry != entry)
             {
                 _genericRuntimeStatPatchedKeys.Clear();
+                _genericRuntimeStatDiagSeenGuards.Clear();
                 _genericRuntimeStatActiveEntry = entry;
             }
         }
@@ -229,7 +240,7 @@ public partial class Program
                 }
             }
 
-            if (TryPatchGenericRuntimeStatTarget(table, target, out string? logLine))
+            if (TryPatchGenericRuntimeStatTarget(entry, table, target, out string? logLine))
             {
                 lock (_genericRuntimeStatPatchLock)
                     _genericRuntimeStatPatchedKeys.Add(key);
@@ -243,9 +254,10 @@ public partial class Program
         return complete == targets.Length;
     }
 
-    private bool TryPatchGenericRuntimeStatTarget(nint table, RuntimeGenericStatTarget target, out string? logLine)
+    private bool TryPatchGenericRuntimeStatTarget(int entry, nint table, RuntimeGenericStatTarget target, out string? logLine)
     {
         logLine = null;
+        bool sawUnitId = false;
 
         for (int i = 0; i < ACTOR_TABLE_COUNT; i++)
         {
@@ -254,84 +266,140 @@ public partial class Program
             if (unitId != target.UnitId)
                 continue;
 
-            if (!TryReadGenericRuntimeStatInputs(unit, target, out GenericRuntimeStatInputs inputs))
-                return false;
+            sawUnitId = true;
+            if (!TryReadGenericRuntimeStatInputs(unit, target, out GenericRuntimeStatInputs inputs, out string failReason))
+            {
+                TraceGenericRuntimeStatGuardOnce(entry, target, i, failReason);
+                continue;
+            }
 
             GenericRuntimeStats stats = CalculateGenericRuntimeStats(inputs);
             WriteGenericRuntimeStats(unit, inputs, stats);
+            GenericLevelOneBases bases = GetGenericLevelOneBases(inputs.IsMale);
 
             logLine =
                 $"target=0x{target.UnitId:X2}/{target.Kind}/{target.Label} a{i} char=0x{inputs.CharId:X2} job={inputs.JobId} lv={inputs.Level} " +
-                $"HP {inputs.CurrentHp}/{inputs.MaxHp}->{stats.CurrentHp}/{stats.MaxHp} " +
-                $"MP {inputs.CurrentMp}/{inputs.MaxMp}->{stats.CurrentMp}/{stats.MaxMp} " +
-                $"rawPA {inputs.RawPa}->{stats.RawPa} rawMA {inputs.RawMa}->{stats.RawMa} " +
-                $"rawSpd {inputs.RawSpeed}->{stats.RawSpeed}";
+                $"gender={(inputs.IsMale ? "M" : "F")} base=HP{bases.Hp}/MP{bases.Mp}/Spd{bases.Speed}/PA{bases.Pa}/MA{bases.Ma} " +
+                $"growth=HP{inputs.HpGrowth}x{inputs.HpMultiplier}/MP{inputs.MpGrowth}x{inputs.MpMultiplier}/Spd{inputs.SpeedGrowth}x{inputs.SpeedMultiplier}/PA{inputs.PaGrowth}x{inputs.PaMultiplier}/MA{inputs.MaGrowth}x{inputs.MaMultiplier} " +
+                $"visibleHP {inputs.CurrentHp}/{inputs.MaxHp} calcHP {stats.CurrentHp}/{stats.MaxHp} written={APPLY_GENERIC_RUNTIME_HP_MP_TO_VISIBLE_POOLS} " +
+                $"visibleMP {inputs.CurrentMp}/{inputs.MaxMp} calcMP {stats.CurrentMp}/{stats.MaxMp} written={APPLY_GENERIC_RUNTIME_HP_MP_TO_VISIBLE_POOLS} " +
+                $"rawPA {inputs.RawPa}->{stats.RawPa} effPA {inputs.EffectivePa}->{stats.EffectivePa} " +
+                $"rawMA {inputs.RawMa}->{stats.RawMa} effMA {inputs.EffectiveMa}->{stats.EffectiveMa} " +
+                $"rawSpd {inputs.RawSpeed}->{stats.RawSpeed} effSpd {inputs.EffectiveSpeed}->{stats.EffectiveSpeed}";
             return true;
         }
 
+        if (!sawUnitId)
+            TraceGenericRuntimeStatGuardOnce(entry, target, -1, "unit id not present in actor table yet");
         return false;
+    }
+
+    private void TraceGenericRuntimeStatGuardOnce(
+        int entry,
+        RuntimeGenericStatTarget target,
+        int actorIndex,
+        string reason)
+    {
+        if (!DIAG_TRACE_GENERIC_RUNTIME_STATS)
+            return;
+
+        string key = $"{entry}:{target.UnitId:X2}:{actorIndex}:{reason}";
+        lock (_genericRuntimeStatPatchLock)
+        {
+            if (!_genericRuntimeStatDiagSeenGuards.Add(key))
+                return;
+        }
+
+        string actor = actorIndex >= 0 ? $"a{actorIndex}" : "no-actor";
+        TraceLog($"[generic-stats] guard entry={entry} target=0x{target.UnitId:X2}/{target.Kind}/{target.Label} {actor} -> {reason}");
     }
 
     private static bool TryReadGenericRuntimeStatInputs(
         nint unit,
         RuntimeGenericStatTarget target,
-        out GenericRuntimeStatInputs inputs)
+        out GenericRuntimeStatInputs inputs,
+        out string failReason)
     {
         inputs = default;
+        failReason = "";
 
         byte state = SafeReadByte(unit + UNIT_STATE_OFFSET);
-        if (state == 0xFF)
-            return false;
-
         byte charId = SafeReadByte(unit + UNIT_CHAR_ID_OFFSET);
         byte jobId = SafeReadByte(unit + UNIT_JOB_ID_OFFSET);
         byte team = SafeReadByte(unit + UNIT_TEAM_OFFSET);
         byte foeFlags = SafeReadByte(unit + UNIT_FOE_FLAGS_OFFSET);
+        if (state == 0xFF)
+        {
+            failReason = $"inactive st=0xFF char=0x{charId:X2} job={jobId} team=0x{team:X2} foe=0x{foeFlags:X2}";
+            return false;
+        }
+
         bool isEnemySide = team != 0 && (foeFlags & FOE_TEAM_BIT) != 0;
 
         if (target.Kind == RuntimeStatTargetKind.EnemyGenericHuman)
         {
             if (!isEnemySide)
+            {
+                failReason = $"not enemy-side st=0x{state:X2} char=0x{charId:X2} job={jobId} team=0x{team:X2} foe=0x{foeFlags:X2}";
                 return false;
+            }
 
             if (target.ExpectedJobId != 0)
             {
                 if (jobId != target.ExpectedJobId)
+                {
+                    failReason = $"expected job {target.ExpectedJobId}, got {jobId} st=0x{state:X2} char=0x{charId:X2}";
                     return false;
+                }
             }
             else if (jobId is < 74 or > 93)
             {
+                failReason = $"job {jobId} outside generic human range st=0x{state:X2} char=0x{charId:X2}";
                 return false;
             }
         }
         else
         {
             if (isEnemySide ||
-                team == 0 ||
                 charId != target.ExpectedCharId ||
                 jobId != target.ExpectedJobId)
+            {
+                failReason = $"guest guard mismatch st=0x{state:X2} char=0x{charId:X2}/exp=0x{target.ExpectedCharId:X2} job={jobId}/exp={target.ExpectedJobId} team=0x{team:X2} foe=0x{foeFlags:X2}";
                 return false;
+            }
         }
 
         byte genderFlags = SafeReadByte(unit + UNIT_GENDER_FLAGS_OFFSET);
         if ((genderFlags & GENDER_MONSTER_BIT) != 0)
+        {
+            failReason = $"monster gender flags=0x{genderFlags:X2} st=0x{state:X2} char=0x{charId:X2} job={jobId}";
             return false;
+        }
 
         bool isMale = (genderFlags & GENDER_MALE_BIT) != 0;
         bool isFemale = (genderFlags & GENDER_FEMALE_BIT) != 0;
         if (isMale == isFemale)
+        {
+            failReason = $"ambiguous gender flags=0x{genderFlags:X2} st=0x{state:X2} char=0x{charId:X2} job={jobId}";
             return false;
+        }
 
         byte level = SafeReadByte(unit + UNIT_LEVEL_OFFSET);
         if (level is < 1 or > 99)
+        {
+            failReason = $"invalid live level {level} st=0x{state:X2} char=0x{charId:X2} job={jobId}";
             return false;
+        }
 
         ushort currentHp = SafeReadU16(unit + UNIT_CURRENT_HP_OFFSET);
         ushort maxHp = SafeReadU16(unit + UNIT_MAX_HP_OFFSET);
         ushort currentMp = SafeReadU16(unit + UNIT_CURRENT_MP_OFFSET);
         ushort maxMp = SafeReadU16(unit + UNIT_MAX_MP_OFFSET);
         if (maxHp is 0 or > 9999 || currentHp > maxHp || maxMp > 9999 || currentMp > maxMp)
+        {
+            failReason = $"pool sanity failed HP {currentHp}/{maxHp} MP {currentMp}/{maxMp} st=0x{state:X2} char=0x{charId:X2} job={jobId}";
             return false;
+        }
 
         byte hpGrowth = SafeReadByte(unit + UNIT_HP_GROWTH_OFFSET);
         byte hpMultiplier = SafeReadByte(unit + UNIT_HP_MULTIPLIER_OFFSET);
@@ -345,11 +413,14 @@ public partial class Program
         byte maMultiplier = SafeReadByte(unit + UNIT_MA_MULTIPLIER_OFFSET);
 
         if (hpGrowth == 0 || hpMultiplier == 0 ||
-            mpGrowth == 0 || mpMultiplier == 0 ||
+            mpGrowth == 0 ||
             speedGrowth == 0 || speedMultiplier == 0 ||
             paGrowth == 0 || paMultiplier == 0 ||
             maGrowth == 0 || maMultiplier == 0)
+        {
+            failReason = $"zero growth/mult HP{hpGrowth}x{hpMultiplier} MP{mpGrowth}x{mpMultiplier} Spd{speedGrowth}x{speedMultiplier} PA{paGrowth}x{paMultiplier} MA{maGrowth}x{maMultiplier}";
             return false;
+        }
 
         inputs = new GenericRuntimeStatInputs(
             CharId: charId,
@@ -381,28 +452,38 @@ public partial class Program
 
     private static GenericRuntimeStats CalculateGenericRuntimeStats(GenericRuntimeStatInputs inputs)
     {
-        GenericLevelOneBases bases = inputs.IsMale
-            ? new GenericLevelOneBases(30, 15, 6, 4, 3)
-            : new GenericLevelOneBases(28, 16, 6, 3, 4);
+        GenericLevelOneBases bases = GetGenericLevelOneBases(inputs.IsMale);
 
-        ushort maxHp = CalculateVisibleWordStat(bases.Hp, inputs.HpGrowth, inputs.HpMultiplier, inputs.Level, 1);
-        ushort maxMp = CalculateVisibleWordStat(bases.Mp, inputs.MpGrowth, inputs.MpMultiplier, inputs.Level, 0);
+        ushort maxHp = MaxStat(
+            inputs.MaxHp,
+            CalculateVisibleWordStat(bases.Hp, inputs.HpGrowth, inputs.HpMultiplier, inputs.Level, 1));
+        ushort maxMp = MaxStat(
+            inputs.MaxMp,
+            CalculateVisibleWordStat(bases.Mp, inputs.MpGrowth, inputs.MpMultiplier, inputs.Level, 0));
         byte rawSpeed = CalculateVisibleByteStat(bases.Speed, inputs.SpeedGrowth, inputs.SpeedMultiplier, inputs.Level, 1);
         byte rawPa = CalculateVisibleByteStat(bases.Pa, inputs.PaGrowth, inputs.PaMultiplier, inputs.Level, 1);
         byte rawMa = CalculateVisibleByteStat(bases.Ma, inputs.MaGrowth, inputs.MaMultiplier, inputs.Level, 1);
+        (byte finalRawPa, byte finalEffectivePa) = ApplyNonDecreasingEffectiveStat(inputs.RawPa, inputs.EffectivePa, rawPa);
+        (byte finalRawMa, byte finalEffectiveMa) = ApplyNonDecreasingEffectiveStat(inputs.RawMa, inputs.EffectiveMa, rawMa);
+        (byte finalRawSpeed, byte finalEffectiveSpeed) = ApplyNonDecreasingEffectiveStat(inputs.RawSpeed, inputs.EffectiveSpeed, rawSpeed);
 
         return new GenericRuntimeStats(
             CurrentHp: PreserveCurrentPool(inputs.CurrentHp, inputs.MaxHp, maxHp),
             MaxHp: maxHp,
             CurrentMp: PreserveCurrentPool(inputs.CurrentMp, inputs.MaxMp, maxMp),
             MaxMp: maxMp,
-            RawPa: rawPa,
-            RawMa: rawMa,
-            RawSpeed: rawSpeed,
-            EffectivePa: ApplyEffectiveDelta(inputs.RawPa, inputs.EffectivePa, rawPa),
-            EffectiveMa: ApplyEffectiveDelta(inputs.RawMa, inputs.EffectiveMa, rawMa),
-            EffectiveSpeed: ApplyEffectiveDelta(inputs.RawSpeed, inputs.EffectiveSpeed, rawSpeed));
+            RawPa: finalRawPa,
+            RawMa: finalRawMa,
+            RawSpeed: finalRawSpeed,
+            EffectivePa: finalEffectivePa,
+            EffectiveMa: finalEffectiveMa,
+            EffectiveSpeed: finalEffectiveSpeed);
     }
+
+    private static GenericLevelOneBases GetGenericLevelOneBases(bool isMale)
+        => isMale
+            ? new GenericLevelOneBases(30, 14, 6, 5, 4)
+            : new GenericLevelOneBases(28, 15, 6, 4, 5);
 
     private static ushort CalculateVisibleWordStat(int baseValue, int growth, int multiplier, int level, int min)
         => (ushort)CalculateVisibleStat(baseValue, growth, multiplier, level, min, 9999);
@@ -427,22 +508,40 @@ public partial class Program
         return current > newMax ? newMax : current;
     }
 
+    private static ushort MaxStat(ushort current, ushort calculated)
+        => calculated > current ? calculated : current;
+
     private static byte ApplyEffectiveDelta(byte oldRaw, byte oldEffective, byte newRaw)
     {
         int delta = oldEffective - oldRaw;
         return (byte)Math.Clamp(newRaw + delta, 1, 127);
     }
 
+    private static (byte Raw, byte Effective) ApplyNonDecreasingEffectiveStat(
+        byte oldRaw,
+        byte oldEffective,
+        byte calculatedRaw)
+    {
+        byte newRaw = calculatedRaw > oldRaw ? calculatedRaw : oldRaw;
+        byte newEffective = ApplyEffectiveDelta(oldRaw, oldEffective, newRaw);
+        if (newEffective < oldEffective)
+            return (oldRaw, oldEffective);
+        return (newRaw, newEffective);
+    }
+
     private static void WriteGenericRuntimeStats(nint unit, GenericRuntimeStatInputs inputs, GenericRuntimeStats stats)
     {
-        if (inputs.MaxHp != stats.MaxHp)
-            Marshal.WriteInt16(unit + UNIT_MAX_HP_OFFSET, unchecked((short)stats.MaxHp));
-        if (inputs.CurrentHp != stats.CurrentHp)
-            Marshal.WriteInt16(unit + UNIT_CURRENT_HP_OFFSET, unchecked((short)stats.CurrentHp));
-        if (inputs.MaxMp != stats.MaxMp)
-            Marshal.WriteInt16(unit + UNIT_MAX_MP_OFFSET, unchecked((short)stats.MaxMp));
-        if (inputs.CurrentMp != stats.CurrentMp)
-            Marshal.WriteInt16(unit + UNIT_CURRENT_MP_OFFSET, unchecked((short)stats.CurrentMp));
+        if (APPLY_GENERIC_RUNTIME_HP_MP_TO_VISIBLE_POOLS)
+        {
+            if (inputs.MaxHp != stats.MaxHp)
+                Marshal.WriteInt16(unit + UNIT_MAX_HP_OFFSET, unchecked((short)stats.MaxHp));
+            if (inputs.CurrentHp != stats.CurrentHp)
+                Marshal.WriteInt16(unit + UNIT_CURRENT_HP_OFFSET, unchecked((short)stats.CurrentHp));
+            if (inputs.MaxMp != stats.MaxMp)
+                Marshal.WriteInt16(unit + UNIT_MAX_MP_OFFSET, unchecked((short)stats.MaxMp));
+            if (inputs.CurrentMp != stats.CurrentMp)
+                Marshal.WriteInt16(unit + UNIT_CURRENT_MP_OFFSET, unchecked((short)stats.CurrentMp));
+        }
 
         Marshal.WriteByte(unit + UNIT_RAW_PA_OFFSET, stats.RawPa);
         Marshal.WriteByte(unit + UNIT_RAW_MA_OFFSET, stats.RawMa);

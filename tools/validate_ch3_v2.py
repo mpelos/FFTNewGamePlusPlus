@@ -171,44 +171,46 @@ def run() -> int:
     vaults_enemy_slots = [1, 2, 3, 4, 5, 6]
     check("422 roster jobs", roster(entd, 422, vaults_enemy_slots, 0x0A) == [87, 87, 87, 75, 81, 81])
     check("422 roster levels", roster(entd, 422, vaults_enemy_slots, 0x03) == [102, 101, 100, 101, 101, 101])
-    check("422 roster secondaries", roster(entd, 422, vaults_enemy_slots, 0x0B) == [6, 5, 5, 5, 6, 6])
+    check("422 roster secondaries", roster(entd, 422, vaults_enemy_slots, 0x0B) == [6, 6, 6, 5, 6, 6])
     check("422 roster Brave", roster(entd, 422, vaults_enemy_slots, 0x06) == [84, 84, 84, 68, 60, 60])
-    check("422 roster Faith", roster(entd, 422, vaults_enemy_slots, 0x07) == [42, 42, 42, 64, 74, 74])
+    check("422 roster Faith", roster(entd, 422, vaults_enemy_slots, 0x07) == [72, 72, 72, 64, 74, 74])
     for slot_no in vaults_enemy_slots:
         job = field(entd, 422, slot_no, 0x0A)
         check(f"422 s{slot_no} jobrank", field(entd, 422, slot_no, 0x08) == rank(job))
 
+    check("422 all Dragoons Dragonheart",
+          [field16(entd, 422, slot_no, 0x0C) for slot_no in (1, 2, 3)] == [427, 427, 427])
     for slot_no in (1, 2, 3):
         check(f"422 s{slot_no} Dragoon JobLevel", field(entd, 422, slot_no, 0x09) == 8)
         check(f"422 s{slot_no} Dragoon R/S/M",
-              field16(entd, 422, slot_no, 0x0C) == 449
-              and field16(entd, 422, slot_no, 0x0E) == 465
-              and field16(entd, 422, slot_no, 0x10) == 486)
+              field16(entd, 422, slot_no, 0x0C) == 427
+              and field16(entd, 422, slot_no, 0x0E) == 469
+              and field16(entd, 422, slot_no, 0x10) == 492)
         check(f"422 s{slot_no} Dragoon gear",
               roster(entd, 422, [slot_no], 0x12) == [154]
               and roster(entd, 422, [slot_no], 0x13) == [182]
-              and roster(entd, 422, [slot_no], 0x14) == [218]
+              and roster(entd, 422, [slot_no], 0x14) == [213]
               and roster(entd, 422, [slot_no], 0x15) == [102]
               and roster(entd, 422, [slot_no], 0x16) == [139])
 
     check("422 Chemist JobLevel", field(entd, 422, 4, 0x09) == 8)
     check("422 Chemist R/S/M",
           field16(entd, 422, 4, 0x0C) == 441
-          and field16(entd, 422, 4, 0x0E) == 474
-          and field16(entd, 422, 4, 0x10) == 486)
+          and field16(entd, 422, 4, 0x0E) == 466
+          and field16(entd, 422, 4, 0x10) == 487)
     check("422 Chemist gear",
           roster(entd, 422, [4], 0x12) == [167]
           and roster(entd, 422, [4], 0x13) == [198]
-          and roster(entd, 422, [4], 0x14) == [218]
+          and roster(entd, 422, [4], 0x14) == [234]
           and roster(entd, 422, [4], 0x15) == [72]
           and roster(entd, 422, [4], 0x16) == [254])
 
     for slot_no in (5, 6):
         check(f"422 s{slot_no} Time Mage JobLevel cap", field(entd, 422, slot_no, 0x09) == 4)
         check(f"422 s{slot_no} Time Mage R/S/M",
-              field16(entd, 422, slot_no, 0x0C) == 449
+              field16(entd, 422, slot_no, 0x0C) == 445
               and field16(entd, 422, slot_no, 0x0E) == 467
-              and field16(entd, 422, slot_no, 0x10) == 486)
+              and field16(entd, 422, slot_no, 0x10) == 494)
         check(f"422 s{slot_no} Time Mage gear",
               roster(entd, 422, [slot_no], 0x12) == [167]
               and roster(entd, 422, [slot_no], 0x13) == [206]
@@ -231,17 +233,17 @@ def run() -> int:
           and (field(entd, 423, 0, 0x06), field(entd, 423, 0, 0x07)) == (86, 55))
     check("423 Izlude special R/S/M preserved",
           field16(entd, 423, 0, 0x0C) == 442
-          and field16(entd, 423, 0, 0x0E) == 475
+          and field16(entd, 423, 0, 0x0E) == 465
           and field16(entd, 423, 0, 0x10) == 492)
     check("423 Izlude Reflect Mail kit",
           roster(entd, 423, [0], 0x13) == [184]
           and roster(entd, 423, [0], 0x14) == [218]
-          and roster(entd, 423, [0], 0x15) == [30])
+          and roster(entd, 423, [0], 0x15) == [33])
 
     vaults3_enemy_slots = [1, 2, 3, 4, 5]
     check("423 roster jobs", roster(entd, 423, vaults3_enemy_slots, 0x0A) == [76, 76, 82, 77, 77])
     check("423 roster levels", roster(entd, 423, vaults3_enemy_slots, 0x03) == [101, 101, 101, 101, 100])
-    check("423 roster secondaries", roster(entd, 423, vaults3_enemy_slots, 0x0B) == [6, 5, 6, 5, 5])
+    check("423 roster secondaries", roster(entd, 423, vaults3_enemy_slots, 0x0B) == [12, 12, 6, 8, 8])
     check("423 roster Brave", roster(entd, 423, vaults3_enemy_slots, 0x06) == [86, 84, 58, 80, 80])
     check("423 roster Faith", roster(entd, 423, vaults3_enemy_slots, 0x07) == [55, 45, 78, 45, 45])
     for slot_no in vaults3_enemy_slots:
@@ -251,9 +253,9 @@ def run() -> int:
 
     for slot_no in (1, 2):
         check(f"423 s{slot_no} Knight R/S/M",
-              field16(entd, 423, slot_no, 0x0C) == 442
+              field16(entd, 423, slot_no, 0x0C) == 453
               and field16(entd, 423, slot_no, 0x0E) == 465
-              and field16(entd, 423, slot_no, 0x10) == 486)
+              and field16(entd, 423, slot_no, 0x10) == 487)
         check(f"423 s{slot_no} Knight gear",
               roster(entd, 423, [slot_no], 0x12) == [154]
               and roster(entd, 423, [slot_no], 0x13) == [182]
@@ -263,8 +265,8 @@ def run() -> int:
 
     check("423 Summoner R/S/M",
           field16(entd, 423, 3, 0x0C) == 449
-          and field16(entd, 423, 3, 0x0E) == 467
-          and field16(entd, 423, 3, 0x10) == 486)
+          and field16(entd, 423, 3, 0x0E) == 482
+          and field16(entd, 423, 3, 0x10) == 498)
     check("423 Summoner gear",
           roster(entd, 423, [3], 0x12) == [167]
           and roster(entd, 423, [3], 0x13) == [206]
@@ -276,7 +278,7 @@ def run() -> int:
         check(f"423 s{slot_no} Archer R/S/M",
               field16(entd, 423, slot_no, 0x0C) == 449
               and field16(entd, 423, slot_no, 0x0E) == 469
-              and field16(entd, 423, slot_no, 0x10) == 486)
+              and field16(entd, 423, slot_no, 0x10) == 490)
         check(f"423 s{slot_no} Archer gear",
               roster(entd, 423, [slot_no], 0x12) == [168]
               and roster(entd, 423, [slot_no], 0x13) == [198]

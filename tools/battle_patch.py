@@ -53,6 +53,7 @@ TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged brea
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
 # skills
 COUNTER, PARRY, ATK_BOOST, MV1, MV2 = 442, 447, 465, 486, 487
+DRAGONHEART = 427
 VIGILANCE = 426
 VANISH = 425
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
@@ -62,6 +63,8 @@ SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-C
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
+ARTS_OF_WAR = 8
+GEOMANCY = 12
 MIGHTY_SWORD = 52
 IAIDO = 19
 STEAL = 14
@@ -72,6 +75,8 @@ SPEECHCRAFT = 15
 AIM = 8           # Archer secondary skillset (PSX "Charge") — innate ranged charge-up shots
 MANA_SHIELD = 445 # reaction: redirect HP damage to MP (PSX "MP Switch"); Brave-gated trigger
 MOVE_MP_UP = 494  # movement: restore MP each move (WotL "Manafont") — refuels the Mana Shield buffer
+IGNORE_HEIGHT = 492
+JUMP2 = 490
 # items
 HEADBAND, POWER_GARB, BRACERS, ICEBRAND, RUNEBLADE = 163, 195, 218, 29, 30
 THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
@@ -1058,27 +1063,28 @@ def lesalia(data):
 # roster; scale LEVEL ONLY to preserve its identity/kit); s1,s2,s3 Dragoon (87); s4 Chemist (75);
 # s5,s6 Time Mage (81). Per docs/027.
 #   - Dragoons: Jump (innate primary). Polearm + heavy gear + shield (job 87 equips Helmet/Armor/
-#     Shield/Polearm). The aerial threat onto the back line.
+#     Shield/Polearm). Ignore Height lets them cross the vault; all three get Dragonheart.
 #   - Time Mages: Haste/Slow ONLY -> jl CAPPED to 4 (no Stop/Immobilize). NOTE: Time Mage equips
 #     STAFF, not Rod (job 81) -> use SHOP_STAFF (the Ch2 TMages were given SHOP_ROD = illegal/no-op;
-#     flagged separately). Chemist = the sustain priority kill. No boss -> no rare loot.
+#     flagged separately). Chemist = the sustain priority kill; Featherweave + Defense Boost + Move+2.
+#     No boss -> no rare loot.
 def vaults_2nd(data):
     E = 422
     set_slot(data, E, 0, level=102, brave=84, faith=55)  # Nightblade special: preserve identity/kit
     for s, lvl in ((1, 102), (2, 101), (3, 100)):  # 3 Dragoons — Jump divers
         set_slot(data, E, s, level=lvl, joblevel=8, job=LANCER,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=PARTISAN, lh=SHOP_SHIELD)
+                 reaction=DRAGONHEART, support=CONCENTRATION, movement=IGNORE_HEIGHT,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=HERMES_SHOES, rh=PARTISAN, lh=SHOP_SHIELD)
     set_slot(data, E, 4, level=101, joblevel=8, job=CHEMIST,  # Chemist — sustain / priority kill
-             reaction=AUTO_POTION, support=THROW_ITEMS, movement=MV1,
-             head=MAGE_HAT, body=BLACK_GARB, acc=BRACERS, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
+             reaction=AUTO_POTION, support=DEFENSE_BOOST, movement=MV2,
+             head=MAGE_HAT, body=BLACK_GARB, acc=FEATHERWEAVE, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
     for s in (5, 6):  # 2 Time Mages — Haste/Slow only (jl4), Staff (job-legal)
         set_slot(data, E, s, level=101, joblevel=4, job=TMAGE,
-                 reaction=REFLEXES, movement=MV1,
+                 reaction=MANA_SHIELD, movement=MOVE_MP_UP,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
-    set_slot(data, E, 1, secondary=ITEMS, brave=84, faith=42)
+    set_slot(data, E, 1, secondary=ITEMS, brave=84, faith=72)
     for s in (2, 3):
-        set_slot(data, E, s, secondary=FUNDAMENTS, brave=84, faith=42)
+        set_slot(data, E, s, secondary=ITEMS, brave=84, faith=72)
     set_slot(data, E, 4, secondary=FUNDAMENTS, brave=68, faith=64)
     for s in (5, 6):
         set_slot(data, E, s, secondary=ITEMS, brave=60, faith=74, support=MAGICK_BOOST)
@@ -1859,12 +1865,12 @@ def airship_ultima(data):
 def vaults_3rd_v2(data):
     touched = vaults_3rd(data)
     E = 423
-    set_slot(data, E, 0, brave=86, faith=55)
-    set_slot(data, E, 1, secondary=ITEMS, brave=86, faith=55)
-    set_slot(data, E, 2, secondary=FUNDAMENTS, brave=84, faith=45)
-    set_slot(data, E, 3, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+    set_slot(data, E, 0, brave=86, faith=55, support=ATK_BOOST, rh=DEFENDER)
+    set_slot(data, E, 1, secondary=GEOMANCY, brave=86, faith=55, reaction=FIRST_STRIKE, movement=MV2)
+    set_slot(data, E, 2, secondary=GEOMANCY, brave=84, faith=45, reaction=FIRST_STRIKE, movement=MV2)
+    set_slot(data, E, 3, secondary=ITEMS, brave=58, faith=78, support=SWIFTSPELL, movement=TELEPORT)
     for s in (4, 5):
-        set_slot(data, E, s, brave=80, faith=45)
+        set_slot(data, E, s, secondary=ARTS_OF_WAR, brave=80, faith=45, movement=JUMP2)
     return touched
 
 

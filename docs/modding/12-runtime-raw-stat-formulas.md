@@ -1,18 +1,28 @@
-# Runtime raw stats for Chapter 3+ humans
+# Runtime raw stat formulas
 
-This document is the starting reference for Chapter 3+ runtime stat recalculation.
+This document records the FFT/IVC raw-stat formula and the runtime fields used to inspect or correct
+specific edge cases. It is not a standard implementation requirement for Chapter 3+ battles.
+Validated Gollund/Orran tests showed that Ivalice Chronicles already recalculates ordinary human
+battle stats correctly from the expanded ENTD level, job growth, and job multipliers.
+
+Default rule:
+
+```text
+Use ENTD level encoding (`100+` relative levels) as the normal scaling mechanism.
+Do not apply runtime stat correction unless a specific unit is proven undergrown in-game.
+```
 
 Scope:
 
 ```text
 Included:
-- generic human enemies in jobs 74-93;
-- active allied guests when a battle doc explicitly requires them, using the guest's live
-  job-growth/multiplier bytes instead of a hardcoded generic-job assumption.
+- diagnostic calculations for generic human enemies in jobs 74-93;
+- battle-specific runtime exceptions for active allied guests only when a test proves the guest is
+  undergrown after normal ENTD scaling.
 
 Excluded:
 - inactive story actors, story bosses, Lucavi, monsters, transform forms, and Chapter 1/2 units
-  unless a separate battle-specific runtime rule explicitly opts them in.
+- normally scaled humans, unless a separate battle-specific runtime rule explicitly opts them in.
 ```
 
 ## Confidence
@@ -22,18 +32,24 @@ HIGH   = confirmed in Ivalice Chronicles data/runtime or local reverse engineeri
 MEDIUM = classic FFT stat model carried forward; good enough to implement, then validate in-game.
 ```
 
-## Level-1 generic bases
+## Level-1 generic raw seeds
 
-Working classic FFT base seeds:
+Classic FFT stores level-1 generic stats as hidden fixed-point raw values. One visible stat point is
+`16384` raw units. Generic units are normally generated inside a small range; for this mod's
+deterministic runtime correction, use the lower bound of each range as the seed.
 
-| Gender | HP | MP | Speed | PA | MA | Confidence |
-|---|---:|---:|---:|---:|---:|---|
-| Male | 30 | 15 | 6 | 4 | 3 | MEDIUM |
-| Female | 28 | 16 | 6 | 3 | 4 | MEDIUM |
+| Gender | HP seed | MP seed | Speed seed | PA seed | MA seed | Fixed-point raw values | Confidence |
+|---|---:|---:|---:|---:|---:|---|---|
+| Male | 30 | 14 | 6 | 5 | 4 | HP `491520`, MP `229376`, Speed `98304`, PA `81920`, MA `65536` | MEDIUM |
+| Female | 28 | 15 | 6 | 4 | 5 | HP `458752`, MP `245760`, Speed `98304`, PA `65536`, MA `81920` | MEDIUM |
 
 Use male/female only for ordinary generic humans and active human guests. If a unit is a monster,
 Lucavi, inactive story actor, or story boss, do not use this table unless a separate runtime rule
 explicitly says so.
+
+Do not use the old simplified visible bases (`Male HP30/MP15/Spd6/PA4/MA3`,
+`Female HP28/MP16/Spd6/PA3/MA4`). Those are Squire-like visible approximations and understate
+high-level PA/MA after recalculation.
 
 ## Growth model
 
@@ -42,18 +58,20 @@ Job growth constants are inverse: lower growth is better.
 Working model for a unit treated as if it leveled entirely in its current job:
 
 ```text
-raw = level_1_gender_base
+RAW_SCALE = 16384
+raw = level_1_gender_seed * RAW_SCALE
 for currentLevel = 1 to targetLevel - 1:
   raw += raw / (growth + currentLevel)
 
-displayStat = floor(raw * multiplier / 100)
+displayStat = floor(raw * multiplier / (RAW_SCALE * 100))
 ```
 
 Preserve fractions while looping. If this is implemented with only visible integer stats, Speed/PA/MA
 growth will be undercounted because many level-up increments are fractional. Runtime code should use a
 scaled integer or equivalent fixed-point representation, then floor only for the final display stat.
+The current runtime uses the classic `16384` scale directly.
 
-For our runtime patch, `displayStat` is the target battle stat:
+For a diagnostic/edge-case runtime patch, `displayStat` is the target battle stat:
 
 ```text
 HP     -> Max HP / Current HP, with no mid-fight healing
@@ -63,10 +81,17 @@ PA     -> Raw PA, then Effective PA adjusted by the same equipment delta
 MA     -> Raw MA, then Effective MA adjusted by the same equipment delta
 ```
 
+If an exception patch is enabled, apply the recalculated value only when it is not lower than the
+unit's current live stat. This pass is a correction for proven undergrown battle units, not a nerf
+pass. For PA/MA/Speed, compare the final effective stat after preserving the equipment delta; if that
+final stat would be lower, keep both the old raw and old effective bytes. For HP/MP visible pools,
+never reduce Max HP/MP.
+
 The HP/MP path does not currently have a separate confirmed raw-vs-equipment pair like PA/MA/Speed.
-Until equipment HP/MP bonuses are mapped, treat the calculated value as the intended start-of-battle
-max stat and only sync current HP/MP when the unit is still full. Never use this runtime pass as a
-mid-fight heal/refill.
+`+0x30/+0x32/+0x34/+0x36` are visible pools, not the hidden fixed-point raw stats. Until the real
+raw HP/MP storage is mapped, treat the calculated value as the intended start-of-battle max stat and
+only sync current HP/MP when the unit is still full. Never use this runtime pass as a mid-fight
+heal/refill.
 
 ## Runtime fields
 
@@ -103,7 +128,8 @@ Fields needed for runtime stat scaling:
 | `+0x93` | MA Multiplier | Cached current-job value. |
 
 Prefer the cached growth/multiplier block over a hardcoded job table when possible. It reflects the
-unit's actual loaded job data, including modded job-table values.
+unit's actual loaded job data, including Ivalice Chronicles job-table changes and this mod's future
+job edits. Some IVC rows differ from classic internet tables; the live bytes win.
 
 Gender flags are cross-checked from the neighboring `FFTGenericChronicle` runtime map:
 `Male=0x80`, `Female=0x40`, `Monster=0x20` at actor-table offset `+0x06`.
@@ -147,9 +173,12 @@ Only the generic human rows are copied here.
 | 92 | Dancer | 20 | 60 | 20 | 50 | 100 | 100 | 50 | 110 | 50 | 95 | 3 | 3 | 5 |
 | 93 | Mime | 6 | 140 | 30 | 50 | 100 | 120 | 35 | 120 | 40 | 115 | 4 | 4 | 5 |
 
-## Implementation rules
+## Diagnostic / exception implementation rules
 
-For each generic human enemy:
+Do not run this globally for every active unit. The current mod keeps the generic runtime-stat pass
+disabled by default because the game already calculates normal human stats from level.
+
+For each generic human enemy opted into an exception patch:
 
 ```text
 1. Arm the runtime scan only for the current NG+ battle entry.
@@ -160,13 +189,16 @@ For each generic human enemy:
 6. Read gender flags from +0x06; choose male or female base; skip monsters/unknown flags.
 7. Read the already-expanded live level from +0x29.
 8. Read current-job growth/multiplier from +0x8A..+0x93.
-9. Recalculate HP, MP, Speed, PA, and MA as if the unit leveled entirely in its current job.
-10. Write Max HP/MP and preserve current HP/MP without healing/refilling if the unit is no longer full.
-11. Write Raw PA/MA/Speed and preserve the old effective-minus-raw deltas.
+9. Recalculate HP, MP, Speed, PA, and MA from the `16384` raw seeds as if the unit leveled entirely
+   in its current job.
+10. Write Max HP/MP only if the current build intentionally enables visible-pool HP/MP writes, and
+   only upward; preserve current HP/MP without healing/refilling if the unit is no longer full.
+11. Write Raw PA/MA/Speed and preserve the old effective-minus-raw deltas, but never lower the final
+   effective stat.
 12. Mark that unit id patched so a repeated scan cannot apply late HP/MP healing.
 ```
 
-For each active allied guest opted into the pass:
+For each active allied guest opted into an exception patch:
 
 ```text
 1. Arm the runtime scan only for the current NG+ battle entry.
@@ -175,14 +207,14 @@ For each active allied guest opted into the pass:
 4. Confirm the expected allied/guest side and expected story unit id.
 5. Do not require job id 74-93; named guest jobs can sit outside the generic range.
 6. Read gender flags, live expanded level, and the live job growth/multiplier bytes from +0x8A..+0x93.
-7. Recalculate HP, MP, Speed, PA, and MA using those live growth/multiplier bytes.
+7. Recalculate HP, MP, Speed, PA, and MA from the `16384` raw seeds using those live
+   growth/multiplier bytes.
 8. Preserve HP/MP current/full relationship and effective-stat equipment deltas.
 9. Mark the guest patched so repeated scans cannot keep refreshing HP/MP.
 10. Preserve the guest's scripted identity, control behavior, objective status, and special commands.
 ```
 
-Do not run this globally for every active unit. It is a Chapter 3+ battle-start correction and should
-be enabled entry-by-entry or unit-by-unit from the runtime plan.
+Every exception must name the battle, unit id, observed wrong stat, expected stat, and playtest proof.
 
 ## Sources
 
