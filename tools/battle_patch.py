@@ -1278,12 +1278,14 @@ def riovanes_gate(data):
 #   - Archaeodaemons: demon adds, level only (no gear). 103/103/102.
 def riovanes_keep(data):
     E = 432
-    # Wiegraf PHASE-1 duel boss — level + Defender weapon (rare) only; preserve duel kit/scripting.
-    set_slot(data, E, 0, level=104, rh=DEFENDER)
-    # Belias PHASE-2 Lucavi — level only (chapter top 105); preserve demon kit + transform/spawn.
-    set_slot(data, E, 5, level=105)
-    for s, lvl in ((6, 103), (7, 103), (8, 102)):  # 3 Archaeodaemon adds — level only (monsters)
-        set_slot(data, E, s, level=lvl, joblevel=8)
+    # Wiegraf PHASE-1 duel boss: complete but still disarmable/stealable. Preserve job 40 and scripting.
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=FUNDAMENTS, brave=88, faith=60,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=DEFENDER, lh=SHOP_SHIELD)
+    # Belias PHASE-2 Lucavi: no gear slots; keep canonical demon kit and transform/spawn.
+    set_slot(data, E, 5, level=105, joblevel=8, brave=88, faith=82)
+    for s, lvl in ((6, 103), (7, 103), (8, 102)):  # 3 Archaeodaemon adds — monsters, no gear.
+        set_slot(data, E, s, level=lvl, joblevel=8, brave=84, faith=72)
     return [E]
 
 

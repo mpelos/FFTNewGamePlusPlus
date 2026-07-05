@@ -641,6 +641,68 @@ def run() -> int:
               and roster(entd, 431, [slot_no], 0x15) == [30]
               and roster(entd, 431, [slot_no], 0x16) == [139])
 
+    # 034 - Riovanes Castle Keep, entry 432.
+    # Wiegraf and Belias are bosses/transform forms; no generic runtime target is configured here.
+    check("432 runtime generic scaler not armed for bosses", "[432] = Targets(" not in runtime)
+    check("432 Wiegraf identity preserved", field(entd, 432, 0, 0x00) == 40 and field(entd, 432, 0, 0x0A) == 40)
+    check("432 Wiegraf level/setup",
+          field(entd, 432, 0, 0x03) == 104
+          and field(entd, 432, 0, 0x09) == 8
+          and field(entd, 432, 0, 0x0B) == 5
+          and field(entd, 432, 0, 0x06) == 88
+          and field(entd, 432, 0, 0x07) == 60)
+    check("432 Wiegraf disarmable Defender kit",
+          field16(entd, 432, 0, 0x0C) == 442
+          and field16(entd, 432, 0, 0x0E) == 465
+          and field16(entd, 432, 0, 0x10) == 486
+          and roster(entd, 432, [0], 0x12) == [154]
+          and roster(entd, 432, [0], 0x13) == [182]
+          and roster(entd, 432, [0], 0x14) == [218]
+          and roster(entd, 432, [0], 0x15) == [33]
+          and roster(entd, 432, [0], 0x16) == [139])
+    check("432 Wiegraf no Safeguard", field16(entd, 432, 0, 0x0E) != 475)
+
+    placeholder_knights = [1, 2, 3, 4]
+    check("432 transform placeholder Knights preserved",
+          roster(entd, 432, placeholder_knights, 0x03) == [1, 1, 1, 1]
+          and roster(entd, 432, placeholder_knights, 0x09) == [0, 0, 0, 0]
+          and roster(entd, 432, placeholder_knights, 0x0A) == [76, 76, 76, 76])
+    placeholder_wiegrafs = [9, 10, 11]
+    check("432 transform placeholder Wiegrafs preserved",
+          roster(entd, 432, placeholder_wiegrafs, 0x03) == [1, 1, 1]
+          and roster(entd, 432, placeholder_wiegrafs, 0x09) == [0, 0, 0]
+          and roster(entd, 432, placeholder_wiegrafs, 0x0A) == [40, 40, 40])
+
+    check("432 Belias identity and level",
+          field(entd, 432, 5, 0x00) == 60
+          and field(entd, 432, 5, 0x0A) == 60
+          and field(entd, 432, 5, 0x03) == 105
+          and field(entd, 432, 5, 0x09) == 8
+          and field(entd, 432, 5, 0x06) == 88
+          and field(entd, 432, 5, 0x07) == 82)
+    check("432 Belias no fake gear",
+          roster(entd, 432, [5], 0x12) == [255]
+          and roster(entd, 432, [5], 0x13) == [255]
+          and roster(entd, 432, [5], 0x14) == [255]
+          and roster(entd, 432, [5], 0x15) == [255]
+          and roster(entd, 432, [5], 0x16) == [255])
+
+    demon_slots = [6, 7, 8]
+    check("432 Archaeodaemon jobs/levels",
+          roster(entd, 432, demon_slots, 0x0A) == [153, 153, 153]
+          and roster(entd, 432, demon_slots, 0x03) == [103, 103, 102])
+    check("432 Archaeodaemon JobLevel and Br/Fa",
+          roster(entd, 432, demon_slots, 0x09) == [8, 8, 8]
+          and roster(entd, 432, demon_slots, 0x06) == [84, 84, 84]
+          and roster(entd, 432, demon_slots, 0x07) == [72, 72, 72])
+    for slot_no in demon_slots:
+        check(f"432 s{slot_no} Archaeodaemon no gear",
+              roster(entd, 432, [slot_no], 0x12) == [254]
+              and roster(entd, 432, [slot_no], 0x13) == [254]
+              and roster(entd, 432, [slot_no], 0x14) == [254]
+              and roster(entd, 432, [slot_no], 0x15) == [254]
+              and roster(entd, 432, [slot_no], 0x16) == [254])
+
     passed = 0
     for name, ok in checks:
         if ok:
