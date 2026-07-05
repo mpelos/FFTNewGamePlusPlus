@@ -62,6 +62,13 @@ public partial class Program
             EnemyUnit(0x82, "Archer gate cover"),
             EnemyUnit(0x83, "Black Mage clump punish"),
             EnemyUnit(0x84, "Archer flank cover")),
+        [426] = Targets(
+            EnemyUnit(0x80, "Rain Black Mage"),
+            EnemyUnit(0x81, "Chemist sustain A"),
+            EnemyUnit(0x82, "Squire cluster body"),
+            EnemyUnit(0x83, "Chemist sustain B"),
+            EnemyUnit(0x84, "Archer chip"),
+            EnemyUnit(0x85, "Thief harass")),
     };
 
     private enum RuntimeStatTargetKind

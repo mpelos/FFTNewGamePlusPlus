@@ -1864,6 +1864,18 @@ def vaults_1st_v2(data):
     return touched
 
 
+def grogh_v2(data):
+    touched = grogh(data)
+    E = 426
+    set_slot(data, E, 0, secondary=ITEMS, brave=58, faith=78, support=MAGICK_BOOST)
+    for s in (1, 3):
+        set_slot(data, E, s, secondary=FUNDAMENTS, brave=68, faith=64)
+    set_slot(data, E, 2, secondary=ITEMS, brave=70, faith=50)
+    set_slot(data, E, 4, brave=80, faith=45)
+    set_slot(data, E, 5, secondary=ITEMS, brave=84, faith=42)
+    return touched
+
+
 BATTLES = {
     "chapter1_guest_control": chapter1_guest_control,
     "gariland": gariland,
@@ -1891,7 +1903,7 @@ BATTLES = {
     "vaults_2nd": vaults_2nd,
     "vaults_3rd": vaults_3rd_v2,
     "vaults_1st": vaults_1st_v2,
-    "grogh": grogh,
+    "grogh": grogh_v2,
     "yardrow": yardrow,
     "yuguewood": yuguewood,
     "riovanes_gate": riovanes_gate,

@@ -357,6 +357,83 @@ def run() -> int:
     for slot_no in (6, 7):
         check(f"424 s{slot_no} inactive placeholder preserved", field(entd, 424, slot_no, 0x03) == 254)
 
+    # 030 - Grogh Heights, entry 426.
+    # s0 Black Mage; s1/s3 Chemist; s2 Squire; s4 Archer; s5 Thief; s6/s7/s8 inactive.
+    check("426 runtime target table present", "[426] = Targets(" in runtime)
+    check("426 runtime target excludes inactive Orran placeholder", "EnemyUnit(0x15" not in runtime)
+    for uid in (0x80, 0x81, 0x82, 0x83, 0x84, 0x85):
+        check(f"426 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
+
+    grogh_slots = [0, 1, 2, 3, 4, 5]
+    check("426 roster jobs", roster(entd, 426, grogh_slots, 0x0A) == [80, 75, 74, 75, 77, 83])
+    check("426 roster levels", roster(entd, 426, grogh_slots, 0x03) == [101, 101, 100, 100, 101, 100])
+    check("426 roster secondaries", roster(entd, 426, grogh_slots, 0x0B) == [6, 5, 6, 5, 5, 6])
+    check("426 roster Brave", roster(entd, 426, grogh_slots, 0x06) == [58, 68, 70, 68, 80, 84])
+    check("426 roster Faith", roster(entd, 426, grogh_slots, 0x07) == [78, 64, 50, 64, 45, 42])
+    for slot_no in grogh_slots:
+        job = field(entd, 426, slot_no, 0x0A)
+        check(f"426 s{slot_no} jobrank", field(entd, 426, slot_no, 0x08) == rank(job))
+        check(f"426 s{slot_no} JobLevel 8", field(entd, 426, slot_no, 0x09) == 8)
+
+    check("426 Black Mage R/S/M",
+          field16(entd, 426, 0, 0x0C) == 449
+          and field16(entd, 426, 0, 0x0E) == 467
+          and field16(entd, 426, 0, 0x10) == 486)
+    check("426 Black Mage gear",
+          roster(entd, 426, [0], 0x12) == [167]
+          and roster(entd, 426, [0], 0x13) == [206]
+          and roster(entd, 426, [0], 0x14) == [234]
+          and roster(entd, 426, [0], 0x15) == [56]
+          and roster(entd, 426, [0], 0x16) == [255])
+
+    for slot_no in (1, 3):
+        check(f"426 s{slot_no} Chemist R/S/M",
+              field16(entd, 426, slot_no, 0x0C) == 441
+              and field16(entd, 426, slot_no, 0x0E) == 474
+              and field16(entd, 426, slot_no, 0x10) == 486)
+        check(f"426 s{slot_no} Chemist gear",
+              roster(entd, 426, [slot_no], 0x12) == [167]
+              and roster(entd, 426, [slot_no], 0x13) == [198]
+              and roster(entd, 426, [slot_no], 0x14) == [218]
+              and roster(entd, 426, [slot_no], 0x15) == [72]
+              and roster(entd, 426, [slot_no], 0x16) == [254])
+
+    check("426 Squire R/S/M",
+          field16(entd, 426, 2, 0x0C) == 442
+          and field16(entd, 426, 2, 0x0E) == 465
+          and field16(entd, 426, 2, 0x10) == 486)
+    check("426 Squire gear",
+          roster(entd, 426, [2], 0x12) == [163]
+          and roster(entd, 426, [2], 0x13) == [195]
+          and roster(entd, 426, [2], 0x14) == [218]
+          and roster(entd, 426, [2], 0x15) == [29]
+          and roster(entd, 426, [2], 0x16) == [255])
+
+    check("426 Archer R/S/M",
+          field16(entd, 426, 4, 0x0C) == 449
+          and field16(entd, 426, 4, 0x0E) == 469
+          and field16(entd, 426, 4, 0x10) == 486)
+    check("426 Archer gear",
+          roster(entd, 426, [4], 0x12) == [168]
+          and roster(entd, 426, [4], 0x13) == [198]
+          and roster(entd, 426, [4], 0x14) == [218]
+          and roster(entd, 426, [4], 0x15) == [87]
+          and roster(entd, 426, [4], 0x16) == [254])
+
+    check("426 Thief R/S/M",
+          field16(entd, 426, 5, 0x0C) == 453
+          and field16(entd, 426, 5, 0x0E) == 465
+          and field16(entd, 426, 5, 0x10) == 487)
+    check("426 Thief gear",
+          roster(entd, 426, [5], 0x12) == [168]
+          and roster(entd, 426, [5], 0x13) == [198]
+          and roster(entd, 426, [5], 0x14) == [210]
+          and roster(entd, 426, [5], 0x15) == [9]
+          and roster(entd, 426, [5], 0x16) == [255])
+
+    for slot_no in (6, 7, 8):
+        check(f"426 s{slot_no} inactive placeholder preserved", field(entd, 426, slot_no, 0x03) == 254)
+
     passed = 0
     for name, ok in checks:
         if ok:
