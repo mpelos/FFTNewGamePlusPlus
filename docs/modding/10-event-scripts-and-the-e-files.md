@@ -2,10 +2,57 @@
 
 The single entry point for adding a unit to a battle: the decision tree, every tool and path, how
 to find the battle's event script, and the validated recipes. Deep references: `01` (ENTD bytes),
-`03` (opcodes), `04` (event-spawn recipe), `08` (OverrideEntryData), `09` (sprite budget).
+`03` (opcodes), `04` (event-spawn recipe), `08` (OverrideEntryData), `09` (sprite budget), `12`
+(Chapter 3+ generic enemy runtime stat formulas).
 
 Validation status is marked per claim: **[VALIDATED]** = confirmed in-game; **[PENDING]** =
 implemented, awaiting playtest; **[HYPOTHESIS]** = best reading of the data.
+
+## Mandatory preflight for every level design
+
+Before designing, implementing, or reviewing any story battle, do this even if the requested change
+looks like "only ENTD":
+
+```powershell
+Get-ChildItem docs\modding -File
+```
+
+Read this file first, then read every `docs/modding` file that looks relevant to the planned work.
+At minimum:
+
+```text
+ENTD slot edits                         -> 01, 06
+Runtime actor/stat edits                -> 02, 11, 12
+Event-scripted enemies or new units     -> 03, 04, 05, 10
+Formation-gated static additions        -> 08
+Sprite/job/portrait changes             -> 09
+Diagnostics or file-access confirmation -> 07
+```
+
+For every battle, identify the battle's event script and write down what it does before declaring the
+design implementable. This is required even when no new enemy is planned, because the script can
+control unit registration, delayed waves, intro choreography, guests, corpse placeholders,
+transforms, win/loss behavior, and presentation-only actors.
+
+The minimum event-script review is:
+
+```text
+1. Scan for the battle's active uid set with tools/scan_event_units.py.
+2. Shortlist likely event<NNN>.e files from uid profile and story order.
+3. If any script patch, new unit, wave, or suspicious no-op is involved, confirm the real loaded
+   file through Reloaded-II file-access logging (doc 07).
+4. Note whether the script registers units with AddUnit brackets, moves/warps them, draws/fades them,
+   changes animations, creates ghosts/corpses, transforms bosses, or enforces objectives.
+5. Decide the implementation layer from the evidence: job-swap, static ENTD add,
+   formation-gated static add, script-managed add, or runtime actor-table patch.
+```
+
+If a new enemy is added to a battle where existing enemies have a scripted entrance, the new enemy
+must get equivalent entrance choreography. Mirror the closest matching wave-mate or nearby unit's
+registration, warp/path, draw/fade, and idle/pose records. If no same-team choreography peer exists,
+use the closest presentation-equivalent unit only as a timing/animation template, then retarget every
+unit id and coordinate deliberately. If the battle has no scripted entrances, document why static
+appearance is acceptable.
 
 ## The mental model (what gates a unit's existence)
 
@@ -47,6 +94,37 @@ Want one MORE enemy?
 │       └── RECIPE B (script-managed): ENTD + .e patch. [Merchant VALIDATED; Zaland PENDING]
 └── 4. Either way: finish with the Verify & deploy block, then ONE playtest.
 ```
+
+## Chapter 3+ generic enemy stat pass
+
+Starting in Chapter 3, generic human enemies are not considered complete just because their ENTD
+level, job, gear, and abilities are correct. Their live start-of-battle stats must also be
+recalculated at runtime from their gender and current job, as if they had leveled every level in that
+job.
+
+Process:
+
+```text
+1. Keep ENTD as the source for level encoding, job, gear, abilities, Brave/Faith, flags, and position.
+2. For every Chapter 3+ generic human enemy in the redesigned battle, add a runtime stat target for
+   that battle entry/unit id.
+3. At battle load, arm a short actor-table scan only for that NG+ battle entry.
+4. For each configured unit id:
+   - confirm active actor entry;
+   - confirm enemy-side;
+   - confirm generic human job id 74-93;
+   - read gender flags at actor +0x06;
+   - read live expanded level at actor +0x29;
+   - read job growth/multipliers at actor +0x8A..+0x93;
+   - calculate HP, MP, Speed, PA, and MA from the gender base + current job growth;
+   - write Max HP/MP without using the pass as a mid-fight heal/refill;
+   - write Raw PA/MA/Speed and preserve effective-stat equipment deltas.
+5. Mark the unit patched so repeated scans cannot keep refreshing HP/MP.
+```
+
+Use [12-runtime-raw-stat-formulas.md](12-runtime-raw-stat-formulas.md) for the exact bases, formula,
+offsets, and guard rules. Do **not** apply this pass to named jobs, Lucavi, story bosses, monsters,
+guests, or Chapter 1/2 battles unless a separate battle-specific runtime rule explicitly says so.
 
 ## Paths map
 
@@ -100,9 +178,10 @@ Want one MORE enemy?
    practice; necessity never isolated [HYPOTHESIS] — keep shipping it until a row-removal test.
 4. Verify & deploy block below.
 
-Cosmetic cost in intro battles: the unit stands outside the intro choreography (visible early,
-default animation). Acceptable for battles without a staged entrance; for full parity in a
-choreographed intro, use Recipe B.
+Cosmetic cost in intro battles: a purely static unit stands outside the intro choreography (visible
+early, default animation). This is acceptable only when the battle does not stage comparable enemy
+entrances. If neighboring enemies enter through script choreography, do not ship a static visual
+outlier; use Recipe B or document a deliberate exception before playtest.
 
 ## Recipe B — script-managed add (siblings carry `0x40`, or wave `0x10`) [Merchant VALIDATED end-to-end; Zaland parity PENDING]
 
@@ -115,12 +194,14 @@ Everything in Recipe A steps 1/3/4, PLUS:
    - **Registration**: `45 <uid> 00 01` inserted inside the bracket that registers the unit's own
      wave-siblings, immediately before that bracket's closing `4A`. (A script can have several
      brackets — pick the wave-mates', doc `04` step 4.)
-   - **Choreography**: mirror the siblings' entrance for the new uid. Two validated shapes:
+   - **Choreography**: if the sibling/wave units have an entrance, the new uid must also have one.
+     Mirror the closest matching same-team wave-mate or nearby scripted unit. Two validated shapes:
      per-unit block copied verbatim and uid-retargeted (Merchant, doc `04` step 6), or phase-
      interleaved scripts (Zaland): insert a compact block (WarpUnit to the unit's tile +
      ColorUnit prep + Draw + ColorUnit fade + UnitAnim pose) at a record boundary right after the
      siblings' Draw records, plus the final idle `11 <uid> 00 02 00 00` next to a sibling's idle
-     record. Opcode shapes/lengths: doc `03` table.
+     record. Opcode shapes/lengths: doc `03` table. Retarget every uid, position, facing/pose, and
+     timing operand intentionally; never leave a copied block pointing at the template unit.
    - Insertion safety: whole records at record boundaries only; the format has no length/offset
      fields to desync (doc `03`); guard every insertion with pristine-hash + context bytes.
 4. WarpUnit tile doubles as the unit's battle-start position (Merchant precedent) — pick valid
@@ -128,18 +209,35 @@ Everything in Recipe A steps 1/3/4, PLUS:
 
 ## Verify & deploy (every change, before any playtest)
 
+Do not mark a battle implementation as done until every relevant script/check below has run cleanly.
+If a script does not exist yet for the chapter/change, either add the check or explicitly document why
+the existing validator does not cover this battle.
+
 ```powershell
+Get-ChildItem docs\modding -File             # confirm docs inventory before final review
+python tools\scan_event_units.py <uids...>   # event-script profile for the battle's active ids
+python tools\sprite_budget.py <entry>        # unique-sheet budget check
 python tools\battle_patch.py <battle>        # byte-diff must be contained to the intended entry
-python tools\<script patcher>.py             # if Recipe B
+python tools\<script patcher>.py             # if any .e script is patched
 python tools\audit_slot_adds.py              # zero ERRORs
-python tools\validate_ch2_v2.py              # all checks pass (add checks for the new change)
+python tools\validate_ch2_v2.py              # or the relevant chapter validator; all checks pass
 $env:RELOADEDIIMODS='C:\Reloaded-II\Mods'; dotnet build .\src\fftivc.battles.ngplus\fftivc.battles.ngplus.csproj -c Release
 ```
 
-Then verify the DEPLOYED artifacts, not the intent: read the entry back from the deployed DLL's
-embedded resource (`GetManifestResourceStream`), hash the deployed loose files against source.
-Playtest once, from a save BEFORE the battle, with full player deployment (doc `09`).
-Document results in `work/` first; `docs/` only after the playtest confirms.
+For Chapter 3+ generic-human battle work, also verify that every generic human enemy expected to use
+the runtime stat pass has a configured target in the code and that non-generic enemies are deliberately
+excluded.
+
+Then verify the DEPLOYED artifacts, not the intent:
+
+```text
+1. Read the entry back from the deployed DLL's embedded ENTD resource.
+2. Hash any deployed loose `.e`/NXD files against the source overrides.
+3. If an added enemy should have an entrance animation, verify the patched `.e` contains both
+   registration and choreography for that uid.
+4. Playtest from a save BEFORE the battle with full player deployment.
+5. Document results in `work/` first; update durable `docs/` only after the playtest confirms.
+```
 
 ## Failure triage
 

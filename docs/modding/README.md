@@ -26,6 +26,7 @@ and not durable documentation.
 | [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md) | The per-battle unique-spritesheet budget: the palette-corruption symptom, what counts against the budget, the `tools/sprite_budget.py` pre-playtest analyzer, design mitigations, and the future path to raising the engine limit. |
 | [10-event-scripts-and-the-e-files.md](10-event-scripts-and-the-e-files.md) | **The enemy-add playbook — start here.** Decision tree (job-swap / static add / script-managed add), the full paths + tools maps, how to find a battle's `.e` file (uid-profile scan → numbering shortlist → authoritative file-access log), both recipes with validation status, the verify-and-deploy block, failure triage, and the per-battle track record. |
 | [11-transform-boss-runtime-scaling.md](11-transform-boss-runtime-scaling.md) | How to scale scripted transform/phase bosses whose final fighting actor is not fully controlled by the visible ENTD slot; confirmed on Lionel Castle Oratory / Cuchulainn. |
+| [12-runtime-raw-stat-formulas.md](12-runtime-raw-stat-formulas.md) | Generic-human runtime stat formula reference: male/female level-1 bases, job growth/multiplier constants for generic jobs 74-93, and actor-table fields for Chapter 3+ HP/MP/Speed/PA/MA recalculation. |
 
 ## State of the world
 

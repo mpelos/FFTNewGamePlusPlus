@@ -33,7 +33,7 @@ namespace fftivc.battles.ngplus;
 ///    guest at party level never hardens a first playthrough, and patching every ENTD read removes
 ///    the dependency on detecting NG+ at the exact join cutscene (when the level bakes into the save).
 /// </summary>
-public class Program : IMod
+public partial class Program : IMod
 {
     private ILogger _logger = null!;
     private IModLoader _modLoader = null!;
@@ -181,15 +181,33 @@ public class Program : IMod
     private const int ACTOR_TABLE_COUNT = 0x15;
     private const int ACTOR_UNIT_ID_OFFSET = 0x191;
     private const int UNIT_CHAR_ID_OFFSET = 0x00;
+    private const int UNIT_STATE_OFFSET = 0x01;
     private const int UNIT_JOB_ID_OFFSET = 0x03;
+    private const int UNIT_TEAM_OFFSET = 0x04;
+    private const int UNIT_FOE_FLAGS_OFFSET = 0x05;
+    private const int UNIT_GENDER_FLAGS_OFFSET = 0x06;
     private const int UNIT_LEVEL_OFFSET = 0x29;
     private const int UNIT_CURRENT_HP_OFFSET = 0x30;
     private const int UNIT_MAX_HP_OFFSET = 0x32;
+    private const int UNIT_CURRENT_MP_OFFSET = 0x34;
+    private const int UNIT_MAX_MP_OFFSET = 0x36;
     private const int UNIT_RAW_PA_OFFSET = 0x38;
+    private const int UNIT_RAW_MA_OFFSET = 0x39;
     private const int UNIT_RAW_SPEED_OFFSET = 0x3A;
     private const int UNIT_EFFECTIVE_PA_OFFSET = 0x3E;
+    private const int UNIT_EFFECTIVE_MA_OFFSET = 0x3F;
     private const int UNIT_EFFECTIVE_SPEED_OFFSET = 0x40;
     private const int UNIT_CT_OFFSET = 0x41;
+    private const int UNIT_HP_GROWTH_OFFSET = 0x8A;
+    private const int UNIT_HP_MULTIPLIER_OFFSET = 0x8B;
+    private const int UNIT_MP_GROWTH_OFFSET = 0x8C;
+    private const int UNIT_MP_MULTIPLIER_OFFSET = 0x8D;
+    private const int UNIT_SPEED_GROWTH_OFFSET = 0x8E;
+    private const int UNIT_SPEED_MULTIPLIER_OFFSET = 0x8F;
+    private const int UNIT_PA_GROWTH_OFFSET = 0x90;
+    private const int UNIT_PA_MULTIPLIER_OFFSET = 0x91;
+    private const int UNIT_MA_GROWTH_OFFSET = 0x92;
+    private const int UNIT_MA_MULTIPLIER_OFFSET = 0x93;
     private const byte GOLGOLLADA_GAFFGARION_CHAR_ID = 0x11;
     private const byte GOLGOLLADA_GAFFGARION_JOB_ID = 17;
     private const byte CUCHULAINN_ENTD_CHAR_ID = 0x3C;
@@ -211,6 +229,7 @@ public class Program : IMod
         "E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 85 C9 74 ?? E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74";
 
     private volatile bool _isNgPlus;
+    private int _currentBattleEntry = -1;
     private DateTime _lastMerchantDorterEntdTraceUtc = DateTime.MinValue;
     private long _zeircheleActorTableProbeUntilTicks;
     private long _merchantActorTableProbeUntilTicks;
@@ -497,6 +516,8 @@ public class Program : IMod
         }
         new System.Threading.Thread(GolgolladaGaffPaPatchLoop) { IsBackground = true, Name = "ngplus-golgollada-gaff-pa-patch" }.Start();
         new System.Threading.Thread(CuchulainnHpPatchLoop) { IsBackground = true, Name = "ngplus-cuchulainn-hp-patch" }.Start();
+        if (GenericRuntimeStatTargetsByEntry.Count > 0)
+            new System.Threading.Thread(GenericRuntimeStatPatchLoop) { IsBackground = true, Name = "ngplus-generic-runtime-stat-patch" }.Start();
 
     }
 
@@ -556,6 +577,8 @@ public class Program : IMod
             if (validSlice) ScaleGuestsAlways(outputPointer, size, fileIndex, sectorOffset, haveMod ? modded : null);
             if (validSlice) TraceZeircheleEntd("after-scale", outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
             if (validSlice) TraceMerchantDorterEntd(outputPointer, size, fileIndex, sectorOffset, _isNgPlus, haveMod, fullRead);
+            if (_isNgPlus && haveMod && validSlice)
+                ArmGenericRuntimeStatPatchIfNeeded(fileIndex, sectorOffset, size);
             if (_isNgPlus && haveMod && validSlice && SliceCoversEntdEntry(fileIndex, sectorOffset, size, GOLGOLLADA_GALLOWS_ENTRY))
                 ArmGolgolladaGaffPaPatch();
             if (_isNgPlus && haveMod && validSlice && SliceCoversEntdEntry(fileIndex, sectorOffset, size, LIONEL_ORATORY_ENTRY))
@@ -2159,6 +2182,7 @@ public class Program : IMod
             if (path is null) { Log("[ngdetect] autosave not found"); return; }
 
             Dictionary<string, byte[]> files = SaveReader.Decode(path);
+            CaptureCurrentBattleEntry(files);
 
             // Diagnostic: log every resume file's flag byte so we can see which is fresh/current.
             foreach (var kv in files)
