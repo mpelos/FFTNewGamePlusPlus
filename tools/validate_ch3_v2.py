@@ -102,6 +102,61 @@ def run() -> int:
           and roster(entd, 417, [6], 0x14) == [210]
           and roster(entd, 417, [6], 0x15) == [72])
 
+    # 026 - Lesalia Castle Postern, entry 420.
+    # s0 Alma support guest; s1 Zalmo retreating Inquisitor; s2/s3/s5 Knight; s4/s6 Monk.
+    check("420 runtime target table present", "[420] = Targets(" in runtime)
+    check("420 runtime target includes Alma guest", 'GuestUnit(0x30, 0x30, 0x30, "Alma support guest")' in runtime)
+    for uid in (0x80, 0x81, 0x82, 0x83, 0x84):
+        check(f"420 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
+
+    check("420 Alma identity preserved", field(entd, 420, 0, 0x00) == 0x30 and field(entd, 420, 0, 0x0A) == 0x30)
+    check("420 Alma level/control", field(entd, 420, 0, 0x03) == 100 and (field(entd, 420, 0, 0x18) & 0x08) != 0)
+    check("420 Alma Brave/Faith", (field(entd, 420, 0, 0x06), field(entd, 420, 0, 0x07)) == (60, 78))
+
+    check("420 Zalmo identity preserved", field(entd, 420, 1, 0x00) == 0x10 and field(entd, 420, 1, 0x0A) == 0x10)
+    check("420 Zalmo level secondary Br/Fa",
+          field(entd, 420, 1, 0x03) == 103
+          and field(entd, 420, 1, 0x0B) == 6
+          and (field(entd, 420, 1, 0x06), field(entd, 420, 1, 0x07)) == (70, 78))
+    check("420 Zalmo special R/S/M preserved",
+          field16(entd, 420, 1, 0x0C) == 452
+          and field16(entd, 420, 1, 0x0E) == 462
+          and field16(entd, 420, 1, 0x10) == 493)
+
+    lesalia_enemy_slots = [2, 3, 4, 5, 6]
+    check("420 roster jobs", roster(entd, 420, lesalia_enemy_slots, 0x0A) == [76, 76, 78, 76, 78])
+    check("420 roster levels", roster(entd, 420, lesalia_enemy_slots, 0x03) == [101, 101, 101, 101, 101])
+    check("420 roster secondaries", roster(entd, 420, lesalia_enemy_slots, 0x0B) == [6, 6, 6, 5, 6])
+    check("420 roster Brave", roster(entd, 420, lesalia_enemy_slots, 0x06) == [84, 84, 84, 84, 84])
+    check("420 roster Faith", roster(entd, 420, lesalia_enemy_slots, 0x07) == [45, 45, 42, 45, 42])
+    for slot_no in lesalia_enemy_slots:
+        job = field(entd, 420, slot_no, 0x0A)
+        check(f"420 s{slot_no} jobrank", field(entd, 420, slot_no, 0x08) == rank(job))
+        check(f"420 s{slot_no} JobLevel 8", field(entd, 420, slot_no, 0x09) == 8)
+
+    for slot_no in (2, 3, 5):
+        check(f"420 s{slot_no} Knight R/S/M",
+              field16(entd, 420, slot_no, 0x0C) == 442
+              and field16(entd, 420, slot_no, 0x0E) == 465
+              and field16(entd, 420, slot_no, 0x10) == 486)
+        check(f"420 s{slot_no} Knight gear",
+              roster(entd, 420, [slot_no], 0x12) == [154]
+              and roster(entd, 420, [slot_no], 0x13) == [182]
+              and roster(entd, 420, [slot_no], 0x14) == [218]
+              and roster(entd, 420, [slot_no], 0x15) == [30]
+              and roster(entd, 420, [slot_no], 0x16) == [135])
+
+    for slot_no in (4, 6):
+        check(f"420 s{slot_no} Monk R/S/M",
+              field16(entd, 420, slot_no, 0x0C) == 442
+              and field16(entd, 420, slot_no, 0x0E) == 465
+              and field16(entd, 420, slot_no, 0x10) == 486)
+        check(f"420 s{slot_no} Monk gear",
+              roster(entd, 420, [slot_no], 0x12) == [254]
+              and roster(entd, 420, [slot_no], 0x13) == [195]
+              and roster(entd, 420, [slot_no], 0x14) == [218]
+              and roster(entd, 420, [slot_no], 0x15) == [254])
+
     passed = 0
     for name, ok in checks:
         if ok:

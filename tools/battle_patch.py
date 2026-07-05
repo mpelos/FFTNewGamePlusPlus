@@ -1017,21 +1017,29 @@ def gollund(data):
 # Vanilla 420: s0 = Alma guest (cid/sprite/job 48; runtime-scaled, DO NOT touch here); s1 = Zalmo
 # (named cid 0x10, job 16 Inquisitor — the SUB-BOSS; HEALS/REVIVES, RETREATS at HP threshold, no
 # death/loot here); s2,s3,s5 Knight (76); s4,s6 Monk (78). Per docs/026.
-#   - Zalmo: LEVEL ONLY (103). Preserve job 16 + secondary 6 + gear + the heal/revive/retreat
-#     scripting (like Cúchulainn) — touching his special-job gear risks illegality + breaks the puzzle.
+#   - Zalmo: preserve job 16 + gear + the heal/revive/retreat scripting (like Cúchulainn). Safe v2
+#     edits are level, Br/Fa, and an Items secondary; touching his special-job identity risks the puzzle.
 #   - Knights: Flame Shield band (Fire-absorb element puzzle); Rend innate (Battle Skill primary).
 #   - Monks: bare-fist; Monk equips HairAdornment (all reserved) not Hat, so NO head item -> bare head
 #     (canonical). Body = Power Garb (Clothing, legal); no shield (give PA via Bracers).
 #   - No rare loot (Zalmo retreats), per the Ch3 overview.
 def lesalia(data):
     E = 420
-    set_slot(data, E, 1, level=103)  # Zalmo sub-boss: level only; preserve heal/revive/retreat kit
-    for s, lvl in ((2, 101), (3, 101), (5, 100)):  # 3 Knights — Flame Shield wall, Rend innate
-        set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT,
+    set_slot(data, E, 0, level=100, brave=60, faith=78)  # Alma guest: preserve Aegis kit/gear
+    set_player_control(data, E, 0)
+    set_slot(data, E, 1, level=103, secondary=ITEMS, brave=70, faith=78)  # Zalmo: preserve retreat kit
+    for s in (2, 3):  # 2 main Knights — Flame Shield wall, Rend innate
+        set_slot(data, E, s, level=101, joblevel=8, job=KNIGHT, secondary=ITEMS,
+                 brave=84, faith=45,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=FLAME_SHIELD)
+    set_slot(data, E, 5, level=101, joblevel=8, job=KNIGHT, secondary=FUNDAMENTS,
+             brave=84, faith=45,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=FLAME_SHIELD)
     for s in (4, 6):  # 2 Monks — bare-fist bruisers (no legal Hat/shield); Power Garb + Bracers
-        set_slot(data, E, s, level=101, joblevel=8, job=MONK,
+        set_slot(data, E, s, level=101, joblevel=8, job=MONK, secondary=ITEMS,
+                 brave=84, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  body=POWER_GARB, acc=BRACERS)
     return [E]

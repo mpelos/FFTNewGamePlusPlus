@@ -36,6 +36,13 @@ public partial class Program
             EnemyUnit(0x83, "Thief charm mid"),
             EnemyUnit(0x84, "Thief charm right"),
             EnemyUnit(0x85, "Orator anchor")),
+        [420] = Targets(
+            GuestUnit(0x30, 0x30, 0x30, "Alma support guest"),
+            EnemyUnit(0x80, "Knight wall A"),
+            EnemyUnit(0x81, "Knight wall B"),
+            EnemyUnit(0x82, "Monk bruiser A"),
+            EnemyUnit(0x83, "Knight wall C"),
+            EnemyUnit(0x84, "Monk bruiser B")),
     };
 
     private enum RuntimeStatTargetKind
