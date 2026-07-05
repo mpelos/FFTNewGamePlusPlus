@@ -82,6 +82,14 @@ public partial class Program
             EnemyUnit(0x81, 0x44, "Enemy Time Mage A"),
             EnemyUnit(0x82, 0x42, "Enemy Black Mage B"),
             EnemyUnit(0x83, 0x44, "Enemy Time Mage B")),
+        [431] = Targets(
+            EnemyUnit(0x80, "High Archer A"),
+            EnemyUnit(0x81, "High Archer B"),
+            EnemyUnit(0x82, "Flank Archer"),
+            EnemyUnit(0x83, 0x26, "Templar bridge breaker"),
+            EnemyUnit(0x84, "Knight bridge body A"),
+            EnemyUnit(0x85, "Knight bridge body B"),
+            EnemyUnit(0x86, "Knight bridge body C")),
     };
 
     private enum RuntimeStatTargetKind

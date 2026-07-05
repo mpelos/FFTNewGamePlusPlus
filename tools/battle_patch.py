@@ -59,6 +59,7 @@ SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-C
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
+MIGHTY_SWORD = 52
 STEAL = 14
 SPEECHCRAFT = 15
 # Argath/Ziekden crossbow-sniper kit. IDs resolved from the FFTPatcher PSX tables, which TIC
@@ -1910,6 +1911,22 @@ def yuguewood_v2(data):
     return touched
 
 
+def riovanes_gate_v2(data):
+    touched = riovanes_gate(data)
+    E = 431
+    # Marach survives and is intentionally excluded from the runtime generic-stat pass.
+    set_slot(data, E, 1, joblevel=8, secondary=ITEMS, brave=78, faith=72,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1)
+    # Templar bridge breaker: keep the special job but explicitly equip Mighty Sword as the secondary.
+    set_slot(data, E, 5, secondary=MIGHTY_SWORD, brave=84, faith=45)
+    set_slot(data, E, 6, secondary=FUNDAMENTS, brave=84, faith=45)
+    for s in (7, 8):
+        set_slot(data, E, s, secondary=ITEMS, brave=84, faith=45)
+    for s in (2, 3, 4):
+        set_slot(data, E, s, brave=80, faith=45)
+    return touched
+
+
 BATTLES = {
     "chapter1_guest_control": chapter1_guest_control,
     "gariland": gariland,
@@ -1940,7 +1957,7 @@ BATTLES = {
     "grogh": grogh_v2,
     "yardrow": yardrow_v2,
     "yuguewood": yuguewood_v2,
-    "riovanes_gate": riovanes_gate,
+    "riovanes_gate": riovanes_gate_v2,
     "riovanes_keep": riovanes_keep,
     "riovanes_roof": riovanes_roof,
     "dugeura": dugeura,

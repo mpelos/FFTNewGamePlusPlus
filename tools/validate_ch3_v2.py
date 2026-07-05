@@ -561,6 +561,86 @@ def run() -> int:
               and roster(entd, 430, [slot_no], 0x15) == [254]
               and roster(entd, 430, [slot_no], 0x16) == [254])
 
+    # 033 - Riovanes Castle Gate, entry 431.
+    # s0 Rapha placeholder inactive; s1 Marach named boss excluded from runtime;
+    # s2-s4 Archers, s5 Templar, s6-s8 Knights.
+    check("431 runtime target table present", "[431] = Targets(" in runtime)
+    check("431 runtime target excludes Marach boss", 'GuestUnit(0x1A' not in runtime and 'EnemyUnit(0x1A' not in runtime)
+    for uid, label in (
+        ("0x80", "High Archer A"),
+        ("0x81", "High Archer B"),
+        ("0x82", "Flank Archer"),
+        ("0x84", "Knight bridge body A"),
+        ("0x85", "Knight bridge body B"),
+        ("0x86", "Knight bridge body C"),
+    ):
+        check(f"431 runtime target includes {label}", f'EnemyUnit({uid}, "{label}")' in runtime)
+    check("431 runtime target includes Templar explicit job",
+          'EnemyUnit(0x83, 0x26, "Templar bridge breaker")' in runtime)
+
+    check("431 Rapha placeholder inactive", field(entd, 431, 0, 0x03) == 254)
+    check("431 Marach identity preserved", field(entd, 431, 1, 0x0A) == 26)
+    check("431 Marach level/setup",
+          field(entd, 431, 1, 0x03) == 103
+          and field(entd, 431, 1, 0x09) == 8
+          and field(entd, 431, 1, 0x0B) == 6
+          and field(entd, 431, 1, 0x06) == 78
+          and field(entd, 431, 1, 0x07) == 72)
+    check("431 Marach R/S/M and gear",
+          field16(entd, 431, 1, 0x0C) == 449
+          and field16(entd, 431, 1, 0x0E) == 467
+          and field16(entd, 431, 1, 0x10) == 486
+          and roster(entd, 431, [1], 0x12) == [167]
+          and roster(entd, 431, [1], 0x13) == [206]
+          and roster(entd, 431, [1], 0x14) == [218]
+          and roster(entd, 431, [1], 0x15) == [111]
+          and roster(entd, 431, [1], 0x16) == [254])
+
+    riovanes_slots = [2, 3, 4, 5, 6, 7, 8]
+    check("431 roster jobs", roster(entd, 431, riovanes_slots, 0x0A) == [77, 77, 77, 38, 76, 76, 76])
+    check("431 roster levels", roster(entd, 431, riovanes_slots, 0x03) == [102, 101, 100, 102, 101, 101, 101])
+    check("431 roster JobLevel 8", roster(entd, 431, riovanes_slots, 0x09) == [8, 8, 8, 8, 8, 8, 8])
+    check("431 roster Brave", roster(entd, 431, riovanes_slots, 0x06) == [80, 80, 80, 84, 84, 84, 84])
+    check("431 roster Faith", roster(entd, 431, riovanes_slots, 0x07) == [45, 45, 45, 45, 45, 45, 45])
+
+    for slot_no in (2, 3, 4):
+        check(f"431 s{slot_no} Archer R/S/M",
+              field(entd, 431, slot_no, 0x0B) == 5
+              and field16(entd, 431, slot_no, 0x0C) == 449
+              and field16(entd, 431, slot_no, 0x0E) == 469
+              and field16(entd, 431, slot_no, 0x10) == 486)
+        check(f"431 s{slot_no} Archer gear",
+              roster(entd, 431, [slot_no], 0x12) == [168]
+              and roster(entd, 431, [slot_no], 0x13) == [198]
+              and roster(entd, 431, [slot_no], 0x14) == [218]
+              and roster(entd, 431, [slot_no], 0x15) == [87]
+              and roster(entd, 431, [slot_no], 0x16) == [254])
+
+    check("431 Templar Mighty Sword kit",
+          field(entd, 431, 5, 0x0B) == 52
+          and field16(entd, 431, 5, 0x0C) == 442
+          and field16(entd, 431, 5, 0x0E) == 465
+          and field16(entd, 431, 5, 0x10) == 486
+          and roster(entd, 431, [5], 0x12) == [154]
+          and roster(entd, 431, [5], 0x13) == [182]
+          and roster(entd, 431, [5], 0x14) == [218]
+          and roster(entd, 431, [5], 0x15) == [30]
+          and roster(entd, 431, [5], 0x16) == [139])
+
+    check("431 Knight secondaries",
+          roster(entd, 431, [6, 7, 8], 0x0B) == [5, 6, 6])
+    for slot_no in (6, 7, 8):
+        check(f"431 s{slot_no} Knight R/S/M",
+              field16(entd, 431, slot_no, 0x0C) == 442
+              and field16(entd, 431, slot_no, 0x0E) == 465
+              and field16(entd, 431, slot_no, 0x10) == 486)
+        check(f"431 s{slot_no} Knight gear",
+              roster(entd, 431, [slot_no], 0x12) == [154]
+              and roster(entd, 431, [slot_no], 0x13) == [182]
+              and roster(entd, 431, [slot_no], 0x14) == [218]
+              and roster(entd, 431, [slot_no], 0x15) == [30]
+              and roster(entd, 431, [slot_no], 0x16) == [139])
+
     passed = 0
     for name, ok in checks:
         if ok:
