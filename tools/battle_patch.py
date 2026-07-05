@@ -1057,7 +1057,7 @@ def lesalia(data):
 #     flagged separately). Chemist = the sustain priority kill. No boss -> no rare loot.
 def vaults_2nd(data):
     E = 422
-    set_slot(data, E, 0, level=102)  # Nightblade special: level only, preserve identity/kit
+    set_slot(data, E, 0, level=102, brave=84, faith=55)  # Nightblade special: preserve identity/kit
     for s, lvl in ((1, 102), (2, 101), (3, 100)):  # 3 Dragoons — Jump divers
         set_slot(data, E, s, level=lvl, joblevel=8, job=LANCER,
                  reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
@@ -1069,6 +1069,12 @@ def vaults_2nd(data):
         set_slot(data, E, s, level=101, joblevel=4, job=TMAGE,
                  reaction=REFLEXES, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
+    set_slot(data, E, 1, secondary=ITEMS, brave=84, faith=42)
+    for s in (2, 3):
+        set_slot(data, E, s, secondary=FUNDAMENTS, brave=84, faith=42)
+    set_slot(data, E, 4, secondary=FUNDAMENTS, brave=68, faith=64)
+    for s in (5, 6):
+        set_slot(data, E, s, secondary=ITEMS, brave=60, faith=74, support=MAGICK_BOOST)
     return [E]
 
 

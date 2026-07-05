@@ -157,6 +157,65 @@ def run() -> int:
               and roster(entd, 420, [slot_no], 0x14) == [218]
               and roster(entd, 420, [slot_no], 0x15) == [254])
 
+    # 027 - Monastery Vaults 2nd Level, entry 422.
+    # s0 Nightblade special is preserved; s1/s2/s3 Dragoon; s4 Chemist; s5/s6 Time Mage.
+    check("422 runtime target table present", "[422] = Targets(" in runtime)
+    for uid in (0x80, 0x81, 0x82, 0x83, 0x84, 0x85):
+        check(f"422 runtime target includes enemy uid 0x{uid:02X}", f"EnemyUnit(0x{uid:02X}" in runtime)
+
+    check("422 Nightblade identity preserved", field(entd, 422, 0, 0x00) == 0x26 and field(entd, 422, 0, 0x0A) == 0x26)
+    check("422 Nightblade level Br/Fa",
+          field(entd, 422, 0, 0x03) == 102
+          and (field(entd, 422, 0, 0x06), field(entd, 422, 0, 0x07)) == (84, 55))
+
+    vaults_enemy_slots = [1, 2, 3, 4, 5, 6]
+    check("422 roster jobs", roster(entd, 422, vaults_enemy_slots, 0x0A) == [87, 87, 87, 75, 81, 81])
+    check("422 roster levels", roster(entd, 422, vaults_enemy_slots, 0x03) == [102, 101, 100, 101, 101, 101])
+    check("422 roster secondaries", roster(entd, 422, vaults_enemy_slots, 0x0B) == [6, 5, 5, 5, 6, 6])
+    check("422 roster Brave", roster(entd, 422, vaults_enemy_slots, 0x06) == [84, 84, 84, 68, 60, 60])
+    check("422 roster Faith", roster(entd, 422, vaults_enemy_slots, 0x07) == [42, 42, 42, 64, 74, 74])
+    for slot_no in vaults_enemy_slots:
+        job = field(entd, 422, slot_no, 0x0A)
+        check(f"422 s{slot_no} jobrank", field(entd, 422, slot_no, 0x08) == rank(job))
+
+    for slot_no in (1, 2, 3):
+        check(f"422 s{slot_no} Dragoon JobLevel", field(entd, 422, slot_no, 0x09) == 8)
+        check(f"422 s{slot_no} Dragoon R/S/M",
+              field16(entd, 422, slot_no, 0x0C) == 449
+              and field16(entd, 422, slot_no, 0x0E) == 465
+              and field16(entd, 422, slot_no, 0x10) == 486)
+        check(f"422 s{slot_no} Dragoon gear",
+              roster(entd, 422, [slot_no], 0x12) == [154]
+              and roster(entd, 422, [slot_no], 0x13) == [182]
+              and roster(entd, 422, [slot_no], 0x14) == [218]
+              and roster(entd, 422, [slot_no], 0x15) == [102]
+              and roster(entd, 422, [slot_no], 0x16) == [139])
+
+    check("422 Chemist JobLevel", field(entd, 422, 4, 0x09) == 8)
+    check("422 Chemist R/S/M",
+          field16(entd, 422, 4, 0x0C) == 441
+          and field16(entd, 422, 4, 0x0E) == 474
+          and field16(entd, 422, 4, 0x10) == 486)
+    check("422 Chemist gear",
+          roster(entd, 422, [4], 0x12) == [167]
+          and roster(entd, 422, [4], 0x13) == [198]
+          and roster(entd, 422, [4], 0x14) == [218]
+          and roster(entd, 422, [4], 0x15) == [72]
+          and roster(entd, 422, [4], 0x16) == [254])
+
+    for slot_no in (5, 6):
+        check(f"422 s{slot_no} Time Mage JobLevel cap", field(entd, 422, slot_no, 0x09) == 4)
+        check(f"422 s{slot_no} Time Mage R/S/M",
+              field16(entd, 422, slot_no, 0x0C) == 449
+              and field16(entd, 422, slot_no, 0x0E) == 467
+              and field16(entd, 422, slot_no, 0x10) == 486)
+        check(f"422 s{slot_no} Time Mage gear",
+              roster(entd, 422, [slot_no], 0x12) == [167]
+              and roster(entd, 422, [slot_no], 0x13) == [206]
+              and roster(entd, 422, [slot_no], 0x14) == [234]
+              and roster(entd, 422, [slot_no], 0x15) == [64]
+              and roster(entd, 422, [slot_no], 0x16) == [255])
+
     passed = 0
     for name, ok in checks:
         if ok:

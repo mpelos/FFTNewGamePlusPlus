@@ -43,6 +43,13 @@ public partial class Program
             EnemyUnit(0x82, "Monk bruiser A"),
             EnemyUnit(0x83, "Knight wall C"),
             EnemyUnit(0x84, "Monk bruiser B")),
+        [422] = Targets(
+            EnemyUnit(0x80, "Dragoon lead"),
+            EnemyUnit(0x81, "Dragoon diver A"),
+            EnemyUnit(0x82, "Dragoon diver B"),
+            EnemyUnit(0x83, "Chemist sustain"),
+            EnemyUnit(0x84, "Time Mage tempo A"),
+            EnemyUnit(0x85, "Time Mage tempo B")),
     };
 
     private enum RuntimeStatTargetKind
