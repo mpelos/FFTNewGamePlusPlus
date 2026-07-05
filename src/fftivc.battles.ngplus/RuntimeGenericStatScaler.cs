@@ -4,7 +4,7 @@ namespace fftivc.battles.ngplus;
 
 public partial class Program
 {
-    private const int FIRST_CHAPTER3_ENTRY = 426;
+    private const int FIRST_CHAPTER3_ENTRY = 417;
     private const byte GENDER_MALE_BIT = 0x80;
     private const byte GENDER_FEMALE_BIT = 0x40;
     private const byte GENDER_MONSTER_BIT = 0x20;
@@ -17,21 +17,45 @@ public partial class Program
     private long _genericRuntimeStatPatchUntilTicks;
     private int _genericRuntimeStatActiveEntry = -1;
 
-    // Chapter 3+ generic human runtime stat targets.
+    // Chapter 3+ human runtime stat targets.
     //
-    // Add entries here as battle docs are implemented. Use the ENTD global entry and the runtime UnitID
-    // (+0x191), not an actor-table index:
+    // Add entries here as battle docs are implemented. Use the ENTD global entry and the runtime
+    // UnitID (+0x191), not an actor-table index. Generic enemies use enemy-side + job 74-93 guards.
+    // Active allied guests use expected char/job + allied-side guards and the same live growth bytes.
     //
     // [426] = Targets(
-    //     Unit(0x80, "frontline Knight"),
-    //     Unit(0x81, "support Chemist"));
+    //     EnemyUnit(0x80, "frontline Knight"),
+    //     GuestUnit(0x15, 0x15, 0x15, "Orran"));
     private static readonly Dictionary<int, RuntimeGenericStatTarget[]> GenericRuntimeStatTargetsByEntry = new()
     {
+        [417] = Targets(
+            GuestUnit(0x15, 0x15, 0x15, "Orran protected guest"),
+            EnemyUnit(0x80, "Thief charm left"),
+            EnemyUnit(0x81, "Chemist sustain A"),
+            EnemyUnit(0x82, "Chemist sustain B"),
+            EnemyUnit(0x83, "Thief charm mid"),
+            EnemyUnit(0x84, "Thief charm right"),
+            EnemyUnit(0x85, "Orator anchor")),
     };
 
-    private readonly record struct RuntimeGenericStatTarget(byte UnitId, string Label);
+    private enum RuntimeStatTargetKind
+    {
+        EnemyGenericHuman,
+        AlliedGuest,
+    }
 
-    private static RuntimeGenericStatTarget Unit(byte unitId, string label) => new(unitId, label);
+    private readonly record struct RuntimeGenericStatTarget(
+        byte UnitId,
+        RuntimeStatTargetKind Kind,
+        byte ExpectedCharId,
+        byte ExpectedJobId,
+        string Label);
+
+    private static RuntimeGenericStatTarget EnemyUnit(byte unitId, string label)
+        => new(unitId, RuntimeStatTargetKind.EnemyGenericHuman, 0, 0, label);
+
+    private static RuntimeGenericStatTarget GuestUnit(byte unitId, byte expectedCharId, byte expectedJobId, string label)
+        => new(unitId, RuntimeStatTargetKind.AlliedGuest, expectedCharId, expectedJobId, label);
 
     private static RuntimeGenericStatTarget[] Targets(params RuntimeGenericStatTarget[] targets) => targets;
 
@@ -171,14 +195,14 @@ public partial class Program
             if (unitId != target.UnitId)
                 continue;
 
-            if (!TryReadGenericRuntimeStatInputs(unit, out GenericRuntimeStatInputs inputs))
+            if (!TryReadGenericRuntimeStatInputs(unit, target, out GenericRuntimeStatInputs inputs))
                 return false;
 
             GenericRuntimeStats stats = CalculateGenericRuntimeStats(inputs);
             WriteGenericRuntimeStats(unit, inputs, stats);
 
             logLine =
-                $"target=0x{target.UnitId:X2}/{target.Label} a{i} job={inputs.JobId} lv={inputs.Level} " +
+                $"target=0x{target.UnitId:X2}/{target.Kind}/{target.Label} a{i} char=0x{inputs.CharId:X2} job={inputs.JobId} lv={inputs.Level} " +
                 $"HP {inputs.CurrentHp}/{inputs.MaxHp}->{stats.CurrentHp}/{stats.MaxHp} " +
                 $"MP {inputs.CurrentMp}/{inputs.MaxMp}->{stats.CurrentMp}/{stats.MaxMp} " +
                 $"rawPA {inputs.RawPa}->{stats.RawPa} rawMA {inputs.RawMa}->{stats.RawMa} " +
@@ -189,7 +213,10 @@ public partial class Program
         return false;
     }
 
-    private static bool TryReadGenericRuntimeStatInputs(nint unit, out GenericRuntimeStatInputs inputs)
+    private static bool TryReadGenericRuntimeStatInputs(
+        nint unit,
+        RuntimeGenericStatTarget target,
+        out GenericRuntimeStatInputs inputs)
     {
         inputs = default;
 
@@ -197,10 +224,25 @@ public partial class Program
         if (state == 0xFF)
             return false;
 
+        byte charId = SafeReadByte(unit + UNIT_CHAR_ID_OFFSET);
+        byte jobId = SafeReadByte(unit + UNIT_JOB_ID_OFFSET);
         byte team = SafeReadByte(unit + UNIT_TEAM_OFFSET);
         byte foeFlags = SafeReadByte(unit + UNIT_FOE_FLAGS_OFFSET);
-        if (team == 0 || (foeFlags & FOE_TEAM_BIT) == 0)
-            return false;
+        bool isEnemySide = team != 0 && (foeFlags & FOE_TEAM_BIT) != 0;
+
+        if (target.Kind == RuntimeStatTargetKind.EnemyGenericHuman)
+        {
+            if (!isEnemySide || jobId is < 74 or > 93)
+                return false;
+        }
+        else
+        {
+            if (isEnemySide ||
+                team == 0 ||
+                charId != target.ExpectedCharId ||
+                jobId != target.ExpectedJobId)
+                return false;
+        }
 
         byte genderFlags = SafeReadByte(unit + UNIT_GENDER_FLAGS_OFFSET);
         if ((genderFlags & GENDER_MONSTER_BIT) != 0)
@@ -209,10 +251,6 @@ public partial class Program
         bool isMale = (genderFlags & GENDER_MALE_BIT) != 0;
         bool isFemale = (genderFlags & GENDER_FEMALE_BIT) != 0;
         if (isMale == isFemale)
-            return false;
-
-        byte jobId = SafeReadByte(unit + UNIT_JOB_ID_OFFSET);
-        if (jobId is < 74 or > 93)
             return false;
 
         byte level = SafeReadByte(unit + UNIT_LEVEL_OFFSET);
@@ -245,6 +283,7 @@ public partial class Program
             return false;
 
         inputs = new GenericRuntimeStatInputs(
+            CharId: charId,
             IsMale: isMale,
             JobId: jobId,
             Level: level,
@@ -347,6 +386,7 @@ public partial class Program
     private readonly record struct GenericLevelOneBases(int Hp, int Mp, int Speed, int Pa, int Ma);
 
     private readonly record struct GenericRuntimeStatInputs(
+        byte CharId,
         bool IsMale,
         byte JobId,
         byte Level,

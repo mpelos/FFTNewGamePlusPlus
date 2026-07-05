@@ -3,7 +3,7 @@
 The single entry point for adding a unit to a battle: the decision tree, every tool and path, how
 to find the battle's event script, and the validated recipes. Deep references: `01` (ENTD bytes),
 `03` (opcodes), `04` (event-spawn recipe), `08` (OverrideEntryData), `09` (sprite budget), `12`
-(Chapter 3+ generic enemy runtime stat formulas).
+(Chapter 3+ runtime stat formulas for generic enemies and active allied guests).
 
 Validation status is marked per claim: **[VALIDATED]** = confirmed in-game; **[PENDING]** =
 implemented, awaiting playtest; **[HYPOTHESIS]** = best reading of the data.
@@ -95,12 +95,18 @@ Want one MORE enemy?
 └── 4. Either way: finish with the Verify & deploy block, then ONE playtest.
 ```
 
-## Chapter 3+ generic enemy stat pass
+## Chapter 3+ runtime stat pass
 
 Starting in Chapter 3, generic human enemies are not considered complete just because their ENTD
 level, job, gear, and abilities are correct. Their live start-of-battle stats must also be
 recalculated at runtime from their gender and current job, as if they had leveled every level in that
 job.
+
+The same growth pass is also required for active allied guests when the battle has one. A protected
+or scripted guest is part of the designed encounter, so leaving that guest with vanilla raw stats can
+make the redesign fail even if their level, gear, and control flags are correct. Gollund's Orran is
+the first Chapter 3 example: he must be scaled, geared, player-controlled, and have growth-corrected
+raw stats while preserving Celestial Stasis and the save-Orran objective.
 
 Process:
 
@@ -108,23 +114,30 @@ Process:
 1. Keep ENTD as the source for level encoding, job, gear, abilities, Brave/Faith, flags, and position.
 2. For every Chapter 3+ generic human enemy in the redesigned battle, add a runtime stat target for
    that battle entry/unit id.
-3. At battle load, arm a short actor-table scan only for that NG+ battle entry.
-4. For each configured unit id:
+3. For every active allied guest in the redesigned battle, add an explicit runtime stat target too.
+   Mark it as an allied-guest target so the runtime uses guest-side guards instead of enemy-side
+   guards.
+4. At battle load, arm a short actor-table scan only for that NG+ battle entry.
+5. For each configured unit id:
    - confirm active actor entry;
-   - confirm enemy-side;
-   - confirm generic human job id 74-93;
+   - for enemy targets, confirm enemy-side and generic human job id 74-93;
+   - for allied-guest targets, confirm the expected guest/story unit id and allied side;
+   - for named or special guest jobs, verify the live job growth/multiplier bytes before applying
+     the formula; do not assume generic job ids;
    - read gender flags at actor +0x06;
    - read live expanded level at actor +0x29;
    - read job growth/multipliers at actor +0x8A..+0x93;
    - calculate HP, MP, Speed, PA, and MA from the gender base + current job growth;
    - write Max HP/MP without using the pass as a mid-fight heal/refill;
    - write Raw PA/MA/Speed and preserve effective-stat equipment deltas.
-5. Mark the unit patched so repeated scans cannot keep refreshing HP/MP.
+6. Mark the unit patched so repeated scans cannot keep refreshing HP/MP.
 ```
 
 Use [12-runtime-raw-stat-formulas.md](12-runtime-raw-stat-formulas.md) for the exact bases, formula,
-offsets, and guard rules. Do **not** apply this pass to named jobs, Lucavi, story bosses, monsters,
-guests, or Chapter 1/2 battles unless a separate battle-specific runtime rule explicitly says so.
+offsets, and guard rules. Do **not** apply this pass to Lucavi, story bosses, monsters, inactive
+story actors, or Chapter 1/2 battles unless a separate battle-specific runtime rule explicitly says
+so. Active allied guests in Chapter 3+ are not optional: include them when they exist, but keep their
+scripted identity, control behavior, objectives, and special commands intact.
 
 ## Paths map
 
@@ -224,9 +237,9 @@ python tools\validate_ch2_v2.py              # or the relevant chapter validator
 $env:RELOADEDIIMODS='C:\Reloaded-II\Mods'; dotnet build .\src\fftivc.battles.ngplus\fftivc.battles.ngplus.csproj -c Release
 ```
 
-For Chapter 3+ generic-human battle work, also verify that every generic human enemy expected to use
-the runtime stat pass has a configured target in the code and that non-generic enemies are deliberately
-excluded.
+For Chapter 3+ human battle work, also verify that every generic human enemy and every active allied
+guest expected to use the runtime stat pass has a configured target in the code, and that monsters,
+story bosses, Lucavi, and inactive story actors are deliberately excluded.
 
 Then verify the DEPLOYED artifacts, not the intent:
 

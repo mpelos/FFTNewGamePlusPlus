@@ -1,13 +1,18 @@
-# Generic enemy runtime raw stats
+# Runtime raw stats for Chapter 3+ humans
 
-This document is only for **generic human enemy jobs**. It is the starting reference for Chapter 3+
-runtime stat recalculation.
+This document is the starting reference for Chapter 3+ runtime stat recalculation.
 
 Scope:
 
 ```text
-Included: generic human jobs 74-93.
-Excluded: named jobs, story bosses, Lucavi, monsters, transform forms, guests.
+Included:
+- generic human enemies in jobs 74-93;
+- active allied guests when a battle doc explicitly requires them, using the guest's live
+  job-growth/multiplier bytes instead of a hardcoded generic-job assumption.
+
+Excluded:
+- inactive story actors, story bosses, Lucavi, monsters, transform forms, and Chapter 1/2 units
+  unless a separate battle-specific runtime rule explicitly opts them in.
 ```
 
 ## Confidence
@@ -26,8 +31,9 @@ Working classic FFT base seeds:
 | Male | 30 | 15 | 6 | 4 | 3 | MEDIUM |
 | Female | 28 | 16 | 6 | 3 | 4 | MEDIUM |
 
-Use male/female only for ordinary generic humans. If a unit is a monster or a named/special job, do
-not use this table.
+Use male/female only for ordinary generic humans and active human guests. If a unit is a monster,
+Lucavi, inactive story actor, or story boss, do not use this table unless a separate runtime rule
+explicitly says so.
 
 ## Growth model
 
@@ -66,7 +72,7 @@ mid-fight heal/refill.
 
 Actor table base and stride are documented in [02-battle-actor-table.md](02-battle-actor-table.md).
 
-Fields needed for generic stat scaling:
+Fields needed for runtime stat scaling:
 
 | Offset | Field | Use |
 |---:|---|---|
@@ -141,7 +147,7 @@ Only the generic human rows are copied here.
 | 92 | Dancer | 20 | 60 | 20 | 50 | 100 | 100 | 50 | 110 | 50 | 95 | 3 | 3 | 5 |
 | 93 | Mime | 6 | 140 | 30 | 50 | 100 | 120 | 35 | 120 | 40 | 115 | 4 | 4 | 5 |
 
-## First implementation rule
+## Implementation rules
 
 For each generic human enemy:
 
@@ -158,6 +164,21 @@ For each generic human enemy:
 10. Write Max HP/MP and preserve current HP/MP without healing/refilling if the unit is no longer full.
 11. Write Raw PA/MA/Speed and preserve the old effective-minus-raw deltas.
 12. Mark that unit id patched so a repeated scan cannot apply late HP/MP healing.
+```
+
+For each active allied guest opted into the pass:
+
+```text
+1. Arm the runtime scan only for the current NG+ battle entry.
+2. Patch only the configured guest unit id for that entry.
+3. Confirm the actor entry is active: state != 0xFF.
+4. Confirm the expected allied/guest side and expected story unit id.
+5. Do not require job id 74-93; named guest jobs can sit outside the generic range.
+6. Read gender flags, live expanded level, and the live job growth/multiplier bytes from +0x8A..+0x93.
+7. Recalculate HP, MP, Speed, PA, and MA using those live growth/multiplier bytes.
+8. Preserve HP/MP current/full relationship and effective-stat equipment deltas.
+9. Mark the guest patched so repeated scans cannot keep refreshing HP/MP.
+10. Preserve the guest's scripted identity, control behavior, objective status, and special commands.
 ```
 
 Do not run this globally for every active unit. It is a Chapter 3+ battle-start correction and should

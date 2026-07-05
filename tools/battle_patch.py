@@ -57,6 +57,9 @@ FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
+ITEMS = 6
+STEAL = 14
+SPEECHCRAFT = 15
 # Argath/Ziekden crossbow-sniper kit. IDs resolved from the FFTPatcher PSX tables, which TIC
 # reuses 1:1 (verified vs 9 known item anchors: RuneBlade 30, FeatherMantle 234, CrystalShield 139,
 # TwistHeadband 163, PowerSleeve 195, etc.). Names cross PSX<->WotL but the ids are identical.
@@ -979,23 +982,31 @@ def cuchulainn(data):
 # Vanilla 417: s0 = Orran guest (cid/sprite 21, job 21; runtime-scaled, DO NOT touch here);
 # s1,s4,s5 Thief (job 83); s2,s3 Chemist (job 75, gun); s6 Orator (job 84). Per docs/025.
 #   - Low-lethality, high-denial: keep the 2 Chemist / 3 Thief / 1 Orator shape (one new wrinkle).
-#   - Charm/steal stay on Thieves; Orator keeps its vanilla charm/soft-status skillset (NO hard lock
-#     added). Secondary left vanilla on every slot to preserve canonical Steal/Speechcraft behavior.
+#   - Charm/steal stay on Thieves; Orator keeps Speechcraft as its primary charm/soft-status skillset
+#     (NO hard lock added). Chapter 3 requires real secondaries on active humans, so Thieves/Orator
+#     get Items for limited sustain and Chemists get Fundaments as mild, non-locking filler.
 #   - No boss here -> no rare boss loot (per the Ch3 overview); generics on shop-tier gear.
 def gollund(data):
     E = 417
+    # Orran protected guest: keep job/special kit/script, but make the embedded NG+ ENTD match v2
+    # Br/Fa and control intent. Runtime guest scaler still handles every read path and direct level.
+    set_slot(data, E, 0, level=100, brave=65, faith=75)
+    set_player_control(data, E, 0)
     # 3 Thieves: s1 L101, s4 L101, s5 L100 — fast charm/steal harassers rushing Orran.
     for s, lvl in ((1, 101), (4, 101), (5, 100)):
-        set_slot(data, E, s, level=lvl, joblevel=8, job=THIEF,
+        set_slot(data, E, s, level=lvl, joblevel=8, job=THIEF, secondary=ITEMS,
+                 brave=84, faith=42,
                  reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=AIR_KNIFE, lh=LH_EMPTY)
     # 2 Chemists L101 (s2,s3) — heal/revive sustain spine (gun = two-handed).
     for s in (2, 3):
-        set_slot(data, E, s, level=101, joblevel=8, job=CHEMIST,
+        set_slot(data, E, s, level=101, joblevel=8, job=CHEMIST, secondary=FUNDAMENTS,
+                 brave=68, faith=64,
                  reaction=AUTO_POTION, support=THROW_ITEMS, movement=MV1,
                  head=MAGE_HAT, body=BLACK_GARB, acc=BRACERS, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
-    # Orator L102 (s6) — the NEW caste anchor; charm/status. Gun two-handed; skillset left vanilla.
-    set_slot(data, E, 6, level=102, joblevel=8, job=ORATOR,
+    # Orator L102 (s6) — the NEW caste anchor; charm/status. Gun two-handed; Items secondary.
+    set_slot(data, E, 6, level=102, joblevel=8, job=ORATOR, secondary=ITEMS,
+             brave=65, faith=72,
              reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=GERMINAS, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
     return [E]
