@@ -114,14 +114,23 @@ NINJA_BLADE = 14    # Ninja Longblade — best NON-reserved ninja blade availabl
 DEFENDER = 33       # weakest KnightSword (non-buyable) — Wiegraf's Ch3 rare at the Keep (034); the
                     # reserved best KnightSwords are 34-37 (Save the Queen/Excalibur/Ragnarok/Chaos Blade)
 KIKU_ICHIMONJI = 45  # best buyable non-rare katana below Masamune; safe for fleeing Ch3 Elmdor
+KOGA_BLADE = 18
 # --- Chapter 4 best-in-slot rares (Unknown20-reserved tier, unlocked tiered in Ch4 per docs/037) ---
 SAVE_THE_QUEEN = 34  # Tier-A KnightSword — Meliadoul (039). Best KnightSword below the Tier-S pair.
 MASAMUNE = 46        # Tier-A Katana — Elmdor (048, deferred from Ch3).
+CHIRIJIRADEN = 47
+GENJI_SHIELD = 140
+GENJI_HELM = 155
 GENJI_ARMOR = 183    # Tier-A Armor — Elmdor (048).
+GENJI_GLOVES = 216
 AEGIS_SHIELD = 136   # Tier-A Shield (best magic-evade + status ward) — Zalera (049).
 GRAND_HELM = 156     # Tier-A Helmet (best non-Genji) — Adramelk/Dycedarg (050).
 CHAOS_BLADE = 37     # Tier-S KnightSword — Folmarv (052).
 RIBBON = 171         # Tier-S HairAdornment (best headgear) — Zalbaag (053).
+HAIRBAND = 169
+BARRETTE = 170
+NINJA_GEAR = 197
+ENVOUTEMENT = 237
 ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; NOT the Chapter1 id 128) — Loffrey (055).
 MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; NOT Materia Blade Plus 256) — Lost Halidom relic (057).
 RAGNAROK = 36        # Tier-S KnightSword capstone — Ultima (058).
@@ -1317,24 +1326,26 @@ def riovanes_keep(data):
 # Netherseer lvl-5 (Marach-class) — both lvl-5 SCRIPTING placeholders, DO NOT TOUCH; s3 = Elmdor
 # (job 27 Ark Knight); s4 = Celia (job 45 Assassin); s5 = Lettie (job 46 Assassin). All three enemies
 # FLEE on critical (none die) -> NO loot; preserve their special kits + the flee-on-critical scripting.
-#   - The 3 enemies: complete special kits, but no Masamune/Genji/loot and no extra bodies; preserve
-#     the flee-on-critical trigger + protect-Rapha fail condition + 4-unit cap.
+#   - The 3 enemies: keep original ability fields, but upgrade iconic gear; preserve the flee-on-critical
+#     trigger + protect-Rapha fail condition + 4-unit cap.
 #   - Rapha (s0): controlled in NG+, direct ENTD level/control/gear, and runtime guest stat growth via
 #     UnitID 0x29 (the script clone is uid 0x80, so the runtime guard can distinguish them).
-#   - NO rare: Elmdor's Masamune/Genji are his Chapter-4 Limberry loot, not here.
 def riovanes_roof(data):
     E = 433
-    set_slot(data, E, 0, level=100, brave=65, faith=75, secondary=ITEMS,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
+    set_slot(data, E, 0, level=100, jobrank=generic_job_rank(WMAGE), joblevel=8,
+             secondary=WHITE_MAGICKS, brave=65, faith=75,
+             reaction=MANA_SHIELD, support=DEFENSE_BOOST, movement=MOVE_MP_UP,
              head=THIEFS_CAP, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=113, lh=LH_TWOHAND)
     set_player_control(data, E, 0)
-    set_slot(data, E, 3, level=104, joblevel=8, secondary=ITEMS, brave=90, faith=65,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=TELEPORT,
-             head=GOLD_HAIRPIN, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
-    for s in (4, 5):
-        set_slot(data, E, s, level=103, joblevel=8, secondary=ITEMS, brave=90, faith=60,
-                 reaction=FIRST_STRIKE, support=DUAL_WIELD, movement=TELEPORT,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE, rh=NINJA_BLADE, lh=NINJA_BLADE)
+    set_slot(data, E, 3, level=104, joblevel=7, secondary=0, brave=90, faith=65,
+             reaction=FIRST_STRIKE, support=DOUBLEHAND, movement=IGNORE_HEIGHT,
+             head=GENJI_HELM, body=GENJI_ARMOR, acc=GENJI_GLOVES, rh=CHIRIJIRADEN, lh=GENJI_SHIELD)
+    set_slot(data, E, 4, level=103, joblevel=8, secondary=254, brave=90, faith=60,
+             reaction=510, support=510, movement=510,
+             head=HAIRBAND, body=NINJA_GEAR, acc=ENVOUTEMENT, rh=MASAMUNE, lh=LH_TWOHAND)
+    set_slot(data, E, 5, level=103, joblevel=8, secondary=254, brave=90, faith=60,
+             reaction=510, support=510, movement=510,
+             head=BARRETTE, body=NINJA_GEAR, acc=SORTILEGE, rh=KOGA_BLADE, lh=KOGA_BLADE)
     for s in (3, 4, 5):
         set_spoil(data, E, s, 0)
     return [E]

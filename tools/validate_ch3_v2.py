@@ -74,6 +74,7 @@ def run() -> int:
     entd = ENTD.read_bytes()
     runtime = RUNTIME.read_text(encoding="utf-8")
     override_428_0 = read_override_row(428, 0)
+    override_433_0 = read_override_row(433, 0)
     checks: list[tuple[str, bool]] = []
 
     def check(name: str, condition: bool) -> None:
@@ -788,19 +789,28 @@ def run() -> int:
     check("433 Rapha identity preserved", field(entd, 433, 0, 0x00) == 41 and field(entd, 433, 0, 0x0A) == 41)
     check("433 Rapha level/control Br/Fa",
           field(entd, 433, 0, 0x03) == 100
+          and field(entd, 433, 0, 0x08) == 5
+          and field(entd, 433, 0, 0x09) == 8
           and (field(entd, 433, 0, 0x18) & 0x08) == 0x08
           and field(entd, 433, 0, 0x06) == 65
           and field(entd, 433, 0, 0x07) == 75)
-    check("433 Rapha support kit",
-          field(entd, 433, 0, 0x0B) == 6
-          and field16(entd, 433, 0, 0x0C) == 449
-          and field16(entd, 433, 0, 0x0E) == 467
-          and field16(entd, 433, 0, 0x10) == 486
+    check("433 Rapha Yardrow-matched kit",
+          field(entd, 433, 0, 0x0B) == 10
+          and field16(entd, 433, 0, 0x0C) == 445
+          and field16(entd, 433, 0, 0x0E) == 466
+          and field16(entd, 433, 0, 0x10) == 494
           and roster(entd, 433, [0], 0x12) == [168]
           and roster(entd, 433, [0], 0x13) == [206]
           and roster(entd, 433, [0], 0x14) == [234]
           and roster(entd, 433, [0], 0x15) == [113]
           and roster(entd, 433, [0], 0x16) == [254])
+    check("433 Rapha OverrideEntryData ability row",
+          override_433_0.get("SecondarySkillset") == 10
+          and override_433_0.get("Reaction") == 445
+          and override_433_0.get("Support") == 466
+          and override_433_0.get("Movement") == 494
+          and override_433_0.get("JobUnlock") == 5
+          and override_433_0.get("JobLevel") == 8)
 
     check("433 scripting placeholders preserved",
           field(entd, 433, 1, 0x03) == 5
@@ -812,19 +822,20 @@ def run() -> int:
           field(entd, 433, 3, 0x00) == 27
           and field(entd, 433, 3, 0x0A) == 27
           and field(entd, 433, 3, 0x03) == 104
-          and field(entd, 433, 3, 0x09) == 8
+          and field(entd, 433, 3, 0x09) == 7
           and field(entd, 433, 3, 0x06) == 90
           and field(entd, 433, 3, 0x07) == 65)
-    check("433 Elmdor no-Limberry kit",
-          field(entd, 433, 3, 0x0B) == 6
+    check("433 Elmdor original skills and Genji kit",
+          field(entd, 433, 3, 0x09) == 7
+          and field(entd, 433, 3, 0x0B) == 0
           and field16(entd, 433, 3, 0x0C) == 453
-          and field16(entd, 433, 3, 0x0E) == 465
-          and field16(entd, 433, 3, 0x10) == 498
-          and roster(entd, 433, [3], 0x12) == [166]
-          and roster(entd, 433, [3], 0x13) == [206]
-          and roster(entd, 433, [3], 0x14) == [234]
-          and roster(entd, 433, [3], 0x15) == [45]
-          and roster(entd, 433, [3], 0x16) == [254]
+          and field16(entd, 433, 3, 0x0E) == 476
+          and field16(entd, 433, 3, 0x10) == 492
+          and roster(entd, 433, [3], 0x12) == [155]
+          and roster(entd, 433, [3], 0x13) == [183]
+          and roster(entd, 433, [3], 0x14) == [216]
+          and roster(entd, 433, [3], 0x15) == [47]
+          and roster(entd, 433, [3], 0x16) == [140]
           and field(entd, 433, 3, 0x1E) == 0)
 
     check("433 Assassin identities and levels",
@@ -837,17 +848,24 @@ def run() -> int:
           and roster(entd, 433, [4, 5], 0x06) == [90, 90]
           and roster(entd, 433, [4, 5], 0x07) == [60, 60])
     for slot_no in (4, 5):
-        check(f"433 s{slot_no} Assassin race kit",
-              field(entd, 433, slot_no, 0x0B) == 6
-              and field16(entd, 433, slot_no, 0x0C) == 453
-              and field16(entd, 433, slot_no, 0x0E) == 477
-              and field16(entd, 433, slot_no, 0x10) == 498
-              and roster(entd, 433, [slot_no], 0x12) == [168]
-              and roster(entd, 433, [slot_no], 0x13) == [198]
-              and roster(entd, 433, [slot_no], 0x14) == [234]
-              and roster(entd, 433, [slot_no], 0x15) == [14]
-              and roster(entd, 433, [slot_no], 0x16) == [14]
+        check(f"433 s{slot_no} Assassin original skills",
+              field(entd, 433, slot_no, 0x0B) == 254
+              and field16(entd, 433, slot_no, 0x0C) == 510
+              and field16(entd, 433, slot_no, 0x0E) == 510
+              and field16(entd, 433, slot_no, 0x10) == 510
               and field(entd, 433, slot_no, 0x1E) == 0)
+    check("433 Celia requested gear",
+          roster(entd, 433, [4], 0x12) == [169]
+          and roster(entd, 433, [4], 0x13) == [197]
+          and roster(entd, 433, [4], 0x14) == [237]
+          and roster(entd, 433, [4], 0x15) == [46]
+          and roster(entd, 433, [4], 0x16) == [254])
+    check("433 Lettie requested gear",
+          roster(entd, 433, [5], 0x12) == [170]
+          and roster(entd, 433, [5], 0x13) == [197]
+          and roster(entd, 433, [5], 0x14) == [239]
+          and roster(entd, 433, [5], 0x15) == [18]
+          and roster(entd, 433, [5], 0x16) == [18])
 
     passed = 0
     for name, ok in checks:
