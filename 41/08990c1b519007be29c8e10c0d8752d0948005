@@ -1,0 +1,20 @@
+docs/battles/040-finnath-creek.md
+  s_641ab1422b22e2::t_614d927f7ae45a 34,80,83,91,136,148-150,245-246,264,270
+  s_641ab1422b22e2::t_10eef99affb82a 3,17-18,23,105,119,161,164-178,182-183,186-198,202-207,213,228-229,237-239,282-284,292-295,300,304-305,307
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4108990c1b519007be29c8e10c0d8752d0948005",
+  "prompts": {},
+  "sessions": {
+    "s_641ab1422b22e2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f303f-056c-79a3-95f8-f4a550856b35",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
