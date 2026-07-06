@@ -1643,10 +1643,10 @@ def limberry_gate(data):
     #   unit data/AI and are preserved untouched. Assassins 104 (boss-tier chain opener), Reavers 103.
     #   jl left as-is on the named assassins (their ability set is fixed; bumping jl risks their kit).
     E = 454
-    set_slot(data, E, 0, level=104)  # Celia (Assassin) - flee-on-critical; level only, fixed gear
-    set_slot(data, E, 1, level=104)  # Lettie (Assassin) - flee-on-critical; level only, fixed gear
+    set_slot(data, E, 0, level=104, brave=92, faith=90)  # Celia - flee-on-critical; fixed gear
+    set_slot(data, E, 1, level=104, brave=92, faith=90)  # Lettie - flee-on-critical; fixed gear
     for s in (2, 3, 4, 5):           # 4 Reaver demon escort (monsters) - level only
-        set_slot(data, E, s, level=103)
+        set_slot(data, E, s, level=103, brave=88, faith=76)
     return [E]
 
 

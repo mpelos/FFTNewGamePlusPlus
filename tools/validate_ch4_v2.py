@@ -521,6 +521,32 @@ def run() -> int:
               and roster(entd, e, [slot_no], 0x16) == [0])
     check("453 cursed/phoenix spoils preserved", roster(entd, e, active, 0x1E) == [222, 253, 253, 0, 0, 0])
 
+    # 047 - Limberry Castle Gate, entry 454.
+    # Fixed-kit assassin flee race. Preserve eq=254 assassins and monster Reavers; no equipment reward plan.
+    e = 454
+    active = [0, 1, 2, 3, 4, 5]
+    check("454 active jobs", roster(entd, e, active, 0x0A) == [45, 46, 150, 150, 150, 150])
+    check("454 active levels", roster(entd, e, active, 0x03) == [104, 104, 103, 103, 103, 103])
+    check("454 active job levels preserved", roster(entd, e, active, 0x09) == [3, 3, 0, 0, 0, 0])
+    check("454 Brave targets", roster(entd, e, active, 0x06) == [92, 92, 88, 88, 88, 88])
+    check("454 Faith targets", roster(entd, e, active, 0x07) == [90, 90, 76, 76, 76, 76])
+    check("454 fixed-kit assassin flags", roster(entd, e, [0, 1], 0x01) == [0x40, 0x40])
+    check("454 Reaver monster flags", roster(entd, e, [2, 3, 4, 5], 0x01) == [0x20, 0x20, 0x20, 0x20])
+    for slot_no in (0, 1):
+        check(f"454 s{slot_no} Assassin fixed equipment",
+              roster(entd, e, [slot_no], 0x12) == [254]
+              and roster(entd, e, [slot_no], 0x13) == [254]
+              and roster(entd, e, [slot_no], 0x14) == [254]
+              and roster(entd, e, [slot_no], 0x15) == [254]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+    for slot_no in (2, 3, 4, 5):
+        check(f"454 s{slot_no} Reaver no-equipment shape",
+              roster(entd, e, [slot_no], 0x12) == [255]
+              and roster(entd, e, [slot_no], 0x13) == [255]
+              and roster(entd, e, [slot_no], 0x14) == [255]
+              and roster(entd, e, [slot_no], 0x15) == [255]
+              and roster(entd, e, [slot_no], 0x16) == [255])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
