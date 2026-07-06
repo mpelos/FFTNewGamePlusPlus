@@ -1367,17 +1367,21 @@ def riovanes_roof(data):
 def dugeura(data):
     E = 442
     set_slot(data, E, 0, level=101, joblevel=8, job=KNIGHT,  # lone front-line screen
+             secondary=ITEMS, brave=88, faith=42,
              reaction=COUNTER, support=ATK_BOOST, movement=MV1,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
     for s in (1, 3):  # 2 Black Mages — boosted-elemental AoE, the priority kill
         set_slot(data, E, s, level=102, joblevel=8, job=BMAGE,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+                 secondary=ITEMS, brave=60, faith=84,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, E, 2, level=102, joblevel=4, job=TMAGE,  # NEW: Haste the Dragoons (jl4, no hard lock)
-             reaction=REFLEXES, movement=MV1,
+    set_slot(data, E, 2, level=101, joblevel=4, job=TMAGE,  # Haste/Slow/Float only; no hard lock
+             secondary=ITEMS, brave=62, faith=80,
+             reaction=REFLEXES, support=SWIFTSPELL, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
     for s, lvl in ((4, 102), (5, 101)):  # 2 Dragoons — Jump (innate); vertical back-line pressure
         set_slot(data, E, s, level=lvl, joblevel=8, job=LANCER,
+                 secondary=ITEMS, brave=86, faith=40,
                  reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GERMINAS, rh=PARTISAN, lh=SHOP_SHIELD)
     return [E]
