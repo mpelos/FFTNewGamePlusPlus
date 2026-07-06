@@ -117,6 +117,7 @@ DEFENDER = 33       # weakest KnightSword (non-buyable) — Wiegraf's Ch3 rare a
                     # reserved best KnightSwords are 34-37 (Save the Queen/Excalibur/Ragnarok/Chaos Blade)
 KIKU_ICHIMONJI = 45  # best buyable non-rare katana below Masamune; safe for fleeing Ch3 Elmdor
 KOGA_BLADE = 18
+IGA_BLADE = 17
 # --- Chapter 4 best-in-slot rares (Unknown20-reserved tier, unlocked tiered in Ch4 per docs/037) ---
 SAVE_THE_QUEEN = 34  # Tier-A KnightSword — Meliadoul (039). Best KnightSword below the Tier-S pair.
 MASAMUNE = 46        # Tier-A Katana — Elmdor (048, deferred from Ch3).
@@ -1594,15 +1595,21 @@ def besselat_sluice(data):
 #   - ESCALATION: swap ONE Thief (s1) -> 2nd Ninja (apex wall-climbers). Remaining Thief keeps Steal harass.
 def germinas(data):
     E = 452
-    for s, lvl in ((0, 103), (1, 102)):  # 2 Ninja — apex wall-climbing dual-wield (Throw innate)
-        set_slot(data, E, s, level=lvl, joblevel=8, job=NINJA,
-                 reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
+    set_slot(data, E, 0, level=103, joblevel=8, job=NINJA,  # apex climber; visible Ninja Gear reward
+             secondary=ITEMS, brave=90, faith=35,
+             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
+             head=THIEFS_CAP, body=NINJA_GEAR, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
+    set_slot(data, E, 1, level=102, joblevel=8, job=NINJA,  # second climber; visible Koga reward
+             secondary=ITEMS, brave=90, faith=35,
+             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=KOGA_BLADE, lh=NINJA_BLADE)
     set_slot(data, E, 2, level=101, joblevel=8, job=THIEF,  # fast Steal harass on the ledges
+             secondary=ITEMS, brave=88, faith=38,
              reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
              head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=AIR_KNIFE, lh=LH_EMPTY)
     for s, lvl in ((3, 102), (4, 101), (5, 101)):  # 3 Archers — tiered ledge crossfire
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
+        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
+                 brave=82, faith=45,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
     return [E]

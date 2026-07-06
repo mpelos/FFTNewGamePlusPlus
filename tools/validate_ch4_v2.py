@@ -438,6 +438,62 @@ def run() -> int:
           and roster(entd, e, [5], 0x16) == [255])
     check("450 Kaiser Shield spoil preserved", field(entd, e, 2, 0x1E) == 141)
 
+    # 045 - Mount Germinas, entry 452.
+    # Vertical mobility skirmish: two Ninjas, one Thief, three Archers; ninja arsenal paid via spoils.
+    e = 452
+    active = [0, 1, 2, 3, 4, 5]
+    check("452 active jobs", roster(entd, e, active, 0x0A) == [89, 89, 83, 77, 77, 77])
+    check("452 active levels", roster(entd, e, active, 0x03) == [103, 102, 101, 102, 101, 101])
+    check("452 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("452 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6])
+    check("452 Brave targets", roster(entd, e, active, 0x06) == [90, 90, 88, 82, 82, 82])
+    check("452 Faith targets", roster(entd, e, active, 0x07) == [35, 35, 38, 45, 45, 45])
+
+    check("452 s0 Apex Ninja R/S/M and visible Ninja Gear",
+          field16(entd, e, 0, 0x0C) == 453
+          and field16(entd, e, 0, 0x0E) == 465
+          and field16(entd, e, 0, 0x10) == 487
+          and roster(entd, e, [0], 0x12) == [168]
+          and roster(entd, e, [0], 0x13) == [197]
+          and roster(entd, e, [0], 0x14) == [210]
+          and roster(entd, e, [0], 0x15) == [14]
+          and roster(entd, e, [0], 0x16) == [14])
+    check("452 s1 Ninja R/S/M and visible Koga",
+          field16(entd, e, 1, 0x0C) == 453
+          and field16(entd, e, 1, 0x0E) == 465
+          and field16(entd, e, 1, 0x10) == 487
+          and roster(entd, e, [1], 0x12) == [168]
+          and roster(entd, e, [1], 0x13) == [198]
+          and roster(entd, e, [1], 0x14) == [210]
+          and roster(entd, e, [1], 0x15) == [18]
+          and roster(entd, e, [1], 0x16) == [14])
+    check("452 s2 Thief R/S/M and legal gear",
+          field16(entd, e, 2, 0x0C) == 453
+          and field16(entd, e, 2, 0x0E) == 465
+          and field16(entd, e, 2, 0x10) == 487
+          and roster(entd, e, [2], 0x12) == [168]
+          and roster(entd, e, [2], 0x13) == [198]
+          and roster(entd, e, [2], 0x14) == [210]
+          and roster(entd, e, [2], 0x15) == [9]
+          and roster(entd, e, [2], 0x16) == [255])
+
+    for slot_no in (3, 4, 5):
+        check(f"452 s{slot_no} Archer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 469
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"452 s{slot_no} Archer gear",
+              roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [87]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+
+    check("452 ninja arsenal spoils preserved",
+          field(entd, e, 0, 0x1E) == 197
+          and field(entd, e, 1, 0x1E) == 18
+          and field(entd, e, 2, 0x1E) == 17)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
