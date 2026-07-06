@@ -88,6 +88,7 @@ JUMP2 = 490
 HEADBAND, POWER_GARB, BRACERS, ICEBRAND, RUNEBLADE = 163, 195, 218, 29, 30
 WINGED_BOOTS = 212
 THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
+YOICHI_BOW, PERSEUS_BOW = 90, 91
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
 MAGEPOWER_GLOVES = 217
 SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
@@ -1511,34 +1512,42 @@ def bed_desert(data):
 def besselat_wall(data):
     # --- South Wall (448) — melee/stealth ---
     S = 448
-    for s, lvl in ((0, 102), (1, 102), (2, 101)):  # 3 Knights — wall of bodies
-        set_slot(data, S, s, level=lvl, joblevel=8, job=KNIGHT,
+    for s, lvl, jl in ((0, 102, 8), (1, 102, 8), (2, 101, 1)):  # s2 bodyguard has no full Rend kit
+        set_slot(data, S, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=ITEMS,
+                 brave=88, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    for s, lvl in ((3, 102), (4, 101)):  # 2 Archers — parapet chip
-        set_slot(data, S, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
+    for s, lvl, bow in ((3, 102, YOICHI_BOW), (4, 101, PERSEUS_BOW)):  # visible reward-bow pressure
+        set_slot(data, S, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
+                 brave=82, faith=45,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=bow, lh=LH_TWOHAND)
     set_slot(data, S, 5, level=102, joblevel=8, job=NINJA,  # wall-climbing dual-wield (Throw innate)
+             secondary=ITEMS, brave=90, faith=35,
              reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
              head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
     set_slot(data, S, 6, level=101, joblevel=8, job=THIEF,  # fast flank / steal harass
+             secondary=ITEMS, brave=88, faith=38,
              reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
              head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=AIR_KNIFE, lh=LH_EMPTY)
     # --- North Wall (449) — ranged/AoE ---
     N = 449
-    for s, lvl in ((0, 102), (3, 101)):  # 2 Archers — rampart chip
-        set_slot(data, N, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
+    for s, lvl, bow in ((0, 102, YOICHI_BOW), (3, 101, PERSEUS_BOW)):  # visible reward-bow pressure
+        set_slot(data, N, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
+                 brave=82, faith=45,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=bow, lh=LH_TWOHAND)
     for s, lvl in ((1, 102), (2, 101)):  # 2 Dragoons — Jump (innate); vertical ledge pressure
-        set_slot(data, N, s, level=lvl, joblevel=8, job=LANCER,
+        set_slot(data, N, s, level=lvl, joblevel=8, job=LANCER, secondary=ITEMS,
+                 brave=86, faith=40,
                  reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GERMINAS, rh=PARTISAN, lh=SHOP_SHIELD)
     set_slot(data, N, 4, level=102, joblevel=8, job=SUMMONER,  # PRIORITY: wide-area summon (charge intact)
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+             secondary=WHITE_MAGICKS, brave=60, faith=84,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     set_slot(data, N, 5, level=102, joblevel=8, job=MONK,  # bruiser — bare head/fist (Power Garb + Bracers)
+             secondary=ITEMS, brave=88, faith=40,
              reaction=COUNTER, support=ATK_BOOST, movement=MV1,
              body=POWER_GARB, acc=BRACERS)
     return [S, N]

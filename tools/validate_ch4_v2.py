@@ -274,6 +274,115 @@ def run() -> int:
           and roster(entd, e, [6, 7], 0x20) == [0x85, 0x86])
     check("447 guaranteed gun spoils preserved", roster(entd, e, active, 0x1E) == [74, 75, 76, 0, 0, 0])
 
+    # 043 - Fort Besselat Wall, entries 448 South / 449 North.
+    # Branching wall assault: South melee/stealth, North ranged/AoE. Both paths pay the same bow rewards.
+    e = 448
+    active = [0, 1, 2, 3, 4, 5, 6]
+    check("448 South active jobs", roster(entd, e, active, 0x0A) == [76, 76, 76, 77, 77, 89, 83])
+    check("448 South active levels", roster(entd, e, active, 0x03) == [102, 102, 101, 102, 101, 102, 101])
+    check("448 South job levels", roster(entd, e, active, 0x09) == [8, 8, 1, 8, 8, 8, 8])
+    check("448 South secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6, 6])
+    check("448 South Brave targets", roster(entd, e, active, 0x06) == [88, 88, 88, 82, 82, 90, 88])
+    check("448 South Faith targets", roster(entd, e, active, 0x07) == [42, 42, 42, 45, 45, 35, 38])
+
+    for slot_no in (0, 1, 2):
+        check(f"448 s{slot_no} Knight R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"448 s{slot_no} Knight gear",
+              roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+
+    for slot_no, bow in ((3, 90), (4, 91)):
+        check(f"448 s{slot_no} Archer R/S/M and bow",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 469
+              and field16(entd, e, slot_no, 0x10) == 486
+              and field(entd, e, slot_no, 0x15) == bow)
+        check(f"448 s{slot_no} Archer gear",
+              roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+
+    check("448 s5 Ninja R/S/M and gear",
+          field16(entd, e, 5, 0x0C) == 453
+          and field16(entd, e, 5, 0x0E) == 465
+          and field16(entd, e, 5, 0x10) == 487
+          and roster(entd, e, [5], 0x12) == [168]
+          and roster(entd, e, [5], 0x13) == [198]
+          and roster(entd, e, [5], 0x14) == [210]
+          and roster(entd, e, [5], 0x15) == [14]
+          and roster(entd, e, [5], 0x16) == [14])
+    check("448 s6 Thief R/S/M and gear",
+          field16(entd, e, 6, 0x0C) == 453
+          and field16(entd, e, 6, 0x0E) == 465
+          and field16(entd, e, 6, 0x10) == 487
+          and roster(entd, e, [6], 0x12) == [168]
+          and roster(entd, e, [6], 0x13) == [198]
+          and roster(entd, e, [6], 0x14) == [210]
+          and roster(entd, e, [6], 0x15) == [9]
+          and roster(entd, e, [6], 0x16) == [255])
+    check("448 bow spoils preserved",
+          field(entd, e, 3, 0x1E) == 90
+          and field(entd, e, 4, 0x1E) == 91)
+
+    e = 449
+    active = [0, 1, 2, 3, 4, 5]
+    check("449 North active jobs", roster(entd, e, active, 0x0A) == [77, 87, 87, 77, 82, 78])
+    check("449 North active levels", roster(entd, e, active, 0x03) == [102, 102, 101, 101, 102, 102])
+    check("449 North job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("449 North secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 10, 6])
+    check("449 North Brave targets", roster(entd, e, active, 0x06) == [82, 86, 86, 82, 60, 88])
+    check("449 North Faith targets", roster(entd, e, active, 0x07) == [45, 40, 40, 45, 84, 40])
+
+    for slot_no, bow in ((0, 90), (3, 91)):
+        check(f"449 s{slot_no} Archer R/S/M and bow",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 469
+              and field16(entd, e, slot_no, 0x10) == 486
+              and field(entd, e, slot_no, 0x15) == bow)
+        check(f"449 s{slot_no} Archer gear",
+              roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+
+    for slot_no in (1, 2):
+        check(f"449 s{slot_no} Dragoon R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"449 s{slot_no} Dragoon gear",
+              roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [210]
+              and roster(entd, e, [slot_no], 0x15) == [102]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+
+    check("449 s4 Summoner R/S/M and gear",
+          field16(entd, e, 4, 0x0C) == 449
+          and field16(entd, e, 4, 0x0E) == 467
+          and field16(entd, e, 4, 0x10) == 486
+          and roster(entd, e, [4], 0x12) == [167]
+          and roster(entd, e, [4], 0x13) == [206]
+          and roster(entd, e, [4], 0x14) == [234]
+          and roster(entd, e, [4], 0x15) == [56]
+          and roster(entd, e, [4], 0x16) == [255])
+    check("449 s5 Monk R/S/M and gear",
+          field16(entd, e, 5, 0x0C) == 442
+          and field16(entd, e, 5, 0x0E) == 465
+          and field16(entd, e, 5, 0x10) == 486
+          and roster(entd, e, [5], 0x13) == [195]
+          and roster(entd, e, [5], 0x14) == [218])
+    check("449 bow spoils preserved",
+          field(entd, e, 0, 0x1E) == 90
+          and field(entd, e, 3, 0x1E) == 91)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
