@@ -583,6 +583,51 @@ def run() -> int:
     check("456 Masamune/Genji/Chirijiraden spoils preserved",
           roster(entd, e, active, 0x1E) == [46, 183, 47, 0, 0])
 
+    # 049 - Limberry Castle Undercroft, entry 457.
+    # Zalera status-Lucavi plus dense undead screen. Preserve Elmdor placeholder and Meliadoul join data.
+    e = 457
+    active = [1, 2, 3, 4, 5, 6, 8, 9]
+    check("457 placeholder Elmdor preserved",
+          field(entd, e, 0, 0x03) == 43
+          and field(entd, e, 0, 0x0A) == 27
+          and roster(entd, e, [0], 0x12) == [255])
+    check("457 Meliadoul join record preserved",
+          field(entd, e, 7, 0x03) == 254
+          and field(entd, e, 7, 0x0A) == 42
+          and roster(entd, e, [7], 0x12) == [153]
+          and roster(entd, e, [7], 0x13) == [206]
+          and roster(entd, e, [7], 0x14) == [213]
+          and roster(entd, e, [7], 0x15) == [34]
+          and roster(entd, e, [7], 0x16) == [136])
+    check("457 active jobs", roster(entd, e, active, 0x0A) == [62, 61, 61, 111, 110, 109, 111, 111])
+    check("457 active levels", roster(entd, e, active, 0x03) == [105, 103, 103, 103, 103, 103, 103, 103])
+    check("457 active job levels preserved", roster(entd, e, active, 0x09) == [8, 8, 8, 0, 0, 0, 0, 0])
+    check("457 Brave targets", roster(entd, e, active, 0x06) == [92, 86, 86, 86, 86, 86, 86, 86])
+    check("457 Faith targets", roster(entd, e, active, 0x07) == [86, 35, 35, 35, 35, 35, 35, 35])
+    check("457 Zalera no-equipment shape",
+          roster(entd, e, [1], 0x12) == [255]
+          and roster(entd, e, [1], 0x13) == [255]
+          and roster(entd, e, [1], 0x14) == [255]
+          and roster(entd, e, [1], 0x15) == [255]
+          and roster(entd, e, [1], 0x16) == [255])
+    for slot_no in (2, 3):
+        check(f"457 s{slot_no} undead fixed body shape",
+              roster(entd, e, [slot_no], 0x12) == [254]
+              and roster(entd, e, [slot_no], 0x13) == [254]
+              and roster(entd, e, [slot_no], 0x14) == [254]
+              and roster(entd, e, [slot_no], 0x15) == [254]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+    for slot_no in (4, 5, 6, 8, 9):
+        check(f"457 s{slot_no} skeleton-family no-equipment shape",
+              roster(entd, e, [slot_no], 0x12) == [0]
+              and roster(entd, e, [slot_no], 0x13) == [0]
+              and roster(entd, e, [slot_no], 0x14) == [0]
+              and roster(entd, e, [slot_no], 0x15) == [0]
+              and roster(entd, e, [slot_no], 0x16) == [0])
+    check("457 Aegis/Zeus spoils preserved",
+          field(entd, e, 1, 0x1E) == 136
+          and field(entd, e, 2, 0x1E) == 65)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

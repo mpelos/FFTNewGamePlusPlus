@@ -1688,11 +1688,11 @@ def limberry_undercroft(data):
     #   an Aegis Shield (slot 7), and the map Move-Find layer is the clean place for a guaranteed copy.
     #   Flagged to the reward layer; no fake equip on the boss.
     E = 457
-    set_slot(data, E, 1, level=105)              # Zalera (Lucavi) - status spike; eq255, level only
+    set_slot(data, E, 1, level=105, brave=92, faith=86)  # Zalera (Lucavi) - status spike; eq255
     for s in (2, 3):                              # 2 undead Knights (job 61)
-        set_slot(data, E, s, level=103)
+        set_slot(data, E, s, level=103, brave=86, faith=35)
     for s in (4, 5, 6, 8, 9):                     # skeleton family (109/110/111) - undead reraise screen
-        set_slot(data, E, s, level=103)
+        set_slot(data, E, s, level=103, brave=86, faith=35)
     return [E]
 
 
