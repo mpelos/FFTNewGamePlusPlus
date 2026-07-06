@@ -822,6 +822,64 @@ def run() -> int:
           and field(entd, e, 2, 0x1E) == 171
           and field(entd, e, 3, 0x1E) == 245)
 
+    # 054 - Monastery Vaults, Fourth Level, entry 435.
+    # Endgame gauntlet opener: Loffrey exits by script; six active generics with capped Rend pressure.
+    e = 435
+    active = [1, 2, 3, 4, 5, 6]
+    check("435 Loffrey cutscene slot preserved",
+          field(entd, e, 0, 0x03) == 1
+          and field(entd, e, 0, 0x0A) == 37
+          and field(entd, e, 0, 0x06) == 90
+          and field(entd, e, 0, 0x07) == 55
+          and roster(entd, e, [0], 0x12) == [153]
+          and roster(entd, e, [0], 0x13) == [181]
+          and roster(entd, e, [0], 0x14) == [211]
+          and roster(entd, e, [0], 0x15) == [33]
+          and roster(entd, e, [0], 0x16) == [136])
+    check("435 active jobs", roster(entd, e, active, 0x0A) == [76, 76, 76, 78, 78, 89])
+    check("435 active levels", roster(entd, e, active, 0x03) == [103, 103, 102, 102, 102, 103])
+    check("435 active job levels", roster(entd, e, active, 0x09) == [8, 8, 1, 8, 8, 8])
+    check("435 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 5, 5, 14])
+    check("435 Brave targets", roster(entd, e, active, 0x06) == [88, 88, 88, 88, 88, 90])
+    check("435 Faith targets", roster(entd, e, active, 0x07) == [42, 42, 42, 40, 40, 35])
+    for slot_no in (1, 2):
+        check(f"435 s{slot_no} Rend Knight kit",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486
+              and roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+    check("435 s3 guard Knight kit",
+          field16(entd, e, 3, 0x0C) == 442
+          and field16(entd, e, 3, 0x0E) == 466
+          and field16(entd, e, 3, 0x10) == 486
+          and roster(entd, e, [3], 0x12) == [154]
+          and roster(entd, e, [3], 0x13) == [182]
+          and roster(entd, e, [3], 0x14) == [218]
+          and roster(entd, e, [3], 0x15) == [30]
+          and roster(entd, e, [3], 0x16) == [139])
+    for slot_no in (4, 5):
+        check(f"435 s{slot_no} Monk kit",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486
+              and roster(entd, e, [slot_no], 0x12) == [163]
+              and roster(entd, e, [slot_no], 0x13) == [195]
+              and roster(entd, e, [slot_no], 0x14) == [218])
+    check("435 Ninja replaces Archer",
+          field16(entd, e, 6, 0x0C) == 449
+          and field16(entd, e, 6, 0x0E) == 465
+          and field16(entd, e, 6, 0x10) == 487
+          and roster(entd, e, [6], 0x12) == [168]
+          and roster(entd, e, [6], 0x13) == [198]
+          and roster(entd, e, [6], 0x14) == [218]
+          and roster(entd, e, [6], 0x15) == [14]
+          and roster(entd, e, [6], 0x16) == [14])
+    check("435 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

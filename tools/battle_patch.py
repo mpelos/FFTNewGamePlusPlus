@@ -1823,21 +1823,28 @@ def vaults_4th(data):
     # Battle 49 - Monastery Vaults, Fourth Level (entry 435): the gauntlet OPENER. CONFIRMED in-game =
     #   Loffrey only ENTERS in a cutscene and walks out the door (a scripted NPC exit, NOT a fightable
     #   boss here — his real fight is the Fifth Level, 436). The actual enemies are slots 1-6 = 3 Knight/
-    #   2 Monk/1 Archer (matches doc 054); no boss, no rare. Scale to the LIGHT opener band (102; the doc
-    #   asks for 101-103, lighter than 50-53). slot0 Loffrey is left VANILLA (he cutscene-exits, so his
-    #   level/gear never matter; his Tier-S Escutcheon pays at the Fifth Level instead).
+    #   2 Monk/1 Archer in vanilla. v2 keeps the all-generic opener but swaps the Archer to a tempered
+    #   Ninja. No boss, no rare, no usable gauntlet reward. slot0 Loffrey is cutscene-only.
     E = 435
-    for s in (1, 2, 3):                                          # 3 Knight - equip-break wall (Rend)
-        set_slot(data, E, s, level=102, joblevel=8, job=KNIGHT,
+    set_slot(data, E, 0, brave=90, faith=55)  # Loffrey cutscene unit; preserve level/gear/event behavior.
+    for s in (1, 2):                                             # 2 Knight - capped Rend sources
+        set_slot(data, E, s, level=103, joblevel=8, job=KNIGHT, secondary=ITEMS,
+                 brave=88, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, lh=SHOP_SHIELD)
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
+    set_slot(data, E, 3, level=102, joblevel=1, job=KNIGHT, secondary=ITEMS,
+             brave=88, faith=42,
+             reaction=COUNTER, support=DEFENSE_BOOST, movement=MV1,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
     for s in (4, 5):                                             # 2 Monk - Chakra sustain
-        set_slot(data, E, s, level=102, joblevel=8, job=MONK, secondary=0,
+        set_slot(data, E, s, level=102, joblevel=8, job=MONK, secondary=FUNDAMENTS,
+                 brave=88, faith=40,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEADBAND, body=POWER_GARB, acc=BRACERS)
-    set_slot(data, E, 6, level=102, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,  # 1 Archer - ranged chip
-             reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+    set_slot(data, E, 6, level=103, joblevel=8, job=NINJA, secondary=STEAL,  # tempered tempo flanker
+             brave=90, faith=35,
+             reaction=REFLEXES, support=ATK_BOOST, movement=MV2,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=NINJA_BLADE, lh=NINJA_BLADE)
     return [E]
 
 
