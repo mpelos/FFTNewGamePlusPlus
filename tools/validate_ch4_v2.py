@@ -196,37 +196,41 @@ def run() -> int:
     check("445 active jobs", roster(entd, e, active, 0x0A) == [16, 85, 85, 76, 76, 76])
     check("445 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 102, 102, 101])
     check("445 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 1])
-    check("445 active secondaries", roster(entd, e, active, 0x0B) == [10, 10, 10, 6, 6, 6])
+    check("445 active secondaries", roster(entd, e, active, 0x0B) == [16, 13, 13, 9, 9, 9])
     check("445 Brave targets", roster(entd, e, active, 0x06) == [72, 68, 72, 88, 88, 88])
     check("445 Faith targets", roster(entd, e, active, 0x07) == [82, 78, 82, 42, 42, 42])
 
-    check("445 Zalmo R/S/M and robe",
+    check("445 Zalmo R/S/M and gear",
           field16(entd, e, 1, 0x0C) == 449
-          and field16(entd, e, 1, 0x0E) == 467
-          and field16(entd, e, 1, 0x10) == 486
-          and field(entd, e, 1, 0x13) == 206)
+          and field16(entd, e, 1, 0x0E) == 466
+          and field16(entd, e, 1, 0x10) == 487
+          and roster(entd, e, [1], 0x12) == [167]
+          and roster(entd, e, [1], 0x13) == [206]
+          and roster(entd, e, [1], 0x14) == [239]
+          and roster(entd, e, [1], 0x15) == [114]
+          and roster(entd, e, [1], 0x16) == [254])
 
     for slot_no in (2, 3):
         check(f"445 s{slot_no} Mystic R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 467
-              and field16(entd, e, slot_no, 0x10) == 486)
+              field16(entd, e, slot_no, 0x0C) == 445
+              and field16(entd, e, slot_no, 0x0E) == 482
+              and field16(entd, e, slot_no, 0x10) == 494)
         check(f"445 s{slot_no} Mystic gear",
               roster(entd, e, [slot_no], 0x12) == [167]
-              and roster(entd, e, [slot_no], 0x13) == [206]
-              and roster(entd, e, [slot_no], 0x14) == [234]
+              and roster(entd, e, [slot_no], 0x13) == [205]
+              and roster(entd, e, [slot_no], 0x14) == [217]
               and roster(entd, e, [slot_no], 0x15) == [56]
               and roster(entd, e, [slot_no], 0x16) == [255])
 
     for slot_no in (4, 5, 6):
         check(f"445 s{slot_no} Knight R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 442
+              field16(entd, e, slot_no, 0x0C) == 453
               and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486)
+              and field16(entd, e, slot_no, 0x10) == 487)
         check(f"445 s{slot_no} Knight gear",
               roster(entd, e, [slot_no], 0x12) == [154]
               and roster(entd, e, [slot_no], 0x13) == [182]
-              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x14) == [216]
               and roster(entd, e, [slot_no], 0x15) == [30]
               and roster(entd, e, [slot_no], 0x16) == [139])
     check("445 reward spoils preserved", roster(entd, e, active, 0x1E) == [223, 206, 0, 0, 0, 0])

@@ -74,6 +74,7 @@ TIME_MAGICKS = 12
 PUGILISM = 53
 ARTS_OF_WAR = 8
 WHITE_MAGICKS = 10
+SUMMON = 13
 MYSTIC_ARTS = 16
 GEOMANCY = 17
 MIGHTY_SWORD = 52
@@ -115,6 +116,7 @@ HEAVY_HELM, HEAVY_ARMOR, SHOP_SHIELD = 154, 182, 139   # Knight heavy gear (Helm
 MAGE_HAT, SHOP_ROBE, SHOP_ROD = 167, 206, 56           # Black Mage gear (Hat/Robe/Rod)
 SHOP_STAFF = 64                                          # White Mage weapon (Staff, MA/heal)
 PARTISAN = 102   # strongest pre-Ch4 SHOP-tier spear (Holy Lance/Dragon Whisker are Unknown20/reserved)
+WHALE_WHISKER = 114  # rare pole for Zalmo (041); two-handed marker required in LH.
 GEMS_108 = 226  # TIC English name: Japa Mala. Docs call it 108 Gems; Ch2 Cuchulainn reward.
 BLOOD_SWORD = 23  # HP-drain sword — Ch2 rare boss loot (overview-named); IS Gaffgarion's Shadowblade
                   # sustain in item form, so Steal Weapon both ends his self-heal and claims the prize
@@ -1473,27 +1475,27 @@ def finath(data):
 # Vanilla 445: s0 = inactive guest placeholder (job 5, level 0xFE, control 00 84 — leave alone);
 # s1 = Zalmo (job 16 Celebrant/Inquisitor, GEARED, wields a rod; win = defeat him, he DIES here, paying
 # his Ch3-deferred rare); s2,s3 Mystic (85); s4,s5,s6 Knight (76). Per docs/041.
-#   - Zalmo: BOSS L104/jl8. His Tier-A rare = LIGHT ROBE (= Luminous Robe 206, top robe below the
-#     Tier-S Lordly Robe) as body (upgrades his vanilla White Robe; steal-bait). Preserve job/head/acc/
-#     rod/win-on-death scripting; add a complete but non-Safeguard R/S/M shell.
-#   - 2 Mystics: soft status with defensive White Magicks secondary; no hard-lock engine.
+#   - Zalmo: BOSS L104/jl8. Light Robe body + Sortilege and Whale Whisker steal-bait; preserve
+#     job/win-on-death scripting and avoid Angel Ring/Reraise gear.
+#   - 2 Mystics: soft status with Summon secondary; no hard-lock engine.
 #   - 2 Rend Knights + 1 lower-JL bodyguard Knight (s6) to respect the <=2 break-source cap.
 #   - PRESERVE the vanilla guaranteed Angel Ring reward + buried map rares (different layer, untouched).
 def outlying_church(data):
     E = 445
-    # Zalmo BOSS — Light Robe steal-bait; preserve identity/scripting and avoid Angel Ring/Reraise gear.
-    set_slot(data, E, 1, level=104, joblevel=8, secondary=WHITE_MAGICKS, brave=72, faith=82,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1, body=LIGHT_ROBE)
-    for s in (2, 3):  # 2 Mystics — soft status guarding the approach (Rod-legal for job 85)
-        set_slot(data, E, s, level=102, joblevel=8, job=MYSTIC, secondary=WHITE_MAGICKS,
+    # Zalmo BOSS: Light Robe/Sortilege steal-bait; Whale Whisker is two-handed.
+    set_slot(data, E, 1, level=104, joblevel=8, secondary=MYSTIC_ARTS, brave=72, faith=82,
+             reaction=REFLEXES, support=DEFENSE_BOOST, movement=MV2,
+             head=MAGE_HAT, body=LIGHT_ROBE, acc=SORTILEGE, rh=WHALE_WHISKER, lh=LH_TWOHAND)
+    for s in (2, 3):  # 2 Mystics: soft status plus charged Summon pressure.
+        set_slot(data, E, s, level=102, joblevel=8, job=MYSTIC, secondary=SUMMON,
                  brave=68 if s == 2 else 72, faith=78 if s == 2 else 82,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+                 reaction=MANA_SHIELD, support=SWIFTSPELL, movement=MOVE_MP_UP,
+                 head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
     for s, lvl, jl in ((4, 102, 8), (5, 102, 8), (6, 101, 1)):  # s6 is bodyguard, not a full Rend source
-        set_slot(data, E, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=ITEMS,
+        set_slot(data, E, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=MARTIAL_ARTS,
                  brave=88, faith=42,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
+                 reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GENJI_GLOVES, rh=RUNEBLADE, lh=SHOP_SHIELD)
     return [E]
 
 
