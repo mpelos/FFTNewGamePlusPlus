@@ -135,8 +135,8 @@ BARRETTE = 170
 NINJA_GEAR = 197
 ENVOUTEMENT = 237
 ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; paid before the gauntlet at Mullonde Nave 052).
-MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; NOT Materia Blade Plus 256) — Lost Halidom relic (057).
-RAGNAROK = 36        # Tier-S KnightSword capstone — Ultima (058).
+MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; side/relic plan only, not awarded in Lost Halidom 057).
+RAGNAROK = 36        # Tier-S KnightSword capstone; paid before the final gauntlet at Sanctuary 053.
 GLACIAL_GUN = 74     # Tier-A Gun — Barich (042).
 LIGHT_ROBE = 206     # Tier-A robe — Zalmo (041). TIC's Luminous Robe = top robe BELOW Lordly; == SHOP_ROBE
 ROBE_OF_LORDS = 207  # Tier-S robe (Lordly Robe, Unknown20 best; paid before the gauntlet at 052).
@@ -1896,17 +1896,18 @@ def capitoline(data):
 
 
 def lost_halidom(data):
-    # Battle 52 - Necrohol of Mullonde / Lost Halidom (entry 439): the BARICH REMATCH (last at Bed Desert
-    #   447; WIN = "Defeat Barich"). Roster CONFIRMED in-game = Barich + Chemist + 4 dragon-monsters
-    #   (jobs 139/140/141/135 = Hydra/Greater Hydra/Tiamat/Dark Behemoth). slot0 Barich (name43 job43
-    #   Machinist/gunner; keeps rh76 Glacial Gun = his Bed-Desert reward) -> NO ENTD rare: his Tier-S is
-    #   the enshrined MATERIA BLADE recovered as a MAP relic on victory (gunner has no sword -> map layer,
-    #   deferred until the map id is captured). slot1 Chemist (sustain; keeps gun). Dragons = apex beasts.
+    # Battle 52 - Necrohol of Mullonde / Lost Halidom (entry 439): Barich rematch.
+    # Win = "Defeat Barich". Roster is Barich + Chemist + 4 apex monsters. This is the
+    # gauntlet 4/5 peak: one answerable control boss, raceable sustain, no usable reward.
     E = 439
-    set_slot(data, E, 0, level=105, joblevel=8)                 # Barich - keep Glacial Gun; reward = map relic
-    set_slot(data, E, 1, level=104, joblevel=8)                 # Chemist - sustain (keep gun)
+    set_slot(data, E, 0, level=105, joblevel=8, secondary=ITEMS,
+             brave=84, faith=55, rh=MYTHRIL_GUN, lh=LH_TWOHAND)  # Barich - no 042 gun duplicate.
+    set_slot(data, E, 1, level=104, joblevel=8, job=CHEMIST, secondary=FUNDAMENTS,
+             brave=72, faith=68,
+             reaction=AUTO_POTION, support=DEFENSE_BOOST, movement=MV1,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
     for s in (2, 3, 4, 5):                                      # 4 dragons - apex beasts, scale only
-        set_slot(data, E, s, level=105, joblevel=8)
+        set_slot(data, E, s, level=105, joblevel=8, brave=90, faith=30)
     return [E]
 
 
