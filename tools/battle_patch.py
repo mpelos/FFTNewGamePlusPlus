@@ -1849,23 +1849,25 @@ def vaults_4th(data):
 
 
 def vaults_5th(data):
-    # Battle 50 - Monastery Vaults, Fifth Level (entry 436): Loffrey's DEATH battle (he cutscene-exited at
-    #   the Fourth Level; here WIN = "Defeat Loffrey"). Roster matches doc 055 = Loffrey + 2 Black Mage/
-    #   2 Summoner/1 Time Mage. slot0 Loffrey (name37 job37 Divine Knight; keeps rh34 Save the Queen for
-    #   the Unyielding-Blade equip-break) -> Tier-S ESCUTCHEON into the shield slot (was lh139): steal/
-    #   drop, guaranteed on the focus kill. slots1-2 Black Mage, 3&5 Summoner, 4 Time Mage -> scaled casters.
+    # Battle 50 - Monastery Vaults, Fifth Level (entry 436): Loffrey's death battle.
+    # Roster matches doc 055: Loffrey + 2 Black Mage + 2 Summoner + 1 Time Mage. The final
+    # gauntlet has no usable rewards, so Loffrey uses standard gear instead of duplicate uniques.
     E = 436
-    set_slot(data, E, 0, level=105, joblevel=8, lh=ESCUTCHEON)  # Loffrey - Tier-S Escutcheon (shield), DIES
+    set_slot(data, E, 0, level=105, joblevel=8, brave=90, faith=55,
+             rh=RUNEBLADE, lh=SHOP_SHIELD, movement=MV2)  # Loffrey - one break boss, no gauntlet rare
     for s in (1, 2):                                             # 2 Black Mage - heavy AoE magic
-        set_slot(data, E, s, level=104, joblevel=8, job=BMAGE, secondary=0,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+        set_slot(data, E, s, level=103, joblevel=8, job=BMAGE, secondary=ITEMS,
+                 brave=60, faith=84,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s in (3, 5):                                             # 2 Summoner - AoE summon damage
-        set_slot(data, E, s, level=104, joblevel=8, job=SUMMONER, secondary=0,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+    for s in (3, 4):                                             # 2 Summoner - AoE summon damage
+        set_slot(data, E, s, level=103, joblevel=8, job=SUMMONER, secondary=ITEMS,
+                 brave=60, faith=84,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, E, 4, level=104, joblevel=8, job=TMAGE, secondary=0,  # 1 Time Mage - Slow/tempo
-             reaction=REFLEXES, movement=MV1,
+    set_slot(data, E, 5, level=103, joblevel=4, job=TMAGE, secondary=ITEMS,  # Haste/Slow/Float, no Stop
+             brave=62, faith=80,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     return [E]
 

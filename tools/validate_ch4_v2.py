@@ -880,6 +880,38 @@ def run() -> int:
           and roster(entd, e, [6], 0x16) == [14])
     check("435 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
 
+    # 055 - Monastery Vaults, Fifth Level, entry 436.
+    # Loffrey boss race through caster crossfire; no usable reward inside the final gauntlet.
+    e = 436
+    active = [0, 1, 2, 3, 4, 5]
+    check("436 active jobs", roster(entd, e, active, 0x0A) == [37, 80, 80, 82, 82, 81])
+    check("436 active levels", roster(entd, e, active, 0x03) == [105, 103, 103, 103, 103, 103])
+    check("436 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 4])
+    check("436 active secondaries", roster(entd, e, active, 0x0B) == [61, 6, 6, 6, 6, 6])
+    check("436 Brave targets", roster(entd, e, active, 0x06) == [90, 60, 60, 60, 60, 62])
+    check("436 Faith targets", roster(entd, e, active, 0x07) == [55, 84, 84, 84, 84, 80])
+    check("436 Loffrey non-rare break kit",
+          field16(entd, e, 0, 0x0C) == 447
+          and field16(entd, e, 0, 0x0E) == 466
+          and field16(entd, e, 0, 0x10) == 487
+          and roster(entd, e, [0], 0x12) == [154]
+          and roster(entd, e, [0], 0x13) == [182]
+          and roster(entd, e, [0], 0x14) == [210]
+          and roster(entd, e, [0], 0x15) == [30]
+          and roster(entd, e, [0], 0x16) == [139])
+    for slot_no in (1, 2, 3, 4, 5):
+        check(f"436 s{slot_no} caster R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"436 s{slot_no} caster gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [206]
+              and roster(entd, e, [slot_no], 0x14) == [234]
+              and roster(entd, e, [slot_no], 0x15) == [56]
+              and roster(entd, e, [slot_no], 0x16) == [255])
+    check("436 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
