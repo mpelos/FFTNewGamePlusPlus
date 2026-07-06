@@ -494,6 +494,33 @@ def run() -> int:
           and field(entd, e, 1, 0x1E) == 18
           and field(entd, e, 2, 0x1E) == 17)
 
+    # 046 - Lake Poescas / Poeskas Lake, entry 453.
+    # All-monster undead roster. Preserve monster jobs/equipment-empty shape; tune only levels and Br/Fa.
+    e = 453
+    active = [0, 1, 2, 3, 4, 5]
+    check("453 undead monster jobs", roster(entd, e, active, 0x0A) == [70, 63, 63, 71, 114, 114])
+    check("453 undead monster levels", roster(entd, e, active, 0x03) == [102, 101, 101, 102, 103, 102])
+    check("453 undead monster job levels preserved", roster(entd, e, active, 0x09) == [7, 7, 7, 8, 0, 0])
+    check("453 undead monster Brave targets", roster(entd, e, active, 0x06) == [86, 86, 86, 86, 86, 86])
+    check("453 undead monster Faith targets", roster(entd, e, active, 0x07) == [35, 35, 35, 35, 35, 35])
+    check("453 active flags preserved", roster(entd, e, active, 0x01) == [0x80, 0x80, 0x80, 0x40, 0x20, 0x20])
+    check("453 unit ids preserved", roster(entd, e, active, 0x20) == [0x80, 0x81, 0x82, 0x83, 0x84, 0x85])
+    for slot_no in (0, 1, 2, 3):
+        check(f"453 s{slot_no} floater equipment empty",
+              roster(entd, e, [slot_no], 0x12) == [254]
+              and roster(entd, e, [slot_no], 0x13) == [254]
+              and roster(entd, e, [slot_no], 0x14) == [254]
+              and roster(entd, e, [slot_no], 0x15) == [254]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+    for slot_no in (4, 5):
+        check(f"453 s{slot_no} Revenant equipment empty",
+              roster(entd, e, [slot_no], 0x12) == [0]
+              and roster(entd, e, [slot_no], 0x13) == [0]
+              and roster(entd, e, [slot_no], 0x14) == [0]
+              and roster(entd, e, [slot_no], 0x15) == [0]
+              and roster(entd, e, [slot_no], 0x16) == [0])
+    check("453 cursed/phoenix spoils preserved", roster(entd, e, active, 0x1E) == [222, 253, 253, 0, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

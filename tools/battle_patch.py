@@ -1628,7 +1628,7 @@ def poeskas(data):
     for s, lvl in ((4, 103), (5, 102),     # 2 Revenants - reraising anchors (one 103 anchor)
                    (0, 102), (3, 102),      # 2 floating-undead
                    (1, 101), (2, 101)):     # 2 floating-undead
-        set_slot(data, E, s, level=lvl)
+        set_slot(data, E, s, level=lvl, brave=86, faith=35)
     return [E]
 
 
