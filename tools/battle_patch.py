@@ -1772,17 +1772,18 @@ def mullonde_nave(data):
     #              kill target + Tier-S carrier. rh set to CHAOS BLADE (37): a KnightSword, so it both
     #              powers his Divine Sword / Unyielding-Blade break AND is the steal/drop reward.
     #     slot 1 = Loffrey  (name 37, job 37 Divine-Knight-class; rh=29 Icebrand) -> 2nd equip-breaker.
-    #              RETREATS -> NO drop here (his Tier-S Robe of Lords pays at Vaults 5th, 055). Gear kept.
+    #              RETREATS, but the reward ledger pays Escutcheon here through guaranteed spoils.
     #     slot 2 = Cletienne (name 39, job 39 Sorcerer; rh=57 rod) -> caster, denies turtling. RETREATS
-    #              -> NO drop here (his Tier-S Materia Blade pays at Necrohol, 056). Gear kept.
+    #              but the reward ledger pays Lordly Robe here through guaranteed spoils. Gear kept.
     #     slot 3 = job 39 clone (name255, lvl65, eq=0) -> scripting/summon placeholder; left untouched.
     # CHANGE: scale to the human-boss band + jl8 (full kit incl. the equip-break). Folmarv 105 (leader),
     #   Loffrey & Cletienne 104. Win-on-one-falls, equip-break (Folmarv+Loffrey only), and caster pressure
-    #   all preserved (level/jl/Folmarv's blade only; reactions/scripting untouched).
+    #   all preserved. Br/Fa tunes two physical break bosses and one high-Faith caster.
     E = 461
-    set_slot(data, E, 0, level=105, joblevel=8, rh=CHAOS_BLADE)  # Folmarv - Tier-S Chaos Blade (KnightSword)
-    set_slot(data, E, 1, level=104, joblevel=8)                  # Loffrey - retreats, no drop; gear kept
-    set_slot(data, E, 2, level=104, joblevel=8)                  # Cletienne - retreats, no drop; gear kept
+    set_slot(data, E, 0, level=105, joblevel=8, brave=90, faith=55,
+             rh=CHAOS_BLADE)                                    # Folmarv - Tier-S Chaos Blade (KnightSword)
+    set_slot(data, E, 1, level=104, joblevel=8, brave=90, faith=55)  # Loffrey - second break source
+    set_slot(data, E, 2, level=104, joblevel=8, brave=65, faith=88)  # Cletienne - caster pressure
     return [E]
 
 

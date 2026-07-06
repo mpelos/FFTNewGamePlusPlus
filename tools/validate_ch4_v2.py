@@ -733,6 +733,56 @@ def run() -> int:
 
     check("460 Faerie Harp spoil preserved", field(entd, e, 2, 0x1E) == 94)
 
+    # 052 - Mullonde Cathedral Nave / Murond Holy Place, entry 461.
+    # Pure three-boss focus race: Folmarv + Loffrey are the only break bosses; Cletienne is caster pressure.
+    e = 461
+    active = [0, 1, 2]
+    check("461 active jobs", roster(entd, e, active, 0x0A) == [36, 37, 39])
+    check("461 active levels", roster(entd, e, active, 0x03) == [105, 104, 104])
+    check("461 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8])
+    check("461 Brave targets", roster(entd, e, active, 0x06) == [90, 90, 65])
+    check("461 Faith targets", roster(entd, e, active, 0x07) == [55, 55, 88])
+    check("461 Folmarv Chaos Blade kit",
+          field16(entd, e, 0, 0x0C) == 442
+          and field16(entd, e, 0, 0x0E) == 466
+          and field16(entd, e, 0, 0x10) == 486
+          and roster(entd, e, [0], 0x12) == [154]
+          and roster(entd, e, [0], 0x13) == [182]
+          and roster(entd, e, [0], 0x14) == [232]
+          and roster(entd, e, [0], 0x15) == [37]
+          and roster(entd, e, [0], 0x16) == [139])
+    check("461 Loffrey break kit",
+          field16(entd, e, 1, 0x0C) == 437
+          and field16(entd, e, 1, 0x0E) == 466
+          and field16(entd, e, 1, 0x10) == 489
+          and roster(entd, e, [1], 0x12) == [152]
+          and roster(entd, e, [1], 0x13) == [180]
+          and roster(entd, e, [1], 0x14) == [224]
+          and roster(entd, e, [1], 0x15) == [29]
+          and roster(entd, e, [1], 0x16) == [138])
+    check("461 Cletienne caster kit",
+          field16(entd, e, 2, 0x0C) == 435
+          and field16(entd, e, 2, 0x0E) == 468
+          and field16(entd, e, 2, 0x10) == 492
+          and roster(entd, e, [2], 0x12) == [166]
+          and roster(entd, e, [2], 0x13) == [196]
+          and roster(entd, e, [2], 0x14) == [232]
+          and roster(entd, e, [2], 0x15) == [57]
+          and roster(entd, e, [2], 0x16) == [254])
+    check("461 script placeholder preserved",
+          field(entd, e, 3, 0x03) == 65
+          and field(entd, e, 3, 0x0A) == 39
+          and field(entd, e, 3, 0x18) == 0xD0
+          and roster(entd, e, [3], 0x12) == [0]
+          and roster(entd, e, [3], 0x13) == [0]
+          and roster(entd, e, [3], 0x14) == [0]
+          and roster(entd, e, [3], 0x15) == [0]
+          and roster(entd, e, [3], 0x16) == [0])
+    check("461 Chaos/Escutcheon/Lordly spoils preserved",
+          field(entd, e, 0, 0x1E) == 37
+          and field(entd, e, 1, 0x1E) == 143
+          and field(entd, e, 2, 0x1E) == 207)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
