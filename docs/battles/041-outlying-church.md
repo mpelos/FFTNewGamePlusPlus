@@ -1,6 +1,6 @@
 # 041 - Outlying Church (Zeltennia Church)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 445
+Status: 📝 redesign v3 planned (docs-only) — v1 implementation exists for entry 445
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 36 (after Finnath Creek)
 Target version: Enhanced v1.5.0
@@ -16,10 +16,11 @@ Current implementation (entry 445, vanilla-dump verified):
 - s4,s5 Knight L102, s6 Knight L101 — height-guarding screen; Heavy gear/Runeblade/shop Shield; Rend innate.
 - s0 = inactive guest placeholder (level 0xFE) — left untouched. Angel Ring + buried map rares (other layer) untouched.
 
-Planned v2 redesign (docs-only in this pass): keep the same six-body vanilla roster, but make the
+Planned v3 redesign (docs-only in this pass): keep the same six-body vanilla roster, but make the
 party a complete Chapter-4 **inquisition shell**: Zalmo remains the focus target, two Knights are the
-only Rend sources, the third Knight is a bodyguard/item stabilizer, and both Mystics gain limited
-defensive secondary magic so they support the boss without becoming a separate healer puzzle.
+only Rend sources, the third Knight is a bodyguard stabilizer, and both Mystics become fast
+Summon-backed casters so they pressure the approach without changing the win line. The v3 Knight
+package shifts the screen from item attrition into aggressive Crystal/Genji melee pressure.
 
 > Note: TIC has no distinct "Light Robe" item; the top robe below the reserved Lordly Robe (207) is
 > Luminous Robe (206), used here. The current reward ledger treats this as a thematic/modest payout,
@@ -103,8 +104,8 @@ CONFIRMED:
 - No active guest.
 - Reward ledger currently maps this battle to Light Robe + Angel Ring guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
-- Confirm exact enemy slot order before patching the complete v2 kits.
+STILL NEEDED FOR V3 IMPLEMENTATION:
+- Confirm exact enemy slot order before patching the complete v3 kits.
 - Confirm the win condition remains "Defeat Zalmour" and that any equipped/accessory choices do not
   interfere with the death trigger.
 - Confirm whether OverrideEntryData carries level for this battle or leaves it at runtime scale.
@@ -128,7 +129,7 @@ CHANGE: NO generic-slot swap. The escalation is the complete party shell around 
   closing his arc and paying his deferred/modest holy reward.
 WHY: the fight's identity is already "reach/silence the sustaining holy boss and burst him on elevated
   ground." The faithful Ch4 escalation is to make the existing roster synergize cleanly: the Knights
-  guard the climb and threaten gear, the Mystics add soft pressure plus defensive support, and Zalmo
+  guard the climb and threaten gear, the Mystics add soft pressure plus Summon-backed casting, and Zalmo
   remains the single focus target. No new caste is needed.
 CONSTRAINT (carry Ch3 Zalmo precedent, 026): his sustain/revive is answered by Silence / focus-burst /
   reaching him; HOLY + SOFT status only (no hard lock). Keep Knight Rend within the carried
@@ -164,29 +165,60 @@ PRESERVE: buried map rares (White Robe, Japa Mala, Magick Ring, Assassin's Dagge
   treasure and are not the NG++ reward channel.
 ```
 
-## Proposed Composition (New Game++ Outlying Church v2)
+## Proposed Composition (New Game++ Outlying Church v3)
 
 Keep the count (6) and the elevated boss-duel shape; make every active human a complete Chapter-4 unit.
-Boss `104`; Knights `102`/`102`/`101`; Mystics `102`.
+Boss `104`; Knights `102`/`102`/`101`; Mystics `102`. The v3 change keeps the vanilla jobs and count,
+but turns the whole enemy party into complete Chapter-4 units: Zalmour gets a complete defensive
+boss kit, Knights keep the vanilla Knight identity and the two-Rend cap through their primary job, and
+Mystics become Summon-backed casters with Mana Shield, Swiftspell, Manafont, and high-MA gear.
+
+Vanilla composition:
+
+```text
+1x Zalmour Lucianada  (boss; Inquisitor holy sustain/revive)
+3x Knight             (front-line Rend/break pressure)
+2x Mystic             (soft status / support)
+```
+
+v3 composition:
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
-| n | Zalmour (BOSS) | Inquisitor | `104` | `72/82` | Holy sustain/revive on high ground; objective; Light Robe visible steal-bait. |
+| n | Zalmour (BOSS) | Inquisitor | `104` | `72/82` | Holy sustain/revive on high ground; Mystic secondary; Luminous Robe + Sortilège steal-bait. |
 | n | Rend Knight | Knight | `102` | `88/42` | Front-line screen; Rend source 1; threatens gear on the climb. |
 | n | Rend Knight | Knight | `102` | `88/42` | Second screen; Rend source 2 — cap reached. |
-| n | Bodyguard Knight | Knight | `101` | `88/42` | No Rend learned/enabled; Item secondary stabilizes the screen without reviving Zalmo. |
-| n | Mystic Chaplain | Mystic | `102` | `68/78` | Soft Mystic pressure + limited defensive White Magic secondary. |
-| n | Mystic Chaplain | Mystic | `102` | `72/82` | Second soft caster; supports Zalmo without hard status or Raise/Holy. |
+| n | Bodyguard Knight | Knight | `101` | `88/42` | No Rend learned/enabled; body-blocks with the same aggressive Knight package. |
+| n | Mystic Chaplain | Mystic | `102` | `68/78` | Soft Mystic pressure + fast Summon secondary. |
+| n | Mystic Chaplain | Mystic | `102` | `72/82` | Second soft caster; adds summon-clock pressure from the flank. |
+
+Current difference from vanilla:
+
+```text
+- Enemy count and jobs are unchanged: Zalmour + 3 Knights + 2 Mystics.
+- The objective is unchanged: defeat Zalmour.
+- Zalmour's v3 setup is now explicit: Mystic secondary, Reflexes, Defense Boost, Movement +2,
+  Whale's Whisker, Luminous Robe, Lambent Hat, and Sortilège.
+- The Knight screen is now much more complete: Martial Arts secondary, First Strike, Attack Boost,
+  Movement +2, Runeblade, Crystal Shield, Crystal Helm, Crystal Mail, and Genji Gloves.
+- Rend remains capped at two Knight sources through the Knight primary; the third Knight is still a
+  bodyguard, not a third break source.
+- The Mystics are still Mystics, but their v3 setup is much more aggressive: Summon secondary,
+  Mana Shield, Swiftspell, Manafont, Wizard's Rod, Lambent Hat, Black Robe, and Magepower Glove.
+```
 
 Reasoning:
 
 The faithful move is to **make the returning boss the whole focus while the screen becomes fully built
-Chapter 4 support**. Zalmour at `104` on the elevated church, with a Silence/focus-counterable sustain
-kit and Light-Robe steal-bait, delivers the "reach-or-silence-and-burst the holy boss" duel at full Ch4
-strength. The Knights guard the height with exactly two Rend sources; the third uses limited Item
-support instead of adding a third break line. The Mystics gain constrained defensive secondary magic so
-they reinforce the holy shell without becoming a White Mage detour. Only Zalmour sits at the boss band
-(`104`); the screen is `101`–`102`.
+Chapter 4 support**. Zalmour at `104` on the elevated church, with Mystic secondary, Reflexes,
+Defense Boost, Movement +2, Whale's Whisker, Luminous Robe, Lambent Hat, and Sortilège, delivers the
+"reach-or-silence-and-burst the holy boss" duel at full Ch4 strength while staying the single
+objective. The Knights guard the height with exactly two Rend sources, but v3 turns them into a more
+dangerous melee wall: First Strike and Attack Boost punish rushes, Movement +2 lets them contest the
+stairs faster, and Genji Gloves make them tempting but dangerous steal-bait. The Mystics gain fast
+Summon-backed pressure and enough MP resilience to survive a casual dive, but they still answer to
+Silence, MP pressure, spread positioning, and focused kills. Only Zalmour sits at the boss band
+(`104`); the screen is `101`-`102`.
 
 Rejected variants:
 
@@ -212,24 +244,32 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 
 ```text
 Job: Inquisitor (id TBD)   JobLevel: 8   Primary: holy magic + sustain/revive (Holy, Cure-line, Raise);
-Secondary: Mystic/White utility limited to soft support (Protect/Shell/Esuna/Cure-tier); no hard status.
-Reaction: Reflexes / Counter Magic (id TBD)   Support: Arcane Strength / MA boost (id TBD)
-  Movement: Movement +1 (486) or Ignore Height (id TBD — fits the elevated boss if legal)
-Head: holy mitre / mage hat (id TBD)   Body: LIGHT ROBE (Tier-A, id TBD)
-Accessory: non-Reraise caster accessory (do NOT equip Angel Ring unless death-trigger behavior is tested)
-Right hand: high holy staff/rod (id TBD)   Left: none (255)
+Secondary: Mystic, Mystic JobLevel 8
+Reaction: Reflexes (449)
+Support: Defense Boost (466)
+Movement: Movement +2 (487)
+Head: Lambent Hat
+Body: Luminous Robe (206)
+Accessory: Sortilège (239)
+Right hand: Whale's Whisker   Left: none (255)
 ```
 
-Role: the objective and the sustain threat — reach/silence and burst him; steal his Light Robe.
+Role: the objective and the sustain threat — reach/silence and burst him; steal his Luminous Robe or
+Sortilège if the player can afford the tempo.
 
 ### Knight x3 (Lv 102 / 102 / 101) — height-guarding screen
 
 ```text
 Job: Knight (id TBD)   JobLevel: 8   Primary: basic + Rend (ONLY on 2 of the 3 — cap)
-Secondary: Item, limited to Potion/Hi-Potion/Remedy style stabilization; no Phoenix Down/Elixir.
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Bracers (218)
-Right hand: shop knight sword (id TBD)   Left: shop shield (id TBD)
+Secondary: Martial Arts, Monk JobLevel 8
+Reaction: First Strike (453)
+Support: Attack Boost (465)
+Movement: Movement +2 (487)
+Head: Crystal Helm (154)
+Body: Crystal Mail (182)
+Accessory: Genji Gloves
+Right hand: Runeblade (30)
+Left hand: Crystal Shield (139)
 ```
 
 Role: front-line screen guarding the approach to the height; Rend on at most two (cap), no break-lock.
@@ -238,7 +278,7 @@ Third Knight rule:
 
 ```text
 The Lv101 bodyguard Knight has the same complete equipment/reaction/support/movement package, but NO
-Rend abilities learned/enabled. His job is body-blocking, Item cleanup, and melee pressure.
+Rend abilities learned/enabled. His job is body-blocking, Martial Arts utility, and melee pressure.
 ```
 
 ### Mystic x2 (Lv 102) — soft status
@@ -246,21 +286,22 @@ Rend abilities learned/enabled. His job is body-blocking, Item cleanup, and mele
 ```text
 Job: Mystic / Oracle (id TBD)   JobLevel: 8
 Primary: soft, resistable Mystic pressure only.
-Secondary: White Magic, LIMITED to defensive/light sustain (Protect/Shell/Esuna/Cure-tier).
-  No Raise, no Holy, no Stop/Don't Act/Petrify/Death/Charm-equivalent turn deletion.
-Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
-Head: mage hat (id TBD)   Body: shop robe (id TBD)
-Accessory: Featherweave Cloak (234)   Right hand: magic-boost rod (id TBD)   Left: none (255)
+Secondary: Summon, Summoner JobLevel 8
+Reaction: Mana Shield (445)
+Support: Swiftspell (482)
+Movement: Manafont (494)
+Head: Lambent Hat   Body: Black Robe
+Accessory: Magepower Glove   Right hand: Wizard's Rod   Left: none (255)
 ```
 
-Role: soft pressure and defensive shelling that buys Zalmo a turn or two without creating a separate
-healer-kill detour.
+Role: soft pressure plus fast summon-clock threat that buys Zalmo a turn or two without creating a
+second healer-kill detour.
 
 ## Positioning Plan
 
 ```text
 Elevated church: Zalmour starts atop the high ground (the height wall), the three Knights screening the
-  stairs/ramp up to him, the two Mystics flanking with status sightlines onto the approach.
+  stairs/ramp up to him, the two Mystics flanking with status and summon sightlines onto the approach.
 Preserve the ELEVATION (the height is the puzzle) — the player must bring height-ignoring damage
   (Holy / Black magic / Hallowed Bolt) or rush him with a mobile unit (Ninja / Ignore Height).
 Keep Zalmour reachable-but-guarded so it's a fight THROUGH the screen to the boss, not a free snipe.
@@ -310,21 +351,25 @@ Iteration decision:
 ```text
 ACCEPT v2 constrained inquisition shell.
 Iteration 1 rejected the full-healer reading because it pushed sustain over the local budget.
-Iteration 2 keeps the vanilla roster and complete setups, but constrains Mystic secondary magic and
-Knight item access so the answer remains Zalmo-focused: Silence, mobility, height-ignoring burst, or
-fast gear disruption.
+Iteration 2 keeps the vanilla roster and complete setups, but constrains Mystic pressure and Knight
+item access so the answer remains Zalmo-focused: Silence, mobility, height-ignoring burst, or fast gear
+disruption.
 ```
 
 ## Implementation Checklist
 
 - [ ] Confirm current entry 445 slot order: Zalmour + 3 Knight + 2 Mystic + player slots.
 - [ ] Keep win condition = "Defeat Zalmour" (ends on his death); keep the elevated geometry.
-- [ ] Set Zalmour `104` with holy sustain/revive — Silence/focus answerable, holy+soft only, no hard lock.
-- [ ] Equip Zalmour with Light Robe as visible steal-bait; rewards must still be guaranteed spoils.
+- [ ] Set Zalmour `104` with holy sustain/revive plus Mystic secondary at Mystic JobLevel 8 — Silence/
+      focus answerable, holy+soft only, no hard lock.
+- [ ] Give Zalmour Reflexes, Defense Boost, Movement +2, Whale's Whisker, Luminous Robe, Lambent Hat,
+      and Sortilège.
 - [ ] Do not equip Angel Ring on Zalmo unless death-trigger/Reraise behavior is explicitly tested.
 - [ ] Limit Rend to 2 of the 3 Knights (≤2-break-source cap); third Knight has no Rend enabled.
-- [ ] Give Knights complete kits; Item secondary is limited and does not include Phoenix Down/Elixir.
-- [ ] Give Mystics complete kits; secondary White Magic is limited to defensive/light support, no Raise/Holy.
+- [ ] Give Knights complete v3 kits: Martial Arts secondary at Monk JobLevel 8, First Strike,
+      Attack Boost, Movement +2, Runeblade, Crystal Shield, Crystal Helm, Crystal Mail, and Genji Gloves.
+- [ ] Give Mystics complete v3 kits: Summon secondary at Summoner JobLevel 8, Mana Shield, Swiftspell,
+      Manafont, Wizard's Rod, Lambent Hat, Black Robe, and Magepower Glove.
 - [ ] Set add levels: 2 Knight + 2 Mystic `102`; third Knight `101`.
 - [ ] Preserve guaranteed spoils: Light Robe + Angel Ring; preserve buried map rares (do not remove/duplicate).
 - [ ] Set JobLevel `8` on all active enemy slots.
@@ -336,11 +381,17 @@ fast gear disruption.
 
 - Is the ELEVATION still the crux (player must bring height-ignoring damage or rush the boss)?
 - Does Zalmour still out-sustain chip damage so the answer is reach/Silence/focus-burst (no slow trade)?
-- Is his sustain holy/soft only — never a hard lock — and is he a tempting STEAL (Light Robe)?
+- Is his sustain holy/soft only — never a hard lock — and is he tempting STEAL bait without making
+  Sortilège mandatory to steal?
+- Does Defense Boost + Sortilège protect Zalmour without pushing the fight into an unreachable stall?
 - Do Light Robe + Angel Ring pay through guaranteed spoils, without requiring Steal?
 - Is Knight Rend within the ≤2-source cap (no break-lock) and Mystic status soft/resistable?
+- Do First Strike + Genji Gloves make the Knights threatening without making the boss unreachable?
+- Does Martial Arts utility support the Knight screen without becoming a second sustain engine?
 - Do all active humans have complete equipment plus secondary/reaction/support/movement?
-- Does Mystic secondary support Zalmo without becoming a second healer puzzle?
+- Do Swiftspell Summon Mystics add pressure without stealing focus from the Zalmo burst race?
+- Does Mana Shield + Manafont make the Mystics resilient but still answerable through Silence, MP
+  pressure, and focused kills?
 - Is only Zalmour at the boss band (`104`), screen `101`-`102` — a Tier-A boss, not a spike?
 - Does it read as the long-awaited execution of the runaway inquisitor on his own church steps?
 
