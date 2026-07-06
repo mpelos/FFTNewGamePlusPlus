@@ -100,6 +100,7 @@ GOLDEN_STAFF = 64  # == SHOP_STAFF; Ovelia's MA staff (alias for readability in 
 GOLD_HAIRPIN = 166  # Hat (Princess-legal), MP+50/HP+80, buyable (Chapter3_SaveRafa); Ovelia head — HP cushion
 GASTROPHETES = 82  # best buyable crossbow (WP 10, PSX "Gastrafitis"); one-handed -> shield-compatible
 CRYSTAL_SHIELD = 139  # best buyable shield (== SHOP_SHIELD); high evade -> "hard to hit"
+KAISER_SHIELD = 141
 # Dorter additions — strongest SHOP-tier per category (no Unknown20 treasure tier):
 HEAVY_HELM, HEAVY_ARMOR, SHOP_SHIELD = 154, 182, 139   # Knight heavy gear (Helmet/Armor/Shield)
 MAGE_HAT, SHOP_ROBE, SHOP_ROD = 167, 206, 56           # Black Mage gear (Hat/Robe/Rod)
@@ -1564,17 +1565,22 @@ def besselat_wall(data):
 def besselat_sluice(data):
     E = 450
     set_slot(data, E, 4, level=102, joblevel=8, job=BMAGE,  # AoE on the high ground — priority kill
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+             secondary=ITEMS, brave=60, faith=84,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     set_slot(data, E, 5, level=102, joblevel=4, job=TMAGE,  # NEW: Slow the lever-runner (jl4, no hard lock)
-             reaction=REFLEXES, movement=MV1,
+             secondary=ITEMS, brave=62, faith=80,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
-    for s, lvl in ((2, 102), (3, 102), (6, 101), (7, 101)):  # 4 Knights — gate wall
-        set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT,
+    for s, lvl, jl, shield in ((2, 102, 8, KAISER_SHIELD), (3, 102, 8, SHOP_SHIELD),
+                               (6, 101, 1, SHOP_SHIELD), (7, 101, 1, SHOP_SHIELD)):
+        set_slot(data, E, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=ITEMS,
+                 brave=88, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=shield)
     for s, lvl in ((0, 102), (1, 101)):  # 2 Archers — lane chip over the approach
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
+        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
+                 brave=82, faith=45,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
     return [E]
