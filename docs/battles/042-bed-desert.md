@@ -1,6 +1,6 @@
 # 042 - Beddha Sandwaste (Bed Desert)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 447
+Status: 📝 redesign v3 planned (docs-only) — v1 implementation exists for entry 447
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 37 (after Outlying Church)
 Target version: Enhanced v1.5.0
@@ -20,9 +20,11 @@ Current implementation (entry 447, vanilla-dump verified):
 - s6,s7 = job-43 Barich-clone scripting placeholders (jl0) — left untouched. NO Hydra. Only Barich at band 104.
 - Barich recurs at Lost Halidom (057) as a Tier-S dragon fight — no double-best (gun paid here only).
 
-Planned v2 redesign (docs-only in this pass): keep the vanilla six-body gun-duel roster, but make every
-active human a complete Chapter-4 unit. Barich's **Glacial Gun** remains the only active gun engine;
-**Blaze Gun** and **Blaster** stay guaranteed Spoils of War rewards, not extra enemy gun pressure.
+Planned v3 redesign (docs-only in this pass): keep the vanilla six-body gun-duel roster, but make every
+active human a complete Chapter-4 unit. Barich shifts from the v2 Glacial Gun engine into a more
+mobile/evasive Stoneshooter boss package, while the vanilla Knights become Samurai parry screens and
+the vanilla Archers become Geomancer terrain bruisers. **Glacial Gun**, **Blaze Gun**, and **Blaster**
+stay guaranteed Spoils of War rewards, not extra enemy gun pressure.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
@@ -31,9 +33,9 @@ active human a complete Chapter-4 unit. Barich's **Glacial Gun** remains the onl
 ## Design Goal
 
 ```text
-Make Bed Desert a clean open-lane gun duel: the player must cross exposed sand, absorb or respect
-Glacial Gun, disarm Barich if desired, and burst him through a complete ranged screen. The pressure is
-range, element, and approach geometry, not dragons, hard control, or a three-gunner pileup.
+Make Bed Desert a clean open-lane gun duel: the player must cross exposed sand, respect Stoneshooter,
+disarm Barich if desired, and burst him through a complete ranged screen. The pressure is range,
+evasion, terrain, and approach geometry, not dragons, hard control, or a three-gunner pileup.
 ```
 
 No active guests appear here. No guest-control implementation is needed for this battle.
@@ -86,14 +88,14 @@ identity is **a distance/elemental puzzle**: the player must **close on the gunn
 Mage AoE). Because the fight ends when Barich falls, it rewards reaching and bursting the gunner over
 trading shots across the dunes.
 
-The most elegant New Game++ move is to keep his **Glacial Gun as visible steal-bait** — so the disarm
-line (Steal Weapon) removes his ice threat, exactly like disarming Wiegraf's Holy Sword in Ch3, while
-the actual Glacial/Blaze/Blaster rewards remain guaranteed through Spoils of War.
+The v3 New Game++ move is to give him **Stoneshooter as visible steal-bait** — so the disarm line
+(Steal Weapon) removes his active gun threat, exactly like disarming Wiegraf's Holy Sword in Ch3,
+while the actual Glacial/Blaze/Blaster rewards remain guaranteed through Spoils of War.
 
-For New Game++ the identity must stay: **an open-desert gun-duel — close on / absorb / disarm a
-long-range ice-gun Templar and burst him through a ranged screen — with his Glacial Gun as the
-tempting, threat-removing steal; the boss is the escalation, the screen stays familiar, and the extra
-guns are payout rather than extra combat engines.**
+For New Game++ the identity must stay: **an open-desert gun-duel — close on / bypass / disarm a
+long-range Templar gunner and burst him through a ranged screen — with his active gun as the tempting,
+threat-removing steal; the boss is the escalation, the screen stays familiar, and the extra guns are
+payout rather than extra combat engines.**
 
 ## Local Data Confirmed / Data Still Needed
 
@@ -106,8 +108,8 @@ CONFIRMED:
 - No Hydra here; the dragon-pit Barich rematch belongs to Lost Halidom (`057`).
 - Reward ledger currently maps this battle to Glacial Gun + Blaze Gun + Blaster guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
-- Confirm exact enemy slot order before patching complete v2 kits.
+STILL NEEDED FOR V3 IMPLEMENTATION:
+- Confirm exact enemy slot order before patching complete v3 kits.
 - Confirm the win condition remains "Defeat Barich" and Barich clone placeholders remain untouched.
 - Confirm whether OverrideEntryData carries level for this battle or leaves it at runtime scale.
 - Preserve open desert geometry and long sightlines; the distance puzzle is the fight.
@@ -117,8 +119,8 @@ STILL NEEDED FOR V2 IMPLEMENTATION:
 Job IDs (carry over known, verify the rest in-game):
 
 ```text
-77 = Archer            (confirmed)
-Knight job id          (TBD - verify)
+Samurai job id         (TBD - verify)
+Geomancer job id       (TBD - verify)
 Black Mage job id      (TBD - verify)
 Knights Templar / Machinist id (TBD - verify; Barich's boss job)
 ```
@@ -126,33 +128,37 @@ Knights Templar / Machinist id (TBD - verify; Barich's boss job)
 ## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-CHANGE: NO generic-slot swap. The escalation is a complete open-desert firing lane around the BOSS —
-  Barich is a Knights Templar machinist whose Glacial Gun delivers high-tier RANGED ELEMENTAL damage
-  with no charge tell, a distinct threat-profile from the melee-break Templars.
-WHY: the fight's identity is already "cross open ground and neutralize a long-range elemental gunner."
+CHANGE: light generic-slot swap. The escalation is a complete open-desert firing lane around the BOSS —
+  Barich is a Knights Templar machinist whose Stoneshooter package creates a mobile/evasive gunner
+  threat, while the vanilla Knights become Samurai parry screens instead of break tanks and the
+  vanilla Archers become Geomancer terrain bruisers instead of pure bow chip.
+WHY: the fight's identity is already "cross open ground and neutralize a long-range gunner."
   The faithful Ch4 escalation is to give the existing screen complete kits while keeping the gun-boss
-  as the single headline. The Knights pin the approach, Archers tax long lanes, and the Black Mage
-  punishes clumps; all of that amplifies crossing the gun lane.
-CONSTRAINT: the gun is answerable — ICE SHIELD absorbs it, closing distance removes the range
-  advantage, and STEAL WEAPON disarms it. Rewards are guaranteed spoils, not steal-gated.
+  as the single headline. The Samurai pin the approach, Geomancers tax terrain lanes, and the Black
+  Mage punishes clumps; all of that amplifies crossing the gun lane.
+CONSTRAINT: the gun is answerable — closing distance removes the range advantage, Reflexes/Featherweave
+  are bypassed by non-evadable pressure, and STEAL WEAPON disarms it. Rewards are guaranteed spoils,
+  not steal-gated.
 REJECTED DEFAULTS: no Hydra/dragon preview, no active three-gun enemy team, no heavy Disable/
   Immobilize control, no Time Mage crossfire. Those are either the 057 rematch identity or a second
   engine.
-WHAT IS NOT CHANGED: the open desert, the 2 Knight + 2 Archer + 1 Black Mage ranged screen, and the
-  "reach and burst the boss" win line remain. No brand-new caste debuts here.
+WHAT IS NOT CHANGED: the open desert, the 2 front-line screeners + 2 lane punishers + 1 Black Mage
+  ranged screen, and the "reach and burst the boss" win line remain. No brand-new caste debuts here.
 ```
 
 ## Sanctioned exceptions (carried precedents)
 
 ```text
-RANGED ELEMENTAL GUN (Barich's Glacial Gun) — allowed as the boss's identity: high-tier ice at gun
-  range. Counters: Ice Shield ABSORB (heals you), close the distance, or Steal Weapon (disarm = the
-  tactical answer). Not a status; race-able; no hard lock.
-KNIGHT REND / BREAK — only 2 Knights here, within the carried ≤2-break-source cap; telegraphed,
-  Safeguard/Steal answers.
+RANGED BOSS GUN (Barich's Stoneshooter) — allowed as the boss's identity: long-range pressure from the
+  named machinist. Counters: close the distance, use non-evadable pressure against Reflexes/
+  Featherweave, or Steal Weapon (disarm = the tactical answer). Not a status; race-able; no hard lock.
+SAMURAI PARRY SCREEN — the former Knight slots become Samurai with Shirahadori. Counters: magic,
+  non-evadable skills, disarm/steal pressure, or ignoring them to reach Barich. This replaces Rend;
+  do not also add Knight break pressure here.
 BLACK MAGE AoE — boosted elemental, race-able by rushing it (Ch4 opener precedent, 038). Not new.
-ARCHER LANE CHIP — allowed because the open desert is the fight; answerable by closing, evasion,
-  terrain, or killing the screen.
+GEOMANCER TERRAIN BRUISERS — the former Archer slots become Geomancers with Nature's Wrath. Counters:
+  range, magic, disabling the bruisers, or forcing them off ideal terrain. This preserves lane pressure
+  without adding a second ranged-gun engine.
 ```
 
 ## Rare/reward handling
@@ -160,36 +166,57 @@ ARCHER LANE CHIP — allowed because the open desert is the fight; answerable by
 ```text
 Guaranteed spoils for entry 447: GLACIAL GUN + BLAZE GUN + BLASTER.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
-COMBAT ROLE: Barich may equip Glacial Gun as visible steal-bait and as the fight's ice engine.
-Blaze Gun and Blaster should remain reward payloads, not active extra enemy gun engines, unless the
-fight is redesigned and resimulated.
+COMBAT ROLE: in v3 Barich equips Stoneshooter as visible steal-bait and as the fight's active gun.
+Glacial Gun, Blaze Gun, and Blaster remain reward payloads, not active extra enemy gun engines, unless
+the fight is redesigned and resimulated.
 WHY IT FITS: Barich is the machinist Templar; the gun trio is his thematic payout.
 TIER: mid-Chapter-4 gun reward. The later Lost Halidom Barich rematch is dragon/control-themed and
 does not re-pay the gun identity.
 ```
 
-## Proposed Composition (New Game++ Bed Desert v2)
+## Proposed Composition (New Game++ Bed Desert v3)
 
 Keep the count (6) and the open-desert gun-duel shape; make every active human a complete Chapter-4
-unit. Boss `104`; Knights `102`; Archers `102`/`101`; Black Mage `102`.
+unit. Boss `104`; Samurai `102`; Geomancers `102`/`101`; Black Mage `102`.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
-| n | Barich (BOSS) | Knights Templar (machinist) | `104` | `84/55` | Glacial-Gun ranged ice nukes; objective; gun is visible steal-bait. |
-| n | Knight | Knight | `102` | `88/42` | Front-line screen; Rend (break source 1). |
-| n | Knight | Knight | `102` | `88/42` | Second screen; Rend (break source 2 — cap reached). |
-| n | Lane Archer | Archer | `102` | `82/45` | Ranged chip across the open dunes; complete utility kit. |
-| n | Lane Archer | Archer | `101` | `82/45` | Second archer; covers the approach lanes; complete utility kit. |
+| n | Barich (BOSS) | Knights Templar (machinist) | `104` | `84/55` | Stoneshooter gun pressure; evasive/mobile boss; objective. |
+| n | Parry Samurai | Samurai | `102` | `88/60` | Front-line parry screen; Martial Arts utility; Kiku-Ichimonji pressure. |
+| n | Parry Samurai | Samurai | `102` | `88/60` | Second parry screen; blocks the approach without adding Rend pressure. |
+| n | Terrain Geomancer | Geomancer | `102` | `84/60` | Terrain bruiser; Runeblade + Nature's Wrath punishes the approach. |
+| n | Terrain Geomancer | Geomancer | `101` | `84/60` | Second terrain bruiser; covers the alternate lane with Item utility. |
 | n | Black Mage | Black Mage | `102` | `60/84` | AoE caster; punishes clumping while crossing; no Time Magic engine. |
+
+Current difference from vanilla:
+
+```text
+- Enemy count is unchanged, but the vanilla Knight and Archer slots are upgraded: Barich + 2 Samurai +
+  2 Geomancers + 1 Black Mage.
+- The objective is unchanged: defeat Barich.
+- Barich's v3 setup replaces the active Glacial Gun plan with Stoneshooter, no secondary, Reflexes,
+  Defense Boost, Jump +3, Thief's Cap, Black Garb, and Featherweave Cloak.
+- The former Knights lose Rend entirely and become Samurai parry screens: Martial Arts secondary,
+  Shirahadori, Doublehand, Movement +3, Kiku-Ichimonji, Crystal Helm, Crystal Mail, and Magic Gauntlet.
+- The former Archers become Geomancers: Item secondary at JobLevel 8, Nature's Wrath, Attack Boost,
+  Movement +2, Runeblade, Lambent Hat, Power Garb, and Magepower Glove.
+- Glacial Gun, Blaze Gun, and Blaster remain guaranteed rewards only; they are not extra active enemy
+  gun engines.
+- The two Samurai and two Geomancers now have full v3 kits; the Black Mage keeps the vanilla caster
+  pressure shape until its v3 individual kit is assigned.
+```
 
 Reasoning:
 
 The faithful move is to **make the gun-boss the whole focus while the desert screen becomes fully built
-Chapter 4 support**. Barich at `104` with a high-range Glacial Gun (absorb-/close-/steal-counterable)
-delivers the "cross the sand and neutralize the gunner" duel at full Ch4 strength. The two Knights
-hold the line with exactly two Rend sources; the two Archers and Black Mage make the approach costly
-without adding another puzzle engine. Only Barich sits at the boss band (`104`); the screen is
-`101`–`102`.
+Chapter 4 support**. Barich at `104` with Stoneshooter, Reflexes, Defense Boost, Jump +3, Thief's Cap,
+Black Garb, and Featherweave Cloak delivers the "cross the sand and neutralize the gunner" duel at full
+Ch4 strength, but now the boss is a harder-to-pin evasive target instead of a pure Glacial Gun elemental
+check. The two former Knights become Samurai: they trade Rend pressure for Shirahadori/Doublehand
+front-line threat, making careless physical rushes worse without turning the fight into a gear-break
+tax. The former Archers become Geomancers, trading passive bow chip for terrain-driven hybrid pressure
+and Nature's Wrath counter-chip. The Black Mage still punishes clumps without adding another puzzle
+engine. Only Barich sits at the boss band (`104`); the screen is `101`-`102`.
 
 Rejected variants:
 
@@ -215,41 +242,52 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ### Barich (Lv 104) — BOSS (machinist Templar)
 
 ```text
-Job: Knights Templar / Machinist (id TBD)   JobLevel: 8   Primary: gun fire (Glacial Gun ice spells) +
-  light Aim only. No Disable/Immobilize control in this first Barich fight.
-Secondary: Item, limited to self-stabilization (Hi-Potion/Remedy style); no Phoenix Down/Elixir.
-Reaction: (anti-burst) Reflexes / Counter (id TBD)   Support: Concentration (469) or Attack Boost (465)
-  Movement: Movement +1 (486)
-Head: Tier-A helm (id TBD)   Body: Tier-A armor (id TBD)   Accessory: Tier-A accessory (id TBD)
-Right hand: GLACIAL GUN (ice element, id TBD)   Left: none / two-hand (254)
+Job: Knights Templar / Machinist (id TBD)   JobLevel: 8   Primary: machinist/gun skills at JobLevel 8.
+No Disable/Immobilize control in this first Barich fight.
+Secondary: none
+Reaction: Reflexes (449)
+Support: Defense Boost (466)
+Movement: Jump +3
+Head: Thief's Cap (168)
+Body: Black Garb (198)
+Accessory: Featherweave Cloak (234)
+Right hand: Stoneshooter   Left: none / two-hand (254)
 ```
 
-Role: the long-range threat and objective — absorb (Ice Shield) / close / disarm (Steal Weapon) and
-burst him. Keep the gun stealable as tactical disarm; rewards still pay through spoils.
+Role: the long-range threat and objective — close, bypass evasion, disarm (Steal Weapon), or burst him.
+Keep the gun stealable as tactical disarm; rewards still pay through spoils.
 
-### Knight x2 (Lv 102) — desert screen
+### Samurai x2 (Lv 102) — desert parry screen
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Primary: basic + Rend (both — 2 sources = cap)
-Secondary: Item, limited to Potion/Hi-Potion/Remedy style stabilization; no Phoenix Down/Elixir.
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Bracers (218)
-Right hand: shop knight sword (id TBD)   Left: shop shield (id TBD)
+Job: Samurai (id TBD)   JobLevel: 8
+Secondary: Martial Arts, Monk JobLevel 8
+Reaction: Shirahadori
+Support: Doublehand
+Movement: Movement +3
+Head: Crystal Helm (154)
+Body: Crystal Mail (182)
+Accessory: Magic Gauntlet
+Right hand: Kiku-Ichimonji   Left: none / two-hand (254)
 ```
 
-Role: front-line screen slowing the player's approach across the sand; Rend within the cap.
+Role: front-line parry screen slowing the player's approach across the sand; no Rend/break pressure.
 
-### Archer x2 (Lv 102 / 101) — open-lane chip
+### Geomancer x2 (Lv 102 / 101) — open-lane terrain bruisers
 
 ```text
-Job: Archer (77)   JobLevel: 8
-Secondary: Item, limited to Potion/Remedy style utility; no Phoenix Down/Elixir.
-Reaction: Reflexes (449)   Support: Concentration (469)   Movement: Movement +1 (486)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
-Right hand: shop high-tier bow (id TBD)   Left: none / two-hand marker (254)
+Job: Geomancer (id TBD)   JobLevel: 8
+Secondary: Item, Item JobLevel 8
+Reaction: Nature's Wrath
+Support: Attack Boost (465)
+Movement: Movement +2 (487)
+Head: Lambent Hat
+Body: Power Garb (195)
+Accessory: Magepower Glove
+Right hand: Runeblade (30)   Left: none (255)
 ```
 
-Role: ranged chip exploiting the open desert sightlines; punishes a slow approach.
+Role: terrain bruiser exploiting the open desert lanes; punishes a slow approach and melee contact.
 
 ### Black Mage (Lv 102) — AoE
 
@@ -267,17 +305,18 @@ Role: punishes the player for clumping while crossing the open ground toward Bar
 ## Positioning Plan
 
 ```text
-Open desert: Barich starts at MAX distance with clear gun sightlines (the long-range duel), the two
-  Knights forward as the screen, the two Archers on flanking dunes/high ground, the Black Mage mid-back.
+Open desert: Barich starts at MAX distance with clear Stoneshooter sightlines (the long-range duel),
+  the two Samurai forward as the screen, the two Geomancers on flanking dunes/lanes, the Black Mage
+  mid-back.
 Preserve the open geometry and long sightlines (the distance puzzle IS the fight) — do not box Barich
   in a corner where he can be reached trivially turn one.
-Keep the gun stealable and Ice-Shield-absorbable; the player should have multiple valid answers (absorb,
-  close, disarm), none mandatory.
+Keep the gun stealable; the player should have multiple valid answers (close, non-evadable pressure,
+  disarm), none mandatory.
 Only the boss at `104`; do not over-scale the screen.
 ```
 
-The desert should say: "a Templar gunner rules the open sand — soak his ice, sprint the dunes, or
-snatch his gun, then put him down before the desert wears you thin."
+The desert should say: "a Templar gunner rules the open sand — sprint the dunes, ignore his evasive
+shell, or snatch his gun, then put him down before the desert wears you thin."
 
 ## Simulation Plan and Results
 
@@ -301,6 +340,10 @@ foe differentiation, and hard-control risk. It does not simulate exact FFT formu
 
 Result summary:
 
+> Current note: these results are the v2 baseline simulation. The v3 Stoneshooter/Reflexes/
+> Featherweave Barich package is the active design direction and still needs a refreshed simulation
+> pass before implementation.
+
 | Candidate | Pressure | Gun clarity | Approach answer | Disarm clarity | Break fairness | Repeat diff | Hard control | Verdict |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | v1 partial firing line | 168 | 94 | 84 | 90 | 74 | 95 | 0 | Rejected: incomplete setup |
@@ -314,23 +357,34 @@ Result summary:
 Iteration decision:
 
 ```text
-ACCEPT v2 complete firing lane.
-Keep the vanilla roster and complete every human setup. Do not activate Blaze Gun/Blaster as extra
-enemy guns; do not bring forward 057's dragons or Disable/Immobilize control. The answer remains:
-elemental defense, close distance, Steal Weapon, or burst Barich.
+ACCEPT v2 complete firing lane as the baseline structure.
+For v3, keep the vanilla count and complete every human setup, but replace Barich's active Glacial
+Gun engine with the Stoneshooter/Reflexes/Defense Boost/Jump +3 evasive boss package, and replace the
+two vanilla Knights with Samurai parry screens and the two vanilla Archers with Geomancer terrain
+bruisers. Do not activate Glacial Gun/Blaze Gun/Blaster as extra enemy guns; do not bring forward
+057's dragons or Disable/Immobilize control. The answer remains: close distance, non-evadable
+pressure, Steal Weapon, or burst Barich.
 ```
 
 ## Implementation Checklist
 
 - [ ] Confirm current entry 447 slot order: Barich + 2 Knight + 2 Archer + 1 Black Mage + player slots (NO Hydra).
 - [ ] Keep win condition = "Defeat Barich" (ends on his fall); keep the open desert geometry.
-- [ ] Set Barich `104` with Glacial Gun (ranged ice); confirm Ice-Shield absorb + STEAL WEAPON work.
-- [ ] Equip Barich with Glacial Gun as visible steal-bait; rewards must still be guaranteed spoils.
-- [ ] Do not activate Blaze Gun/Blaster as extra enemy gun engines unless redesigned and resimulated.
-- [ ] Limit Rend to the 2 Knights (cap); keep Black Mage AoE + Archer ranged chip.
+- [ ] Set Barich `104` with complete v3 kit: primary JobLevel 8, no secondary, Reflexes, Defense Boost,
+      Jump +3, Stoneshooter, Thief's Cap, Black Garb, and Featherweave Cloak.
+- [ ] Confirm STEAL WEAPON works against Stoneshooter; rewards must still be guaranteed spoils.
+- [ ] Do not activate Glacial Gun/Blaze Gun/Blaster as extra enemy gun engines unless redesigned and
+      resimulated.
+- [ ] Replace both vanilla Knights with Samurai `102`: Martial Arts secondary at Monk JobLevel 8,
+      Shirahadori, Doublehand, Movement +3, Kiku-Ichimonji, Crystal Helm, Crystal Mail, and
+      Magic Gauntlet.
+- [ ] Replace both vanilla Archers with Geomancers: Item secondary at Item JobLevel 8, Nature's Wrath,
+      Attack Boost, Movement +2, Runeblade, Lambent Hat, Power Garb, and Magepower Glove.
+- [ ] Remove Knight Rend/break pressure from these two slots; keep Black Mage AoE + Geomancer lane
+      pressure.
 - [ ] Give every active human complete equipment plus secondary/reaction/support/movement.
-- [ ] Keep secondaries constrained to utility/self-stabilization; no Phoenix Down loops, Time Magic, or hard control.
-- [ ] Set add levels: 2 Knight + 1 Archer + Black Mage `102`; second Archer `101`.
+- [ ] Keep remaining secondaries constrained to role utility; no Phoenix Down loops, Time Magic, or hard control.
+- [ ] Set add levels: 2 Samurai + 1 Geomancer + Black Mage `102`; second Geomancer `101`.
 - [ ] Set JobLevel `8` on all active enemy slots.
 - [ ] Preserve guaranteed spoils: Glacial Gun + Blaze Gun + Blaster; preserve buried Yagyu Darkrood.
 - [ ] Patch via the correct layer; keep the diff inside the Bed Desert window only.
@@ -339,14 +393,16 @@ elemental defense, close distance, Steal Weapon, or burst Barich.
 
 ## Test Questions
 
-- Is Barich's Glacial Gun a real long-range threat with multiple FAIR answers (Ice Shield absorb, close
-  distance, Steal Weapon disarm) — never a hard lock?
-- Does stealing the Glacial Gun remove his ice threat while rewards still pay through guaranteed spoils?
+- Is Barich's Stoneshooter a real long-range threat with multiple FAIR answers (close distance,
+  non-evadable pressure, Steal Weapon disarm) — never a hard lock?
+- Does stealing the Stoneshooter remove his gun threat while rewards still pay through guaranteed spoils?
 - Does "Defeat Barich ends the fight" keep it a reach-and-burst race, not a cross-desert trade war?
 - Is the open desert geometry preserved (long sightlines — the distance puzzle)?
-- Is Knight Rend within the cap (2 sources) and the AoE Black Mage race-able?
+- Do the Samurai parry screens pressure physical rushes without turning Shirahadori into a fake wall?
+- Do the Geomancers preserve lane pressure without becoming a second headline engine?
+- Is the AoE Black Mage race-able while the Samurai and Geomancers occupy the approach lanes?
 - Do all active humans have complete equipment plus secondary/reaction/support/movement?
-- Are Blaze Gun and Blaster rewards only, not extra active enemy gun engines?
+- Are Glacial Gun, Blaze Gun, and Blaster rewards only, not extra active enemy gun engines?
 - Is only Barich at the boss band (`104`), screen `101`-`102` — a Tier-A boss, not a spike?
 - Does the loot stay consistent with his later Lost Halidom (`052`) appearance (no double-best)?
 
