@@ -628,6 +628,59 @@ def run() -> int:
           field(entd, e, 1, 0x1E) == 136
           and field(entd, e, 2, 0x1E) == 65)
 
+    # 050 - Eagrose Castle / Igros Castle, entry 459.
+    # Two-phase Dycedarg -> Adramelk fight. Slot 0 guest must be player-controlled if active.
+    e = 459
+    active = [0, 1, 2, 3, 4, 5, 6, 7]
+    check("459 active jobs", roster(entd, e, active, 0x0A) == [8, 9, 76, 76, 76, 76, 76, 69])
+    check("459 active levels", roster(entd, e, active, 0x03) == [103, 104, 103, 103, 103, 103, 103, 105])
+    check("459 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 1, 1, 1, 0])
+    check("459 active secondaries", roster(entd, e, active, 0x0B) == [254, 71, 6, 6, 6, 6, 6, 120])
+    check("459 Brave targets", roster(entd, e, active, 0x06) == [70, 88, 88, 88, 84, 84, 84, 92])
+    check("459 Faith targets", roster(entd, e, active, 0x07) == [65, 60, 42, 42, 55, 55, 55, 86])
+    check("459 guest player-control bit", field(entd, e, 0, 0x18) == 0x8C)
+    check("459 guest gear preserved",
+          roster(entd, e, [0], 0x12) == [154]
+          and roster(entd, e, [0], 0x13) == [182]
+          and roster(entd, e, [0], 0x14) == [210]
+          and roster(entd, e, [0], 0x15) == [30]
+          and roster(entd, e, [0], 0x16) == [139])
+    check("459 Dycedarg gear and R/S/M",
+          field16(entd, e, 1, 0x0C) == 450
+          and field16(entd, e, 1, 0x0E) == 479
+          and field16(entd, e, 1, 0x10) == 486
+          and roster(entd, e, [1], 0x12) == [156]
+          and roster(entd, e, [1], 0x13) == [181]
+          and roster(entd, e, [1], 0x14) == [215]
+          and roster(entd, e, [1], 0x15) == [33]
+          and roster(entd, e, [1], 0x16) == [136])
+
+    for slot_no in (2, 3, 4, 5, 6):
+        check(f"459 s{slot_no} Knight R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"459 s{slot_no} Knight armor",
+              roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+
+    check("459 Adramelk no-equipment shape",
+          roster(entd, e, [7], 0x12) == [255]
+          and roster(entd, e, [7], 0x13) == [255]
+          and roster(entd, e, [7], 0x14) == [255]
+          and roster(entd, e, [7], 0x15) == [255]
+          and roster(entd, e, [7], 0x16) == [255])
+    check("459 placeholders preserved",
+          roster(entd, e, [8, 9], 0x03) == [254, 254]
+          and roster(entd, e, [8, 9], 0x0A) == [8, 8]
+          and roster(entd, e, [8, 9], 0x18) == [0xC0, 0xC0])
+    check("459 Maximillian/Grand Helm/Venetian spoils preserved",
+          field(entd, e, 1, 0x1E) == 185
+          and field(entd, e, 2, 0x1E) == 156
+          and field(entd, e, 3, 0x1E) == 142)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

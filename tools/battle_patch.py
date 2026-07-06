@@ -1710,18 +1710,24 @@ def eagrose(data):
     #     slots 2-6 = 5 Knights (job 76) -> the upper-stair wall; armed (were near-naked) + scaled.
     #     slot 7 = Adramelk (name 69, job 69, eq=255 Lucavi no-equip) -> Phase-2 transform spike; lvl only.
     #     slots 8,9 = job 8, eq=0, lvl254 -> scripting placeholders; left untouched.
-    # CAVEAT (Rend cap): the ledger caps Break/Rend to <=2 sources. Knight (job 76) has Arts of War as its
-    #   primary command, which can't be removed via ENTD without changing the job (losing the knight-wall
-    #   identity). Kept all 5 as Knights; the <=2-Rend cap is a soft/AI item to verify in-game (enemy
-    #   Knight AI does not coordinate a 5-source break-lock, and the player has Safeguard/Steal answers).
+    # Rend cap: only s2/s3 keep full JobLevel 8. s4-s6 stay Knights for the stair-wall identity but use
+    #   JobLevel 1 so they are heavy guards rather than three extra effective break sources.
     E = 459
-    set_slot(data, E, 0, level=103)                    # guest ally - direct-level scale (sprite collision)
-    set_slot(data, E, 1, level=104, head=GRAND_HELM)  # Dycedarg (Phase 1) - Grand Helm Tier-A reward
-    for s in (2, 3, 4, 5, 6):                          # 5 Knights - the stair-wall (keep their sword rh)
-        set_slot(data, E, s, level=103, joblevel=8, job=KNIGHT,
+    set_slot(data, E, 0, level=103, brave=70, faith=65)  # guest ally - direct-level scale
+    set_player_control(data, E, 0)
+    set_slot(data, E, 1, level=104, brave=88, faith=60,
+             head=GRAND_HELM)  # Dycedarg (Phase 1) - Grand Helm Tier-A reward
+    for s in (2, 3):                                    # 2 effective breakers - stair-wall cap
+        set_slot(data, E, s, level=103, joblevel=8, job=KNIGHT, secondary=ITEMS,
+                 brave=88, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, lh=SHOP_SHIELD)
-    set_slot(data, E, 7, level=105)                    # Adramelk (Lucavi, Phase 2) - eq255, level only
+    for s in (4, 5, 6):                                  # heavy guards - no full Rend kit
+        set_slot(data, E, s, level=103, joblevel=1, job=KNIGHT, secondary=ITEMS,
+                 brave=84, faith=55,
+                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, lh=SHOP_SHIELD)
+    set_slot(data, E, 7, level=105, brave=92, faith=86)  # Adramelk (Lucavi, Phase 2)
     return [E]
 
 
