@@ -49,6 +49,7 @@ GEOMANCER = 86  # terrain elemental attacks (Ch3 debut, Balias Swale 019); equip
 NINJA = 89    # dual-wield/wall-climb/Throw — Ch3 marquee caste (Yardow)
 SAMURAI = 88  # Bushido/draw-out — Ch3 elite
 MYSTIC = 85   # Oracle-equivalent — soft status; equips Hat/Robe/Clothing/Rod/Staff/Book (Ch4 Zalmo screen)
+DANCER = 92   # global Dance pressure; ENTD cannot mask learned dances per unit.
 TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged breaks; equips Helmet/Armor/
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
 # skills
@@ -58,6 +59,7 @@ NATURES_WRATH = 437
 VIGILANCE = 426
 VANISH = 425
 SOULBIND = 446
+FURY = 422  # table name: Strength Surge; battle docs call this Dancer reaction Fury.
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 SHIRAHADORI = 451
 DOUBLEHAND = 476
@@ -86,6 +88,7 @@ MANA_SHIELD = 445 # reaction: redirect HP damage to MP (PSX "MP Switch"); Brave-
 MOVE_MP_UP = 494  # movement: restore MP each move (WotL "Manafont") — refuels the Mana Shield buffer
 IGNORE_HEIGHT = 492
 JUMP2 = 490
+JUMP3 = 491
 # items
 HEADBAND, POWER_GARB, BRACERS, ICEBRAND, RUNEBLADE = 163, 195, 218, 29, 30
 WINGED_BOOTS = 212
@@ -94,6 +97,7 @@ YOICHI_BOW, PERSEUS_BOW = 90, 91
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
 MAGEPOWER_GLOVES = 217
 RED_SHOES = 214
+WIZARD_ROBE = 202
 BLACK_ROBE = 205
 OBELISK = 103
 SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
@@ -125,6 +129,7 @@ KOGA_BLADE = 18
 IGA_BLADE = 17
 # --- Chapter 4 best-in-slot rares (Unknown20-reserved tier, unlocked tiered in Ch4 per docs/037) ---
 SAVE_THE_QUEEN = 34  # Tier-A KnightSword — Meliadoul (039). Best KnightSword below the Tier-S pair.
+CASHMERE = 120       # cloth weapon for the Bervenia v3 Dancer.
 MASAMUNE = 46        # Tier-A Katana — Elmdor (048, deferred from Ch3).
 CHIRIJIRADEN = 47
 GENJI_SHIELD = 140
@@ -1406,26 +1411,37 @@ def dugeura(data):
 #     as her equipped KnightSword (steal-bait; job 47 equips KnightSword — verified). Upgrades her
 #     vanilla Defender. PRESERVE job 47 / secondary / other gear (helm/armor/acc/shield) / win-on-death
 #     scripting. Break is telegraphed (Safeguard/Steal Weapon answer it); no hard lock added.
-#   - Summoners: AoE screen, intact charge times. Archers: elevation chip. Ninja: dual-wield flanker.
+#   - v3: Summoners are complete charge-time screens, one Archer remains, s3 becomes a Dancer soft clock,
+#     and the vanilla Ninja becomes a Monk flanker. ENTD cannot enforce "Wiznaibus only" learned-dance masks.
 def bervenia(data):
     E = 443
-    # Meliadoul BOSS — level + jl + Save the Queen (rare/steal-bait); preserve her other gear/scripting.
-    set_slot(data, E, 0, level=104, joblevel=8, secondary=ITEMS, brave=88, faith=42,
-             reaction=COUNTER, support=ATK_BOOST, movement=MV1, rh=SAVE_THE_QUEEN)
-    for s in (1, 4):  # 2 Summoners — AoE screen (Rod, intact charge times)
-        set_slot(data, E, s, level=102, joblevel=8, job=SUMMONER,
-                 secondary=ITEMS, brave=60, faith=84,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s, lvl in ((2, 102), (3, 101)):  # 2 Archers — elevation chip (two-hand bow)
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
-                 brave=88 if s == 2 else 82, faith=55 if s == 2 else 45,
-                 reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
-    set_slot(data, E, 5, level=102, joblevel=8, job=NINJA,  # fast dual-wield flanker (Throw innate)
-             secondary=ITEMS, brave=90, faith=35,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
+    # Meliadoul BOSS: preserve job/identity/accessory/scripting; equip Save the Queen as steal-bait.
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=FUNDAMENTS, brave=88, faith=42,
+             reaction=COUNTER, support=DEFENSE_BOOST, movement=MV2,
+             head=HEAVY_HELM, body=MIRROR_MAIL, rh=SAVE_THE_QUEEN, lh=CRYSTAL_SHIELD)
+
+    # 2 Summoners: split White/Time secondary, no instant casts; Swiftspell keeps the charge-clock relevant.
+    set_slot(data, E, 1, level=102, joblevel=8, job=SUMMONER, secondary=WHITE_MAGICKS,
+             brave=60, faith=84, reaction=SOULBIND, support=SWIFTSPELL, movement=MV2,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+    set_slot(data, E, 4, level=102, joblevel=8, job=SUMMONER, secondary=TIME_MAGICKS,
+             brave=60, faith=84, reaction=SOULBIND, support=SWIFTSPELL, movement=MV2,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+
+    # One high-ground Archer remains as route chip, without adding another break source.
+    set_slot(data, E, 2, level=102, joblevel=8, job=ARCHER, secondary=ITEMS,
+             brave=88, faith=55, reaction=REFLEXES, support=THROW_ITEMS, movement=IGNORE_HEIGHT,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+
+    # Dancer soft clock. The ENTD format sets Dance at JL8 but has no per-unit learned-dance mask.
+    set_slot(data, E, 3, level=101, jobrank=generic_job_rank(DANCER), joblevel=8, job=DANCER, secondary=0,
+             brave=88, faith=45, reaction=FURY, support=ATK_BOOST, movement=JUMP3,
+             head=HEADBAND, body=POWER_GARB, acc=BRACERS, rh=CASHMERE, lh=LH_EMPTY)
+
+    # Monk replaces the vanilla Ninja as fast physical flank pressure without rare weapon leakage.
+    set_slot(data, E, 5, level=102, joblevel=8, job=MONK, secondary=ITEMS,
+             brave=90, faith=35, reaction=SHIRAHADORI, support=DUAL_WIELD, movement=MV2,
+             head=LH_EMPTY, body=BLACK_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
     return [E]
 
 

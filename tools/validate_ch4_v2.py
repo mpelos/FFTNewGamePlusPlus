@@ -105,56 +105,69 @@ def run() -> int:
     check("442 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 58, 179, 0, 0, 0])
 
     # 039 - Free City of Bervenia, entry 443.
-    # Meliadoul is the only break source; support screen is complete but does not add hard control.
+    # v3 keeps six enemies: Meliadoul break-duel, one Archer, one Dancer soft clock, one Monk flanker.
     e = 443
     active = [0, 1, 2, 3, 4, 5]
-    check("443 active jobs", roster(entd, e, active, 0x0A) == [47, 82, 77, 77, 82, 89])
+    check("443 active jobs", roster(entd, e, active, 0x0A) == [47, 82, 77, 92, 82, 78])
     check("443 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 101, 102, 102])
     check("443 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("443 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 5, 5, 6, 6])
-    check("443 Brave targets", roster(entd, e, active, 0x06) == [88, 60, 88, 82, 60, 90])
+    check("443 active secondaries", roster(entd, e, active, 0x0B) == [5, 10, 6, 0, 12, 6])
+    check("443 Brave targets", roster(entd, e, active, 0x06) == [88, 60, 88, 88, 60, 90])
     check("443 Faith targets", roster(entd, e, active, 0x07) == [42, 84, 55, 45, 84, 35])
 
-    check("443 Meliadoul boss R/S/M and weapon",
+    check("443 Meliadoul boss R/S/M and gear",
           field16(entd, e, 0, 0x0C) == 442
-          and field16(entd, e, 0, 0x0E) == 465
-          and field16(entd, e, 0, 0x10) == 486
-          and field(entd, e, 0, 0x15) == 34)
+          and field16(entd, e, 0, 0x0E) == 466
+          and field16(entd, e, 0, 0x10) == 487
+          and roster(entd, e, [0], 0x12) == [154]
+          and roster(entd, e, [0], 0x13) == [184]
+          and roster(entd, e, [0], 0x15) == [34]
+          and roster(entd, e, [0], 0x16) == [139])
 
     for slot_no in (1, 4):
         check(f"443 s{slot_no} Summoner R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 467
-              and field16(entd, e, slot_no, 0x10) == 486)
+              field16(entd, e, slot_no, 0x0C) == 446
+              and field16(entd, e, slot_no, 0x0E) == 482
+              and field16(entd, e, slot_no, 0x10) == 487)
         check(f"443 s{slot_no} Summoner gear",
               roster(entd, e, [slot_no], 0x12) == [167]
-              and roster(entd, e, [slot_no], 0x13) == [206]
+              and roster(entd, e, [slot_no], 0x13) == [202]
               and roster(entd, e, [slot_no], 0x14) == [234]
               and roster(entd, e, [slot_no], 0x15) == [56]
               and roster(entd, e, [slot_no], 0x16) == [255])
 
-    for slot_no in (2, 3):
-        check(f"443 s{slot_no} Archer R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 469
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"443 s{slot_no} Archer gear",
-              roster(entd, e, [slot_no], 0x12) == [168]
-              and roster(entd, e, [slot_no], 0x13) == [198]
-              and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x15) == [87]
-              and roster(entd, e, [slot_no], 0x16) == [254])
+    check("443 s2 Archer R/S/M",
+          field16(entd, e, 2, 0x0C) == 449
+          and field16(entd, e, 2, 0x0E) == 474
+          and field16(entd, e, 2, 0x10) == 492)
+    check("443 s2 Archer gear",
+          roster(entd, e, [2], 0x12) == [168]
+          and roster(entd, e, [2], 0x13) == [198]
+          and roster(entd, e, [2], 0x14) == [218]
+          and roster(entd, e, [2], 0x15) == [87]
+          and roster(entd, e, [2], 0x16) == [254])
 
-    check("443 s5 Ninja R/S/M",
-          field16(entd, e, 5, 0x0C) == 453
-          and field16(entd, e, 5, 0x0E) == 465
+    check("443 s3 Dancer R/S/M",
+          field16(entd, e, 3, 0x0C) == 422
+          and field16(entd, e, 3, 0x0E) == 465
+          and field16(entd, e, 3, 0x10) == 491)
+    check("443 s3 Dancer gear",
+          roster(entd, e, [3], 0x12) == [163]
+          and roster(entd, e, [3], 0x13) == [195]
+          and roster(entd, e, [3], 0x14) == [218]
+          and roster(entd, e, [3], 0x15) == [120]
+          and roster(entd, e, [3], 0x16) == [255])
+
+    check("443 s5 Monk R/S/M",
+          field16(entd, e, 5, 0x0C) == 451
+          and field16(entd, e, 5, 0x0E) == 477
           and field16(entd, e, 5, 0x10) == 487)
-    check("443 s5 Ninja gear",
-          roster(entd, e, [5], 0x12) == [168]
+    check("443 s5 Monk gear",
+          roster(entd, e, [5], 0x12) == [255]
           and roster(entd, e, [5], 0x13) == [198]
-          and roster(entd, e, [5], 0x14) == [210]
-          and roster(entd, e, [5], 0x15) == [14]
-          and roster(entd, e, [5], 0x16) == [14])
+          and roster(entd, e, [5], 0x14) == [218]
+          and roster(entd, e, [5], 0x15) == [255]
+          and roster(entd, e, [5], 0x16) == [255])
     check("443 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 0, 0, 225, 252, 34])
 
     # 040 - Finnath Creek, entry 444.
