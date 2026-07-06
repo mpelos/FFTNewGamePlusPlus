@@ -547,6 +547,42 @@ def run() -> int:
               and roster(entd, e, [slot_no], 0x15) == [255]
               and roster(entd, e, [slot_no], 0x16) == [255])
 
+    # 048 - Limberry Castle Keep, entry 456.
+    # Elmdor parry race with fixed assassins and Ultima Demon transform forms.
+    e = 456
+    active = [0, 1, 2, 3, 4]
+    check("456 active jobs", roster(entd, e, active, 0x0A) == [27, 45, 46, 154, 154])
+    check("456 active levels", roster(entd, e, active, 0x03) == [104, 104, 104, 105, 105])
+    check("456 active job levels preserved", roster(entd, e, active, 0x09) == [8, 3, 3, 0, 0])
+    check("456 Brave targets", roster(entd, e, active, 0x06) == [90, 90, 90, 88, 88])
+    check("456 Faith targets", roster(entd, e, active, 0x07) == [65, 60, 60, 76, 76])
+    check("456 Elmdor R/S/M preserved",
+          field16(entd, e, 0, 0x0C) == 451
+          and field16(entd, e, 0, 0x0E) == 472
+          and field16(entd, e, 0, 0x10) == 499)
+    check("456 Elmdor visible gear preserved",
+          roster(entd, e, [0], 0x12) == [155]
+          and roster(entd, e, [0], 0x13) == [183]
+          and roster(entd, e, [0], 0x14) == [216]
+          and roster(entd, e, [0], 0x15) == [46]
+          and roster(entd, e, [0], 0x16) == [140])
+    for slot_no in (1, 2):
+        check(f"456 s{slot_no} Assassin fixed equipment",
+              roster(entd, e, [slot_no], 0x12) == [254]
+              and roster(entd, e, [slot_no], 0x13) == [254]
+              and roster(entd, e, [slot_no], 0x14) == [254]
+              and roster(entd, e, [slot_no], 0x15) == [254]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+    for slot_no in (3, 4):
+        check(f"456 s{slot_no} Ultima Demon no-equipment shape",
+              roster(entd, e, [slot_no], 0x12) == [0]
+              and roster(entd, e, [slot_no], 0x13) == [0]
+              and roster(entd, e, [slot_no], 0x14) == [0]
+              and roster(entd, e, [slot_no], 0x15) == [0]
+              and roster(entd, e, [slot_no], 0x16) == [0])
+    check("456 Masamune/Genji/Chirijiraden spoils preserved",
+          roster(entd, e, active, 0x1E) == [46, 183, 47, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

@@ -1663,11 +1663,11 @@ def limberry_keep(data):
     #   Tier-A, not Tier-S). Win-cond, Shirahadori, drain, and the demon-transform scripting preserved.
     #   Elmdor 104 (Tier-A boss); assassins 104; their Ultima-Demon forms 105.
     E = 456
-    set_slot(data, E, 0, level=104)  # Elmdor - parry boss; keeps Masamune+Genji (already equipped)
-    set_slot(data, E, 1, level=104)  # Celia (Assassin phase) - eq=254 fixed; status in AI
-    set_slot(data, E, 2, level=104)  # Lettie (Assassin phase)
-    set_slot(data, E, 3, level=105)  # Celia -> Ultima Demon (transform; Ultima pressure)
-    set_slot(data, E, 4, level=105)  # Lettie -> Ultima Demon
+    set_slot(data, E, 0, level=104, brave=90, faith=65)  # Elmdor - parry boss; keeps Masamune+Genji
+    set_slot(data, E, 1, level=104, brave=90, faith=60)  # Celia (Assassin phase) - fixed kit
+    set_slot(data, E, 2, level=104, brave=90, faith=60)  # Lettie (Assassin phase)
+    set_slot(data, E, 3, level=105, brave=88, faith=76)  # Celia -> Ultima Demon
+    set_slot(data, E, 4, level=105, brave=88, faith=76)  # Lettie -> Ultima Demon
     return [E]
 
 
