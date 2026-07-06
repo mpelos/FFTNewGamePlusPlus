@@ -134,12 +134,12 @@ HAIRBAND = 169
 BARRETTE = 170
 NINJA_GEAR = 197
 ENVOUTEMENT = 237
-ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; NOT the Chapter1 id 128) — Loffrey (055).
+ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; paid before the gauntlet at Mullonde Nave 052).
 MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; NOT Materia Blade Plus 256) — Lost Halidom relic (057).
 RAGNAROK = 36        # Tier-S KnightSword capstone — Ultima (058).
 GLACIAL_GUN = 74     # Tier-A Gun — Barich (042).
 LIGHT_ROBE = 206     # Tier-A robe — Zalmo (041). TIC's Luminous Robe = top robe BELOW Lordly; == SHOP_ROBE
-ROBE_OF_LORDS = 207  # Tier-S robe (Lordly Robe, Unknown20 best) — Cletienne (056).
+ROBE_OF_LORDS = 207  # Tier-S robe (Lordly Robe, Unknown20 best; paid before the gauntlet at 052).
 # --- Ch4 monster job ids (Finath chocobo flock, 040) ---
 CHOCOBO, BLACK_CHOCOBO, RED_CHOCOBO, PIG = 94, 95, 96, 121
 GOBLIN, BLACK_GOBLIN, GOBBLEDYGOOK = 97, 98, 99
@@ -1810,14 +1810,11 @@ def mullonde_sanctuary(data):
 # ---------------------------------------------------------------------------
 # ENDGAME GAUNTLET (battles 49-53) — entries confirmed IN-GAME 2026-06-21 by
 # matching the on-screen roster to a vanilla entd4 dump (the [battle-id] save
-# read LAGS — do not trust it; see docs/battles/ENDGAME-BLOCKER.md). Five of the
-# six are designed entd4 entries (below); Vaults 4th is an OverrideEntryData
-# template battle (deferred — needs the nex path + a map-id capture).
-# Tier-S placed here: Escutcheon -> Loffrey (436, shield), Robe of Lords ->
-# Cletienne (438, robe). Materia Blade (Lost Halidom relic) and Ragnarok (Ultima
-# capstone) are MAP Move-Find relics -> deferred until those maps' ids are
-# captured in-game (Barich is a gunner / the Lucavi are eq255, so neither can
-# hold its Tier-S as ENTD gear).
+# read LAGS — do not trust it; see docs/battles/ENDGAME-BLOCKER.md). All six
+# gauntlet records are direct entd4 entries; Vaults 4th is entry 435, not a
+# template battle.
+# No usable reward is placed inside this five-battle gauntlet. Tier-S gear is paid by the
+# Mullonde chain before the point of no return; these entries are challenge content only.
 # ---------------------------------------------------------------------------
 def vaults_4th(data):
     # Battle 49 - Monastery Vaults, Fourth Level (entry 435): the gauntlet OPENER. CONFIRMED in-game =
@@ -1873,24 +1870,28 @@ def vaults_5th(data):
 
 
 def capitoline(data):
-    # Battle 51 - Necrohol of Mullonde / The Capitoline (entry 438): Cletienne's DEATH battle (RETREATED
-    #   at the Nave; WIN = "Defeat Cletienne"). Roster CONFIRMED in-game = Cletienne + 2 Time Mage/
-    #   2 Ninja/2 Samurai. slot0 Cletienne (name39 job39 Sorcerer, "Magick Surge" comeback caster) ->
-    #   Tier-S ROBE OF LORDS into the body slot (best caster robe; steal/drop, guaranteed on the kill).
+    # Battle 51 - Necrohol of Mullonde / The Capitoline (entry 438): Cletienne's death battle.
+    # Win = "Defeat Cletienne". Roster is Cletienne + 2 Time Mage + 2 Ninja + 2 Samurai.
+    # Keep the Magick Surge race, fill the elite screen's kits, and add no gauntlet reward.
     E = 438
-    set_slot(data, E, 0, level=105, joblevel=8, body=ROBE_OF_LORDS)  # Cletienne - Tier-S Robe of Lords, DIES
+    set_slot(data, E, 0, level=105, joblevel=8, secondary=FUNDAMENTS,
+             brave=65, faith=88, body=BLACK_GARB)  # Cletienne - Silence/burst remains the answer.
     for s in (1, 2):                                                  # 2 Time Mage - Slow/Haste tempo
-        set_slot(data, E, s, level=104, joblevel=8, job=TMAGE, secondary=0,
-                 reaction=REFLEXES, movement=MV1,
+        set_slot(data, E, s, level=104, joblevel=8, job=TMAGE, secondary=ITEMS,
+                 brave=62, faith=80,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     for s in (3, 4):                                                  # 2 Ninja - dual-wield flankers
-        set_slot(data, E, s, level=104, joblevel=8, job=NINJA,
+        set_slot(data, E, s, level=104, joblevel=8, job=NINJA, secondary=ITEMS,
+                 brave=90, faith=35,
                  reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
     for s in (5, 6):                                                  # 2 Samurai - Draw Out (katana auto)
-        set_slot(data, E, s, level=104, joblevel=8, job=SAMURAI,
+        set_slot(data, E, s, level=104, joblevel=8, job=SAMURAI, secondary=ITEMS,
+                 brave=88, faith=60,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS)      # rh left auto = katana (Draw Out)
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
+                 rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
     return [E]
 
 
