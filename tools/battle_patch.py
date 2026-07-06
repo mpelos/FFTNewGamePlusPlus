@@ -67,6 +67,8 @@ SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-C
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
+MARTIAL_ARTS = 9
+TIME_MAGICKS = 12
 PUGILISM = 53
 ARTS_OF_WAR = 8
 WHITE_MAGICKS = 10
@@ -91,6 +93,9 @@ THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
 YOICHI_BOW, PERSEUS_BOW = 90, 91
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
 MAGEPOWER_GLOVES = 217
+RED_SHOES = 214
+BLACK_ROBE = 205
+OBELISK = 103
 SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
 X_POTION, ELIXIR, PHOENIX_DOWN = 242, 245, 253
 HERMES_SHOES = 213
@@ -1361,32 +1366,35 @@ def riovanes_roof(data):
 # Tier A (Save the Queen/Masamune/Genji/Aegis/Grand Helm) on mid-Ch4 bosses; Tier S (Chaos Blade/
 # Ribbon/Escutcheon/Robe of Lords/Materia Blade/Ragnarok) on the endgame sequence only. Per docs/037.
 # ---------------------------------------------------------------------------
-# Battle 033 — Dugeura Pass (entry 442): Ch4 open-field opener; AoE-priority + Jump-dodge. Per docs/038.
+# Battle 033 — Dugeura Pass (entry 442): Ch4 open-field opener; AoE-priority + Jump-dodge. Per docs/038 v3.
 # Vanilla 442: s0 Knight (76); s1,s3 Black Mage (80); s2 Archer (77); s4,s5 Dragoon (87). All enemies,
 # no gear. No boss -> no rare; bottom-of-band levels (101-102), not a spike.
-#   - ESCALATION: swap the Archer (s2) -> Time Mage that Hastes the Dragoons (jl CAPPED to 4 =
-#     Haste/Slow/Float only, no hard lock) — welds the two axes (kill casters / dodge Jumps).
-#   - 2 Black Mages: boosted-elemental AoE priority. 2 Dragoons: Jump (innate). 1 Knight: front screen.
+#   - v3: s0 Knight -> Samurai parry screen; s2 old Time Mage connector -> Geomancer terrain bruiser.
+#   - 2 Black Mages: Mana Shield + Swiftness + Manafont priority casters. 2 Dragoons: Jump pressure.
 def dugeura(data):
     E = 442
-    set_slot(data, E, 0, level=101, joblevel=8, job=KNIGHT,  # lone front-line screen
-             secondary=ITEMS, brave=88, faith=42,
-             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    for s in (1, 3):  # 2 Black Mages — boosted-elemental AoE, the priority kill
-        set_slot(data, E, s, level=102, joblevel=8, job=BMAGE,
-                 secondary=ITEMS, brave=60, faith=84,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, E, 2, level=101, joblevel=4, job=TMAGE,  # Haste/Slow/Float only; no hard lock
-             secondary=ITEMS, brave=62, faith=80,
-             reaction=REFLEXES, support=SWIFTSPELL, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
+    set_slot(data, E, 0, level=101, joblevel=8, job=SAMURAI,
+             secondary=GEOMANCY, brave=88, faith=60,
+             reaction=SHIRAHADORI, support=DOUBLEHAND, movement=MV2,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=MAGEPOWER_GLOVES,
+             rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
+    set_slot(data, E, 1, level=102, joblevel=8, job=BMAGE,
+             secondary=WHITE_MAGICKS, brave=60, faith=84,
+             reaction=MANA_SHIELD, support=SWIFTSPELL, movement=MOVE_MP_UP,
+             head=MAGE_HAT, body=BLACK_ROBE, acc=BARRETTE, rh=SHOP_ROD, lh=LH_EMPTY)
+    set_slot(data, E, 2, level=102, joblevel=8, job=GEOMANCER,
+             secondary=MARTIAL_ARTS, brave=84, faith=60,
+             reaction=NATURES_WRATH, support=ATK_BOOST, movement=MV2,
+             head=THIEFS_CAP, body=POWER_GARB, acc=RED_SHOES, rh=RUNEBLADE, lh=LH_EMPTY)
+    set_slot(data, E, 3, level=102, joblevel=8, job=BMAGE,
+             secondary=TIME_MAGICKS, brave=60, faith=84,
+             reaction=MANA_SHIELD, support=SWIFTSPELL, movement=MOVE_MP_UP,
+             head=MAGE_HAT, body=BLACK_ROBE, acc=BARRETTE, rh=SHOP_ROD, lh=LH_EMPTY)
     for s, lvl in ((4, 102), (5, 101)):  # 2 Dragoons — Jump (innate); vertical back-line pressure
         set_slot(data, E, s, level=lvl, joblevel=8, job=LANCER,
-                 secondary=ITEMS, brave=86, faith=40,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GERMINAS, rh=PARTISAN, lh=SHOP_SHIELD)
+                 secondary=MARTIAL_ARTS, brave=86, faith=40,
+                 reaction=DRAGONHEART, support=ATK_BOOST, movement=IGNORE_HEIGHT,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=HERMES_SHOES, rh=OBELISK, lh=LH_EMPTY)
     return [E]
 
 
