@@ -1447,21 +1447,24 @@ def finath(data):
 # s1 = Zalmo (job 16 Celebrant/Inquisitor, GEARED, wields a rod; win = defeat him, he DIES here, paying
 # his Ch3-deferred rare); s2,s3 Mystic (85); s4,s5,s6 Knight (76). Per docs/041.
 #   - Zalmo: BOSS L104/jl8. His Tier-A rare = LIGHT ROBE (= Luminous Robe 206, top robe below the
-#     Tier-S Lordly Robe) as body (upgrades his vanilla White Robe; steal-bait). PRESERVE job 16 /
-#     secondary / head / acc / rod / holy-sustain + win-on-death scripting. Holy+soft only, no hard lock.
-#   - 2 Mystics: soft status (Oracle-equiv); 3 Knights: height-guarding screen (Rend innate — doc caps
-#     flavor at 2, but Battle Skill is the Knight's innate primary; treated as the prior Knight battles).
+#     Tier-S Lordly Robe) as body (upgrades his vanilla White Robe; steal-bait). Preserve job/head/acc/
+#     rod/win-on-death scripting; add a complete but non-Safeguard R/S/M shell.
+#   - 2 Mystics: soft status with defensive White Magicks secondary; no hard-lock engine.
+#   - 2 Rend Knights + 1 lower-JL bodyguard Knight (s6) to respect the <=2 break-source cap.
 #   - PRESERVE the vanilla guaranteed Angel Ring reward + buried map rares (different layer, untouched).
 def outlying_church(data):
     E = 445
-    # Zalmo BOSS — level/jl + Light Robe (rare) only; preserve job/secondary/head/acc/rod/scripting.
-    set_slot(data, E, 1, level=104, joblevel=8, body=LIGHT_ROBE)
+    # Zalmo BOSS — Light Robe steal-bait; preserve identity/scripting and avoid Angel Ring/Reraise gear.
+    set_slot(data, E, 1, level=104, joblevel=8, secondary=WHITE_MAGICKS, brave=72, faith=82,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1, body=LIGHT_ROBE)
     for s in (2, 3):  # 2 Mystics — soft status guarding the approach (Rod-legal for job 85)
-        set_slot(data, E, s, level=102, joblevel=8, job=MYSTIC,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+        set_slot(data, E, s, level=102, joblevel=8, job=MYSTIC, secondary=WHITE_MAGICKS,
+                 brave=68 if s == 2 else 72, faith=78 if s == 2 else 82,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s, lvl in ((4, 102), (5, 102), (6, 101)):  # 3 Knights — height-guarding screen
-        set_slot(data, E, s, level=lvl, joblevel=8, job=KNIGHT,
+    for s, lvl, jl in ((4, 102, 8), (5, 102, 8), (6, 101, 1)):  # s6 is bodyguard, not a full Rend source
+        set_slot(data, E, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=ITEMS,
+                 brave=88, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
     return [E]
