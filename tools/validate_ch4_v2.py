@@ -171,12 +171,12 @@ def run() -> int:
     check("443 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 0, 0, 225, 252, 34])
 
     # 040 - Finnath Creek, entry 444.
-    # De-randomized six-body flock: 2 Black Chocobo, 2 yellow Chocobo, 1 Red Chocobo, 1 Pig.
+    # De-randomized v3 flock: 2 Red Chocobo, 2 yellow Chocobo, 1 Black Chocobo, 1 Wild Boar.
     e = 444
     cleared = [0, 1, 2, 3, 4, 5]
     active = [6, 7, 8, 9, 10, 11]
     check("444 old variant records cleared", roster(entd, e, cleared, 0x20) == [255, 255, 255, 255, 255, 255])
-    check("444 fixed flock jobs", roster(entd, e, active, 0x0A) == [95, 95, 94, 94, 96, 121])
+    check("444 fixed flock jobs", roster(entd, e, active, 0x0A) == [96, 96, 94, 94, 95, 123])
     check("444 fixed flock levels", roster(entd, e, active, 0x03) == [102, 102, 101, 101, 101, 100])
     check("444 fixed flock job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
     check("444 fixed flock Brave", roster(entd, e, active, 0x06) == [90, 90, 90, 90, 90, 60])
