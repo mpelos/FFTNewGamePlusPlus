@@ -1912,36 +1912,31 @@ def lost_halidom(data):
 
 
 def airship_hashmal(data):
-    # Battle 53 / PHASE 1 - Airship Graveyard, Hashmal (entry 440): first half of the two-phase Lucavi
-    #   finale (WIN = "Defeat Hashmal"; HP/MP fully restore before Ultima). slot0 Folmarv (name36 job36 =
-    #   the Hashmal host; transform scripting lives in his tail) -> scale only. slot1 Celia/Lettie (job44
-    #   Assassin; already wears Ribbon+Luminous) -> scale. slot2 Lucavi (job64, eq255) -> level only.
-    #   slots3-5 job44 transform/clone forms (eq255) -> level only. Faithful-minimal (like limberry_keep/
-    #   eagrose): scale real units, leave all scripting + eq255 untouched. No rare (scripted Lucavi).
+    # Battle 53 / PHASE 1 - Airship Graveyard, Hashmal (entry 440).
+    # Preserve the scripted Hashmal transition and full restore; tune levels/Br-Fa only, except
+    # removing Save the Queen from slot0 so no unique payload leaks inside the final gauntlet.
     E = 440
-    set_slot(data, E, 0, level=105, joblevel=8)  # Folmarv -> Hashmal (host; keep gear + transform script)
-    set_slot(data, E, 1, level=105, joblevel=8)  # Celia/Lettie (Assassin; keeps Ribbon+Luminous)
-    set_slot(data, E, 2, level=105)              # Lucavi (job64, eq255) - level only
+    set_slot(data, E, 0, level=105, joblevel=8, brave=92, faith=86,
+             rh=RUNEBLADE, lh=SHOP_SHIELD)  # Folmarv/Hashmal host; preserve transform script tail.
+    set_slot(data, E, 1, level=105, joblevel=8, brave=88, faith=76)
+    set_slot(data, E, 2, level=105, brave=92, faith=86)              # Lucavi (job64, eq255)
     for s in (3, 4, 5):                          # transform/clone forms (eq255)
-        set_slot(data, E, s, level=104)
+        set_slot(data, E, s, level=104, brave=88, faith=76)
     return [E]
 
 
 def airship_ultima(data):
-    # Battle 53 / PHASE 2 - Airship Graveyard, Ultima (entry 441): the CAPSTONE (WIN = defeat Ultima's
-    #   second form -> campaign ends). Roster CONFIRMED in-game = Ultima + 4 Ultima Demons (+ scripted
-    #   Lucavi). slot2 Ultima (name20 job20; wears Ribbon+Luminous) -> the final boss; her Tier-S RAGNAROK
-    #   is the victory CAPSTONE delivered as a MAP relic (deferred until the map id is captured; the
-    #   scripted Lucavi transform + her gear are left untouched). slots0/1 Lucavi (job49, eq255), slots3-6
-    #   = 4 Ultima Demons (job154), slots7/8 Lucavi (job65/73, eq255) -> level only.
+    # Battle 53 / PHASE 2 - Airship Graveyard, Ultima (entry 441).
+    # Ultima is the single level-106 capstone. Lucavi/form records and Ultima Demons stay capped at
+    # 105 so the finale reads as adaptation, not raw support overleveling. No reward payload.
     E = 441
-    set_slot(data, E, 0, level=105)              # Lucavi (job49, eq255)
-    set_slot(data, E, 1, level=105)              # Lucavi (job49, eq255)
-    set_slot(data, E, 2, level=105, joblevel=8)  # Ultima (final boss; keep gear; Ragnarok via map relic)
+    set_slot(data, E, 0, level=105, brave=92, faith=86)              # Lucavi (job49, eq255)
+    set_slot(data, E, 1, level=105, brave=92, faith=86)              # Lucavi (job49, eq255)
+    set_slot(data, E, 2, level=106, joblevel=8, brave=92, faith=90)  # Ultima final boss
     for s in (3, 4, 5, 6):                       # 4 Ultima Demons (job154)
-        set_slot(data, E, s, level=105)
-    set_slot(data, E, 7, level=105)              # Lucavi (job65, eq255)
-    set_slot(data, E, 8, level=105)              # Lucavi (job73, eq255)
+        set_slot(data, E, s, level=105, brave=88, faith=76)
+    set_slot(data, E, 7, level=105, brave=92, faith=86)              # Lucavi (job65, eq255)
+    set_slot(data, E, 8, level=105, brave=92, faith=86)              # Lucavi (job73, eq255)
     return [E]
 
 

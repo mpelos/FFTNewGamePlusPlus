@@ -1003,6 +1003,52 @@ def run() -> int:
               and roster(entd, e, [slot_no], 0x16) == [0])
     check("439 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
 
+    # 058 - Airship Graveyard, phase 1 Hashmal, entry 440.
+    # Preserve scripted transition; no unique reward payload inside the final gauntlet.
+    e = 440
+    active = [0, 1, 2, 3, 4, 5]
+    check("440 active/script jobs", roster(entd, e, active, 0x0A) == [36, 44, 64, 44, 44, 44])
+    check("440 phase levels", roster(entd, e, active, 0x03) == [105, 105, 105, 104, 104, 104])
+    check("440 Brave targets", roster(entd, e, active, 0x06) == [92, 88, 92, 88, 88, 88])
+    check("440 Faith targets", roster(entd, e, active, 0x07) == [86, 76, 86, 76, 76, 76])
+    check("440 host no Save the Queen leak",
+          roster(entd, e, [0], 0x12) == [154]
+          and roster(entd, e, [0], 0x13) == [182]
+          and roster(entd, e, [0], 0x14) == [213]
+          and roster(entd, e, [0], 0x15) == [30]
+          and roster(entd, e, [0], 0x16) == [139])
+    check("440 named support gear preserved",
+          roster(entd, e, [1], 0x12) == [171]
+          and roster(entd, e, [1], 0x13) == [206]
+          and roster(entd, e, [1], 0x14) == [234]
+          and roster(entd, e, [1], 0x15) == [61]
+          and roster(entd, e, [1], 0x16) == [255])
+    check("440 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
+
+    # 058 - Airship Graveyard, phase 2 Ultima, entry 441.
+    # Ultima is the only level-106 unit; support/form records stay capped at 105.
+    e = 441
+    active = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    check("441 active/script jobs", roster(entd, e, active, 0x0A) == [49, 49, 20, 154, 154, 154, 154, 65, 73])
+    check("441 phase levels", roster(entd, e, active, 0x03) == [105, 105, 106, 105, 105, 105, 105, 105, 105])
+    check("441 Brave targets", roster(entd, e, active, 0x06) == [92, 92, 92, 88, 88, 88, 88, 92, 92])
+    check("441 Faith targets", roster(entd, e, active, 0x07) == [86, 86, 90, 76, 76, 76, 76, 86, 86])
+    check("441 Ultima capstone kit preserved",
+          field16(entd, e, 2, 0x0C) == 430
+          and roster(entd, e, [2], 0x12) == [171]
+          and roster(entd, e, [2], 0x13) == [206]
+          and roster(entd, e, [2], 0x14) == [234]
+          and roster(entd, e, [2], 0x15) == [61]
+          and roster(entd, e, [2], 0x16) == [255])
+    for slot_no in (3, 4, 5, 6):
+        check(f"441 s{slot_no} Ultima Demon shell",
+              roster(entd, e, [slot_no], 0x12) == [255]
+              and roster(entd, e, [slot_no], 0x13) == [255]
+              and roster(entd, e, [slot_no], 0x14) == [255]
+              and roster(entd, e, [slot_no], 0x15) == [255]
+              and roster(entd, e, [slot_no], 0x16) == [255])
+    check("441 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0, 0, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
