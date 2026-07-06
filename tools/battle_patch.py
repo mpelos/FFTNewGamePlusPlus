@@ -54,20 +54,24 @@ TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged brea
 # skills
 COUNTER, PARRY, ATK_BOOST, MV1, MV2 = 442, 447, 465, 486, 487
 DRAGONHEART = 427
+NATURES_WRATH = 437
 VIGILANCE = 426
 VANISH = 425
 SOULBIND = 446
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
+SHIRAHADORI = 451
+DOUBLEHAND = 476
 DUAL_WIELD = 477
 TELEPORT = 498
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
+PUGILISM = 53
 ARTS_OF_WAR = 8
 WHITE_MAGICKS = 10
 MYSTIC_ARTS = 16
-GEOMANCY = 12
+GEOMANCY = 17
 MIGHTY_SWORD = 52
 IAIDO = 19
 STEAL = 14
@@ -82,6 +86,7 @@ IGNORE_HEIGHT = 492
 JUMP2 = 490
 # items
 HEADBAND, POWER_GARB, BRACERS, ICEBRAND, RUNEBLADE = 163, 195, 218, 29, 30
+WINGED_BOOTS = 212
 THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
 MAGEPOWER_GLOVES = 217
@@ -1295,8 +1300,8 @@ def riovanes_gate(data):
 def riovanes_keep(data):
     E = 432
     # Wiegraf PHASE-1 duel boss: complete but still disarmable/stealable. Preserve job 40 and scripting.
-    set_slot(data, E, 0, level=104, joblevel=8, secondary=FUNDAMENTS, brave=88, faith=60,
-             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=PUGILISM, brave=88, faith=60,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV2,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=DEFENDER, lh=SHOP_SHIELD)
     # Belias PHASE-2 Lucavi: no gear slots; keep canonical demon kit and transform/spawn.
     set_slot(data, E, 5, level=105, joblevel=8, brave=88, faith=82)
@@ -1953,12 +1958,21 @@ def riovanes_gate_v2(data):
     E = 431
     # Marach survives and is intentionally excluded from the runtime generic-stat pass.
     set_slot(data, E, 1, joblevel=8, secondary=ITEMS, brave=78, faith=72,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1)
-    # Templar bridge breaker: keep the special job but explicitly equip Mighty Sword as the secondary.
-    set_slot(data, E, 5, secondary=MIGHTY_SWORD, brave=84, faith=45)
-    set_slot(data, E, 6, secondary=FUNDAMENTS, brave=84, faith=45)
-    for s in (7, 8):
-        set_slot(data, E, s, secondary=ITEMS, brave=84, faith=45)
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV2,
+             acc=MAGEPOWER_GLOVES)
+    # Crossbow Knight replaces the bugged special Templar job without adding another sprite sheet.
+    set_slot(data, E, 5, job=KNIGHT, secondary=GEOMANCY, brave=84, faith=45,
+             reaction=DRAGONHEART, support=ATK_BOOST, movement=MV2,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=GASTROPHETES, lh=SHOP_SHIELD)
+    # Samurai elite: physical parry puzzle and katana pressure without a secondary skillset.
+    set_slot(data, E, 6, job=SAMURAI, secondary=0, brave=84, faith=45,
+             reaction=SHIRAHADORI, support=DOUBLEHAND, movement=MV2,
+             head=HEAVY_HELM, body=MIRROR_MAIL, acc=BRACERS, rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
+    # s7 is the vanilla Winged Boots Knight. Restore that mobility identity with crossbow pressure.
+    set_slot(data, E, 7, secondary=ITEMS, brave=84, faith=45,
+             reaction=DRAGONHEART, support=ATK_BOOST, movement=MV2,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=WINGED_BOOTS, rh=GASTROPHETES, lh=SHOP_SHIELD)
+    set_slot(data, E, 8, secondary=ITEMS, brave=84, faith=45)
     for s in (2, 3, 4):
         set_slot(data, E, s, brave=80, faith=45)
     return touched

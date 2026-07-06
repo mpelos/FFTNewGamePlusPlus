@@ -93,9 +93,9 @@ public partial class Program
             EnemyUnit(0x80, "High Archer A"),
             EnemyUnit(0x81, "High Archer B"),
             EnemyUnit(0x82, "Flank Archer"),
-            EnemyUnit(0x83, 0x26, "Templar bridge breaker"),
-            EnemyUnit(0x84, "Knight bridge body A"),
-            EnemyUnit(0x85, "Knight bridge body B"),
+            EnemyUnit(0x83, "Crossbow Knight bracers"),
+            EnemyUnit(0x84, "Samurai bridge body"),
+            EnemyUnit(0x85, "Winged Knight crossbow"),
             EnemyUnit(0x86, "Knight bridge body C")),
         [433] = Targets(
             GuestUnit(0x29, 0x29, 0x29, "Rapha rooftop protected guest")),
