@@ -1,0 +1,64 @@
+docs/builds/dragoon.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-31
+docs/battles/041-outlying-church.md
+  s_641ab1422b22e2::t_85ebf7e7140e4e 21-22,132,171,192-193,206-207,221
+  s_641ab1422b22e2::t_a6b9ef9da3532b 172-174,188,200-201,213-216,218-220,247-254,257-258,363-366,384-386
+  s_641ab1422b22e2::t_6abfd8397e69ae 108
+  s_641ab1422b22e2::t_a3667c820f7331 3,19,23,107,168,176-184,191,194-199,202-205,208,217,264-272,281,369-370,389-390
+  s_641ab1422b22e2::t_89ee19ee64dd32 289-294,297-298,304,354-356,371-372,392-394
+  s_641ab1422b22e2::t_7089ee78d3f559 175
+docs/builds/ninja.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-31
+docs/builds/arithmetician.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-31
+docs/builds/dancer.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-28
+docs/builds/samurai.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-30
+docs/builds/mystic.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-29
+docs/builds/orator.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-29
+docs/builds/black-mage.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-32
+docs/builds/knight.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-30
+docs/builds/chemist.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-31
+docs/builds/geomancer.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-28
+docs/builds/summoner.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-30
+docs/builds/thief.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-30
+docs/builds/mime.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-30
+docs/builds/time-mage.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-30
+docs/builds/white-mage.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-30
+docs/builds/monk.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-31
+docs/builds/bard.md
+  s_641ab1422b22e2::t_e8ffcc8c1c87c1 1-28
+docs/builds/archer.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-29
+docs/builds/squire.md
+  s_641ab1422b22e2::t_781ed6fcdeb39f 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "2dc8a8693c83b5899e32943b16b035bd4f2f2771",
+  "prompts": {},
+  "sessions": {
+    "s_641ab1422b22e2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f303f-056c-79a3-95f8-f4a550856b35",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
