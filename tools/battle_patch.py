@@ -1796,13 +1796,14 @@ def mullonde_sanctuary(data):
     #     slots 2,3 = Archaeodaemon (job 153, undead) -> the reraise/HP-drain screen.
     #     slot 4 = Ultima Demon (job 154) -> telegraphed Ultima pressure (optional target).
     #     slot 5 = job 51 clone (name255, eq255, lvl254) -> scripting placeholder; left untouched.
-    # CHANGE: scale + Tier-S reward. Zalbaag 105, acc set to RIBBON (171) = the Tier-S steal/drop on the
-    #   named kill target (he DIES -> guaranteed). Keep his Runeblade (the equip-break weapon) + vampirism/
-    #   undead flags + scripting (only level/acc changed). Archaeodaemons & Ultima Demon 103.
+    # CHANGE: scale + Tier-S reward. Zalbaag 105, acc set to RIBBON (171) for status-warding identity.
+    #   Ragnarok remains reward payload only; keep his Runeblade (the equip-break weapon) + vampirism/
+    #   undead flags + scripting. Archaeodaemons & Ultima Demon 103.
     E = 462
-    set_slot(data, E, 1, level=105, acc=RIBBON)  # Zalbaag - Tier-S Ribbon; keep Runeblade + vampire kit
+    set_slot(data, E, 1, level=105, brave=90, faith=78,
+             acc=RIBBON)  # Zalbaag - keep Runeblade + vampire kit; Ragnarok is spoil-only
     for s in (2, 3, 4):                           # 2 Archaeodaemon (undead) + 1 Ultima Demon
-        set_slot(data, E, s, level=103)
+        set_slot(data, E, s, level=103, brave=88, faith=76)
     return [E]
 
 

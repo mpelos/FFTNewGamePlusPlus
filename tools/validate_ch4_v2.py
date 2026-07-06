@@ -783,6 +783,45 @@ def run() -> int:
           and field(entd, e, 1, 0x1E) == 143
           and field(entd, e, 2, 0x1E) == 207)
 
+    # 053 - Mullonde Cathedral Sanctuary / Murond Holy Place, entry 462.
+    # Chain closer: Zalbaag is the sole focus target; demons are screen pressure; Ragnarok is spoil-only.
+    e = 462
+    active = [1, 2, 3, 4]
+    check("462 active jobs", roster(entd, e, active, 0x0A) == [51, 153, 153, 154])
+    check("462 active levels", roster(entd, e, active, 0x03) == [105, 103, 103, 103])
+    check("462 Brave targets", roster(entd, e, active, 0x06) == [90, 88, 88, 88])
+    check("462 Faith targets", roster(entd, e, active, 0x07) == [78, 76, 76, 76])
+    check("462 Zalbaag Runeblade/Ribbon kit",
+          field(entd, e, 1, 0x09) == 8
+          and field(entd, e, 1, 0x0B) == 63
+          and field16(entd, e, 1, 0x0C) == 424
+          and field16(entd, e, 1, 0x0E) == 466
+          and field16(entd, e, 1, 0x10) == 493
+          and roster(entd, e, [1], 0x12) == [154]
+          and roster(entd, e, [1], 0x13) == [182]
+          and roster(entd, e, [1], 0x14) == [171]
+          and roster(entd, e, [1], 0x15) == [30]
+          and roster(entd, e, [1], 0x16) == [139])
+    for slot_no in (2, 3, 4):
+        check(f"462 s{slot_no} demon no-equipment shape",
+              roster(entd, e, [slot_no], 0x12) == [0]
+              and roster(entd, e, [slot_no], 0x13) == [0]
+              and roster(entd, e, [slot_no], 0x14) == [0]
+              and roster(entd, e, [slot_no], 0x15) == [0]
+              and roster(entd, e, [slot_no], 0x16) == [0])
+    check("462 placeholders preserved",
+          field(entd, e, 0, 0x03) == 254
+          and field(entd, e, 0, 0x0A) == 36
+          and roster(entd, e, [0], 0x12) == [255]
+          and field(entd, e, 5, 0x03) == 254
+          and field(entd, e, 5, 0x0A) == 51
+          and field(entd, e, 5, 0x18) == 0xD0
+          and roster(entd, e, [5], 0x12) == [255])
+    check("462 Ragnarok/Ribbon/Elixir spoils preserved",
+          field(entd, e, 1, 0x1E) == 36
+          and field(entd, e, 2, 0x1E) == 171
+          and field(entd, e, 3, 0x1E) == 245)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
