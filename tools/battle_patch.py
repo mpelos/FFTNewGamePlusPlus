@@ -1481,16 +1481,20 @@ def outlying_church(data):
 def bed_desert(data):
     E = 447
     # Barich BOSS — level/jl; re-assert Glacial Gun (his rare/steal-bait, already equipped). Preserve rest.
-    set_slot(data, E, 0, level=104, joblevel=8, rh=GLACIAL_GUN)
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=ITEMS, brave=84, faith=55,
+             reaction=REFLEXES, support=CONCENTRATION, movement=MV1, rh=GLACIAL_GUN)
     for s in (1, 2):  # 2 Knights — desert screen
-        set_slot(data, E, s, level=102, joblevel=8, job=KNIGHT,
+        set_slot(data, E, s, level=102, joblevel=8, job=KNIGHT, secondary=ITEMS,
+                 brave=88, faith=42,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
     set_slot(data, E, 3, level=102, joblevel=8, job=BMAGE,  # Black Mage — AoE punishing clumps
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+             secondary=ITEMS, brave=60, faith=84,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     for s, lvl in ((4, 102), (5, 101)):  # 2 Archers — open-lane chip (two-hand bow)
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
+        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
+                 brave=82, faith=45,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
     return [E]

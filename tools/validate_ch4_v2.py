@@ -215,6 +215,65 @@ def run() -> int:
               and roster(entd, e, [slot_no], 0x16) == [139])
     check("445 reward spoils preserved", roster(entd, e, active, 0x1E) == [223, 206, 0, 0, 0, 0])
 
+    # 042 - Beddha Sandwaste / Bed Desert, entry 447.
+    # Six active enemies plus two Barich script placeholders. Keep the gun duel focused on Barich.
+    e = 447
+    active = [0, 1, 2, 3, 4, 5]
+    check("447 active jobs", roster(entd, e, active, 0x0A) == [43, 76, 76, 80, 77, 77])
+    check("447 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 102, 102, 101])
+    check("447 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("447 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6])
+    check("447 Brave targets", roster(entd, e, active, 0x06) == [84, 88, 88, 60, 82, 82])
+    check("447 Faith targets", roster(entd, e, active, 0x07) == [55, 42, 42, 84, 45, 45])
+
+    check("447 Barich boss R/S/M and Glacial Gun",
+          field16(entd, e, 0, 0x0C) == 449
+          and field16(entd, e, 0, 0x0E) == 469
+          and field16(entd, e, 0, 0x10) == 486
+          and field(entd, e, 0, 0x15) == 74)
+
+    for slot_no in (1, 2):
+        check(f"447 s{slot_no} Knight R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"447 s{slot_no} Knight gear",
+              roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+
+    check("447 s3 Black Mage R/S/M",
+          field16(entd, e, 3, 0x0C) == 449
+          and field16(entd, e, 3, 0x0E) == 467
+          and field16(entd, e, 3, 0x10) == 486)
+    check("447 s3 Black Mage gear",
+          roster(entd, e, [3], 0x12) == [167]
+          and roster(entd, e, [3], 0x13) == [206]
+          and roster(entd, e, [3], 0x14) == [234]
+          and roster(entd, e, [3], 0x15) == [56]
+          and roster(entd, e, [3], 0x16) == [255])
+
+    for slot_no in (4, 5):
+        check(f"447 s{slot_no} Archer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 469
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"447 s{slot_no} Archer gear",
+              roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [87]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+
+    check("447 Barich placeholders preserved",
+          roster(entd, e, [6, 7], 0x0A) == [43, 43]
+          and roster(entd, e, [6, 7], 0x09) == [0, 0]
+          and roster(entd, e, [6, 7], 0x18) == [0xD0, 0xD0]
+          and roster(entd, e, [6, 7], 0x20) == [0x85, 0x86])
+    check("447 guaranteed gun spoils preserved", roster(entd, e, active, 0x1E) == [74, 75, 76, 0, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
