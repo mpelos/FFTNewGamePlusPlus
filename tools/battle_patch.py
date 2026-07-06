@@ -1735,26 +1735,30 @@ def mullonde_exterior(data):
     # Battle 46 - Mullonde Cathedral Exterior: the hidden-healer caster screen, opening the Mullonde
     #   chain (46->47->48, no resupply). Entry 460 (exact roster match, all generic casters spr128):
     #     slot 0 = White Mage (job 79, rh=64 staff) -> the HIDDEN rooftop heal+Raise-multi sustain engine.
-    #     slot 1 = Summoner (job 82, rh=57 Dragon Rod) -> AoE; the rod is the stealable reward (KEEP rh).
+    #     slot 1 = Summoner (job 82, rh=57 Dragon Rod) -> AoE; Dragon Rod remains steal flavor (KEEP rh).
     #     slots 2,3 = Geomancer (job 86; were naked) -> terrain elemental.
     #     slots 4,5 = Orator (job 84, rh=72 gun) -> soft status (one-disruptor cap).
-    # CHANGE (faithful): scale to the chain-opener band + arm the bare casters + jl8 (the White Mage was
-    #   jl5 -> jl8 so its Raise/Cure tier is real, the whole point). No boss, no rare. White Mage 103
-    #   (priority), rest 102. Verticality/split-deploy/hidden-roof start all live in the map+tail (untouched).
+    # CHANGE (v2): complete the caster kits while keeping this lighter than the Nave/Sanctuary bosses.
+    #   Items is the safe secondary across the team: useful chain pressure, no Stop/Charm hard-lock.
+    #   Staff of the Magi + Faerie Harp rewards are handled through spoils, not Steal requirements.
     E = 460
     set_slot(data, E, 0, level=103, joblevel=8, job=WMAGE,       # hidden rooftop sustain - priority kill
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+             secondary=ITEMS, brave=60, faith=84,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE)    # keep rh=64 staff
     set_slot(data, E, 1, level=102, joblevel=8, job=SUMMONER,    # AoE; KEEP rh=57 Dragon Rod (steal)
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+             secondary=ITEMS, brave=60, faith=84,
+             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
              head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE)
     for s in (2, 3):                                              # 2 Geomancer - terrain (were naked)
-        set_slot(data, E, s, level=102, joblevel=8, job=GEOMANCER,
+        set_slot(data, E, s, level=102, joblevel=8, job=GEOMANCER, secondary=ITEMS,
+                 brave=68, faith=78,
                  reaction=COUNTER, support=ATK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD)
     for s in (4, 5):                                              # 2 Orator - soft status (one-disruptor)
-        set_slot(data, E, s, level=102, joblevel=8, job=ORATOR,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+        set_slot(data, E, s, level=102, joblevel=8, job=ORATOR, secondary=ITEMS,
+                 brave=68, faith=78,
+                 reaction=REFLEXES, support=DEFENSE_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE)  # keep rh=72 gun
     return [E]
 

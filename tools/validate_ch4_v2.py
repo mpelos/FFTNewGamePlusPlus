@@ -681,6 +681,58 @@ def run() -> int:
           and field(entd, e, 2, 0x1E) == 156
           and field(entd, e, 3, 0x1E) == 142)
 
+    # 051 - Mullonde Cathedral Exterior / Murond Holy Place, entry 460.
+    # Chain opener: six static caster enemies, hidden White Mage sustain engine, no added slots.
+    e = 460
+    active = [0, 1, 2, 3, 4, 5]
+    check("460 active jobs", roster(entd, e, active, 0x0A) == [79, 82, 86, 86, 84, 84])
+    check("460 active levels", roster(entd, e, active, 0x03) == [103, 102, 102, 102, 102, 102])
+    check("460 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("460 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6])
+    check("460 Brave targets", roster(entd, e, active, 0x06) == [60, 60, 68, 68, 68, 68])
+    check("460 Faith targets", roster(entd, e, active, 0x07) == [84, 84, 78, 78, 78, 78])
+
+    for slot_no in (0, 1):
+        check(f"460 s{slot_no} pure caster R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"460 s{slot_no} caster gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [206]
+              and roster(entd, e, [slot_no], 0x14) == [234])
+
+    check("460 White Mage staff and reward",
+          field(entd, e, 0, 0x15) == 64
+          and field(entd, e, 0, 0x1E) == 66)
+    check("460 Summoner Dragon Rod and minor spoil",
+          field(entd, e, 1, 0x15) == 57
+          and field(entd, e, 1, 0x1E) == 242)
+
+    for slot_no in (2, 3):
+        check(f"460 s{slot_no} Geomancer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"460 s{slot_no} Geomancer gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [206]
+              and roster(entd, e, [slot_no], 0x14) == [234]
+              and roster(entd, e, [slot_no], 0x15) == [56])
+
+    for slot_no in (4, 5):
+        check(f"460 s{slot_no} Orator R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 466
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"460 s{slot_no} Orator gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [206]
+              and roster(entd, e, [slot_no], 0x14) == [234]
+              and roster(entd, e, [slot_no], 0x15) == [72])
+
+    check("460 Faerie Harp spoil preserved", field(entd, e, 2, 0x1E) == 94)
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")
