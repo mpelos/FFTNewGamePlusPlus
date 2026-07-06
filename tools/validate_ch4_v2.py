@@ -154,6 +154,21 @@ def run() -> int:
           and roster(entd, e, [5], 0x16) == [14])
     check("443 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 0, 0, 225, 252, 34])
 
+    # 040 - Finnath Creek, entry 444.
+    # De-randomized six-body flock: 2 Black Chocobo, 2 yellow Chocobo, 1 Red Chocobo, 1 Pig.
+    e = 444
+    cleared = [0, 1, 2, 3, 4, 5]
+    active = [6, 7, 8, 9, 10, 11]
+    check("444 old variant records cleared", roster(entd, e, cleared, 0x20) == [255, 255, 255, 255, 255, 255])
+    check("444 fixed flock jobs", roster(entd, e, active, 0x0A) == [95, 95, 94, 94, 96, 121])
+    check("444 fixed flock levels", roster(entd, e, active, 0x03) == [102, 102, 101, 101, 101, 100])
+    check("444 fixed flock job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("444 fixed flock Brave", roster(entd, e, active, 0x06) == [90, 90, 90, 90, 90, 60])
+    check("444 fixed flock Faith", roster(entd, e, active, 0x07) == [30, 30, 30, 30, 30, 40])
+    check("444 fixed flock control flags", roster(entd, e, active, 0x18) == [0x90, 0x90, 0x90, 0x90, 0x90, 0x90])
+    check("444 fixed flock unit ids", roster(entd, e, active, 0x20) == [0x80, 0x81, 0x82, 0x83, 0x84, 0x85])
+    check("444 no equipment spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

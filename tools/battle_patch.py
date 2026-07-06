@@ -1423,19 +1423,21 @@ def bervenia(data):
 # Vanilla 444 is a 12-slot RANDOM POOL, all at level 0xFE (runtime-driven spawn/level, unlike fixed
 # battles): s0-s5 Chocobo(94, yellow), s6-s9 Red Chocobo(96), s10 Black Chocobo(95), s11 Pig(121).
 # No boss, no rare; a light change-of-pace.
-#   - DE-RANDOMIZE per doc: the vanilla pool has only ONE Black Chocobo, so a random draw often lacks
-#     the Choco-Meteor threat. Bias the pool toward the threatening variant by converting 2 yellow
-#     slots (s4,s5) -> Black Chocobo (jl8 for the full Meteor kit). This is SAFE under either reading of
-#     the 0xFE slots (pool-candidate vs subset-activation): it changes WHAT a slot becomes, not the
-#     spawn COUNT, and does NOT touch levels.
-#   - PRESERVE the Pig (s11) + its Entice-recruit/poach flag (untouched). Keep yellow healers + red chip.
-#   ⚠️ VERIFY in-game: this randomized battle's LEVEL scaling is runtime/OverrideEntryData-driven; the
-#     .bin level edits used for fixed battles may not apply here. If the flock spawns under-levelled,
-#     move the Ch4 levels (Black 102 / yellow+red 101 / Pig 100) to the OverrideEntryData layer.
+#   - DE-RANDOMIZE per doc: clear the six 0x50 variant records and keep the six 0x90 base records as a
+#     fixed flock: 2 Black Chocobo, 2 yellow Chocobo, 1 Red Chocobo, 1 Pig.
+#   - PRESERVE the Pig (s11) + its Entice-recruit/poach tail; only set its level/Br/Fa/JobLevel.
+#   ⚠️ VERIFY in-game: if this randomized battle ignores ENTD level bytes, move the Ch4 levels
+#     (Black 102 / yellow+red 101 / Pig 100) to the OverrideEntryData layer.
 def finath(data):
     E = 444
-    for s in (4, 5):  # 2 yellow -> Black Chocobo: guarantee Choco-Meteor ranged-nuke pressure
-        set_slot(data, E, s, joblevel=8, job=BLACK_CHOCOBO)
+    for s in range(0, 6):
+        clear_slot(data, E, s)
+    for s in (6, 7):  # 2 Black Chocobo — guaranteed Choco Meteor pressure
+        set_slot(data, E, s, level=102, joblevel=8, job=BLACK_CHOCOBO, brave=90, faith=30)
+    for s in (8, 9):  # 2 yellow Chocobo — Choco Cure sustain
+        set_slot(data, E, s, level=101, joblevel=8, job=CHOCOBO, brave=90, faith=30)
+    set_slot(data, E, 10, level=101, joblevel=8, job=RED_CHOCOBO, brave=90, faith=30)
+    set_slot(data, E, 11, level=100, joblevel=8, job=PIG, brave=60, faith=40)
     return [E]
 
 
