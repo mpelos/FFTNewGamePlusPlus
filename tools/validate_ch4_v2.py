@@ -101,6 +101,59 @@ def run() -> int:
 
     check("442 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 58, 179, 0, 0, 0])
 
+    # 039 - Free City of Bervenia, entry 443.
+    # Meliadoul is the only break source; support screen is complete but does not add hard control.
+    e = 443
+    active = [0, 1, 2, 3, 4, 5]
+    check("443 active jobs", roster(entd, e, active, 0x0A) == [47, 82, 77, 77, 82, 89])
+    check("443 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 101, 102, 102])
+    check("443 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("443 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 5, 5, 6, 6])
+    check("443 Brave targets", roster(entd, e, active, 0x06) == [88, 60, 88, 82, 60, 90])
+    check("443 Faith targets", roster(entd, e, active, 0x07) == [42, 84, 55, 45, 84, 35])
+
+    check("443 Meliadoul boss R/S/M and weapon",
+          field16(entd, e, 0, 0x0C) == 442
+          and field16(entd, e, 0, 0x0E) == 465
+          and field16(entd, e, 0, 0x10) == 486
+          and field(entd, e, 0, 0x15) == 34)
+
+    for slot_no in (1, 4):
+        check(f"443 s{slot_no} Summoner R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"443 s{slot_no} Summoner gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [206]
+              and roster(entd, e, [slot_no], 0x14) == [234]
+              and roster(entd, e, [slot_no], 0x15) == [56]
+              and roster(entd, e, [slot_no], 0x16) == [255])
+
+    for slot_no in (2, 3):
+        check(f"443 s{slot_no} Archer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 469
+              and field16(entd, e, slot_no, 0x10) == 486)
+        check(f"443 s{slot_no} Archer gear",
+              roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [87]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+
+    check("443 s5 Ninja R/S/M",
+          field16(entd, e, 5, 0x0C) == 453
+          and field16(entd, e, 5, 0x0E) == 465
+          and field16(entd, e, 5, 0x10) == 487)
+    check("443 s5 Ninja gear",
+          roster(entd, e, [5], 0x12) == [168]
+          and roster(entd, e, [5], 0x13) == [198]
+          and roster(entd, e, [5], 0x14) == [210]
+          and roster(entd, e, [5], 0x15) == [14]
+          and roster(entd, e, [5], 0x16) == [14])
+    check("443 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 0, 0, 225, 252, 34])
+
     failed = [name for name, ok in checks if not ok]
     if failed:
         print(f"{len(failed)}/{len(checks)} Chapter 4 v2 checks failed:")

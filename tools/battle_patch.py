@@ -1399,16 +1399,20 @@ def dugeura(data):
 def bervenia(data):
     E = 443
     # Meliadoul BOSS — level + jl + Save the Queen (rare/steal-bait); preserve her other gear/scripting.
-    set_slot(data, E, 0, level=104, joblevel=8, rh=SAVE_THE_QUEEN)
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=ITEMS, brave=88, faith=42,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV1, rh=SAVE_THE_QUEEN)
     for s in (1, 4):  # 2 Summoners — AoE screen (Rod, intact charge times)
         set_slot(data, E, s, level=102, joblevel=8, job=SUMMONER,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
+                 secondary=ITEMS, brave=60, faith=84,
+                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
                  head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
     for s, lvl in ((2, 102), (3, 101)):  # 2 Archers — elevation chip (two-hand bow)
         set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=FUNDAMENTS,
+                 brave=88 if s == 2 else 82, faith=55 if s == 2 else 45,
                  reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
                  head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
     set_slot(data, E, 5, level=102, joblevel=8, job=NINJA,  # fast dual-wield flanker (Throw innate)
+             secondary=ITEMS, brave=90, faith=35,
              reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
              head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
     return [E]
