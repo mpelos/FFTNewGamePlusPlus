@@ -1,0 +1,23 @@
+docs/battles/043a-fort-besselat-south-wall.md
+  s_641ab1422b22e2::t_90ec41ef8cc09b 88-89,246-248,269-270
+  s_641ab1422b22e2::t_1b9e28e4621354 3,30,66-67,81-82,101,111,116-117,120,135,144-145,150,188,191-196,199-207,229,257-258,268
+  s_641ab1422b22e2::t_f8bcddfb454df0 21-22,64,109,114,118,133,139-141,149,156,159-165,168,171-172,175,178-185,254-255
+  s_641ab1422b22e2::t_79cee56d86908e 23-24,62-63,65,70-73,110,115,142-143,151-152,210-223,228,256
+  s_641ab1422b22e2::t_407b064d98911b 208-209
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "a7c72489cfef2d6bf2bd60623ce6629a6e68fb38",
+  "prompts": {},
+  "sessions": {
+    "s_641ab1422b22e2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f303f-056c-79a3-95f8-f4a550856b35",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
