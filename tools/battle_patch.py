@@ -49,6 +49,7 @@ GEOMANCER = 86  # terrain elemental attacks (Ch3 debut, Balias Swale 019); equip
 NINJA = 89    # dual-wield/wall-climb/Throw — Ch3 marquee caste (Yardow)
 SAMURAI = 88  # Bushido/draw-out — Ch3 elite
 MYSTIC = 85   # Oracle-equivalent — soft status; equips Hat/Robe/Clothing/Rod/Staff/Book (Ch4 Zalmo screen)
+ARITHMETICIAN = 90  # Calculator-equivalent; used as a JP/skill bucket seed for Arithmeticks.
 DANCER = 92   # global Dance pressure; ENTD cannot mask learned dances per unit.
 TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged breaks; equips Helmet/Armor/
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
@@ -66,6 +67,7 @@ DOUBLEHAND = 476
 DUAL_WIELD = 477
 TELEPORT = 498
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
+MAGICK_DEFENSE_BOOST = 468
 AUTO_POTION, THROW_ITEMS = 441, 474
 FUNDAMENTS = 5
 ITEMS = 6
@@ -74,6 +76,7 @@ TIME_MAGICKS = 12
 PUGILISM = 53
 ARTS_OF_WAR = 8
 WHITE_MAGICKS = 10
+BLACK_MAGICKS = 11
 SUMMON = 13
 MYSTIC_ARTS = 16
 GEOMANCY = 17
@@ -132,7 +135,7 @@ KOGA_BLADE = 18
 IGA_BLADE = 17
 # --- Chapter 4 best-in-slot rares (Unknown20-reserved tier, unlocked tiered in Ch4 per docs/037) ---
 SAVE_THE_QUEEN = 34  # Tier-A KnightSword — Meliadoul (039). Best KnightSword below the Tier-S pair.
-CASHMERE = 120       # cloth weapon for the Bervenia v3 Dancer.
+CASHMERE = 120       # cloth weapon; former Bervenia Dancer test kit.
 MASAMUNE = 46        # Tier-A Katana — Elmdor (048, deferred from Ch3).
 CHIRIJIRADEN = 47
 GENJI_SHIELD = 140
@@ -173,7 +176,8 @@ def generic_job_rank(job):
 
 def set_slot(data, global_entry, slot, *, level=None, jobrank=None, joblevel=None, job=None,
              secondary=None, reaction=None, support=None, movement=None,
-             head=None, body=None, acc=None, rh=None, lh=None, brave=None, faith=None):
+             head=None, body=None, acc=None, rh=None, lh=None, brave=None, faith=None,
+             palette=None):
     b = (global_entry % 128) * ENTRY + slot * SLOT
     if jobrank is None and job is not None and SQUIRE <= job <= NINJA:
         jobrank = generic_job_rank(job)
@@ -193,6 +197,7 @@ def set_slot(data, global_entry, slot, *, level=None, jobrank=None, joblevel=Non
     w8(0x08, jobrank); w8(0x09, joblevel); w8(0x0A, job); w8(0x0B, secondary)
     w16(0x0C, reaction); w16(0x0E, support); w16(0x10, movement)
     w8(0x12, head); w8(0x13, body); w8(0x14, acc); w8(0x15, rh); w8(0x16, lh)
+    w8(0x17, palette)
 
 
 # ---------------------------------------------------------------------------
@@ -1417,13 +1422,13 @@ def dugeura(data):
 #     as her equipped KnightSword (steal-bait; job 47 equips KnightSword — verified). Upgrades her
 #     vanilla Defender. PRESERVE job 47 / secondary / other gear (helm/armor/acc/shield) / win-on-death
 #     scripting. Break is telegraphed (Safeguard/Steal Weapon answer it); no hard lock added.
-#   - v3: Summoners are complete charge-time screens, one Archer remains, s3 becomes a Dancer soft clock,
-#     and the vanilla Ninja becomes a Monk flanker. ENTD cannot enforce "Wiznaibus only" learned-dance masks.
+#   - v3 adjusted: Summoners are complete charge-time screens, both Archers remain lane pressure,
+#     and the vanilla Ninja becomes a Counter Monk flanker.
 def bervenia(data):
     E = 443
     # Meliadoul BOSS: preserve job/identity/accessory/scripting; equip Save the Queen as steal-bait.
-    set_slot(data, E, 0, level=104, joblevel=8, secondary=FUNDAMENTS, brave=88, faith=42,
-             reaction=COUNTER, support=DEFENSE_BOOST, movement=MV2,
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=FUNDAMENTS, brave=88, faith=78,
+             reaction=COUNTER, support=MAGICK_DEFENSE_BOOST, movement=MV2,
              head=HEAVY_HELM, body=MIRROR_MAIL, rh=SAVE_THE_QUEEN, lh=CRYSTAL_SHIELD)
 
     # 2 Summoners: split White/Time secondary, no instant casts; Swiftspell keeps the charge-clock relevant.
@@ -1434,19 +1439,17 @@ def bervenia(data):
              brave=60, faith=84, reaction=SOULBIND, support=SWIFTSPELL, movement=MV2,
              head=MAGE_HAT, body=WIZARD_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
 
-    # One high-ground Archer remains as route chip, without adding another break source.
+    # Two high-ground Archers cover approach lanes without adding another break source.
     set_slot(data, E, 2, level=102, joblevel=8, job=ARCHER, secondary=ITEMS,
              brave=88, faith=55, reaction=REFLEXES, support=THROW_ITEMS, movement=IGNORE_HEIGHT,
              head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
-
-    # Dancer soft clock. The ENTD format sets Dance at JL8 but has no per-unit learned-dance mask.
-    set_slot(data, E, 3, level=101, jobrank=generic_job_rank(DANCER), joblevel=8, job=DANCER, secondary=0,
-             brave=88, faith=45, reaction=FURY, support=ATK_BOOST, movement=JUMP3,
-             head=HEADBAND, body=POWER_GARB, acc=BRACERS, rh=CASHMERE, lh=LH_EMPTY)
+    set_slot(data, E, 3, level=102, joblevel=8, job=ARCHER, secondary=ITEMS,
+             brave=88, faith=55, reaction=REFLEXES, support=THROW_ITEMS, movement=IGNORE_HEIGHT,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
 
     # Monk replaces the vanilla Ninja as fast physical flank pressure without rare weapon leakage.
     set_slot(data, E, 5, level=102, joblevel=8, job=MONK, secondary=ITEMS,
-             brave=90, faith=35, reaction=SHIRAHADORI, support=DUAL_WIELD, movement=MV2,
+             brave=90, faith=35, reaction=COUNTER, support=DUAL_WIELD, movement=MV2,
              head=LH_EMPTY, body=BLACK_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
     return [E]
 
@@ -1481,25 +1484,29 @@ def finath(data):
 # his Ch3-deferred rare); s2,s3 Mystic (85); s4,s5,s6 Knight (76). Per docs/041.
 #   - Zalmo: BOSS L104/jl8. Light Robe body + Sortilege and Whale Whisker steal-bait; preserve
 #     job/win-on-death scripting and avoid Angel Ring/Reraise gear.
-#   - 2 Mystics: soft status with Summon secondary; no hard-lock engine.
+#   - 2 Mystics: soft status with Black Magicks secondary; Arithmetician bucket seeds math JP/JL.
 #   - 2 Rend Knights + 1 lower-JL bodyguard Knight (s6) to respect the <=2 break-source cap.
 #   - PRESERVE the vanilla guaranteed Angel Ring reward + buried map rares (different layer, untouched).
 def outlying_church(data):
     E = 445
     # Zalmo BOSS: Light Robe/Sortilege steal-bait; Whale Whisker is two-handed.
-    set_slot(data, E, 1, level=104, joblevel=8, secondary=MYSTIC_ARTS, brave=72, faith=82,
+    set_slot(data, E, 1, level=104, jobrank=generic_job_rank(MYSTIC), joblevel=8,
+             secondary=MYSTIC_ARTS, brave=72, faith=82,
              reaction=REFLEXES, support=DEFENSE_BOOST, movement=MV2,
              head=MAGE_HAT, body=LIGHT_ROBE, acc=SORTILEGE, rh=WHALE_WHISKER, lh=LH_TWOHAND)
-    for s in (2, 3):  # 2 Mystics: soft status plus charged Summon pressure.
-        set_slot(data, E, s, level=102, joblevel=8, job=MYSTIC, secondary=SUMMON,
+    for s in (2, 3):  # 2 Mystics: soft status plus Black Magicks; Arithmetician bucket at JL8.
+        set_slot(data, E, s, level=102, jobrank=generic_job_rank(ARITHMETICIAN), joblevel=8,
+                 job=MYSTIC, secondary=BLACK_MAGICKS,
                  brave=68 if s == 2 else 72, faith=78 if s == 2 else 82,
                  reaction=MANA_SHIELD, support=SWIFTSPELL, movement=MOVE_MP_UP,
                  head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s, lvl, jl in ((4, 102, 8), (5, 102, 8), (6, 101, 1)):  # s6 is bodyguard, not a full Rend source
-        set_slot(data, E, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=MARTIAL_ARTS,
+    for s, lvl in ((4, 102), (5, 102), (6, 101)):  # 0x17 restored to the vanilla value for this battle.
+        set_slot(data, E, s, level=lvl, jobrank=generic_job_rank(MONK), joblevel=8,
+                 job=KNIGHT, secondary=MARTIAL_ARTS,
                  brave=88, faith=42,
                  reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GENJI_GLOVES, rh=RUNEBLADE, lh=SHOP_SHIELD)
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GENJI_GLOVES, rh=RUNEBLADE, lh=SHOP_SHIELD,
+                 palette=4)
     return [E]
 
 

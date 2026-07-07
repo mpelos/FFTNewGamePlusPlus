@@ -1,6 +1,6 @@
 # 039 - Free City of Bervenia
 
-Status: ✅ implemented (v1, entry 443) — redesign plan v3 docs-only
+Status: ✅ implemented (v3 adjusted, entry 443)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 34 (after Dugeura Pass)
 Target version: Enhanced v1.5.0
@@ -11,19 +11,21 @@ File: `battle_entd4_ent.bin` (embedded NG+ swap)
 > (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Steal Weapon remains a tactical
 > disarm answer, not the only reward path.
 
-Implemented v1 composition (entry 443, vanilla-dump verified):
+Implemented composition (entry 443, vanilla-dump verified):
 
 - s0 **Meliadoul** (job 47 Divine Knight, boss, dies) — L104, JobLevel 8, Mighty Sword break kit,
   Save the Queen (34) as equipped threat/steal-bait, win-on-death scripting preserved.
 - s1,s4 Summoner — L102.
-- s2,s3 Archer — L102/L101.
-- s5 Ninja — L102.
+- s2,s3 Archer — L102.
+- s5 Monk — L102.
 
 The v2 redesign keeps the exact six-body boss-duel shape, but upgrades the whole support screen to
 complete Chapter 4 setups while preserving the key fairness point: only Meliadoul breaks equipment,
 and she must remain stealable/disarmable.
 
-The v3 redesign starts from the v2 composition baseline below and will be revised slot-by-slot.
+The v3 redesign starts from the v2 composition baseline below and has been adjusted after playtest:
+the Dancer soft-clock was removed, the second lane-pressure Archer restored, Meliadoul's Faith was
+raised to make magic answers matter, and the Monk was softened from Shirahadori wall to Counter.
 
 ## Original Battle
 
@@ -97,8 +99,7 @@ Headline engine: stealable Templar equipment-break race.
 Supporting roles:
   - Meliadoul threatens gear and carries the objective.
   - Summoners punish clumping and slow static Safeguard setups.
-  - Archer covers one approach lane and forces route commitment.
-  - Dancer adds global chip pressure through Wiznaibus without adding hard control.
+  - Two Archers cover approach lanes and force route commitment.
   - Monk replaces the vanilla Ninja as a fast physical flanker without adding a rare-weapon leak.
 ```
 
@@ -119,9 +120,9 @@ SUMMONER AoE:
 MONK FLANK:
   Allowed as damage, counter-pressure, and positional pressure. No hard status, no turn deletion.
 
-DANCER WIZNAIBUS:
-  Allowed as global chip pressure only. The Dancer is restricted to Wiznaibus; no Slow Dance,
-  Nameless Dance, Last Dance, or hard-control performer engine.
+DOUBLE ARCHER SCREEN:
+  Restored after the Dancer variant. This keeps Bervenia closer to vanilla and avoids adding a global
+  performer clock on top of the Templar break race.
 ```
 
 ## Reward Handling
@@ -168,8 +169,8 @@ body city lock.
 
 ## Proposed Composition (New Game++ Bervenia v3)
 
-Initial v3 baseline copied from v2. Current v3 changes: one Archer becomes a Dancer with
-Wiznaibus-only dance pressure, and the vanilla Ninja becomes a Monk flanker.
+Current v3 changes: both vanilla Archer bodies remain Archers with complete lane-pressure kits, and
+the vanilla Ninja becomes a Monk flanker.
 
 Vanilla composition:
 
@@ -184,10 +185,10 @@ v3 composition:
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
-| s0 | Boss / objective | Divine Knight (47) | `104` | `88/42` | Gear-break race; steal/disarm target; guaranteed Save the Queen reward. |
+| s0 | Boss / objective | Divine Knight (47) | `104` | `88/78` | Gear-break race; steal/disarm target; guaranteed Save the Queen reward; magic answer stays live. |
 | s1 | AoE screen | Summoner | `102` | `60/84` | Charge-time AoE that punishes clumping on the approach. |
 | s2 | High-ground chip | Archer (77) | `102` | `88/55` | Covers one route to Meliadoul. |
-| s3 | Global chip | Dancer | `101` | `88/45` | Replaces one Archer; Wiznaibus-only pressure that rewards a focused boss race. |
+| s3 | High-ground chip | Archer (77) | `102` | `88/55` | Second Archer matching s2; restores vanilla lane pressure. |
 | s4 | AoE screen | Summoner | `102` | `60/84` | Second charge-time AoE; forces movement. |
 | s5 | Flanker | Monk | `102` | `90/35` | Fast brawler pressure on backline or steal attempts. |
 
@@ -195,11 +196,11 @@ Current difference from vanilla:
 
 ```text
 - Enemy count is unchanged: 6 enemies.
-- Job count changes two slots: vanilla has 2 Archers + 1 Ninja; v3 has 1 Archer + 1 Dancer + 1 Monk.
+- Job count changes one slot: vanilla has 2 Archers + 1 Ninja; v3 has 2 Archers + 1 Monk.
 - Objective is unchanged: defeat Meliadoul.
 - The intended NG++ difference is kit completeness, higher level bands, Brave/Faith tuning,
   guaranteed Save the Queen reward, stricter guardrails around the single equipment-break source,
-  one Wiznaibus-only global chip unit, and a Monk flanker replacing the vanilla Ninja.
+  two complete Archer lane-pressure units, and a Monk flanker replacing the vanilla Ninja.
 ```
 
 ## Builds (complete setups; Templar-duel puzzle)
@@ -219,7 +220,7 @@ Job: Divine Knight / Knights Templar (47)   JobLevel: 8
 Primary: Mighty Sword / equipment-break kit
 Secondary: Fundaments, Squire JobLevel 8
 Reaction: Counter (442)
-Support: Defense Boost (466); NOT Safeguard/Maintenance
+Support: Magic Defense Boost (468); NOT Safeguard/Maintenance
 Movement: Movement +2 (487)
 Head: Crystal Helm (154)
 Body: Reflect Mail (184)
@@ -255,7 +256,7 @@ Role: make standing still against Meliadoul expensive. Swiftspell shortens the s
 punishes careless burst, and the split secondaries let one Summoner stabilize while the other adds
 tempo pressure.
 
-### Archer x1 (Lv 102)
+### Archer x2 (Lv 102)
 
 ```text
 Job: Archer (77)   JobLevel: 8
@@ -268,24 +269,8 @@ Gear: Thief's Cap (168), Black Garb (198), Bracers (218), high-tier bow
 Forbidden: Rend support; they are lane pressure, not extra break sources.
 ```
 
-Role: force one approach lane to cost turns and HP.
-
-### Dancer (Lv 101, v3 replacement for one Archer)
-
-```text
-Job: Dancer   JobLevel: 8
-Primary: Dance, restricted to Wiznaibus only
-Secondary: none
-Reaction: Fury
-Support: Attack Boost (465)
-Movement: Jump +3
-Br/Fa: 88/45
-Gear: Headband (163), Power Garb (195), Bracers (218), Cashmere
-Forbidden: Slow Dance, Nameless Dance, Last Dance, or any non-Wiznaibus dance.
-```
-
-Role: global chip timer. The Dancer replaces one lane Archer, so Bervenia gains a soft clock without
-adding another break source, hard status engine, or seventh body.
+Role: force both approach lanes to cost turns and HP while keeping the roster closer to vanilla than
+the Dancer variant.
 
 ### Monk (Lv 102, v3 replacement for vanilla Ninja)
 
@@ -293,7 +278,7 @@ adding another break source, hard status engine, or seventh body.
 Job: Monk   JobLevel: 8
 Primary: Martial Arts
 Secondary: Throw, Ninja JobLevel 8, or Item, Chemist JobLevel 8, depending on legal slot behavior
-Reaction: Shirahadori
+Reaction: Counter
 Support: Dual Wield
 Movement: Movement +2 (487)
 Gear: Black Garb (198), Bracers (218)
@@ -308,14 +293,13 @@ of dual ninja-blade burst.
 
 ```text
 Meliadoul starts reachable but screened, close enough to threaten early break. Summoners sit behind
-or above the route so charge AoE punishes clumping. The remaining Archer covers one high-ground lane.
-The Dancer starts protected enough to establish Wiznaibus pressure, but reachable if the player chooses
-to spend tempo removing the soft clock. Monk starts wide enough to punish backline/steal routes but not
-so close that the player loses before acting.
+or above the route so charge AoE punishes clumping. The two Archers cover opposite high-ground lanes
+and tax the approach without adding another puzzle engine. Monk starts wide enough to punish
+backline/steal routes but not so close that the player loses before acting.
 ```
 
-The city should say: "protect your kit, open a route, and take the sword out of her hand before the
-support screen makes the approach too expensive."
+The city should say: "protect your kit, open a route through the bow lanes, and take the sword out of
+her hand before the support screen makes the approach too expensive."
 
 ## Implementation Checklist
 
@@ -325,16 +309,14 @@ support screen makes the approach too expensive."
 - [ ] Keep Save the Queen guaranteed in spoils; decide whether equipped Save the Queen duplicate/steal
       semantics are acceptable or use a non-duplicate equipped sword.
 - [ ] Do not give Meliadoul Safeguard/Maintenance.
-- [ ] Complete Meliadoul setup: Fundaments at JobLevel 8, Counter, Defense Boost (466),
+- [ ] Complete Meliadoul setup: Fundaments at JobLevel 8, Counter, Magic Defense Boost (468),
       Movement +2 (487), Crystal Helm, Reflect Mail, Crystal Shield, and her vanilla/default perfume.
 - [ ] Complete both Summoner setups: s1 with White Magic at JobLevel 8, s4 with Time Magic at
       JobLevel 8, Soulbind, Swiftspell, Movement +2 (487), Wizard's Rod, Lambent Hat, Wizard's Robe,
       and Featherweave Cloak.
-- [ ] Complete the remaining Archer setup: Item at JobLevel 8, Reflexes, Throw Items,
+- [ ] Complete both Archer setups: Item at JobLevel 8, Reflexes, Throw Items,
       Ignore Elevation, Thief's Cap, Black Garb, Bracers, and a high-tier bow.
-- [ ] Replace one Archer with Dancer: Wiznaibus only, no secondary, Fury, Attack Boost, Jump +3,
-      Bracers, Power Garb, Headband, Cashmere, Br/Fa `88/45`.
-- [ ] Replace the vanilla Ninja with Monk: Throw or Item secondary, Shirahadori, Dual Wield,
+- [ ] Replace the vanilla Ninja with Monk: Throw or Item secondary, Counter, Dual Wield,
       Movement +2, Black Garb, and Bracers.
 - [ ] Set/verify levels: Meliadoul `104`; supports `101`-`102`.
 - [ ] Patch only through the correct future implementation layer; keep this redesign docs-only for now.
@@ -348,7 +330,7 @@ support screen makes the approach too expensive."
 - Do Swiftspell Summoners remain raceable, or do they make the approach too compressed?
 - Do White Magic and Time Magic support Meliadoul without creating a second hard engine?
 - Does the Monk preserve the vanilla Ninja's flank pressure without turning into an unfair physical wall?
-- Does the Wiznaibus-only Dancer add a soft clock without turning the battle into performer control?
+- Do the two Archers create lane pressure without burying the Templar break-duel identity?
 - Is Save the Queen guaranteed through spoils and not steal-dependent?
 - If Save the Queen is equipped, is duplicate/steal behavior acceptable?
 - Does the fight feel like the first Chapter 4 boss, not a Lucavi-tier spike?

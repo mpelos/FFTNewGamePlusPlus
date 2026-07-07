@@ -20,8 +20,8 @@ present in a battle's roster, the technique changes:
 - **Job** (`SLOT_JOB`, offset `0x0A`) — the unit's main job id, which also drives its sprite/portrait.
 - **Equipment** — head, body, accessory, and weapon slot ids, set to match the new job's intended kit.
 - **Job level seed** (`SLOT_JOB_LEVEL`, offset `0x09`) and the roster job-unlock target
-  (`SLOT_JOB_UNLOCK`, offset `0x08`), so the unit's abilities (reaction, support, movement, innate
-  job commands) match its new identity.
+  (`SLOT_JOB_UNLOCK`, offset `0x08`), normally pointed at the unit's new **main job** so the visible
+  job and its innate command list match the new identity.
 - **Level** (`SLOT_LEVEL`, offset `0x03`) and any reaction/support/movement ability ids, tuned to the
   new role the slot is meant to play in the redesigned encounter.
 - **Identity/framing in documentation** — the slot is described and balanced as the new unit (e.g.
@@ -42,6 +42,15 @@ One caveat applies even to job-swap: if the new job is a spritesheet the battle 
 load, the swap consumes one unit of the battle's sprite-sheet budget exactly like a slot-add would
 (see [09-sprite-sheet-budget.md](09-sprite-sheet-budget.md)). The swap itself is still safe — the
 budget constrains which JOB to pick, not the technique.
+
+Another caveat applies to secondary skillsets: ENTD `0x08/0x09` seeds **one** job/unlock bucket and
+does not directly write a deterministic learned-skill list. Do not point `0x08` at the secondary job
+expecting both "main job Lv8" and "secondary job Lv8." The Outlying Church test proved the failure
+mode: Knights seeded as Monk became visible Knight Lv3 with several Martial Arts, while Mystics
+seeded as Summoner stayed visible Mystic Lv1 and learned inconsistent numbers of summons. For
+job-swap, keep `0x08` aimed at the main job unless the design explicitly accepts a partial/random
+secondary list or a future runtime learned-ability patch is implemented. See
+[01-entd-binary-format.md](01-entd-binary-format.md#ability-learning-caveat-one-seeded-job-random-learned-skills).
 
 This is what makes job-swap safe in every case: it is a pure ENTD-byte edit confined to a single
 slot's existing fields. It never touches the event-script/activation layer — no choreography block,

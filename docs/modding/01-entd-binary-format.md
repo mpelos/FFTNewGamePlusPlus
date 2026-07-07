@@ -132,6 +132,39 @@ simple for generics and dangerous to over-generalize for named guests:
 - **Validation:** test from before the unit joins the roster. If the unit is already cached in the
   save, ENTD changes can appear to fail even when the bytes are correct.
 
+#### Ability-learning caveat: one seeded job, random learned skills
+
+`0x08/0x09` does **not** mean "set every job to this level" and does **not** directly write a full
+learned-ability list. It seeds one job/unlock bucket. The game then gives enough JP/context for that
+job path and spends/assigns learned abilities through the normal enemy generation logic, which can
+produce different learned skills between otherwise similar units.
+
+Validated consequence on Outlying Church / entry `445`:
+
+- Setting the three Knights' `0x08` to Monk (`4`) and `0x09=8` did **not** make them Knight Lv8 plus
+  guaranteed full Martial Arts. In-game they appeared as Knight Lv3 with several Martial Arts skills.
+  The best explanation is that Monk's prerequisite path funds/raises Knight enough to unlock Monk,
+  while the seeded bucket and learned skills are resolved separately by the game's JP logic.
+- Setting the Mystics' `0x08` to Summoner (`8`) and `0x09=8` left their visible Mystic job at Lv1.
+  Their Summon secondary learned different numbers of summons between the two units. This fits the
+  same model: Summoner is the seeded bucket, but learned skills are not a deterministic "all skills"
+  mask from the ENTD slot.
+
+Operational rule:
+
+```text
+If the unit's main/displayed job must be full strength, keep 0x08 pointed at the main job bucket.
+Do not point 0x08 at a secondary job expecting both main-job Lv8 and secondary-job Lv8.
+ENTD alone currently cannot guarantee a full learned secondary skill list.
+```
+
+For battle design, this means a secondary skillset in `0x0B` is safe as a command assignment, but the
+exact learned abilities behind that secondary are not guaranteed by `0x08/0x09` unless that same
+secondary job is the single seeded bucket and the resulting partial/random learned list is acceptable.
+If a design requires precise full secondary skills, use a different design (make that job primary,
+choose a secondary whose partial list is acceptable, or implement a future runtime/roster learned-
+ability patch once the learned-skill bitfields are mapped).
+
 ## The level relative-encoding scheme
 
 The Level byte (`0x03`) does not always hold a literal level. It uses a relative-encoding

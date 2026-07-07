@@ -105,19 +105,19 @@ def run() -> int:
     check("442 reward spoils preserved", roster(entd, e, active, 0x1E) == [0, 58, 179, 0, 0, 0])
 
     # 039 - Free City of Bervenia, entry 443.
-    # v3 keeps six enemies: Meliadoul break-duel, one Archer, one Dancer soft clock, one Monk flanker.
+    # v3 keeps six enemies: Meliadoul break-duel, two Archers, two Summoners, one Monk flanker.
     e = 443
     active = [0, 1, 2, 3, 4, 5]
-    check("443 active jobs", roster(entd, e, active, 0x0A) == [47, 82, 77, 92, 82, 78])
-    check("443 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 101, 102, 102])
+    check("443 active jobs", roster(entd, e, active, 0x0A) == [47, 82, 77, 77, 82, 78])
+    check("443 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 102, 102, 102])
     check("443 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("443 active secondaries", roster(entd, e, active, 0x0B) == [5, 10, 6, 0, 12, 6])
+    check("443 active secondaries", roster(entd, e, active, 0x0B) == [5, 10, 6, 6, 12, 6])
     check("443 Brave targets", roster(entd, e, active, 0x06) == [88, 60, 88, 88, 60, 90])
-    check("443 Faith targets", roster(entd, e, active, 0x07) == [42, 84, 55, 45, 84, 35])
+    check("443 Faith targets", roster(entd, e, active, 0x07) == [78, 84, 55, 55, 84, 35])
 
     check("443 Meliadoul boss R/S/M and gear",
           field16(entd, e, 0, 0x0C) == 442
-          and field16(entd, e, 0, 0x0E) == 466
+          and field16(entd, e, 0, 0x0E) == 468
           and field16(entd, e, 0, 0x10) == 487
           and roster(entd, e, [0], 0x12) == [154]
           and roster(entd, e, [0], 0x13) == [184]
@@ -136,30 +136,20 @@ def run() -> int:
               and roster(entd, e, [slot_no], 0x15) == [56]
               and roster(entd, e, [slot_no], 0x16) == [255])
 
-    check("443 s2 Archer R/S/M",
-          field16(entd, e, 2, 0x0C) == 449
-          and field16(entd, e, 2, 0x0E) == 474
-          and field16(entd, e, 2, 0x10) == 492)
-    check("443 s2 Archer gear",
-          roster(entd, e, [2], 0x12) == [168]
-          and roster(entd, e, [2], 0x13) == [198]
-          and roster(entd, e, [2], 0x14) == [218]
-          and roster(entd, e, [2], 0x15) == [87]
-          and roster(entd, e, [2], 0x16) == [254])
-
-    check("443 s3 Dancer R/S/M",
-          field16(entd, e, 3, 0x0C) == 422
-          and field16(entd, e, 3, 0x0E) == 465
-          and field16(entd, e, 3, 0x10) == 491)
-    check("443 s3 Dancer gear",
-          roster(entd, e, [3], 0x12) == [163]
-          and roster(entd, e, [3], 0x13) == [195]
-          and roster(entd, e, [3], 0x14) == [218]
-          and roster(entd, e, [3], 0x15) == [120]
-          and roster(entd, e, [3], 0x16) == [255])
+    for slot_no in (2, 3):
+        check(f"443 s{slot_no} Archer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 474
+              and field16(entd, e, slot_no, 0x10) == 492)
+        check(f"443 s{slot_no} Archer gear",
+              roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [87]
+              and roster(entd, e, [slot_no], 0x16) == [254])
 
     check("443 s5 Monk R/S/M",
-          field16(entd, e, 5, 0x0C) == 451
+          field16(entd, e, 5, 0x0C) == 442
           and field16(entd, e, 5, 0x0E) == 477
           and field16(entd, e, 5, 0x10) == 487)
     check("443 s5 Monk gear",
@@ -186,7 +176,7 @@ def run() -> int:
     check("444 no equipment spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
 
     # 041 - Outlying Church, entry 445.
-    # Zalmo focus fight with two full Rend Knights and one lower-JL bodyguard Knight.
+    # Zalmo focus fight; current test seeds secondary-job buckets at JL8 and palettes Knights A/B/C.
     e = 445
     active = [1, 2, 3, 4, 5, 6]
     check("445 inactive placeholder preserved",
@@ -195,10 +185,13 @@ def run() -> int:
           and field(entd, e, 0, 0x18) == 0x84)
     check("445 active jobs", roster(entd, e, active, 0x0A) == [16, 85, 85, 76, 76, 76])
     check("445 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 102, 102, 101])
-    check("445 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 1])
-    check("445 active secondaries", roster(entd, e, active, 0x0B) == [16, 13, 13, 9, 9, 9])
+    check("445 active job unlock buckets", roster(entd, e, active, 0x08) == [11, 16, 16, 4, 4, 4])
+    check("445 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("445 active secondaries", roster(entd, e, active, 0x0B) == [16, 11, 11, 9, 9, 9])
     check("445 Brave targets", roster(entd, e, active, 0x06) == [72, 68, 72, 88, 88, 88])
     check("445 Faith targets", roster(entd, e, active, 0x07) == [82, 78, 82, 42, 42, 42])
+    check("445 Knight palette restored", roster(entd, e, [4, 5, 6], 0x17) == [4, 4, 4])
+    check("445 Knight sprite restored", roster(entd, e, [4, 5, 6], 0x00) == [128, 128, 128])
 
     check("445 Zalmo R/S/M and gear",
           field16(entd, e, 1, 0x0C) == 449
