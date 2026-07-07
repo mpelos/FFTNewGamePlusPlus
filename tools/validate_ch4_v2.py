@@ -236,33 +236,38 @@ def run() -> int:
     check("445 reward spoils preserved", roster(entd, e, active, 0x1E) == [223, 206, 0, 0, 0, 0])
 
     # 042 - Beddha Sandwaste / Bed Desert, entry 447.
-    # Six active enemies plus two Barich script placeholders. Keep the gun duel focused on Barich.
+    # Six active enemies plus two Barich script placeholders. v3 keeps the gun duel focused on Barich.
     e = 447
     active = [0, 1, 2, 3, 4, 5]
-    check("447 active jobs", roster(entd, e, active, 0x0A) == [43, 76, 76, 80, 77, 77])
+    check("447 active jobs", roster(entd, e, active, 0x0A) == [43, 88, 88, 80, 86, 86])
     check("447 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 102, 102, 101])
+    check("447 active job ranks", roster(entd, e, active, 0x08) == [0, 14, 14, 6, 12, 12])
     check("447 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("447 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6])
-    check("447 Brave targets", roster(entd, e, active, 0x06) == [84, 88, 88, 60, 82, 82])
-    check("447 Faith targets", roster(entd, e, active, 0x07) == [55, 42, 42, 84, 45, 45])
+    check("447 active secondaries", roster(entd, e, active, 0x0B) == [0, 9, 9, 6, 6, 6])
+    check("447 Brave targets", roster(entd, e, active, 0x06) == [84, 88, 88, 60, 84, 84])
+    check("447 Faith targets", roster(entd, e, active, 0x07) == [55, 60, 60, 84, 60, 60])
 
-    check("447 Barich boss R/S/M and Glacial Gun",
+    check("447 Barich boss R/S/M and Stoneshooter",
           field16(entd, e, 0, 0x0C) == 449
-          and field16(entd, e, 0, 0x0E) == 469
-          and field16(entd, e, 0, 0x10) == 486
-          and field(entd, e, 0, 0x15) == 74)
+          and field16(entd, e, 0, 0x0E) == 466
+          and field16(entd, e, 0, 0x10) == 491
+          and roster(entd, e, [0], 0x12) == [168]
+          and roster(entd, e, [0], 0x13) == [198]
+          and roster(entd, e, [0], 0x14) == [234]
+          and roster(entd, e, [0], 0x15) == [73]
+          and roster(entd, e, [0], 0x16) == [254])
 
     for slot_no in (1, 2):
-        check(f"447 s{slot_no} Knight R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 442
-              and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"447 s{slot_no} Knight gear",
+        check(f"447 s{slot_no} Samurai R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 451
+              and field16(entd, e, slot_no, 0x0E) == 476
+              and field16(entd, e, slot_no, 0x10) == 488)
+        check(f"447 s{slot_no} Samurai gear",
               roster(entd, e, [slot_no], 0x12) == [154]
               and roster(entd, e, [slot_no], 0x13) == [182]
-              and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x15) == [30]
-              and roster(entd, e, [slot_no], 0x16) == [139])
+              and roster(entd, e, [slot_no], 0x14) == [215]
+              and roster(entd, e, [slot_no], 0x15) == [45]
+              and roster(entd, e, [slot_no], 0x16) == [254])
 
     check("447 s3 Black Mage R/S/M",
           field16(entd, e, 3, 0x0C) == 449
@@ -270,22 +275,22 @@ def run() -> int:
           and field16(entd, e, 3, 0x10) == 486)
     check("447 s3 Black Mage gear",
           roster(entd, e, [3], 0x12) == [167]
-          and roster(entd, e, [3], 0x13) == [206]
+          and roster(entd, e, [3], 0x13) == [205]
           and roster(entd, e, [3], 0x14) == [234]
           and roster(entd, e, [3], 0x15) == [56]
           and roster(entd, e, [3], 0x16) == [255])
 
     for slot_no in (4, 5):
-        check(f"447 s{slot_no} Archer R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 469
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"447 s{slot_no} Archer gear",
-              roster(entd, e, [slot_no], 0x12) == [168]
-              and roster(entd, e, [slot_no], 0x13) == [198]
-              and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x15) == [87]
-              and roster(entd, e, [slot_no], 0x16) == [254])
+        check(f"447 s{slot_no} Geomancer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 437
+              and field16(entd, e, slot_no, 0x0E) == 465
+              and field16(entd, e, slot_no, 0x10) == 487)
+        check(f"447 s{slot_no} Geomancer gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [195]
+              and roster(entd, e, [slot_no], 0x14) == [217]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [255])
 
     check("447 Barich placeholders preserved",
           roster(entd, e, [6, 7], 0x0A) == [43, 43]

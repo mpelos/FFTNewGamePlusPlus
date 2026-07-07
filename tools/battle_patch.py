@@ -53,7 +53,7 @@ DANCER = 92   # global Dance pressure; ENTD cannot mask learned dances per unit.
 TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged breaks; equips Helmet/Armor/
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
 # skills
-COUNTER, PARRY, ATK_BOOST, MV1, MV2 = 442, 447, 465, 486, 487
+COUNTER, PARRY, ATK_BOOST, MV1, MV2, MV3 = 442, 447, 465, 486, 487, 488
 DRAGONHEART = 427
 NATURES_WRATH = 437
 VIGILANCE = 426
@@ -97,6 +97,7 @@ THIEFS_CAP, BLACK_GARB, GERMINAS, AIR_KNIFE, WINDSLASH = 168, 198, 210, 9, 87
 YOICHI_BOW, PERSEUS_BOW = 90, 91
 FEATHERWEAVE, MYTHRIL_GUN = 234, 72
 MAGEPOWER_GLOVES = 217
+POWER_GAUNTLETS = 215  # docs sometimes call this "Magic Gauntlet"; table name is Power Gauntlets.
 RED_SHOES = 214
 WIZARD_ROBE = 202
 BLACK_ROBE = 205
@@ -149,7 +150,10 @@ ENVOUTEMENT = 237
 ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; paid before the gauntlet at Mullonde Nave 052).
 MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; side/relic plan only, not awarded in Lost Halidom 057).
 RAGNAROK = 36        # Tier-S KnightSword capstone; paid before the final gauntlet at Sanctuary 053.
+STONESHOOTER = 73    # Barich v3 active gun/disarm bait (042).
 GLACIAL_GUN = 74     # Tier-A Gun — Barich (042).
+BLAZE_GUN = 75
+BLASTER = 76
 LIGHT_ROBE = 206     # Tier-A robe — Zalmo (041). TIC's Luminous Robe = top robe BELOW Lordly; == SHOP_ROBE
 ROBE_OF_LORDS = 207  # Tier-S robe (Lordly Robe, Unknown20 best; paid before the gauntlet at 052).
 # --- Ch4 monster job ids (Finath chocobo flock, 040) ---
@@ -1500,32 +1504,31 @@ def outlying_church(data):
 
 
 # ---------------------------------------------------------------------------
-# Battle 037 — Beddha Sandwaste / Bed Desert (entry 447): open-desert gun-duel; Barich. Per docs/042.
-# Vanilla 447: s0 = Barich (job 43 Machinist, GEARED, ALREADY wields Glacial Gun 74 — win = defeat him,
-# he DIES here); s1,s2 Knight (76); s3 Black Mage (80); s4,s5 Archer (77); s6,s7 job-43 Barich-clone
-# scripting placeholders (jl0, tail 04 d0 — leave untouched). NO Hydra (that's Lost Halidom 057). Per docs/042.
-#   - Barich: BOSS L104/jl8. His Tier-A rare = GLACIAL GUN (74), ALREADY his equipped weapon (steal-bait
-#     = disarm + reward). PRESERVE job 43 / secondary / head / body / acc / win-on-death scripting.
-#   - 2 Knights: desert screen (Rend innate, cap 2). Black Mage: AoE. 2 Archers: open-lane chip.
+# Battle 037 — Beddha Sandwaste / Bed Desert (entry 447): open-desert gun-duel; Barich. Per docs/042 v3.
+# Vanilla 447: s0 = Barich (job 43 Machinist, win = defeat him); s1,s2 Knight (76); s3 Black Mage (80);
+# s4,s5 Archer (77); s6,s7 job-43 Barich-clone scripting placeholders (jl0, tail 04 d0 — leave untouched).
+# v3 keeps six active enemies: Barich + 2 Samurai + 2 Geomancers + Black Mage. Glacial/Blaze/Blaster
+# remain guaranteed spoils only; Barich's active steal/disarm bait is Stoneshooter.
 def bed_desert(data):
     E = 447
-    # Barich BOSS — level/jl; re-assert Glacial Gun (his rare/steal-bait, already equipped). Preserve rest.
-    set_slot(data, E, 0, level=104, joblevel=8, secondary=ITEMS, brave=84, faith=55,
-             reaction=REFLEXES, support=CONCENTRATION, movement=MV1, rh=GLACIAL_GUN)
-    for s in (1, 2):  # 2 Knights — desert screen
-        set_slot(data, E, s, level=102, joblevel=8, job=KNIGHT, secondary=ITEMS,
-                 brave=88, faith=42,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    set_slot(data, E, 3, level=102, joblevel=8, job=BMAGE,  # Black Mage — AoE punishing clumps
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=0, brave=84, faith=55,
+             reaction=REFLEXES, support=DEFENSE_BOOST, movement=JUMP3,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE, rh=STONESHOOTER, lh=LH_TWOHAND)
+    for s in (1, 2):  # 2 Samurai — parry screen, no Rend/break pressure.
+        set_slot(data, E, s, level=102, joblevel=8, job=SAMURAI, secondary=MARTIAL_ARTS,
+                 brave=88, faith=60,
+                 reaction=SHIRAHADORI, support=DOUBLEHAND, movement=MV3,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=POWER_GAUNTLETS,
+                 rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
+    set_slot(data, E, 3, level=102, joblevel=8, job=BMAGE,  # Black Mage — AoE punishing clumps.
              secondary=ITEMS, brave=60, faith=84,
              reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s, lvl in ((4, 102), (5, 101)):  # 2 Archers — open-lane chip (two-hand bow)
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
-                 brave=82, faith=45,
-                 reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+             head=MAGE_HAT, body=BLACK_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+    for s, lvl in ((4, 102), (5, 101)):  # 2 Geomancers — terrain bruisers on open desert lanes.
+        set_slot(data, E, s, level=lvl, joblevel=8, job=GEOMANCER, secondary=ITEMS,
+                 brave=84, faith=60,
+                 reaction=NATURES_WRATH, support=ATK_BOOST, movement=MV2,
+                 head=MAGE_HAT, body=POWER_GARB, acc=MAGEPOWER_GLOVES, rh=RUNEBLADE, lh=LH_EMPTY)
     return [E]
 
 
