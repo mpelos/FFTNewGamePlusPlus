@@ -31,7 +31,7 @@ progression rebalance; the rest were already placed on their canonical owner.
 | 040 Finnath Creek | - | (none - chocobo field) | - | - |
 | 041 Outlying Church / Zalmo | 445 | Light Robe + Angel Ring | - | mid |
 | 042 Bed Desert / Barich | 447 | Glacial Gun + Blaze Gun + Blaster | Blaze Gun, Blaster | 21 |
-| 043 Fort Besselat Wall | 448 (S) / 449 (N) | Yoichi Bow + Perseus Bow (BOTH path entries) | both | 13 |
+| 043a/043b Fort Besselat Wall | 448 (S) / 449 (N) | Yoichi Bow + Perseus Bow (BOTH path entries) | both | 13 |
 | 044 Fort Besselat Sluice | 450 | Kaiser Shield | Kaiser Shield | 20 |
 | 045 Mount Germinas | 452 | Ninja Gear + Koga Blade + Iga Blade | all 3 | 14 |
 | 046 Poeskas Lake | 453 | Cursed Ring (+2 Phoenix Down) | Cursed Ring | 26 (story: undead) |
@@ -73,7 +73,7 @@ All 26 accounted for: 25 placed across 14 battles + Excalibur reserved on Orland
 
 - **Design: DONE (2026-06-27).** Full distribution decided; every non-buyable item placed; within the
   3-cap; no steal-dependence; progression + story-fit verified.
-- **Apply: DONE (2026-06-27).** All 6 remaining ENTD entries resolved (038=442, 043=448/449, 044=450,
+- **Apply: DONE (2026-06-27).** All 6 remaining ENTD entries resolved (038=442, 043a/043b=448/449, 044=450,
   045=452, 046=453, 051=460). 18 `0x1e` spoils written on active enemy slots (16 unique items; the two
   Bethla Wall bows duplicated across both path entries). Built Release -> deployed DLL. Verified: source
   `battle_entd4_ent.bin` embedded verbatim at DLL offset 0x100f0; every designed rare lands in the awarded

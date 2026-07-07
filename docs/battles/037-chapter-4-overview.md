@@ -46,7 +46,8 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `040` | 35 | Finnath Creek / Finath River | Wild chocobo field; Pig recruit | de-randomized chocobo tempo (Choco Cure/Meteor); no rare | ✅ Done |
 | `041` | 36 | Outlying Church / Zeltennia Church | **Zalmo** rematch — DIES here | elevated holy-boss burst-duel; **Light Robe** (Tier A); deferred rare paid | ✅ Done |
 | `042` | 37 | Beddha Sandwaste / Bed Desert | **Barich** (Templar gunner) — dies here | open-desert gun-duel; **Glacial Gun** steal (Tier A); no Hydra (that's `057`) | ✅ Done |
-| `043` | 38 | Fort Besselat S/N Wall / Bethla | Wall assault (player picks S or N path) | branching vertical wall — S melee/stealth, N ranged/AoE; no rare | ✅ Done |
+| `043a` | 38A | Fort Besselat South Wall / Bethla | Wall assault (South path) | melee/stealth vertical wall; route-parity Yoichi/Perseus reward | ✅ Done |
+| `043b` | 38B | Fort Besselat North Wall / Bethla | Wall assault (North path) | ranged/AoE vertical wall; route-parity Yoichi/Perseus reward | ✅ Done |
 | `044` | 39 | Fort Besselat Sluice / Bethla Sluice | The floodgate; pull levers (open the gate) | lever objective-race + AoE on high ground; Time-Mage Slow; no rare | ✅ Done |
 | `045` | 40 | Mount Germinas / Germinas Peak | Climb; buried Invisibility Cloak | 4/5★ vertical mobility/steal; Thief→2nd Ninja; no rare | ✅ Done |
 | `046` | 41 | Lake Poescas / Poeskas Lake | All-undead lake (5★) | reraise permakill war; +Dark-heal Mystic; PD/Holy answer; no rare | ✅ Done |
@@ -188,7 +189,8 @@ Ultima `106` (the single highest band in the game).
 | Finath (35) | Wild beast field | monsters 100–103 | chocobo/monster tempo; Pig recruit |
 | Zeltennia Church (36) | Zalmo dies at last | boss 104, adds 100–103 | reviving Inquisitor killed; **rare (Tier A)** |
 | Bed Desert (37) | Open-desert gun-duel | boss 104, adds 101-102 | **Barich** Glacial Gun; **rare (Tier A)**; no Hydra (->`057`) |
-| Bethla Wall (38) | Branching wall assault | 100–103 | choose S/N path; Ninja/Summoner |
+| Bethla South Wall (38A) | Melee/stealth wall assault | 101-102 | Knight wall + Ninja/Thief flank |
+| Bethla North Wall (38B) | Ranged/AoE wall assault | 101-102 | Summoner + 2 Dragoon Jump pressure |
 | Bethla Sluice (39) | Floodgate objective | 100–103 | lever puzzle under casters |
 | Germinas (40) | Vertical skirmish | 100–103 | Ninja/Thief climb; buried loot |
 | Poeskas Lake (41) | Undead lake | 100–103 | high undead + reraise |

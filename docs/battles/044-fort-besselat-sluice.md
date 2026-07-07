@@ -2,7 +2,7 @@
 
 Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 450
 Chapter: 4 — "In the Name of Love"
-Battle order: Battle 39 (after the Fort Besselat Wall, S or N)
+Battle order: Battle 39 (after Fort Besselat South Wall or North Wall)
 Target version: Enhanced v1.5.0
 ENTD: global entry **450** (local entry 66, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py besselat_sluice`
@@ -346,6 +346,7 @@ spoils. The two valid player lines remain: race the levers under fire, or clear 
   Helm/Mail, Lambent Hat). https://game8.co/games/Final-Fantasy-Tactics/archives/553071
 - Final Fantasy Wiki, "Bethla Garrison": story/terrain context (the floodgate).
   https://finalfantasy.fandom.com/wiki/Bethla_Garrison
-- Local: `037-chapter-4-overview.md` (rules), `043-fort-besselat-wall.md` (the converging Wall battle),
+- Local: `037-chapter-4-overview.md` (rules), `043a-fort-besselat-south-wall.md` /
+  `043b-fort-besselat-north-wall.md` (the converging Wall battles),
   `038-dugeura-pass.md` (Black Mage AoE + Time-Mage tempo precedent),
   `chapter-4-rewards-implementation.md` (Kaiser Shield guaranteed spoils).

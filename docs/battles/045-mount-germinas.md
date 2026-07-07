@@ -333,5 +333,5 @@ cloak lane, while the other starts on a separate flank.
 - Final Fantasy Wiki, "Germinas Peak": story/terrain context.
   https://finalfantasy.fandom.com/wiki/Germinas_Peak
 - Local: `037-chapter-4-overview.md` (rules), `031-walled-city-yardrow.md` (Ninja debut),
-  `043-fort-besselat-wall.md` (vertical-skirmish handling),
+  `043a-fort-besselat-south-wall.md` / `043b-fort-besselat-north-wall.md` (vertical-skirmish handling),
   `chapter-4-rewards-implementation.md` (Ninja Gear + Koga + Iga guaranteed spoils).

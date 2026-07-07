@@ -36,7 +36,8 @@ structural pressures.
 | 35 | Finnath Creek | `040` | 5 (2 Black Choco + 2 Yellow Choco + Red) + Pig | de-randomized beast flock; no boss | creek | ▂ light |
 | 36 | Outlying Church | `041` | 6 (**Zalmo** + 3 Knight + 2 Mystic; dies) | holy burst-duel; Rend cap 2; **Tier-A Light Robe** | church | ▄ moderate+ |
 | 37 | Bed Desert | `042` | 6 (**Barich** + 2 Knight + 2 Archer + Black Mage; recurs) | open-desert gun-duel; **Tier-A Glacial Gun** | desert | ▄ moderate+ |
-| 38 | Fort Besselat — Wall | `043` | 7 (branching S/N; mutually exclusive) | branching melee-vs-ranged approach; no boss | wall | ▃ moderate |
+| 38A | Fort Besselat — South Wall | `043a` | 7 (3 Knight + 2 Archer + Thief + Ninja) | melee/stealth wall approach; no boss | wall | ▃ moderate |
+| 38B | Fort Besselat — North Wall | `043b` | 6 (2 Archer + 2 Dragoon + Summoner + Monk) | ranged/AoE wall approach; no boss | wall | ▃ moderate |
 | 39 | Fort Besselat — Sluice | `044` | 7 (4 Knight + 2 Archer + Black Mage + Slow Time Mage) | floodgate-lever objective; Rend cap 2/4 | sluice | ▅ hard |
 | 40 | Mount Germinas | `045` | 6 (2 **Ninja** + Thief + 3 Archer) | vertical skirmish; Invis-Cloak dig; no boss | mountain | ▄ moderate+ |
 | 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | all-undead reraise war; one-disruptor cap | frozen lake | ▅ hard |
@@ -125,7 +126,7 @@ and no hidden Brave/Faith assumptions.
 | Templar/Knight equip-break (Mighty/Unyielding Blade, Rend) | Bervenia (`039`), Church (`041`), Sluice (`044`), Eagrose P1 (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | telegraphed; Safeguard/Steal/Maintenance counter; **≤2 break sources/fight** (even with 4-5 Knights) |
 | De-randomized beasts | Finnath (`040`) | reliable, learnable flock | fixed kits (Choco-Meteor/Cure); no status beasts; no boss |
 | Healer/holy boss burst | Church (`041`) | Zalmo's revive/holy IS the puzzle | Silence/focus-burst answer; holy/soft-status only; he dies → Tier-A |
-| Branching mutually-exclusive approach | Besselat Wall (`043`) | the fort's two routes | each route self-contained; no boss; both lead to the Sluice |
+| Branching mutually-exclusive approach | Besselat Wall (`043a`/`043b`) | the fort's two routes | each route self-contained; no boss; both lead to the Sluice |
 | Objective-race (floodgate lever) | Sluice (`044`) | the canonical flood mechanic | race vs clear-first; Rend capped 2/4 |
 | Undead reraise + heal-weakness | Poeska (`046`), Sanctuary (`053`), Airship demons (`058`) | the undead/demon castes | PD/Holy/finish-while-down answers; one-disruptor cap; reraise is mechanic + counterplay |
 | Assassin status / instant-death / flee-on-critical | Limberry Gate (`047`) | the named Assassins | RESISTABLE + non-spam; status-immunity tradeoff; flee makes the danger window short; no rare (flee) |
@@ -152,7 +153,7 @@ Bervenia     (039) : first Ch4 Templar BOSS duel (Meliadoul; equip-break)   -> S
 Finnath      (040) : de-randomized chocobo flock                            -> learnable beasts (light)
 Church       (041) : holy burst-boss Zalmo + Rend Knights (cap 2)           -> Silence/burst; keep gear
 Bed Desert   (042) : open-desert gun-duel Barich                            -> close the gap, disarm the gun
-Besselat Wall(043) : branching melee(S) vs ranged(N) approach               -> pick a route, no boss
+Besselat Wall(043a/043b) : split melee(S) vs ranged(N) approach            -> pick a route, no boss
 Besselat Slu.(044) : floodgate-lever race + Slow Time Mage (Rend cap 2/4)   -> race the lever or clear first
 Mt Germinas  (045) : Thief -> 2nd Ninja; vertical skirmish                  -> climb/intercept; dig the Cloak
 Poeska       (046) : all-undead reraise war + one disruptor                 -> permakill the dead (Holy/PD)
@@ -197,7 +198,7 @@ TIER-S (best-of-best; paid before the no-resupply final gauntlet):
 
 NO NAMED BOSS RARE (boss flees / no named boss -> deferred or none; normal enemies may still carry
 role-fitting non-buyables under the Chapter 4 puzzle-party policy):
-  Dugeura (038), Finnath (040), Besselat Wall (043), Sluice (044), Mt Germinas (045), Poeska (046),
+  Dugeura (038), Finnath (040), Besselat Wall (043a/043b), Sluice (044), Mt Germinas (045), Poeska (046),
   Limberry Gate (047, Celia/Lettie flee -> paid as Ultima Demons at 048), Mullonde Exterior (051),
   Vaults 4th (054), Vaults 5th (055), Necrohol (056), Lost Halidom (057), Airship Graveyard (058).
 
@@ -223,7 +224,7 @@ TBD (verify on Windows, used by name): Knight, Monk, Black Mage, Time Mage, Summ
   Revenant/undead, and apex monster pit jobs 135/139/140/141.
 Boss scripting to preserve (highest-risk patches):
   Meliadoul "defeat ends fight" (039); Zalmo/Barich death triggers (041/042); the Besselat Wall BRANCH
-  (043); the Sluice LEVER objective (044); Celia/Lettie FLEE at Gate (047) then TRANSFORM to Ultima
+  (043a/043b); the Sluice LEVER objective (044); Celia/Lettie FLEE at Gate (047) then TRANSFORM to Ultima
   Demons at Keep (048); Elmdore death (048); Zalera mass-status script (049); the Eagrose 2-phase
   Dycedarg->Adrammelech TRANSFORM + summon spawn (050); the Nave "win when ONE of three falls, others
   RETREAT" (052); Zalbaag vampire/undead + "defeat ends fight" (053); the Vaults-5th "Defeat Loffrey"
@@ -306,7 +307,7 @@ CHAIN 3 — ENDGAME GAUNTLET (49-53 / 054-058), 5 battles, one loadout — THE L
    Barich gun-trio duplication at `057`, and any dormant Hashmal/Ultima reward data).
 9. **Repeat-foe differentiation**: Barich (042 vs 057), Elmdore/Celia/Lettie (Ch3 Roof -> 047/048), and
    the three Templars (052 -> 055/056) must read as distinct stagings, not re-runs.
-10. **Breather calibration** (Finnath 035→040, Besselat Wall 043, Mullonde Exterior 051, Vaults-4th
+10. **Breather calibration** (Finnath 035→040, Besselat Wall 043a/043b, Mullonde Exterior 051, Vaults-4th
     054): confirm these feel lighter so the spikes land harder by contrast.
 11. **Protect/guest & flee scripting**: Celia/Lettie flee (047) then return as Ultima Demons (048);
     confirm no rare leaks on the flee and the transform pays out correctly.
@@ -317,7 +318,7 @@ CHAIN 3 — ENDGAME GAUNTLET (49-53 / 054-058), 5 battles, one loadout — THE L
 Implement in story order so the curve and the three chains can be felt as a player would:
 
 ```text
-038 Dugeura -> 039 Bervenia -> 040 Finnath -> 041 Church -> 042 Bed Desert -> 043 Besselat Wall ->
+038 Dugeura -> 039 Bervenia -> 040 Finnath -> 041 Church -> 042 Bed Desert -> 043a South Wall / 043b North Wall ->
 044 Besselat Sluice -> 045 Mt Germinas -> 046 Poeska ->
 [CHAIN: 047 Limberry Gate -> 048 Limberry Keep -> 049 Limberry Undercroft] -> 050 Eagrose ->
 [CHAIN: 051 Mullonde Exterior -> 052 Mullonde Nave -> 053 Mullonde Sanctuary] ->
