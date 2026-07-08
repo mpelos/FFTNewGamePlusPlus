@@ -1,0 +1,27 @@
+docs/battles/043b-fort-besselat-north-wall.md
+  s_641ab1422b22e2::t_ac46eae34f991c 164-172
+  s_641ab1422b22e2::t_45015b169c0626 150,156-157,222-231,234,273
+  s_641ab1422b22e2::t_1be5ec3c9be963 77
+  s_641ab1422b22e2::t_c80c5ec4fa98b1 3,22-25,30-31,72-73,85,93-94,108,115,118-121,126,139,141,146-147,154,175-184,240,260-262,269-270,286
+  s_641ab1422b22e2::t_c8a41759b427a7 106,148,187,190-197,271-272
+  s_641ab1422b22e2::t_42cd1c6076c2d0 74-75,86-87,116-117,122-123,149,155,200,203-209,212,215-220,235,241-243,274-275,287
+  s_641ab1422b22e2::t_fd4ac82e72b298 294-295
+  s_641ab1422b22e2::t_82fb4ae1f77a13 173-174
+  s_641ab1422b22e2::t_5b4a878602ae59 221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cac4cb2935e8736ecf0f75c82d53eaad37f2d663",
+  "prompts": {},
+  "sessions": {
+    "s_641ab1422b22e2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f303f-056c-79a3-95f8-f4a550856b35",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
