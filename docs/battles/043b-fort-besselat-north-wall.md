@@ -1,6 +1,6 @@
 # 043b - Fort Besselat: North Wall (Bethla Garrison)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 449
+Status: 📝 redesign v3 planned (docs-only) — v1 implementation exists for entry 449
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 38B (North Wall — mutually exclusive with `043a`)
 Target version: Enhanced v1.5.0
@@ -19,15 +19,16 @@ Current implementation (entry 449, vanilla-dump verified):
 - s5 Monk L102 — bare-fist, Power Garb/Bracers.
 - No boss / no named boss rare; low Ch4 band (101-102). Map treasure (other layer) untouched.
 
-Planned v2 redesign (docs-only in this pass): keep the confirmed two-Dragoon North roster, but make
-every active human a complete Chapter-4 unit. Yoichi/Perseus may be visible on the Archer roles here
-because the reward pair is duplicated in `043a` for route parity.
+Planned v3 redesign (docs-only in this pass): keep the North ranged/AoE wall identity, but convert the
+two local Lancer/Dragoon slots into Geomancer-bucket terrain fighters. The route still asks the player
+to climb through ranged pressure toward the Summoner, but the former Jump threat becomes armor-backed
+Geomancy pressure across the wall geometry.
 
 ## Design Goal
 
 ```text
-Make North Wall the ranged/AoE branch of Fort Besselat: the player rushes a Summoner while reading two
-Dragoon Jump threats on narrow vertical terrain. The route should feel distinct from South's
+Make North Wall the ranged/AoE branch of Fort Besselat: the player rushes a Summoner while weathering two
+Geomancer terrain fighters on narrow vertical terrain. The route should feel distinct from South's
 melee/stealth branch and clearly below the Sluice spike.
 ```
 
@@ -68,10 +69,12 @@ Vanilla comparison:
 ```text
 - The route keeps the vanilla North identity: ranged/AoE pressure on vertical wall terrain.
 - Objective is unchanged: defeat all enemies.
-- Compared to public vanilla walkthroughs, the local entry has a second Dragoon; this is preserved.
+- Compared to public vanilla walkthroughs, the local entry has a second Lancer/Dragoon slot; in v3 both
+  of those slots become Geomancers.
+- Both Archer slots change in v3: the closer Archer becomes a Black Mage shooter, while the farther/higher
+  Archer Leader becomes a Knight Leader copied from South Wall.
 - The difference is completeness: all active humans get Chapter-4-level gear and full ability slots.
-- Yoichi Bow + Perseus Bow remain guaranteed route-parity rewards; visible Archer bows are optional
-  pressure, never steal-gated rewards.
+- Yoichi Bow + Perseus Bow remain guaranteed route-parity rewards through spoils, not steal-gated rewards.
 ```
 
 ## Local Data Confirmed / Data Still Needed
@@ -79,14 +82,16 @@ Vanilla comparison:
 ```text
 CONFIRMED:
 - Entry 449 is the Fort Besselat North Wall ENTD entry.
-- North local roster: 2 Archer + 2 Dragoon + 1 Summoner + 1 Monk.
+- Original/local North roster: 2 Archer + 2 Dragoon + 1 Summoner + 1 Monk.
+- Planned v3 roster: 1 far/high Knight Leader + 1 near-side Black Mage shooter + 2 Geomancer-bucket
+  former Lancers/Dragoons + 1 Summoner + 1 former-Monk Knight.
 - The player fights either this branch or South (`043a`), never both.
 - No active guest, no boss.
 - Reward ledger duplicates Yoichi Bow + Perseus Bow across both entries so either route pays the same
   guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
-- Confirm exact slot order before patching complete v2 kits.
+STILL NEEDED FOR V3 IMPLEMENTATION:
+- Confirm exact slot order before patching complete v3 kits.
 - Confirm objective remains "Defeat all enemies".
 - Confirm whether OverrideEntryData carries level for this battle or leaves levels at runtime scale.
 - Preserve vertical wall / narrow-path geometry and branch scripting.
@@ -98,22 +103,27 @@ Job IDs (carry over known, verify the rest in-game):
 ```text
 77 = Archer            (confirmed)
 Monk job id            (TBD - verify)
+Knight job id          (TBD - verify)
 Dragoon / Lancer id    (TBD - verify; enemy Dragoon, 027/038)
+Geomancer job id       (TBD - verify)
 Summoner job id        (TBD - verify)
 ```
 
 ## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-CHANGE: no new caste added. North becomes a complete ranged/AoE wall team: Summoner wide-AoE and two
-  Dragoon Jump threats punish clumping on narrow ledges while Archers and Monk hold the route.
-WHY: North's identity is "rush the Summoner / dodge the Jump." The faithful Ch4 move is to make every
-  defender fully built and let the wall matter more, not to add a boss or a second engine.
-CONSTRAINTS: Dragoon Jump = telegraphed panel; Summoner keeps intact charge times and remains race-able;
-  Archers are pressure/reward carriers, not a separate gun engine.
+CHANGE: North becomes a complete ranged/AoE wall team: Summoner wide-AoE and two Geomancer terrain
+  fighters punish exposed climbing lanes while a far/high Knight Leader, one near-side Black Mage shooter,
+  and a dual-wield Knight hold the route.
+WHY: North's identity is "rush the Summoner through ranged wall pressure." The faithful Ch4 move is to
+  make every defender fully built and let the wall terrain matter more, not to add a boss or a second
+  unrelated engine.
+CONSTRAINTS: Geomancy is terrain pressure, not hard control; Summoner keeps intact charge times and
+  remains race-able; the high/distant Archer Leader uses the same "Holy Knight if possible" fallback as
+  South Wall's Knight Leader.
 REJECTED DEFAULTS: no accelerated Summoner, no hard-status support, no 103+ overlevel spike, no one-sided
   rewards. Branch parity matters because the player chooses only one path.
-WHAT IS NOT CHANGED: North's roster, the "defeat all" objective, and wall/chokepoint geometry remain.
+WHAT IS NOT CHANGED: enemy count, the "defeat all" objective, and wall/chokepoint geometry remain.
 ```
 
 ## Rare/reward handling
@@ -126,70 +136,111 @@ PRESERVE: North map treasure (Carabineer Mail, Angel Ring, Runeblade, Kiku-Ichim
 map loot, not the NG++ reward channel.
 ```
 
-## Proposed Composition (New Game++ North Wall v2)
+## Proposed Composition (New Game++ North Wall v3)
 
-Keep the local roster and the boss-less wall-skirmish feel. No `103`+ spike.
+Keep the local enemy count and the boss-less wall-skirmish feel. No `103`+ spike.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
 | n | Summoner | Summoner | `102` | `60/84` | Wide-area summon — priority kill; reaches you from start. |
-| n | Dragoon | Dragoon | `102` | `86/40` | Jump — vertical pressure on the ledges. |
-| n | Dragoon | Dragoon | `101` | `86/40` | Second Jump body from local data; keeps panels readable. |
-| n | Monk | Monk | `102` | `88/40` | Melee bruiser with Chakra/Wave Fist pressure. |
-| n | Bow Archer | Archer | `102` | `82/45` | Yoichi/Perseus visible bow pressure from the rampart. |
-| n | Bow Archer | Archer | `101` | `82/45` | Second bow reward carrier; covers the approach. |
+| n | Geomancer | Geomancer bucket | `102` | `86/40` | Former Lancer/Dragoon; armored Geomancy pressure on the ledges. |
+| n | Geomancer | Geomancer bucket | `101` | `86/40` | Second former Lancer/Dragoon; mirrors terrain pressure. |
+| n | Knight | Knight, former Monk slot | `102` | `88/40` | Dual Rune Blade bruiser with Martial Arts secondary. |
+| n | Knight Leader | Holy Knight bucket, if possible | `102` | `88/42` | Former far/high Archer Leader; Defender + Crystal Shield anchor. |
+| n | Near-side Black Mage shooter | Black Mage bucket | `101` | `62/84` | Former closer Archer; Blaze Gun pressure near the player approach. |
 
 Reasoning:
 
-North remains a ranged/AoE wall problem. The player must prioritize the Summoner, read two Dragoon
-Jump panels, and handle Archer lane pressure while climbing narrow terrain. The second Dragoon is a
-local-data correction, not an added spike.
+North remains a ranged/AoE wall problem. The player must prioritize the Summoner, endure Geomancy from
+two armored former Lancer/Dragoon slots, and handle a far/high Knight Leader plus a near-side Black Mage
+shooter and dual-wield Knight while climbing narrow terrain. The second former Lancer/Dragoon slot is a
+local-data correction, not an added unit.
 
 ## Builds
 
 ### Summoner (Lv 102)
 
 ```text
-Summoner: (id TBD)   JobLevel: 8   Mid-tier summons, INTACT charge times.
-Secondary: White Magic, limited to defensive/light support; no Short Charge/Quick-like acceleration.
+Job bucket: Summoner   JobLevel: 8
+Primary: Summon Magic with intact charge times
+Secondary: Time Magic, Time Mage JobLevel 8
+Reaction: Soulbind
+Support: Swiftspell
+Movement: Movement +2
+Right hand: Wizard's Rod
+Head: Lambent Hat   Body: Wizard's Robe   Accessory: Featherweave Cloak
+Forbidden: instant summons, Stop/Don't Act engines, unrelated hard status.
+```
+
+### Geomancer x2 (former Lancer/Dragoon slots, Lv 102/101)
+
+```text
+Job bucket: Geomancer   JobLevel: 8
+Secondary: None
+Reaction: Nature's Wrath
+Support: Equip Armor
+Movement: Movement +2
+Right hand: Rune Blade
+Head: Crystal Helm   Body: Crystal Mail   Accessory: Magepower Glove
+```
+
+### Knight (former Monk slot, Lv 102)
+
+```text
+Job bucket: Monk   JobLevel: 8
+Role/job: Knight, if implementation supports the requested Monk-bucket former-Monk conversion.
+Secondary: Martial Arts
+Reaction: First Strike
+Support: Dual Wield
+Movement: Movement +2
+Right hand: Rune Blade   Left hand: Rune Blade
+Head: Crystal Helm   Body: Crystal Mail   Accessory: Bracers
+```
+
+### Knight Leader (former far/high Archer Leader slot, Lv 102)
+
+```text
+Job bucket: Holy Knight, if possible   JobLevel: 8
+Secondary: Holy Knight, if possible
+Reaction: Counter (442)
+Support: Attack Boost (465)
+Movement: Movement +3
+Right hand: Defender   Left hand: Crystal Shield
+Head: Crystal Helm   Body: Crystal Mail   Accessory: Bracers
+```
+
+Implementation note:
+
+```text
+If Holy Knight cannot be assigned cleanly for this generic slot, preserve the role as a Knight Leader:
+Defender + Crystal Shield anchor, Counter, Attack Boost, Movement +3, and no Rend wall plan.
+```
+
+Role: copied from South Wall's Knight Leader and assigned to the Archer Leader that starts farthest/highest.
+Rewards still pay via guaranteed spoils; Steal is optional.
+
+### Black Mage shooter (former closer Archer slot, Lv 101)
+
+```text
+Job bucket: Black Mage   JobLevel: 8
+Secondary: None
 Reaction: Reflexes (449)
-Support: MA-boost (id TBD)   Movement: Movement +1 (486)   Body: shop robe (id TBD)
-Accessory: Featherweave Cloak (234)   Right: magic-boost rod (id TBD)
+Support: Equip Guns
+Movement: Teleport
+Right hand: Blaze Gun
+Head: Lambent Hat   Body: Wizard's Robe   Accessory: Magepower Glove
 ```
 
-### Dragoon x2 (Lv 102/101)
-
-```text
-Dragoon x2: (id TBD)   JobLevel: 8   Primary: Jump   Secondary: Item, limited utility only.
-Reaction: Reflexes (449)   Support: Attack Boost (465)
-Movement: Movement +1 (486)   Body: shop heavy armor (id TBD)   Right: shop spear   Left: shield
-```
-
-### Monk (Lv 102)
-
-```text
-Monk: (id TBD)   JobLevel: 8   Primary: Martial Arts (Chakra / Wave Fist)
-Secondary: Item, limited utility only. Reaction: Counter (442)
-Support: Attack Boost (465)   Movement: Movement +1 (486)   Body: Power Garb (195)   Accessory: Bracers (218)
-```
-
-### Archer x2 (Lv 102/101)
-
-```text
-Job: Archer (77)   JobLevel: 8   Secondary: Item, limited to Potion/Remedy style utility.
-Reaction: Reflexes (449)   Support: Concentration (469)
-  Movement: Movement +1 (486)   Head: Thief's Cap (168)   Body: Black Garb (198)
-  Accessory: Bracers (218)   Right: Yoichi/Perseus or shop high-tier bow per slot/reward plan
-```
-
-Role: visible bow pressure from the wall. Rewards still pay via guaranteed spoils; Steal is optional.
+Role: copied from the South Wall Black Mage shooter model, but with Blaze Gun. This replaces only the
+Archer closer to the player approach; the farther/higher Archer Leader becomes the Knight Leader above.
 
 ## Positioning Plan
 
 ```text
-North: the Summoner starts high/back with wide-AoE sightlines onto the climb, the 2 Dragoons start on
-  staggered elevation for readable Jump arcs, the Monk starts forward as bruiser, and the 2 Archers sit
-  on the rampart.
+North: the Summoner starts high/back with wide-AoE sightlines onto the climb, the 2 Geomancers start on
+  staggered elevation to exploit wall terrain, the former-Monk Knight starts forward as bruiser, the
+  far/high Archer Leader becomes a Knight Leader on the upper rampart, and the closer Archer slot becomes
+  a near-side Black Mage shooter covering the approach.
 Preserve the narrow paths + height; do NOT flatten or widen the wall.
 Modest levels — one of two converging skirmishes, not a spike.
 ```
@@ -206,15 +257,22 @@ tmp/fft-level-design-043b-fort-besselat-north-wall/
   iteration-results.md
 ```
 
-Current result source: inherited from the former combined 043 branch-balance simulation. North accepted
-as part of `v2 complete visible-bow branches`, with moderate pressure and route parity.
+Current result source: inherited from the former combined 043 branch-balance simulation. The v3 redesign
+needs a refreshed simulation pass because the old Dragoon Jump pressure has become armored Geomancy
+terrain pressure.
 
 ## Implementation Checklist
 
 - [ ] Confirm entry 449 North slot order before patching complete kits.
 - [ ] Keep objective = "Defeat all enemies" + the vertical wall / narrow-path geometry.
 - [ ] Keep Summoner charge times intact and rushable.
-- [ ] Keep two readable Dragoon Jump panels.
+- [ ] Former Lancer/Dragoon slots become Geomancer JobLevel 8 units with no secondary, Nature's Wrath,
+  Equip Armor, Movement +2.
+- [ ] Former Monk slot becomes the requested Knight bruiser with Monk JobLevel 8 bucket note, Martial Arts,
+  First Strike, Dual Wield, Movement +2, and dual Rune Blades.
+- [ ] Replace only the Archer closer to the player with a Black Mage shooter copied from South Wall's
+  shooter model, using Blaze Gun.
+- [ ] Replace the farther/higher Archer Leader with a Knight Leader copied from South Wall's Knight Leader.
 - [ ] Give every active human complete equipment plus secondary/reaction/support/movement.
 - [ ] Preserve guaranteed spoils: Yoichi Bow + Perseus Bow on this branch.
 - [ ] Set levels in the low Ch4 band (`101`-`102`, no `103`); JobLevel `8` on all active slots.
@@ -225,14 +283,14 @@ as part of `v2 complete visible-bow branches`, with moderate pressure and route 
 
 - Does North still feel like the ranged/AoE branch, distinct from South?
 - Is the Summoner still the clear priority and race-able with intact charge times?
-- Are both Dragoon Jump panels readable and dodge-able?
-- Are active bow carriers strong but still below Sluice pressure?
+- Do the two Geomancers make wall terrain matter without becoming hard-control pressure?
+- Is the Knight Leader plus Blaze Gun shooter pressure still below Sluice pressure?
 - Does the route pay Yoichi Bow + Perseus Bow equivalently to South?
 
 ## Sources
 
 - Game8, "Fort Besselat: North Wall (Battle 38B)": roster, objective, Summoner priority, terrain, rewards.
   https://game8.co/games/Final-Fantasy-Tactics/archives/553199
-- Local: `037-chapter-4-overview.md`, `043a-fort-besselat-south-wall.md`, `027`/`038`
-  (Dragoon Jump), `028-monastery-vaults-3rd.md`, `044-fort-besselat-sluice.md`,
+- Local: `037-chapter-4-overview.md`, `043a-fort-besselat-south-wall.md`,
+  `044-fort-besselat-sluice.md` (wall pressure / terrain handling),
   `chapter-4-rewards-implementation.md`, and `tmp/fft-level-design-043b-fort-besselat-north-wall/`.
