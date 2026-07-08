@@ -360,52 +360,62 @@ def run() -> int:
 
     e = 449
     active = [0, 1, 2, 3, 4, 5]
-    check("449 North active jobs", roster(entd, e, active, 0x0A) == [77, 87, 87, 77, 82, 78])
-    check("449 North active levels", roster(entd, e, active, 0x03) == [102, 102, 101, 101, 102, 102])
-    check("449 North job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("449 North secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 10, 6])
-    check("449 North Brave targets", roster(entd, e, active, 0x06) == [82, 86, 86, 82, 60, 88])
-    check("449 North Faith targets", roster(entd, e, active, 0x07) == [45, 40, 40, 45, 84, 40])
+    check("449 North v3 active jobs", roster(entd, e, active, 0x0A) == [76, 86, 86, 80, 82, 76])
+    check("449 North v3 active levels", roster(entd, e, active, 0x03) == [102, 102, 101, 101, 102, 102])
+    check("449 North v3 job buckets", roster(entd, e, active, 0x08) == [2, 12, 12, 6, 8, 4])
+    check("449 North v3 job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 0, 8, 8])
+    check("449 North v3 secondaries", roster(entd, e, active, 0x0B) == [0x21, 0, 0, 0, 12, 9])
+    check("449 North v3 Brave targets", roster(entd, e, active, 0x06) == [88, 86, 86, 62, 60, 88])
+    check("449 North v3 Faith targets", roster(entd, e, active, 0x07) == [42, 40, 40, 84, 84, 40])
 
-    for slot_no, bow in ((0, 90), (3, 91)):
-        check(f"449 s{slot_no} Archer R/S/M and bow",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 469
-              and field16(entd, e, slot_no, 0x10) == 486
-              and field(entd, e, slot_no, 0x15) == bow)
-        check(f"449 s{slot_no} Archer gear",
-              roster(entd, e, [slot_no], 0x12) == [168]
-              and roster(entd, e, [slot_no], 0x13) == [198]
-              and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x16) == [254])
+    check("449 s0 Knight Leader Holy Sword kit",
+          field16(entd, e, 0, 0x0C) == 442
+          and field16(entd, e, 0, 0x0E) == 465
+          and field16(entd, e, 0, 0x10) == 488
+          and roster(entd, e, [0], 0x12) == [154]
+          and roster(entd, e, [0], 0x13) == [182]
+          and roster(entd, e, [0], 0x14) == [218]
+          and roster(entd, e, [0], 0x15) == [33]
+          and roster(entd, e, [0], 0x16) == [139])
 
     for slot_no in (1, 2):
-        check(f"449 s{slot_no} Dragoon R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"449 s{slot_no} Dragoon gear",
-              roster(entd, e, [slot_no], 0x12) == [154]
+        check(f"449 s{slot_no} Geomancer armor kit",
+              field16(entd, e, slot_no, 0x0C) == 437
+              and field16(entd, e, slot_no, 0x0E) == 454
+              and field16(entd, e, slot_no, 0x10) == 487
+              and roster(entd, e, [slot_no], 0x12) == [154]
               and roster(entd, e, [slot_no], 0x13) == [182]
-              and roster(entd, e, [slot_no], 0x14) == [210]
-              and roster(entd, e, [slot_no], 0x15) == [102]
+              and roster(entd, e, [slot_no], 0x14) == [217]
+              and roster(entd, e, [slot_no], 0x15) == [30]
               and roster(entd, e, [slot_no], 0x16) == [139])
 
-    check("449 s4 Summoner R/S/M and gear",
-          field16(entd, e, 4, 0x0C) == 449
-          and field16(entd, e, 4, 0x0E) == 467
-          and field16(entd, e, 4, 0x10) == 486
+    check("449 s3 Black Mage shooter kit",
+          field16(entd, e, 3, 0x0C) == 449
+          and field16(entd, e, 3, 0x0E) == 461
+          and field16(entd, e, 3, 0x10) == 498
+          and roster(entd, e, [3], 0x12) == [167]
+          and roster(entd, e, [3], 0x13) == [202]
+          and roster(entd, e, [3], 0x14) == [217]
+          and roster(entd, e, [3], 0x15) == [75]
+          and roster(entd, e, [3], 0x16) == [254])
+    check("449 s4 Summoner Time Magic kit",
+          field16(entd, e, 4, 0x0C) == 446
+          and field16(entd, e, 4, 0x0E) == 482
+          and field16(entd, e, 4, 0x10) == 487
           and roster(entd, e, [4], 0x12) == [167]
-          and roster(entd, e, [4], 0x13) == [206]
+          and roster(entd, e, [4], 0x13) == [202]
           and roster(entd, e, [4], 0x14) == [234]
           and roster(entd, e, [4], 0x15) == [56]
           and roster(entd, e, [4], 0x16) == [255])
-    check("449 s5 Monk R/S/M and gear",
-          field16(entd, e, 5, 0x0C) == 442
-          and field16(entd, e, 5, 0x0E) == 465
-          and field16(entd, e, 5, 0x10) == 486
-          and roster(entd, e, [5], 0x13) == [195]
-          and roster(entd, e, [5], 0x14) == [218])
+    check("449 s5 Knight Martial Arts kit",
+          field16(entd, e, 5, 0x0C) == 453
+          and field16(entd, e, 5, 0x0E) == 477
+          and field16(entd, e, 5, 0x10) == 487
+          and roster(entd, e, [5], 0x12) == [154]
+          and roster(entd, e, [5], 0x13) == [182]
+          and roster(entd, e, [5], 0x14) == [218]
+          and roster(entd, e, [5], 0x15) == [30]
+          and roster(entd, e, [5], 0x16) == [30])
     check("449 bow spoils preserved",
           field(entd, e, 0, 0x1E) == 90
           and field(entd, e, 3, 0x1E) == 91)

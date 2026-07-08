@@ -91,6 +91,7 @@ SPEECHCRAFT = 15
 # TwistHeadband 163, PowerSleeve 195, etc.). Names cross PSX<->WotL but the ids are identical.
 AIM = 8           # Archer secondary skillset (PSX "Charge") — innate ranged charge-up shots
 EQUIP_GUNS = 461
+EQUIP_HEAVY_ARMOR = 454
 MANA_SHIELD = 445 # reaction: redirect HP damage to MP (PSX "MP Switch"); Brave-gated trigger
 MOVE_MP_UP = 494  # movement: restore MP each move (WotL "Manafont") — refuels the Mana Shield buffer
 IGNORE_HEIGHT = 492
@@ -1547,9 +1548,8 @@ def bed_desert(data):
 # Player picks ONE wall; both converge on the Sluice (044). No boss, no rare; low Ch4 band (101-102),
 # verticality carries the difficulty.
 #   SOUTH 448 (melee/stealth): s0,s1,s2 Knight (76); s3,s4 Archer (77); s5 Ninja (89); s6 Thief (83).
-#   NORTH 449 (ranged/AoE):    s0,s3 Archer (77); s1,s2 Dragoon (87); s4 Summoner (82); s5 Monk (78).
-#     (TIC has 2 Dragoons vs the walkthrough's 1.) Constraints carried: Throw/Jump=telegraphed dmg,
-#     Summoner charge times intact, Thief steal = minor harass, Knight Rend innate.
+#   NORTH 449 (ranged/AoE):    s0 Knight leader; s1,s2 Geomancer; s3 BMage shooter; s4 Summoner;
+#     s5 Knight bruiser. Constraints carried: Summoner charge times intact, no added unit, low Ch4 band.
 def besselat_wall(data):
     # --- South Wall (448) — melee/stealth ---
     S = 448
@@ -1576,26 +1576,30 @@ def besselat_wall(data):
              secondary=0, brave=88, faith=38,
              reaction=COUNTER, support=DUAL_WIELD, movement=JUMP3,
              head=BARRETTE, body=POWER_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
-    # --- North Wall (449) — ranged/AoE ---
+    # --- North Wall (449) — ranged/AoE v3 ---
     N = 449
-    for s, lvl, bow in ((0, 102, YOICHI_BOW), (3, 101, PERSEUS_BOW)):  # visible reward-bow pressure
-        set_slot(data, N, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
-                 brave=82, faith=45,
-                 reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=bow, lh=LH_TWOHAND)
-    for s, lvl in ((1, 102), (2, 101)):  # 2 Dragoons — Jump (innate); vertical ledge pressure
-        set_slot(data, N, s, level=lvl, joblevel=8, job=LANCER, secondary=ITEMS,
+    set_slot(data, N, 0, level=102, joblevel=8, job=KNIGHT, secondary=HOLY_SWORD_AGRIAS,
+             brave=88, faith=42,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=DEFENDER, lh=CRYSTAL_SHIELD)
+    for s, lvl in ((1, 102), (2, 101)):
+        set_slot(data, N, s, level=lvl, joblevel=8, job=GEOMANCER, secondary=0,
                  brave=86, faith=40,
-                 reaction=REFLEXES, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=GERMINAS, rh=PARTISAN, lh=SHOP_SHIELD)
-    set_slot(data, N, 4, level=102, joblevel=8, job=SUMMONER,  # PRIORITY: wide-area summon (charge intact)
-             secondary=WHITE_MAGICKS, brave=60, faith=84,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, N, 5, level=102, joblevel=8, job=MONK,  # bruiser — bare head/fist (Power Garb + Bracers)
-             secondary=ITEMS, brave=88, faith=40,
-             reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-             body=POWER_GARB, acc=BRACERS)
+                 reaction=NATURES_WRATH, support=EQUIP_HEAVY_ARMOR, movement=MV2,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=MAGEPOWER_GLOVES, rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
+    set_slot(data, N, 3, level=101, joblevel=0, job=BMAGE, secondary=0,
+             brave=62, faith=84,
+             reaction=REFLEXES, support=EQUIP_GUNS, movement=TELEPORT,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=MAGEPOWER_GLOVES, rh=BLAZE_GUN, lh=LH_TWOHAND)
+    set_slot(data, N, 4, level=102, joblevel=8, job=SUMMONER, secondary=TIME_MAGICKS,
+             brave=60, faith=84,
+             reaction=SOULBIND, support=SWIFTSPELL, movement=MV2,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+    set_slot(data, N, 5, level=102, jobrank=generic_job_rank(MONK), joblevel=8,
+             job=KNIGHT, secondary=MARTIAL_ARTS,
+             brave=88, faith=40,
+             reaction=FIRST_STRIKE, support=DUAL_WIELD, movement=MV2,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=RUNEBLADE)
     return [S, N]
 
 
