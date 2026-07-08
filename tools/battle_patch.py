@@ -65,6 +65,7 @@ FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 SHIRAHADORI = 451
 DOUBLEHAND = 476
 DUAL_WIELD = 477
+BRAWLER = 472
 TELEPORT = 498
 SWIFTSPELL, MAGICK_BOOST, DEFENSE_BOOST = 482, 467, 466  # Ch2 supports: Short-Charge / MA-up / phys-def-up
 MAGICK_DEFENSE_BOOST = 468
@@ -81,6 +82,7 @@ SUMMON = 13
 MYSTIC_ARTS = 16
 GEOMANCY = 17
 MIGHTY_SWORD = 52
+HOLY_SWORD_AGRIAS = 0x21
 IAIDO = 19
 STEAL = 14
 SPEECHCRAFT = 15
@@ -88,6 +90,7 @@ SPEECHCRAFT = 15
 # reuses 1:1 (verified vs 9 known item anchors: RuneBlade 30, FeatherMantle 234, CrystalShield 139,
 # TwistHeadband 163, PowerSleeve 195, etc.). Names cross PSX<->WotL but the ids are identical.
 AIM = 8           # Archer secondary skillset (PSX "Charge") — innate ranged charge-up shots
+EQUIP_GUNS = 461
 MANA_SHIELD = 445 # reaction: redirect HP damage to MP (PSX "MP Switch"); Brave-gated trigger
 MOVE_MP_UP = 494  # movement: restore MP each move (WotL "Manafont") — refuels the Mana Shield buffer
 IGNORE_HEIGHT = 492
@@ -1550,24 +1553,29 @@ def bed_desert(data):
 def besselat_wall(data):
     # --- South Wall (448) — melee/stealth ---
     S = 448
-    for s, lvl, jl in ((0, 102, 8), (1, 102, 8), (2, 101, 1)):  # s2 bodyguard has no full Rend kit
-        set_slot(data, S, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=ITEMS,
+    set_slot(data, S, 0, level=101, joblevel=8, job=KNIGHT, secondary=HOLY_SWORD_AGRIAS,
+             brave=88, faith=42,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=DEFENDER, lh=CRYSTAL_SHIELD)
+    for s in (1, 2):
+        set_slot(data, S, s, level=102, jobrank=generic_job_rank(SAMURAI), joblevel=8,
+                 job=KNIGHT, secondary=AIM,
                  brave=88, faith=42,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    for s, lvl, bow in ((3, 102, YOICHI_BOW), (4, 101, PERSEUS_BOW)):  # visible reward-bow pressure
-        set_slot(data, S, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
-                 brave=82, faith=45,
-                 reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=bow, lh=LH_TWOHAND)
-    set_slot(data, S, 5, level=102, joblevel=8, job=NINJA,  # wall-climbing dual-wield (Throw innate)
-             secondary=ITEMS, brave=90, faith=35,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
-    set_slot(data, S, 6, level=101, joblevel=8, job=THIEF,  # fast flank / steal harass
-             secondary=ITEMS, brave=88, faith=38,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=AIR_KNIFE, lh=LH_EMPTY)
+                 reaction=DRAGONHEART, support=DEFENSE_BOOST, movement=MV3,
+                 head=HEAVY_HELM, body=MIRROR_MAIL, acc=BRACERS, rh=GASTROPHETES, lh=CRYSTAL_SHIELD)
+    for s, lvl, gun in ((3, 102, GLACIAL_GUN), (4, 101, BLASTER)):
+        set_slot(data, S, s, level=lvl, joblevel=0, job=BMAGE, secondary=0,
+                 brave=62, faith=84,
+                 reaction=REFLEXES, support=EQUIP_GUNS, movement=TELEPORT,
+                 head=MAGE_HAT, body=WIZARD_ROBE, acc=MAGEPOWER_GLOVES, rh=gun, lh=LH_TWOHAND)
+    set_slot(data, S, 5, level=102, joblevel=8, job=NINJA,
+             secondary=MARTIAL_ARTS, brave=90, faith=35,
+             reaction=COUNTER, support=BRAWLER, movement=JUMP3,
+             head=THIEFS_CAP, body=POWER_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
+    set_slot(data, S, 6, level=101, joblevel=8, job=MONK,
+             secondary=0, brave=88, faith=38,
+             reaction=COUNTER, support=DUAL_WIELD, movement=JUMP3,
+             head=BARRETTE, body=POWER_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
     # --- North Wall (449) — ranged/AoE ---
     N = 449
     for s, lvl, bow in ((0, 102, YOICHI_BOW), (3, 101, PERSEUS_BOW)):  # visible reward-bow pressure
