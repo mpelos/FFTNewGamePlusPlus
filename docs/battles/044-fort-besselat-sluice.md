@@ -1,6 +1,6 @@
 # 044 - Fort Besselat Sluice Gate (Bethla Garrison Sluice)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 450
+Status: 📝 redesign v3 planned (docs-only) — v1 implementation exists for entry 450
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 39 (after Fort Besselat South Wall or North Wall)
 Target version: Enhanced v1.5.0
@@ -18,9 +18,10 @@ Current implementation (entry 450, vanilla-dump verified) — slots: s0,s1 Arche
 - Lever objective + tiles (scripting) untouched; no boss; low Ch4 band. Kaiser Shield reward is applied
   through spoils; selectable map treasure (other layer) untouched.
 
-Planned v2 redesign (docs-only in this pass): keep the one-Time-Mage lever-race engine, make every
-active human complete, cap Rend at two Knights, and allow Kaiser Shield to be visible on one gate
-Knight as role-fitting pressure while the reward remains guaranteed spoils.
+Planned v3 redesign (docs-only in this pass): restore the second Black Mage, remove the Time Mage
+lever-control engine, and make the floodgate pressure come from two Summon-secondary Black Mages, two
+Knight lever guards with Samurai bucket data, two battle Knights upgraded into Samurai, and two Geomancers
+that replace the Archer lane-chip slots.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
@@ -30,8 +31,9 @@ Knight as role-fitting pressure while the reward remains guaranteed spoils.
 
 ```text
 Make Bethla Sluice a hard objective-race map: the player can still rush the floodgate levers, but the
-lever-runner is taxed by Slow, high-ground AoE, lane chip, and a limited-Rend Knight wall. Clearing
-first must be safer; racing must remain viable. No Stop, no four-Rend gate, no objective conversion.
+lever-runner is taxed by high-ground AoE, Summon pressure, crossbow gate guards, and a stronger melee
+screen. Clearing first must be safer; racing must remain viable. No Stop, no four-Rend gate, no objective
+conversion.
 ```
 
 No active guests appear here. No guest-control implementation is needed for this battle.
@@ -82,7 +84,8 @@ Wall (`043`), it's the payoff of the Bethla assault — the moment you flood the
 
 For New Game++ the identity must stay: **a floodgate-lever objective map — race the gate or clear the
 screen — defined by AoE Black Mages on the high ground and a Knight wall guarding the levers; the
-objective is the demand, sharpened by one tempo wrinkle that makes the lever-race genuinely tense.**
+objective is the demand, sharpened by stronger high-ground magic and lever guards that make the race
+genuinely tense.**
 
 ## Local Data Confirmed / Data Still Needed
 
@@ -90,15 +93,18 @@ objective is the demand, sharpened by one tempo wrinkle that makes the lever-rac
 CONFIRMED:
 - Entry 450 is the Bethla Sluice ENTD entry.
 - Current slots are 4 Knights + 2 Archers + 1 Black Mage + 1 Time Mage (swapped from Black Mage).
+- Planned v3 roster: 2 Black Mages + 2 lever Knights with Samurai bucket + 2 battle Samurais + 2
+  Geomancers.
 - Lever objective scripting is present and must remain the win condition.
 - No active guest, no boss.
 - Reward ledger maps this battle to Kaiser Shield guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
-- Confirm exact slot order before patching complete v2 kits.
+STILL NEEDED FOR V3 IMPLEMENTATION:
+- Confirm exact slot order before patching complete v3 kits.
 - Confirm floodgate lever panels/event tiles remain untouched.
 - Confirm whether OverrideEntryData carries level for this battle or leaves it at runtime scale.
 - Preserve high-ground caster placement and Knight wall geometry.
+- Confirm the former Archer slots can be converted to Geomancer with the documented gear.
 - Preserve selectable treasure (Crystal Shield/Helm/Mail, Lambent Hat) as vanilla map loot.
 ```
 
@@ -108,34 +114,35 @@ Job IDs (carry over known, verify the rest in-game):
 77 = Archer            (confirmed)
 Knight job id          (TBD - verify)
 Black Mage job id      (TBD - verify)
-Time Mage job id       (TBD - verify; the single swapped-in escalation slot)
+Samurai job id         (TBD - verify)
+Geomancer job id       (TBD - verify)
+Summoner job id        (TBD - verify; Black Mage job bucket / secondary)
 ```
 
 ## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-CHANGE: swap ONE of the two Black Mages -> a TIME MAGE that SLOWS the player (and may Haste the Knights)
-  to pressure the LEVER-RACE, while every active human receives a complete Chapter-4 kit.
-WHY: the fight's identity is "race the floodgate vs. a caster screen." The single, fitting escalation is
-  to tax the RACE itself: a Time Mage that Slows the player's lever-runner makes the "sprint the gate"
-  line genuinely risky and rewards clearing the screen first — INTENSIFYING the existing objective
-  tension without changing it. The other Black Mage keeps the AoE-on-high-ground threat the walkthrough
-  is built around, so the "kill the casters first" read survives.
-CONSTRAINT: Time Mage uses Haste/Slow/Float ONLY (no Stop/Immobilize/Don't Act) — sharpen the race,
-  never hard-lock the runner (carried Ch2-Ch4 Time-Mage precedent, 038).
-REJECTED DEFAULTS: no second Time Mage, no Stop/Don't Act, no four-Rend gate, no overlevelled screen,
-  and no removal of the Time Mage. The objective tension needs one tempo lever, not a lockdown stack.
-WHAT IS NOT CHANGED: the floodgate-lever objective, the 4-Knight wall, the Archers, and the remaining
-  AoE Black Mage on the height remain. No brand-new caste, no boss.
+CHANGE: restore the second Black Mage and remove the Time Mage. Both Black Mages become Summoner-bucket
+  casters with Summon secondary, while the four Knight slots split into two lever Knights and two battle
+  Samurais.
+WHY: the fight's identity is "race the floodgate vs. a caster screen." The v3 escalation keeps pressure
+  on the objective through high-ground magic and stronger gate defenders instead of Slow control.
+CONSTRAINT: no Time Mage hard-control layer here; Black Mage + Summon pressure must remain charge-time
+  raceable. Lever Knights stay Knights with Samurai bucket data, while battle Knights become Samurais.
+REJECTED DEFAULTS: no Time Mage, no Stop/Don't Act, no four-Rend gate, no overlevelled screen. The
+  objective tension needs readable damage pressure, not tempo lockdown.
+WHAT IS NOT CHANGED: the floodgate-lever objective, the 4 former-Knight wall footprint, and the two
+  Black Mage caster slots remain. No boss.
 ```
 
 ## Sanctioned exceptions (carried precedents)
 
 ```text
-TIME MAGE CONTROL — Haste/Slow/Float only, normal cast cadence; no hard lock (038 precedent).
 BLACK MAGE AoE — boosted elemental on the high ground; the priority kill; race-able by reaching it.
-KNIGHT REND / BREAK — limit to ≤2 of the 4 Knights (carried ≤2-break-source cap); telegraphed,
-  Safeguard/Steal answers. (A 4-Knight wall must NOT be a 4-source break-lock.)
+SUMMON SECONDARY — allowed on the Black Mages as charge-time AoE pressure; no instant summons or hard
+  status engine.
+KNIGHT/SAMURAI WALL — lever guards remain Knights with Samurai bucket data; battle Knights become
+  Samurais. Rend/break is removed from the v3 wall plan.
 OBJECTIVE TILES (floodgate levers) — preserved as the win condition; not an exception, the core puzzle.
 ROLE-FITTING KAISER SHIELD — allowed on one Knight as visible Chapter-4 gear because it fits the gate
   wall role; reward still pays through spoils.
@@ -152,39 +159,41 @@ PRESERVE: selectable map treasure (Crystal Shield/Helm/Mail, Lambent Hat) remain
 is not the NG++ reward channel.
 ```
 
-## Proposed Composition (New Game++ Bethla Sluice v2)
+## Proposed Composition (New Game++ Bethla Sluice v3)
 
-Keep the count (8) and the objective-map shape; one Black Mage becomes the Slow Time Mage. Every active
-human has a complete but constrained kit. Modest Ch4 levels — no `103` spike (no boss; large screen).
-Casters `102`; Knights `102`/`102`/`101`/`101`; Archers `102`/`101`.
+Keep the count (8) and the objective-map shape. Restore both Black Mages; split the old Knight wall into
+two lever Knights and two battle Samurais; replace both Archers with Geomancers. Modest Ch4 levels — no
+`103` spike (no boss; large screen). Casters `102`; front line `102`/`102`/`101`/`101`; Geomancers
+`102`/`101`.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
-| n | Black Mage | Black Mage | `102` | `60/84` | AoE on the high ground near the levers — priority kill. |
-| n | Time Mage (NEW) | Time Mage | `102` | `62/80` | Slows the player's lever-runner — the objective-tempo wrinkle. |
-| n | Kaiser Knight | Knight | `102` | `88/42` | Gate wall; Rend source 1; visible Kaiser Shield pressure. |
-| n | Knight | Knight | `102` | `88/42` | Gate wall; Rend (break source 2 — cap reached). |
-| n | Knight | Knight | `101` | `88/42` | Gate wall; NO Rend (cap kept). |
-| n | Knight | Knight | `101` | `88/42` | Gate wall; NO Rend (cap kept). |
-| n | Archer | Archer | `102` | `82/45` | Ranged chip over the approach to the levers. |
-| n | Archer | Archer | `101` | `82/45` | Second archer; covers the lever lanes. |
+| n | Black Mage | Black Mage, Summoner bucket | `102` | `60/84` | High-ground AoE + Summon pressure near the levers. |
+| n | Black Mage | Black Mage, Summoner bucket | `102` | `60/84` | Restored from Time Mage; second caster threat. |
+| n | Lever Knight | Knight, Samurai bucket | `102` | `88/42` | On/near lever; Gastrophetes + Reflexes defensive guard. |
+| n | Lever Knight | Knight, Samurai bucket | `102` | `88/42` | Second lever guard; mirrors the first. |
+| n | Battle Samurai | Samurai bucket | `101` | `88/42` | Mobile battle screen; Dragon's Heart pressure sink. |
+| n | Battle Samurai | Samurai bucket | `101` | `88/42` | Second battle Samurai; pushes the approach. |
+| n | Geomancer | Geomancer bucket | `102` | `82/45` | Former Archer lane slot; Rune Blade + Aegis pressure. |
+| n | Geomancer | Geomancer bucket | `101` | `82/45` | Second former Archer; terrain pressure and magic-boosted chip. |
 
 Reasoning:
 
-The faithful move is to **keep the floodgate objective central and tax the race by one degree**. One
-Black Mage stays as the AoE-on-the-height threat (kill it first); the swapped-in Time Mage Slows the
-runner so "just sprint the levers" is risky and clearing the screen first is rewarded — exactly the
-tension the original is built on, raised a notch. The 4-Knight wall (Rend capped to two) guards the
-gate; two Archers cover the lanes. Levels stay low Ch4 band (`101`–`102`, no `103`) because this is a
-large boss-less screen on an objective map, not a spike.
+The faithful move is to **keep the floodgate objective central and tax the race through board pressure**.
+Both Black Mages are restored as the AoE-on-the-height threats; Summon secondary makes ignoring them
+costly without adding Time Mage control. The former Knight wall splits into lever guards and battle
+Samurais, while the former Archers become Geomancers that make terrain and magic mitigation matter on the
+approach. The player must decide between racing the levers under fire or clearing the screen first. Levels
+stay low Ch4 band (`101`–`102`, no `103`) because this is a large boss-less screen on an objective map,
+not a spike.
 
 Rejected variants:
 
 ```text
 - v1 partial setup: correct objective engine, but incomplete for Chapter 4 humans.
-- No Time Mage: too little lever tension for Chapter 4.
+- v2 Time Mage: removed in v3; lever pressure now comes from damage, Summon, and stronger defenders.
 - Double Time Mage: turns the race into tempo control rather than objective choice.
-- Four-Rend gate wall: violates the two-break-source cap.
+- Four-Rend gate wall: superseded; v3 removes Rend/break from the wall plan.
 - Hard-control runner trap: invalidates the lever race.
 - Overlevelled gate: makes the objective map a spike before Limberry.
 - Spoils-only shield: acceptable fallback, but too soft in the paper model if active Kaiser tests fair.
@@ -200,63 +209,72 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Black Mage (Lv 102) — AoE on the height
+### Black Mage x2 (Lv 102) — AoE on the height
 
 ```text
 Job: Black Mage (id TBD)   JobLevel: 8
-High-tier AoE (Fire/Bolt/Ice 3-tier). Black-Robe-equivalent body. Starts on the high ground by the gate.
-Secondary: Item, limited to Ether/Remedy/self-care; no Time Magic or hard control.
-Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
-Head: mage hat (id TBD)   Body: Black Robe-equivalent (id TBD)
-Accessory: Featherweave Cloak (234)   Right hand: magic-boost rod (id TBD)   Left: none (255)
+Job bucket: Summoner   JobLevel: 8
+High-tier AoE (Fire/Bolt/Ice 3-tier). Black-Robe-equivalent body.
+Secondary: Summon
+Reaction: Reflexes (449)   Support: Swift Spell   Movement: Movement +2
+Head: Lambent Hat   Body: Black Robe
+Accessory: Featherweave Cloak (234)   Right hand: Wizard's Rod
 ```
 
-Role: the priority kill — AoE over the levers; reaching/killing it is the safe line.
+Role: priority kills — AoE and Summon pressure over the levers; reaching/killing them is the safe line.
 
-### Time Mage (Lv 102) — NEW (objective tempo)
+### Lever Knight x2 (on the levers, Lv 102/102)
 
 ```text
-Job: Time Mage (id TBD)   JobLevel: 8
-Cast SLOW on the player's lever-runner (and Haste on the Knights). Haste/Slow/Float ONLY — no hard lock.
-Secondary: Item, limited to Ether/Remedy/self-care; no Stop/Don't Act/Petrify/Death.
-Reaction: Reflexes (449)   Support: MA/Magick-boost (id TBD)   Movement: Movement +1 (486)
-Head: mage hat (id TBD)   Body: shop robe (id TBD)
-Accessory: Featherweave Cloak (234)   Right hand: magic-boost rod (id TBD)   Left: none (255)
+Job: Knight
+Job bucket: Samurai   JobLevel: 8
+Secondary: Aim
+Reaction: Reflexes
+Support: Defense Boost
+Movement: Movement +2
+Right hand: Gastrophetes   Left hand: Crystal Shield
+Head: Crystal Helm   Body: Reflect Mail   Accessory: Bracers
 ```
 
-Role: taxes the lever-race; makes "sprint the gate" risky and "clear first" rewarding.
+Role: hold the lever tiles from above/near the objective. They remain Knights, but use Samurai bucket data.
 
-### Knight x4 (Lv 102/102/101/101) — gate wall
+### Battle Samurai x2 (former battle Knights, Lv 101/101)
 
 ```text
-Job: Knight (id TBD)   JobLevel: 8   Primary: basic + Rend (ONLY 2 of 4 — cap)
-Secondary: Item, limited to Potion/Hi-Potion/Remedy style stabilization; no Phoenix Down/Elixir.
-Reaction: Counter (442)   Support: Attack Boost (465)   Movement: Movement +1 (486)
-Head: shop helm (id TBD)   Body: shop heavy armor (id TBD)   Accessory: Bracers (218)
-Right hand: shop knight sword (id TBD)   Left: Kaiser Shield on one Lv102 Knight; shop shield on others
+Job: Samurai
+Job bucket: Samurai   JobLevel: 8
+Secondary: Aim
+Reaction: Dragon's Heart
+Support: Attack Boost
+Movement: Movement +3
+Right hand: Gastrophetes   Left hand: Crystal Shield
+Head: Crystal Helm   Body: Reflect Mail   Accessory: Bracers
 ```
 
-Role: the body wall guarding the levers; Rend on at most two (cap) — never a 4-source break-lock.
-The two Lv101 Knights have complete equipment/reaction/support/movement but no Rend enabled.
+Role: active battle screen pushing the approach while the lever Knights and casters hold the objective.
 
-### Archer x2 (Lv 102/101) — lane chip
+### Geomancer x2 (former Archer slots, Lv 102/101)
 
 ```text
-Job: Archer (77)   JobLevel: 8   Secondary: Item, limited to Potion/Remedy utility; no Phoenix Down loop.
-Reaction: Reflexes (449)   Support: Concentration (469)   Movement: Movement +1 (486)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
-Right hand: shop high-tier bow (id TBD)   Left: none / two-hand marker (254)
+Job bucket: Geomancer   JobLevel: 8
+Secondary: None
+Reaction: Shihadori
+Support: Magic Attack Boost
+Movement: Movement +2
+Right hand: Rune Blade   Left hand: Aegis Shield
+Head: Lambent Hat   Body: Wizard's Robe   Accessory: Japa Mala
 ```
 
-Role: ranged chip covering the approach to the levers.
+Role: replace Archer lane chip with terrain pressure and magic-leaning durability. Aegis Shield and Japa
+Mala give them a defensive identity while Magic Attack Boost makes Geomancy matter.
 
 ## Positioning Plan
 
 ```text
-Outdoor fort, elevation: the floodgate LEVERS sit in/near the contested ground; the Black Mage starts
-  on the HIGH GROUND with AoE sightlines over the levers; the Time Mage tucked behind it (Slow range on
-  the lever approach); the 4 Knights form the wall between the player's start and the levers; the 2
-  Archers on the flanking parapets.
+Outdoor fort, elevation: the floodgate LEVERS sit in/near the contested ground; the two Black Mages start
+  on the HIGH GROUND with AoE/Summon sightlines over the levers; the 2 lever Knights hold the lever tiles;
+  the 2 battle Samurais form the mobile wall between the player's start and the levers; the 2 Geomancers
+  take the former Archer lanes on the flanking parapets.
 Preserve the LEVER objective tiles and the height (the Black-Mage-over-the-gate threat is the puzzle).
 Place the wall so the player must either fight through to the levers or accept counterattacks for a
   fast pull — keep BOTH lines viable (do not make the rush impossible or trivial).
@@ -286,7 +304,7 @@ It scores pressure, lever tension, clear-first viability, race viability, break 
 and hard-lock risk. It does not simulate exact FFT formulas.
 ```
 
-Result summary:
+Result summary (v2 baseline; v3 needs refreshed simulation):
 
 | Candidate | Pressure | Lever tension | Clear-first | Race | Break fairness | Answer | Hard lock | Verdict |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
@@ -306,18 +324,29 @@ ACCEPT v2 complete lever siege.
 One Slow/Haste/Float Time Mage is enough to pressure the objective without deleting turns. Kaiser Shield
 may be visible on one Knight because it fits the gate-wall role; rewards still pay through guaranteed
 spoils. The two valid player lines remain: race the levers under fire, or clear the screen first.
+
+V3 note: this simulation is now stale. The Time Mage was removed, both Black Mages now carry Summon,
+the Knight wall split into lever Knights + battle Samurais, and the Archers became Geomancers. Re-simulate
+the completed v3 setup.
 ```
 
 ## Implementation Checklist
 
-- [ ] Confirm current entry 450 slot order: 4 Knight + 2 Archer + 1 Black Mage + 1 Time Mage + player slots.
+- [ ] Confirm current entry 450 slot order: 4 Knight + 2 Archer + 2 Black Mage + player slots, with one
+  current Black Mage currently implemented as Time Mage in v1.
 - [ ] Confirm lever objective tiles/event scripting remain untouched.
 - [ ] Keep the "open the water gate" lever objective intact (do NOT convert to plain defeat-all).
-- [ ] Swap ONE Black Mage -> Time Mage (Slow the runner); Haste/Slow/Float only, no hard lock.
-- [ ] Keep the other Black Mage on the high ground (AoE over the levers).
-- [ ] Limit Rend to 2 of the 4 Knights (≤2-break-source cap).
+- [ ] Remove the Time Mage and restore the slot to Black Mage.
+- [ ] Give both Black Mages Summoner JobLevel 8 bucket data, Summon secondary, Reflexes, Swift Spell,
+  Movement +2, Lambent Hat, Black Robe, Featherweave Cloak, and Wizard's Rod.
+- [ ] Set the two Knights on the levers as Knights with Samurai bucket, Aim, Reflexes, Defense Boost,
+  Movement +2, Gastrophetes, Crystal Shield, Crystal Helm, Reflect Mail, Bracers.
+- [ ] Convert the two battle Knights to Samurais with Samurai bucket, Aim, Dragon's Heart, Attack Boost,
+  Movement +3, Gastrophetes, Crystal Shield, Crystal Helm, Reflect Mail, Bracers.
+- [ ] Convert both Archer slots to Geomancer JobLevel 8 units with no secondary, Shihadori, Magic
+  Attack Boost, Movement +2, Rune Blade, Aegis Shield, Lambent Hat, Wizard's Robe, and Japa Mala.
 - [ ] Give every active human complete equipment plus secondary/reaction/support/movement.
-- [ ] Keep secondaries constrained to utility/self-care; no Phoenix Down loops, Stop, Don't Act, or hard control.
+- [ ] Keep secondaries constrained; no Phoenix Down loops, Stop, Don't Act, or hard control.
 - [ ] Preserve guaranteed spoils: Kaiser Shield; preserve selectable map treasure.
 - [ ] Set levels low Ch4 band (`101`-`102`, no `103`); JobLevel `8` on all active slots.
 - [ ] Patch via the correct layer; keep the diff inside the Sluice window only.
@@ -328,10 +357,9 @@ spoils. The two valid player lines remain: race the levers under fire, or clear 
 
 - Does the floodgate-LEVER objective still define the fight (both "race the gate" and "clear first"
   lines viable)?
-- Is the AoE Black Mage on the high ground still the priority threat over the levers?
-- Does the swapped-in Time Mage make the lever-race tense (Slow the runner) WITHOUT hard-locking it
-  (Haste/Slow only)?
-- Is the 4-Knight wall a fair screen with Rend capped to two (no break-lock)?
+- Are the two Black Mages on the high ground still priority threats over the levers?
+- Does removing the Time Mage keep the lever-race tense through damage/Summon pressure rather than Slow?
+- Are the lever Knights and battle Samurais a fair screen without Rend/break-lock?
 - Do all active humans have complete equipment plus secondary/reaction/support/movement?
 - Does Kaiser Shield pay through guaranteed spoils, without requiring Steal?
 - If Kaiser Shield is visible on a Knight, does it add gate-wall identity without making the wall a slog?
@@ -348,5 +376,5 @@ spoils. The two valid player lines remain: race the levers under fire, or clear 
   https://finalfantasy.fandom.com/wiki/Bethla_Garrison
 - Local: `037-chapter-4-overview.md` (rules), `043a-fort-besselat-south-wall.md` /
   `043b-fort-besselat-north-wall.md` (the converging Wall battles),
-  `038-dugeura-pass.md` (Black Mage AoE + Time-Mage tempo precedent),
+  `038-dugeura-pass.md` (Black Mage AoE precedent),
   `chapter-4-rewards-implementation.md` (Kaiser Shield guaranteed spoils).
