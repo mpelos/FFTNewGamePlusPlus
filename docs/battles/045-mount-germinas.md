@@ -1,6 +1,6 @@
 # 045 - Mount Germinas (Germinas Peak)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 452
+Status: 📝 redesign v3 planned (docs-only) — v1 implementation exists for entry 452
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 40 (after Bethla Sluice)
 Target version: Enhanced v1.5.0
@@ -19,10 +19,12 @@ Current implementation (entry 452, vanilla-dump verified) — slots: s0 Ninja, s
 - No boss; in-band levels (terrain rates it 4/5★). Ninja arsenal rewards are applied through spoils.
   Plateau geometry + buried Invisibility Cloak (other layer) untouched.
 
-Planned v2 redesign (docs-only in this pass): keep the two-Ninja shape, make every active human a
-complete Chapter-4 unit, and let Ninja Gear/Koga/Iga be visible only where job-equipment legality
-supports it. Rewards remain guaranteed spoils, not Steal- or equipment-dependent. The cloak route must
-be buffered by placement: one Ninja can threaten it, but both Ninjas must not collapse on it immediately.
+Planned v3 redesign (docs-only in this pass): keep the vertical bandit identity, but harden the fight
+against all-party Shihadori by moving to 2 Ninjas + 2 Thieves + 2 Archers. The anti-Shihadori answer is
+not magic or Geomancy; it is Martial Arts on fast cliff-runners, using Aurablast/Shockwave while the
+Yoichi Archers and Throw Thief maintain high-ground and flank pressure. Rewards remain guaranteed
+spoils, not Steal- or equipment-dependent. The cloak route must be buffered by placement: one anti-
+Shihadori unit can threaten it, but the whole team must not collapse on it immediately.
 
 > Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
 > the real game files. This doc is the design; the byte patch is applied on the Windows box.
@@ -31,9 +33,10 @@ be buffered by placement: one Ninja can threaten it, but both Ninjas must not co
 ## Design Goal
 
 ```text
-Make Mount Germinas a moderate+ vertical mobility skirmish: two Ninjas are the apex ledge threat,
-the Thief preserves steal pressure, Archers own the height, and the optional Invisibility Cloak dig
-remains viable. The fight should feel like terrain and movement, not status or raw level inflation.
+Make Mount Germinas a hard vertical mobility skirmish: two Ninjas and two Thieves race over the plateau,
+three Martial Arts users stop all-party Shihadori from trivializing the fight, Archers own the height
+with Yoichi Bow pressure, and the optional Invisibility Cloak dig remains viable. The fight should feel
+like speed, Jump, terrain, and target priority, not status, magic, or raw level inflation.
 ```
 
 No active guests appear here. No guest-control implementation is needed for this battle.
@@ -91,13 +94,15 @@ sharpened by making the Ninja(s) the apex ledge threat, but kept boss-less and r
 CONFIRMED:
 - Entry 452 is the Mount Germinas ENTD entry.
 - Current v1 roster is 2 Ninjas + 1 Thief + 3 Archers.
+- Planned v3 roster is 2 Ninjas + 2 Thieves + 2 Archers.
 - No active guest, no boss.
 - Reward ledger maps this battle to Ninja Gear + Koga Blade + Iga Blade guaranteed spoils.
 - The buried Invisibility Cloak is a protected vanilla map-treasure side objective.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
-- Confirm exact slot order before patching complete v2 kits.
+STILL NEEDED FOR V3 IMPLEMENTATION:
+- Confirm exact slot order before patching complete v3 kits.
 - Confirm Koga/Iga/Ninja Gear active equipment only where job legality supports it.
+- Confirm Martial Arts commands, especially Aurablast/Shockwave, bypass Shihadori as expected in TIC.
 - Confirm whether OverrideEntryData carries level for this battle or leaves it at runtime scale.
 - Preserve multi-level plateau geometry, high Move/Jump, and the Invisibility Cloak dig tile.
 - Preserve other map treasure behavior as vanilla map loot.
@@ -109,31 +114,39 @@ Job IDs (carry over known, verify the rest in-game):
 77 = Archer            (confirmed)
 83 = Thief             (confirmed)
 Ninja job id           (TBD - verify; Ch3 debut, 031)
+Monk job id            (TBD - verify; bucket source for Martial Arts/Brawler)
+Samurai job id         (TBD - verify; bucket source for Shihadori)
+Mime job id            (TBD - verify; Archer bucket request)
 ```
 
 ## Enemy Party Escalation (Chapter 4 rule)
 
 ```text
-CHANGE: swap ONE Thief -> a second NINJA, so the band reads 2 Ninja + 1 Thief + 3 Archer.
-WHY: the fight's identity is "fast wall-climbing flankers on a vertical plateau." The single, fitting
-  escalation for a 4/5★ mountain fight is to make the NINJA the apex demand — two dual-wielding,
-  wall-climbing, Throw-capable ledge-assassins turn the verticality into the real threat, exactly the
-  movement-pressure the high star rating implies. The remaining Thief keeps the Steal harass, so the
-  "pin the climbers before they rob you and scatter" read survives. It INTENSIFIES the existing puzzle
-  (mobility + theft + ledges) without adding a brand-new mechanic.
-CONSTRAINT: Ninja Throw = ranged DAMAGE, not a status lock (031); Thief Steal/charm = minor harass, no
-  hard lock. Keep enemy Move/Jump high (the mobility) but levels in-band (101-103).
-REJECTED DEFAULTS: no third Ninja, no hard-status ledges, no illegal visible reward equipment, and no
-  overlevelled peak. The optional dig must remain possible without sacrificing a unit.
-WHAT IS NOT CHANGED: the multi-level plateau, the 3 Archers' ledge chip, the high mobility, and the
-  optional Invisibility-Cloak dig remain. No boss. Still a skirmish.
+CHANGE: swap one Archer into a second NINJA, so the band reads 2 Ninja + 2 Thief + 2 Archer.
+WHY: the fight's identity is "fast wall-climbing flankers on a vertical plateau," but a pure physical
+  Throw/bow plan loses too hard to all-party Shihadori. The faithful Ch4 escalation is to keep the
+  speed/Jump/thief-ninja fantasy while adding 3 Martial Arts users as real Shihadori answers: Apex
+  Ninja, Second Ninja, and Martial Thief. They use Aurablast/Shockwave to punish parry-stacking without
+  turning the fight into a caster or Geomancy map.
+CONSTRAINT: the anti-Shihadori plan must stay physical-mobility flavored. No Geomancy low-MA chip, no
+  caster secondary, no hard status. Yoichi Archers remain high-ground pressure but are not treated as
+  Shihadori counters. Keep levels in-band (101-103).
+REJECTED DEFAULTS: no single anti-Shihadori unit, no third Ninja, no hard-status ledges, no magic/MA
+  package, no overlevelled peak. The optional dig must remain possible without sacrificing a unit.
+WHAT IS NOT CHANGED: the multi-level plateau, fast climbers, thief/ninja pressure, Archer ledge chip,
+  high mobility, and optional Invisibility-Cloak dig remain. No boss. Still a skirmish.
 ```
 
 ## Sanctioned exceptions (carried precedents)
 
 ```text
+MARTIAL ARTS ANTI-SHIHADORI — Aurablast/Shockwave on fast bodies are the battle's sanctioned parry
+  answer. This is damage pressure, not hard control, and it stays inside the mountain-assassin fantasy.
 NINJA THROW / WALL-CLIMB — ranged damage + mobility; pin/intercept counters (031). Not a lock.
-THIEF STEAL/CHARM — minor harass on the remaining Thief; counterable, no hard lock (Ch2/Ch3 precedent).
+THIEF THROW / DUAL WIELD — fast physical pressure and cleanup; useful against non-parry targets, but
+  not counted as a Shihadori bypass.
+YOICHI BOW LEDGE CHIP — strong high-ground physical pressure. Item/Throw Items support the role, but
+  bows are not treated as Shihadori counters.
 HIGH MOVE/JUMP — a stat/terrain feature, not a status; preserved as the mobility identity.
 BURIED-TREASURE DIG (Invisibility Cloak) — vanilla optional side-objective (low-Brave Chemist +
   Treasure Hunter); preserved untouched. We do NOT add/buff it; it is existing map behavior.
@@ -147,44 +160,50 @@ No hard-control exception introduced.
 ```text
 Guaranteed spoils for entry 452: NINJA GEAR + KOGA BLADE + IGA BLADE.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
-COMBAT ROLE: the two Ninjas may use Ninja Gear/Koga/Iga only where job equipment rules allow it. Do not
-force Iga/Koga onto non-legal users just to make rewards visible.
+COMBAT ROLE: the Apex Ninja may use Ninja Gear/Koga/Iga as the visible apex reward kit where job
+equipment rules allow it. Do not force Koga/Iga onto non-legal users just to make rewards visible.
 PRESERVE: buried Invisibility Cloak and other map treasure remain vanilla map loot and are not the NG++
 reward channel.
 ```
 
-## Proposed Composition (New Game++ Mount Germinas v2)
+## Proposed Composition (New Game++ Mount Germinas v3)
 
-Keep the count (6) and the 4/5★ vertical-skirmish feel; one Thief remains swapped into a second Ninja.
-Every active human has a complete kit. Band `101`–`103` (terrain carries the difficulty). Ninjas are
-the threats; Archers chip; Thief harasses.
+Keep the count (6) and the 4/5★ vertical-skirmish feel; one vanilla Archer becomes a second Ninja so
+the fight has enough anti-Shihadori pressure while still reading as the original cliff band. Every active
+human has a complete kit and a JobLevel 8 bucket. Band `101`–`103` (terrain carries the difficulty).
+The headline is fast Martial Arts on vertical bodies; Archers and Throw Thief punish everything that is
+not protected by Shihadori.
 
-| Slot | Role | Job | Level | Br/Fa | Purpose |
-| ------ | ------ | ----- | ------- | --- | --------- |
-| n | Apex Ninja | Ninja | `103` | `90/35` | Apex wall-climber / Throw; legal Ninja Gear/Koga/Iga pressure if available. |
-| n | Ninja | Ninja | `102` | `90/35` | Second climber; legal ninja arsenal pressure if available. |
-| n | Thief | Thief | `101` | `88/38` | Fast Steal harass using the ledges. |
-| n | Archer | Archer | `102` | `82/45` | Ranged chip from the high plateau. |
-| n | Archer | Archer | `101` | `82/45` | Second archer; covers a second tier. |
-| n | Archer | Archer | `101` | `82/45` | Third archer; crossfire over the climb. |
+| Slot | Role | Job | Job bucket | Level | Br/Fa | Purpose |
+| ------ | ------ | ----- | ----- | ------- | --- | --------- |
+| n | Apex Ninja | Ninja | Samurai `JL8` | `103` | `90/35` | Reward-kit assassin; Shihadori + Martial Arts answer. |
+| n | Barehand Ninja | Ninja | Monk `JL8` | `102` | `90/38` | Brawler cliff-runner; barehand Martial Arts pressure. |
+| n | Martial Thief | Thief | Monk `JL8` | `102` | `88/38` | Fast barehand thief; third Aurablast/Shockwave line. |
+| n | Throw Thief | Thief | Ninja `JL8` | `101` | `88/38` | Dual-wield/Throw flanker; cleans up non-parry targets. |
+| n | Archer | Archer | Mime `JL8` | `102` | `82/45` | Yoichi Bow high-ground pressure; Item utility. |
+| n | Archer | Archer | Mime `JL8` | `101` | `82/45` | Second Yoichi angle; Item utility from another ledge. |
 
 Reasoning:
 
-The faithful move is to **lean into verticality + mobility and let the terrain rate the fight**. Two
-Ninjas make the wall-climbing, Throw-capable assassin pressure the defining demand (the 4/5★ identity),
-while a Thief keeps the gear-theft harass and three Archers own the ledges with crossfire. The optional
-Invisibility-Cloak dig stays as the multitasking side-objective. Levels stay in-band (`101`–`103`, one
-`103` anchor on the apex Ninja) because the difficulty must come from movement, theft, and elevation —
-not a number spike — keeping it a skirmish, not a boss fight, right before Limberry.
+The faithful move is to **lean into verticality + speed while making Shihadori a checked strategy, not a
+win button**. Three enemies can threaten Shihadori builds with Martial Arts: the apex Ninja, a barehand
+Monk-bucket Ninja, and a barehand Monk-bucket Thief. The Throw Thief and Yoichi Archers keep the original
+bandit crossfire and punish parties that do not bring parry, but they are not counted as parry answers.
+The optional Invisibility-Cloak dig stays as the multitasking side-objective. Levels stay in-band
+(`101`–`103`, one `103` anchor on the apex Ninja) because the difficulty must come from speed,
+positioning, and target priority — not a number spike — keeping it a skirmish, not a boss fight, right
+before Limberry.
 
 Rejected variants:
 
 ```text
 - v1 partial setup: correct two-Ninja shape, but incomplete for Chapter 4 humans.
-- Spoils-only ninja arsenal: acceptable fallback if active reward gear overperforms, but too soft in the model.
-- Third Ninja: makes the Invisibility Cloak dig too punitive.
+- v2 two-Ninja cliff band: too easy if the player stacks Shihadori across the party.
+- Single anti-Shihadori Ninja: too fragile as the only answer; kill/control it and the map collapses.
+- Geomancy/caster secondary: solves parry, but shifts the map away from speed/Jump/PA into MA logic.
+- Third Ninja: makes the Invisibility Cloak dig too punitive and overstates the Ninja escalation.
 - Hard-status / Charm thief band: wrong for a mobility skirmish.
-- Archer rare-bow crossfire: adds unrelated reward pressure.
+- Archer rare-bow crossfire without Martial Arts: adds pressure but still folds to all-party Shihadori.
 - Overlevelled peak: makes numbers, not terrain, carry the fight.
 - Mandatory cloak dig: violates the optional side-objective.
 ```
@@ -199,49 +218,96 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Ninja x2 (Lv 103 / 102) — apex climbers
+### Apex Ninja (Lv 103) — reward-kit anti-Shihadori assassin
 
 ```text
-Job: Ninja (id TBD)   JobLevel: 8   Secondary: Throw
-Reaction: First Strike (453)   Support: Attack Boost (465)   Movement: Movement +2 (487)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Germinas Boots (210)
-Right hand/Left hand: Koga/Iga/other legal ninja blade only where legal; otherwise shop ninja blades.
-Body: Ninja Gear on a Ninja only if legal and playtest-safe; otherwise reward payload only.
+Job: Ninja (id TBD)   JobLevel: 8
+Job bucket: Samurai   JobLevel: 8
+Secondary: Martial Arts
+Reaction: Shihadori
+Support: Brawler
+Movement: Jump +3
+Right hand: Koga Blade   Left hand: Iga Blade
+Head: Thief's Cap   Body: Ninja Gear   Accessory: Bracers
 ```
 
-Role: wall-climbing dual-wield flankers; Throw as ranged damage — pin/intercept to answer.
+Role: primary apex threat. Koga/Iga + Ninja Gear make the reward kit visible, while Martial Arts gives
+Aurablast/Shockwave pressure into Shihadori-heavy parties.
 
-### Thief (Lv 101) — harass
+### Barehand Ninja (Lv 102) — Monk-bucket cliff-runner
 
 ```text
-Job: Thief (83)   JobLevel: 8   Secondary: Steal
-Reaction: First Strike (453)   Support: Attack Boost (465)   Movement: Movement +2 (487)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Germinas Boots (210)
-Right hand: Air Knife (9)   Left: none / two-hand marker (254)
+Job: Ninja (id TBD)   JobLevel: 8
+Job bucket: Monk   JobLevel: 8
+Secondary: Martial Arts
+Reaction: First Strike
+Support: Brawler
+Movement: Movement +3
+Right hand: none   Left hand: none
+Head: Headband   Body: Power Garb   Accessory: Bracers
 ```
 
-Role: fast Steal harass using the ledges; minor, counterable.
+Role: fast barehand attacker. Brawler + Headband + Power Garb turns Martial Arts into the second real
+anti-Shihadori line without adding magic.
 
-### Archer x3 (Lv 102 / 101 / 101) — ledge crossfire
+### Martial Thief (Lv 102) — Monk-bucket pressure thief
 
 ```text
-Job: Archer (77)   JobLevel: 8   Secondary: Item, limited to Potion/Remedy utility; no Phoenix Down loop.
-Reaction: Reflexes (449)   Support: Concentration (469)   Movement: Movement +1 (486)
-Head: Thief's Cap (168)   Body: Black Garb (198)   Accessory: Bracers (218)
-Right hand: shop high-tier bow (id TBD)   Left: none / two-hand marker (254)
+Job: Thief (83)   JobLevel: 8
+Job bucket: Monk   JobLevel: 8
+Secondary: Martial Arts
+Reaction: Reflexes
+Support: Brawler
+Movement: Movement +3
+Right hand: none   Left hand: none
+Head: Headband   Body: Power Garb   Accessory: Bracers
 ```
 
-Role: tiered ranged chip from the plateau; punishes a slow, clumped climb.
+Role: third anti-Shihadori threat. It is weaker than the Ninjas, but fast enough to stop the player from
+solving the entire map by killing one Martial Arts unit.
+
+### Throw Thief (Lv 101) — Ninja-bucket flanker
+
+```text
+Job: Thief (83)   JobLevel: 8
+Job bucket: Ninja   JobLevel: 8
+Secondary: Throw
+Reaction: Speed Surge
+Support: Dual Wield
+Movement: Jump +3
+Right hand: Zwill Straightblade   Left hand: Assassin's Dagger
+Head: Thief's Cap   Body: Power Garb   Accessory: Bracers
+```
+
+Role: preserves the thief/throw flavor and punishes non-parry targets. Not counted as a Shihadori
+bypass.
+
+### Archer x2 (Lv 102 / 101) — Yoichi ledge crossfire
+
+```text
+Job: Archer (77)   JobLevel: 8
+Job bucket: Mime   JobLevel: 8
+Secondary: Item
+Reaction: Reflexes (449)
+Support: Throw Items
+Movement: Jump +3
+Right hand: Yoichi Bow
+Head: Thief's Cap   Body: Power Garb   Accessory: Bracers
+```
+
+Role: high-ground pressure and emergency Item utility. They do not use Aim as secondary because Aim is
+already their primary command, and they are not treated as Shihadori counters.
 
 ## Positioning Plan
 
 ```text
-Multi-level plateau: stack the enemy across the TIERS — the two Ninjas on separate upper ledges
-  (wall-climb arcs onto different player lanes), the three Archers spread across two elevation bands
-  for crossfire, the Thief roving a flank. The buried Invisibility-Cloak tile sits out on the map so
-  the optional dig pulls a fragile Chemist into contested ground, but only one Ninja should threaten
-  that lane immediately; the other starts on a separate flank so the dig stays optional and viable.
-Preserve the verticality + high Move (the mobility puzzle) — do NOT flatten the plateau.
+Multi-level plateau: stack the enemy across the TIERS — the Apex Ninja and Barehand Ninja start on
+  separate upper-ledges, the Martial Thief starts near the cloak-side pressure lane, the Throw Thief
+  roves the opposite flank, and the two Yoichi Archers spread across two elevation bands for crossfire.
+  The buried Invisibility-Cloak tile sits out on the map so the optional dig pulls a fragile Chemist
+  into contested ground, but only one anti-Shihadori unit should threaten that lane immediately; the
+  other two must take at least a little movement/time to collapse on it.
+Preserve the verticality + high Move/Jump (the mobility puzzle) — do NOT flatten the plateau.
 Keep it a skirmish: in-band levels, no boss; rewards pay through spoils while terrain + climbers rate
 it 4/5★.
 ```
@@ -273,7 +339,16 @@ It scores pressure, vertical identity, answerability, dig safety, reward safety,
 It does not simulate exact FFT formulas.
 ```
 
-Final iteration result:
+Current v3 note:
+
+```text
+The previous simulation accepted v2, but v2 assumed Shihadori was not a universal player answer.
+That assumption is now rejected. v3 needs a refreshed simulation/playtest pass focused on whether
+three Martial Arts users create enough anti-Shihadori pressure without making the optional cloak dig
+unfair.
+```
+
+Previous v2 result:
 
 | Candidate | Pressure | Vertical identity | Answer | Dig safety | Reward safe | Hard lock | Verdict |
 |---|---:|---:|---:|---:|---:|---:|---|
@@ -289,25 +364,36 @@ Final iteration result:
 Iteration decision:
 
 ```text
-ACCEPT v2 complete ninja cliff band.
+REPLACE v2 complete ninja cliff band with v3 Shihadori-checked cliff band.
 Iteration 1 rejected the same roster because both Ninjas collapsing on the cloak route made the optional
-dig too unsafe. Iteration 2 keeps the roster and adds a positioning rule: one Ninja can threaten the
-cloak lane, while the other starts on a separate flank.
+dig too unsafe. v3 keeps the same positioning lesson: only one anti-Shihadori unit can threaten the
+cloak lane immediately.
 ```
 
 ## Implementation Checklist
 
-- [ ] Confirm current entry 452 slot order: 2 Ninja + 1 Thief + 3 Archer + player slots.
+- [ ] Confirm current entry 452 slot order and map each v3 role to the intended enemy slots.
 - [ ] Confirm Invisibility-Cloak tile and map treasure behavior remain untouched.
-- [ ] Preserve the one-Thief -> Ninja swap (2 Ninja + 1 Thief + 3 Archer); keep Throw as ranged damage.
+- [ ] Apply v3 roster: 2 Ninja + 2 Thief + 2 Archer.
 - [ ] Keep the multi-level plateau geometry + high Move/Jump; keep the buried Invisibility-Cloak dig.
-- [ ] Position Ninjas on separate threat lanes; only one can immediately pressure the cloak dig route.
-- [ ] Set levels: apex Ninja `103`, second Ninja + one Archer `102`; Thief + two Archers `101`.
-- [ ] Keep Steal on the Thief (minor harass); no hard lock anywhere.
+- [ ] Position the three Martial Arts users so only one can immediately pressure the cloak dig route.
+- [ ] Set levels: Apex Ninja `103`; Barehand Ninja, Martial Thief, and one Archer `102`; Throw Thief
+  and one Archer `101`.
+- [ ] Set JobLevel `8` on every main job and every requested job bucket: Samurai, Monk, Ninja, Mime.
+- [ ] Give Apex Ninja Samurai bucket, Martial Arts secondary, Shihadori, Brawler, Jump +3, Koga Blade,
+  Iga Blade, Thief's Cap, Ninja Gear, and Bracers.
+- [ ] Give Barehand Ninja Monk bucket, Martial Arts secondary, First Strike, Brawler, Movement +3,
+  bare hands, Headband, Power Garb, and Bracers.
+- [ ] Give Martial Thief Monk bucket, Martial Arts secondary, Reflexes, Brawler, Movement +3, bare hands,
+  Headband, Power Garb, and Bracers.
+- [ ] Give Throw Thief Ninja bucket, Throw secondary, Speed Surge, Dual Wield, Jump +3, dual daggers,
+  Thief's Cap, Power Garb, and Bracers.
+- [ ] Give both Archers Mime bucket, Item secondary, Reflexes, Throw Items, Jump +3, Yoichi Bow,
+  Thief's Cap, Power Garb, and Bracers.
+- [ ] Confirm Martial Arts Aurablast/Shockwave bypass Shihadori in-game.
 - [ ] Give every active human complete equipment plus secondary/reaction/support/movement.
 - [ ] Preserve guaranteed spoils: Ninja Gear + Koga Blade + Iga Blade.
 - [ ] Equip reward gear only where job legality supports it; otherwise keep reward as spoils payload.
-- [ ] Set JobLevel `8` on all active enemy slots.
 - [ ] Patch via the correct layer; keep the diff inside the Mount Germinas window only.
 - [ ] Re-dump and diff; confirm changes are small and intentional; verify verticality + dig intact.
 - [ ] Install mod, test from a New Game+ save; confirm it plays as a 4/5★ vertical mobility/steal skirmish.
@@ -315,10 +401,14 @@ cloak lane, while the other starts on a separate flank.
 ## Test Questions
 
 - Does the verticality + high mobility still define the fight (pin the climbers, hold the ledges)?
-- Do the two Ninjas read as the apex threat without a hard lock (Throw = damage, not status)?
-- Is the Thief's Steal a minor harass, not a swing factor?
+- Do the three Martial Arts users create enough anti-Shihadori pressure without turning the map into a
+  cleanup slog?
+- Does killing one anti-Shihadori unit still leave at least one meaningful parry answer alive?
+- Do the two Yoichi Archers pressure non-parry targets without pretending to bypass Shihadori?
+- Does the Throw Thief preserve thief/ninja flavor without becoming the real headline?
 - Is the optional Invisibility-Cloak dig still viable (the multitasking side-objective preserved)?
-- Do the Ninjas start on separate lanes so the cloak dig is contested, not immediately collapsed?
+- Do the anti-Shihadori units start on separate lanes so the cloak dig is contested, not immediately
+  collapsed?
 - Do all active humans have complete equipment plus secondary/reaction/support/movement?
 - Do Ninja Gear/Koga/Iga pay through guaranteed spoils, without requiring Steal or illegal equipment?
 - Are levels kept in-band (101-103) so terrain — not a number spike — carries the 4/5★ difficulty?
