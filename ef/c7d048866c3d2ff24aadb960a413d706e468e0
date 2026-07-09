@@ -1,0 +1,21 @@
+docs/battles/045-mount-germinas.md
+  s_641ab1422b22e2::t_a177bc15bdf91d 36-39,148-149
+  s_641ab1422b22e2::t_90a080ffaf720b 3,22-27
+  s_641ab1422b22e2::t_8c9ffd93aea132 97,102-103,105,117-119,125-137,143-144,146-147,163-164,169,171-175,177-184,188-195,201-204,206,221,224-231,234-235,237,240-247,250-251,253,256-263,266-299,304-310,342-351,367,369-370,375,377,379-393,404-408,410-411
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "efc7d048866c3d2ff24aadb960a413d706e468e0",
+  "prompts": {},
+  "sessions": {
+    "s_641ab1422b22e2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f303f-056c-79a3-95f8-f4a550856b35",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Marcelo Pélos <mpelos@gmail.com>"
+    }
+  }
+}
