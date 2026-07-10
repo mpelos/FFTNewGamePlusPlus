@@ -42,7 +42,7 @@ structural pressures.
 | 40 | Mount Germinas | `045` | 6 (2 **Ninja** + 2 Thief + 2 Archer) | band 100-102; only Apex Ninja + primary Archer L102; playtest pending | mountain | ▄ moderate+ |
 | 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | band 100-102; four complete human-undead kits; playtest pending | frozen lake | ▅ hard |
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | band 100-102; dual Masamune vs Koga/Iga flee-race; playtest pending | gate | ▃ moderate (race) |
-| 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | parry-race; **Tier-A Masamune + Genji Armor**; chain 2/3 | keep | ▆ harder |
+| 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | band 100-102; Chirijiraden + armed Assassin parry-race; playtest pending | keep | ▆ harder |
 | 44 | Limberry — Undercroft | `049` | (**Zalera** Lucavi + undead guard) | mass-status Lucavi (constrained); **Tier-A Aegis Shield**; chain 3/3 | undercroft | █ SPIKE |
 | 45 | Eagrose Castle | `050` | P1 5 Knight stair-wall → P2 **Dycedarg→Adrammelech** | 2-phase brother Lucavi; Rend cap 2/5; **Tier-A Grand Helm** | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | hidden-healer caster screen; split deploy; chain 1/3; no rare | cathedral ext | ▃ moderate |
@@ -88,7 +88,7 @@ The endgame GAUNTLET (49-53) is the defining structural test; flagged as the #1 
 ## Level bands & boss policy
 
 ```text
-Generics: normally 100-103 (endgame-tier). Sluice, Germinas, Poeskas, and Limberry Gate deliberately concentrate most units at
+Generics: normally 100-103 (endgame-tier). Sluice through Limberry Keep deliberately concentrate most units at
 100-101 and cap their few anchors at 102; their objective/terrain and complete kits carry the pressure.
 Elite/sub-bosses: 103-104 (Samurai, Ultima Demons, Hydra).
 Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletienne, Zalbaag, Dycedarg).
@@ -160,7 +160,7 @@ Besselat Slu.(044) : floodgate race; six L100 + two lever Knights L102      -> r
 Mt Germinas  (045) : four L100-101 + two L102 anchors; Martial Arts       -> climb/intercept; dig the Cloak
 Poeska       (046) : four L100-101 + Mystic/Summoner L102; all-undead       -> permakill the dead (Holy/PD)
 Limberry Gate(047) : L102 Assassins + L100-101 Reavers; dual blades         -> burst one to critical; no rare
-Limberry Keep(048) : ELMDORE Ark Knight -> Celia/Lettie ULTIMA-DEMON debut; chain 2/3 -> answer parry; Tier-A
+Limberry Keep(048) : L102 Elmdor + L101 Assassins + L100 demons            -> answer parry; Tier-A
 Limberry Und.(049) : ZALERA Lucavi (mass-status, constrained); chain 3/3    -> race the one status source
 Eagrose      (050) : stair-wall Knights -> DYCEDARG->ADRAMMELECH 2-phase Lucavi -> spread vs summons
 Mullonde Ext.(051) : hidden-roof White Mage sustain + caster screen; chain 1/3 -> kill the healer first
@@ -256,7 +256,7 @@ No conflicts found on paper.
 ### Level bands & boss kits
 
 ```text
-Consistent. Generics normally 100-103; Sluice/Germinas/Poeskas/Limberry Gate use low-band 100-102 distributions; elite/
+Consistent. Generics normally 100-103; Sluice through Limberry Keep use low-band 100-102 distributions; elite/
 sub-bosses 103-104; human bosses 104-105; Lucavi 105; FINAL ULTIMA
 106 (the mod's single highest, +6 — one above Ch3's Belias +5, the intended capstone escalation).
 Summons kept MID-TIER with intact charge times; Draw Out (new) race-able; apex monster breath elemental/

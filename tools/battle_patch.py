@@ -1745,16 +1745,17 @@ def limberry_keep(data):
     #                present in vanilla. Shirahadori parry + Vampire drain + Draw Out live in his unit/AI.
     #     slot1 = Celia  (job 45 Assassin, eq=254 fixed)   slot2 = Lettie (job 46 Assassin, eq=254)
     #     slots 3,4 = job 154, name-linked to Celia/Lettie -> their ULTIMA-DEMON transform forms (eq=0).
-    # CHANGE (faithful, minimal): LEVEL only. The Tier-A reward (Masamune + Genji Armor) is already
-    #   equipped, so NO gear edit is needed (and per docs/048 it stays Genji ARMOR, not the full set ->
-    #   Tier-A, not Tier-S). Win-cond, Shirahadori, drain, and the demon-transform scripting preserved.
-    #   Elmdor 104 (Tier-A boss); assassins 104; their Ultima-Demon forms 105.
+    # v3 keeps the parry race and transform timer. Elmdor uses Chirijiraden + Genji Shield; Celia/Lettie
+    # repeat their Gate weapons and add Featherweave Cloaks. All other fixed/scripted fields stay intact.
+    # Low-band rule: Elmdor 102; Assassins 101; their Ultima-Demon forms 100.
     E = 456
-    set_slot(data, E, 0, level=104, brave=90, faith=65)  # Elmdor - parry boss; keeps Masamune+Genji
-    set_slot(data, E, 1, level=104, brave=90, faith=60)  # Celia (Assassin phase) - fixed kit
-    set_slot(data, E, 2, level=104, brave=90, faith=60)  # Lettie (Assassin phase)
-    set_slot(data, E, 3, level=105, brave=88, faith=76)  # Celia -> Ultima Demon
-    set_slot(data, E, 4, level=105, brave=88, faith=76)  # Lettie -> Ultima Demon
+    set_slot(data, E, 0, level=102, brave=90, faith=65, rh=CHIRIJIRADEN, lh=GENJI_SHIELD)
+    set_slot(data, E, 1, level=101, brave=90, faith=60, acc=FEATHERWEAVE,
+             rh=MASAMUNE, lh=MASAMUNE)
+    set_slot(data, E, 2, level=101, brave=90, faith=60, acc=FEATHERWEAVE,
+             rh=KOGA_BLADE, lh=IGA_BLADE)
+    set_slot(data, E, 3, level=100, brave=88, faith=76)  # Celia -> Ultima Demon
+    set_slot(data, E, 4, level=100, brave=88, faith=76)  # Lettie -> Ultima Demon
     return [E]
 
 

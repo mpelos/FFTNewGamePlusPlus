@@ -1,6 +1,6 @@
 # 048 - Limberry Castle Keep
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 456
+Status: 🧪 v3 implemented and deployed — direct in-game playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 43 (Limberry chain 2 of 3 — NO resupply between 42→43→44)
 Target version: Enhanced v1.5.0
@@ -9,7 +9,8 @@ File: `battle_entd4_ent.bin`
 
 > **NG++ rewards applied (2026-06-27):** Masamune + Genji Armor + Chirijiraden through guaranteed
 > Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Masamune and Genji
-> Armor are also Elmdor's active story gear in the local data; Chirijiraden is the added reward payload.
+> Armor remain guaranteed rewards. In v3, Chirijiraden is also Elmdor's active weapon while Masamune
+> remains in the guaranteed reward payload.
 > Canonical map: `chapter-4-rewards-implementation.md`.
 
 ## Current Implementation / Data Reality
@@ -20,28 +21,30 @@ DATA REALITY (verified from entd4 dump):
   Entry 456 is the PLAYABLE Limberry Keep battle.
 
   slot 0 = Elmdor (job 27 Ark Knight, name 0x1b)
-           eq=(155, 183, 216, 46, 140)
-           active story gear includes MASAMUNE (rh=46) + GENJI ARMOR (body=183).
+           eq=(155, 183, 216, 47, 140)
+           v3 active gear includes CHIRIJIRADEN (rh=47) + GENJI SHIELD (lh=140) + GENJI ARMOR.
            Shirahadori parry, Vampire drain, katana/Draw Out behavior, and boss AI are preserved.
-  slot 1 = Celia  (job 45 Assassin) eq=254 fixed boss kit
-  slot 2 = Lettie (job 46 Assassin) eq=254 fixed boss kit
+  slot 1 = Celia  (job 45 Assassin) dual Masamune + Featherweave Cloak
+  slot 2 = Lettie (job 46 Assassin) Koga Blade + Iga Blade + Featherweave Cloak
   slots 3,4 = job 154, name-linked to Celia/Lettie -> scripted ULTIMA DEMON transform forms.
 
-Current v1 implementation:
-  Elmdor = 104
-  Celia/Lettie = 104
-  Ultima Demon transform forms = 105
+Current v3 implementation:
+  Elmdor = 102
+  Celia/Lettie = 101
+  Ultima Demon transform forms = 100
   Win condition, Shirahadori, Vampire drain, fixed Assassin kits, transform scripting, and keep terrain
   are preserved. Rewards are guaranteed spoils, not steal-dependent.
 ```
 
-Planned v2 redesign (docs-only in this pass): keep the exact scripted roster and turn the fight into
+Implemented v3 redesign: keep the exact scripted roster and the accepted v2 parry-race, while adding
+a Chirijiraden to Elmdor and carrying the Gate weapon identities into Celia/Lettie with Featherweave
+Cloaks. The fight remains
 a sharper Chapter 4 puzzle: **crack Elmdor's Shirahadori and burst the objective while Celia/Lettie's
 transform pressure acts as the timer**. Do not add bodies, do not make rewards steal-dependent, and do
 not force normal generic gear/secondary planning onto fixed Assassin/transform slots.
 
-> Data-layer fields are already known for entry 456, but final implementation still needs a fresh
-> dump/diff on the Windows game data before patching. This pass updates documentation only.
+> Entry 456 and its ENTD fields were freshly dumped. OverrideEntryData leaves the edited fields unset;
+> only the playable entry is patched. Entry 455 remains untouched as the event/cutscene formation.
 > LIMBERRY CHAIN: 42 (`047`) → 43 (`048`) → 44 (`049`), one loadout.
 
 ## Design Goal
@@ -103,14 +106,20 @@ every demon form.
 CONFIRMED:
 - Entry 456 is the playable Limberry Keep battle.
 - Entry 455 is a separate event/cutscene formation and is not the playable fight.
-- Slot 0 is Elmdor, job 27 Ark Knight, with active Masamune and Genji Armor in local data.
-- Slots 1/2 are Celia/Lettie fixed Assassin boss kits (eq=254).
+- Slot 0 is Elmdor, job 27 Ark Knight; v3 equips Chirijiraden + Genji Shield and preserves Genji Armor.
+- Slots 1/2 are Celia/Lettie fixed Assassin kits with explicit legal weapon/accessory overrides.
 - Slots 3/4 are the Celia/Lettie Ultima Demon transform forms.
 - Win condition is "Defeat Elmdor."
 - No active guests.
 - Reward ledger maps this battle to Masamune + Genji Armor + Chirijiraden guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
+V3 IMPLEMENTATION CONFIRMED:
+- Elmdor job 27 legally equips Katana and Shield; Chirijiraden + Genji Shield is legal.
+- Celia/Lettie jobs legally equip their requested weapon classes and Cloaks; both retain Dual Wield.
+- OverrideEntryData leaves equipment and levels under the embedded ENTD.
+- Entry 455, jobs, abilities, flags, positions, transform records, win condition, and spoils are untouched.
+
+STILL NEEDED IN GAME:
 - Confirm exact Shirahadori counter behavior in TIC Enhanced: magic, sword-skill, disarm, and other
   reliable anti-parry lines.
 - Confirm transform forms still trigger and do not need normal equipment setup.
@@ -124,8 +133,8 @@ STILL NEEDED FOR V2 IMPLEMENTATION:
 ```text
 Headline engine: Elmdor's Shirahadori parry-race.
 Supporting roles:
-  - Elmdor is the objective and rare-gear story carrier.
-  - Celia and Lettie force the player to act quickly.
+  - Elmdor is the objective and uses Chirijiraden + Genji Shield.
+  - Celia and Lettie force the player to act quickly with their Gate weapons and Featherweave Cloaks.
   - Their Ultima Demon forms punish slow clear-first play.
 
 WHY: the fight already has a complete Chapter 4 identity in the data: boss parry plus transform timer.
@@ -156,9 +165,8 @@ ULTIMA DEMON TRANSFORM:
   Allowed as the timer. It creates chain tax if the player spends too long, but it is not the objective.
 
 FIXED BOSS KITS:
-  Celia/Lettie and their transform forms are scripted/fixed slots. Do not invent normal equipment,
-  secondary, reaction, support, or movement planning for those fixed slots unless future data proves the
-  fields are safely editable.
+  Preserve Celia/Lettie's fixed head/body and abilities. V3 explicitly overrides only accessory and
+  weapons; transform forms remain untouched apart from level.
 ```
 
 ## Rare/reward handling
@@ -168,27 +176,26 @@ Guaranteed spoils for entry 456: MASAMUNE + GENJI ARMOR + CHIRIJIRADEN.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
 
 COMBAT ROLE:
-  - Masamune and Genji Armor are active Elmdor gear in the local data and should remain visible story
-    pressure where implementation preserves the existing equipment.
-  - Chirijiraden is reward payload, not a required active combat item.
+  - Chirijiraden and Genji Armor are active Elmdor gear in v3; Genji Shield remains equipped.
+  - Masamune remains guaranteed reward payload even though Elmdor no longer actively equips it.
 
 PRESERVE:
   - Celia/Lettie do not add separate equipment rewards.
   - Buried map treasure remains vanilla map loot, not the NG++ reward channel.
 ```
 
-## Proposed Composition (New Game++ Limberry Keep v2)
+## Proposed Composition (New Game++ Limberry Keep v3)
 
 Keep the five scripted enemy records: Elmdor, Celia, Lettie, and the two transform forms. No extra
-bodies. Elmdor and assassins sit at `104`; transform forms sit at `105`.
+bodies. Elmdor is the only `102` anchor; Assassins sit at `101`; transform forms sit at `100`.
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
-| s0 | Boss / objective | Elmdor, Ark Knight | `104` | `90/65` | Shirahadori parry puzzle; Vampire sustain; active Masamune + Genji Armor; objective. |
-| s1 | Timer phase 1 | Celia, Assassin fixed kit | `104` | `90/60` | Teleport/status/pressure; not the win condition. |
-| s2 | Timer phase 1 | Lettie, Assassin fixed kit | `104` | `90/60` | Second assassin pressure; not the win condition. |
-| s3 | Timer phase 2 | Celia-linked Ultima Demon | `105` | `88/76` | Transform pressure if the player spends too long. |
-| s4 | Timer phase 2 | Lettie-linked Ultima Demon | `105` | `88/76` | Second transform pressure; chain tax, not required cleanup. |
+| s0 | Boss / objective | Elmdor, Ark Knight | `102` | `90/65` | Shirahadori puzzle; Chirijiraden + Genji Shield/Armor; objective. |
+| s1 | Timer phase 1 | Celia; dual Masamune + Featherweave | `101` | `90/60` | Teleport/status/pressure; not the win condition. |
+| s2 | Timer phase 1 | Lettie; Koga/Iga + Featherweave | `101` | `90/60` | Second assassin pressure; not the win condition. |
+| s3 | Timer phase 2 | Celia-linked Ultima Demon | `100` | `88/76` | Transform pressure if the player spends too long. |
+| s4 | Timer phase 2 | Lettie-linked Ultima Demon | `100` | `88/76` | Second transform pressure; chain tax, not required cleanup. |
 
 Reasoning:
 
@@ -218,18 +225,23 @@ Rejected variants:
 Elmdor:
   - Job: Ark Knight (job 27), JobLevel 8.
   - Preserve Shirahadori, Vampire sustain, katana/Draw Out behavior, and AI.
-  - Preserve active Masamune + Genji Armor unless a future implementation pass proves the data must
-    change for technical reasons.
+  - Right hand: Chirijiraden. Left hand: Genji Shield. Preserve Genji Helm/Armor/Gloves.
   - Do not add blanket immunities or anti-magic protection that erase the parry answers.
 
-Celia/Lettie:
-  - Fixed Assassin boss kits (`eq=254`).
+Celia:
+  - Right hand: Masamune. Left hand: Masamune. Accessory: Featherweave Cloak.
+
+Lettie:
+  - Right hand: Koga Blade. Left hand: Iga Blade. Accessory: Featherweave Cloak.
+
+Both Assassins:
+  - Preserve fixed head/body and all abilities.
   - Preserve teleport/status/Ultima behavior and scripted links to transform forms.
   - Do not assign normal equipment or complete generic setups to these fixed slots.
 
 Ultima Demon transform forms:
   - Preserve scripted transform behavior and demon kits.
-  - Level `105` is the pressure spike, but the demons remain a timer/support threat because Elmdor is
+  - Level `100`; the demons remain a timer/support threat because Elmdor is
     the objective.
 ```
 
@@ -286,23 +298,24 @@ Result summary:
 Iteration decision:
 
 ```text
-ACCEPT v2 parry-race with demon timer.
-Keep the scripted roster, objective, fixed kits, and rewards. The fight becomes harder by making
-Elmdor's parry answer and the transform timer matter, not by adding bodies, hard status, or hidden
-immunity.
+Keep the accepted v2 parry-race with demon timer, adding only the v3 weapons/accessories and low-band
+levels. No new simulation was requested; direct playtest must confirm the gear displays and the scripted
+transforms/objective remain intact.
 ```
 
 ## Implementation Checklist
 
-- [ ] Re-dump entry 456 and verify slot order: Elmdor, Celia, Lettie, two transform forms.
-- [ ] Preserve entry 455 as event/cutscene formation unless a future implementation task proves it is active.
-- [ ] Preserve win condition: defeating Elmdor ends the fight.
-- [ ] Keep Elmdor at `104`; Celia/Lettie at `104`; transform forms at `105`.
-- [ ] Preserve Elmdor's Shirahadori, Vampire sustain, katana behavior, Masamune, and Genji Armor.
-- [ ] Preserve Celia/Lettie fixed boss kits and transform scripting.
+- [x] Re-dump entry 456 and verify slot order: Elmdor, Celia, Lettie, two transform forms.
+- [x] Preserve entry 455 as event/cutscene formation.
+- [x] Preserve win condition by leaving the event script untouched.
+- [x] Set Elmdor `102`; Celia/Lettie `101`; transform forms `100`.
+- [x] Give Elmdor Chirijiraden + Genji Shield; preserve Shirahadori, Vampire sustain, Genji set, and AI.
+- [x] Give Celia dual Masamune + Featherweave; Lettie Koga/Iga + Featherweave.
+- [x] Preserve fixed Assassin head/body, abilities, and transform scripting.
 - [ ] Do not add extra bodies, hard status, blanket anti-magic, or clear-all requirement.
-- [ ] Author/verify spoils: Masamune + Genji Armor + Chirijiraden, all within the first 3 awarded items.
-- [ ] Preserve buried map treasure as map treasure.
+- [x] Preserve spoils: Masamune + Genji Armor + Chirijiraden, all within the first 3 awarded items.
+- [x] Preserve buried map treasure as map treasure.
+- [x] Install the rebuilt mod in Reloaded-II.
 - [ ] Test as Limberry chain 2/3 with resources carried from `047` and into `049`.
 
 ## Test Questions

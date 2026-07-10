@@ -52,7 +52,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `045` | 40 | Mount Germinas / Germinas Peak | Climb; buried Invisibility Cloak | 4/5★ v3: 2 Ninja + 2 Thief + 2 Archer; playtest pending | 🧪 Test |
 | `046` | 41 | Lake Poescas / Poeskas Lake | All-undead lake (5★) | v3 complete undead shell; Mystic/Summoner anchors; playtest pending | 🧪 Test |
 | `047` | 42 | Limberry Castle Gate | **Celia & Lettie** (Assassins; flee on critical) | v3 dual-blade flee-race; band 100-102; playtest pending | 🧪 Test |
-| `048` | 43 | Limberry Castle Keep | **Elmdor** (dies); Celia/Lettie → Ultima Demons | Shirahadori parry-puzzle race; **Masamune + Genji Armor** (Tier A); chain 2/3 | ✅ Done |
+| `048` | 43 | Limberry Castle Keep | **Elmdor** (dies); Celia/Lettie → Ultima Demons | v3 Chirijiraden boss + armed Assassins; band 100-102; playtest pending | 🧪 Test |
 | `049` | 44 | Limberry Undercroft | **Zalera** (3rd Lucavi) + undead guard | mass-status Lucavi (constrained); **Aegis Shield** (Tier A); chain 3/3 | ✅ Done |
 | `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | 2-phase brother duel: stair-wall → spread-or-die; **Grand Helm** (Tier A) | ✅ Done |
 | `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | hidden-healer caster screen; split deploy; chain 1/3 | ✅ Done |
@@ -195,7 +195,7 @@ Ultima `106` (the single highest band in the game).
 | Germinas (40) | Vertical skirmish | 100–102 | 2 Ninja/2 Thief climb; only 2 anchors at 102; buried loot |
 | Poeskas Lake (41) | Undead lake | 100–102 | four L100-101; only Mystic/Summoner L102; reraise |
 | Limberry Gate (42) | Assassin flee-race | 100–102 | Celia/Lettie L102; Reavers L100-101; chain 1/3 |
-| Limberry Keep (43) | **Elmdor → demon** | boss 104→demon 105 | **Masamune + Genji (Tier A)**; chain 2/3 |
+| Limberry Keep (43) | **Elmdor → demon** | 100–102 | Elmdor L102; Assassins L101; demons L100; chain 2/3 |
 | Limberry Undercroft (44) | **Zalera** Lucavi | Lucavi 105, adds 103 | 3rd Lucavi spike; **rare**; chain 3/3 |
 | Eagrose (45) | **Dycedarg → Adramelk** | duel 104, Lucavi 105 | brother → Lucavi (2-phase); **rare** |
 | Mullonde Exterior (46) | Holy-ground casters | 100–103 | Geomancer/Orator; hidden W.Mage; chain 1/3 |

@@ -1,6 +1,6 @@
 # 047 - Limberry Castle Gate
 
-Status: 🧪 v3 implemented — deploy and direct in-game playtest pending
+Status: 🧪 v3 implemented and deployed — direct in-game playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 42 (Limberry chain 1 of 3 — NO resupply between 42→43→44)
 Target version: Enhanced v1.5.0
@@ -242,6 +242,7 @@ race remains bounded.
 - [ ] Keep status resistable/cleansable/non-spam; keep Ultima telegraphed/spaceable.
 - [ ] Preserve status-immunity vs Ultima tradeoff.
 - [x] Preserve no equipment reward; preserve buried map treasure.
+- [x] Install the rebuilt mod in Reloaded-II.
 - [ ] Test as Limberry chain 1/3 with resources carried into `048` and `049`.
 
 ## Test Questions
