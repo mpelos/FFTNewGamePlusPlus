@@ -1,6 +1,6 @@
 # 044 - Fort Besselat Sluice Gate (Bethla Garrison Sluice)
 
-Status: ✅ v3 implemented and approved in-game (2026-07-10)
+Status: 🧪 v3 kits approved in-game; level retune installed — regression pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 39 (after Fort Besselat South Wall or North Wall)
 Target version: Enhanced v1.5.0
@@ -11,11 +11,11 @@ File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py bess
 > NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
 
 Current v3 implementation (entry 450, vanilla-dump verified):
-- s0/s1 Geomancer L102/L101 — former Archer lanes; Shirahadori, Magick Attack Boost, Movement +2,
+- s0/s1 Geomancer L100/L100 — former Archer lanes; Shirahadori, Magick Attack Boost, Movement +2,
   Rune Blade/Crystal Shield and MA gear.
-- s2/s3 Battle Samurai L101 — mobile screen; no secondary, Dragon's Heart, Magick Attack Boost,
+- s2/s3 Battle Samurai L100 — mobile screen; no secondary, Dragon's Heart, Magick Attack Boost,
   Movement +3, Masamune/Crystal Shield and Reflect Mail.
-- s4/s5 Black Mage L102 — Summoner bucket + Summon, Reflexes, Swiftspell, Movement +2 and full mage kit.
+- s4/s5 Black Mage L100 — Summoner bucket + Summon, Reflexes, Swiftspell, Movement +2 and full mage kit.
 - s6/s7 Lever Knight L102 — confirmed on the lever tiles; main job Knight, Samurai bucket, Aim,
   Reflexes, Defense Boost, Movement +2, Gastrophetes/Crystal Shield and Reflect Mail.
 - Lever objective, positions, static flags and event scripting remain untouched. Kaiser Shield stays a
@@ -165,20 +165,20 @@ is not the NG++ reward channel.
 ## Proposed Composition (New Game++ Bethla Sluice v3)
 
 Keep the count (8) and the objective-map shape. Restore both Black Mages; split the old Knight wall into
-two lever Knights and two battle Samurais; replace both Archers with Geomancers. Modest Ch4 levels — no
-`103` spike (no boss; large screen). Casters `102`; front line `102`/`102`/`101`/`101`; Geomancers
-`102`/`101`.
+two lever Knights and two battle Samurais; replace both Archers with Geomancers. The two lever Knights
+stay at `102`; every other enemy is `100`, keeping the large boss-less objective screen from becoming a
+stat spike.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
-| n | Black Mage | Black Mage, Summoner bucket | `102` | `60/84` | High-ground AoE + Summon pressure near the levers. |
-| n | Black Mage | Black Mage, Summoner bucket | `102` | `60/84` | Restored from Time Mage; second caster threat. |
+| n | Black Mage | Black Mage, Summoner bucket | `100` | `60/84` | High-ground AoE + Summon pressure near the levers. |
+| n | Black Mage | Black Mage, Summoner bucket | `100` | `60/84` | Restored from Time Mage; second caster threat. |
 | n | Lever Knight | Knight, Samurai bucket | `102` | `88/42` | On/near lever; Gastrophetes + Reflexes defensive guard. |
 | n | Lever Knight | Knight, Samurai bucket | `102` | `88/42` | Second lever guard; mirrors the first. |
-| n | Battle Samurai | Samurai bucket | `101` | `88/42` | Mobile battle screen; Dragon's Heart pressure sink. |
-| n | Battle Samurai | Samurai bucket | `101` | `88/42` | Second battle Samurai; pushes the approach. |
-| n | Geomancer | Geomancer bucket | `102` | `82/45` | Former Archer lane slot; Rune Blade + Crystal Shield pressure. |
-| n | Geomancer | Geomancer bucket | `101` | `82/45` | Second former Archer; terrain pressure and magic-boosted chip. |
+| n | Battle Samurai | Samurai bucket | `100` | `88/42` | Mobile battle screen; Dragon's Heart pressure sink. |
+| n | Battle Samurai | Samurai bucket | `100` | `88/42` | Second battle Samurai; pushes the approach. |
+| n | Geomancer | Geomancer bucket | `100` | `82/45` | Former Archer lane slot; Rune Blade + Crystal Shield pressure. |
+| n | Geomancer | Geomancer bucket | `100` | `82/45` | Second former Archer; terrain pressure and magic-boosted chip. |
 
 Reasoning:
 
@@ -187,8 +187,8 @@ Both Black Mages are restored as the AoE-on-the-height threats; Summon secondary
 costly without adding Time Mage control. The former Knight wall splits into lever guards and battle
 Samurais, while the former Archers become Geomancers that make terrain and magic mitigation matter on the
 approach. The player must decide between racing the levers under fire or clearing the screen first. Levels
-stay low Ch4 band (`101`–`102`, no `103`) because this is a large boss-less screen on an objective map,
-not a spike.
+put only the two lever Knights at `102`; all six other enemies stay at `100` because this is a large
+boss-less screen on an objective map, not a spike.
 
 Rejected variants:
 
@@ -212,7 +212,7 @@ C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\AbilityData.xml
 C:\Reloaded-II\Mods\fftivc.utility.modloader\TableData\JobCommandData.xml
 ```
 
-### Black Mage x2 (Lv 102) — AoE on the height
+### Black Mage x2 (Lv 100) — AoE on the height
 
 ```text
 Job: Black Mage (id TBD)   JobLevel: 8
@@ -241,7 +241,7 @@ Head: Crystal Helm   Body: Reflect Mail   Accessory: Bracers
 
 Role: hold the lever tiles from above/near the objective. They remain Knights, but use Samurai bucket data.
 
-### Battle Samurai x2 (former battle Knights, Lv 101/101)
+### Battle Samurai x2 (former battle Knights, Lv 100/100)
 
 ```text
 Job: Samurai
@@ -256,7 +256,7 @@ Head: Crystal Helm   Body: Reflect Mail   Accessory: Bracers
 
 Role: active battle screen pushing the approach while the lever Knights and casters hold the objective.
 
-### Geomancer x2 (former Archer slots, Lv 102/101)
+### Geomancer x2 (former Archer slots, Lv 100/100)
 
 ```text
 Job bucket: Geomancer   JobLevel: 8
@@ -323,8 +323,10 @@ Iteration decision:
 The historical coarse model accepted the L101-102 band before the final Samurai equipment revision.
 The first uniform-L102 pass made the mobile screen slightly too sharp and dropped race viability below
 the model threshold. The final Battle Samurai kit — no secondary, Masamune, Magick Attack Boost — is not
-re-simulated by request; it will be validated directly in game. Required playtest questions are whether
-Masamune/Iaido pressure remains readable and whether the Crystal Shield screen creates cleanup drag.
+re-simulated by request. After kit approval, the final level retune placed s0-s5 at L100 and kept only
+the two lever Knights s6/s7 at L102. This exact band will be validated directly in game. Required
+playtest questions are whether Masamune/Iaido pressure remains readable and whether the Crystal Shield
+screen creates cleanup drag.
 ```
 
 ## Implementation Checklist
@@ -344,14 +346,16 @@ Masamune/Iaido pressure remains readable and whether the Crystal Shield screen c
 - [x] Give every active human complete equipment plus secondary/reaction/support/movement.
 - [x] Keep secondaries constrained; no Phoenix Down loops, Stop, Don't Act, or hard control.
 - [x] Preserve guaranteed spoils: Kaiser Shield; preserve selectable map treasure.
-- [x] Set levels low Ch4 band (`101`-`102`, no `103`); JobLevel `8` on all active slots.
+- [x] Set only the two lever Knights to `102`; all six other enemies are `100`; JobLevel `8` on all active slots.
 - [x] Patch through the embedded ENTD; diff is confined to entry 450.
 - [x] Re-dump and validate the entry; flags, unit ids, positions and reward payload are preserved.
 - [x] Install the mod and approve the final v3 setup in game.
 
-In-game validation (2026-07-10): final v3 approved after correcting the lever-guard slot mapping,
+In-game validation (2026-07-10): v3 kits approved after correcting the lever-guard slot mapping,
 changing the Battle Samurais to Masamune/Magick Attack Boost, and replacing the Geomancers' Aegis
-Shields with Crystal Shields. Keep the race-vs-clear routes and reward delivery in the regression list.
+Shields with Crystal Shields. Post-approval level retune: only lever Knights remain `102`; all others
+are now `100` and await the next direct in-game regression. Keep the race-vs-clear routes and reward
+delivery in the regression list.
 
 ## Test Questions
 

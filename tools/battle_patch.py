@@ -51,6 +51,7 @@ SAMURAI = 88  # Bushido/draw-out — Ch3 elite
 MYSTIC = 85   # Oracle-equivalent — soft status; equips Hat/Robe/Clothing/Rod/Staff/Book (Ch4 Zalmo screen)
 ARITHMETICIAN = 90  # Calculator-equivalent; used as a JP/skill bucket seed for Arithmeticks.
 DANCER = 92   # global Dance pressure; ENTD cannot mask learned dances per unit.
+MIME = 93     # Mime; used as a broad Archer ability bucket at Mount Germinas.
 TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged breaks; equips Helmet/Armor/
               # Shield/Polearm/KnightSword/Sword/NinjaBlade. Used as a generic swap at Riovanes Gate (033).
 # skills
@@ -61,6 +62,7 @@ VIGILANCE = 426
 VANISH = 425
 SOULBIND = 446
 FURY = 422  # table name: Strength Surge; battle docs call this Dancer reaction Fury.
+SPEED_SURGE = 424
 FIRST_STRIKE, REFLEXES, CONCENTRATION = 453, 449, 469
 SHIRAHADORI = 451
 DOUBLEHAND = 476
@@ -86,6 +88,7 @@ HOLY_SWORD_AGRIAS = 0x21
 IAIDO = 19
 STEAL = 14
 SPEECHCRAFT = 15
+THROW = 20
 # Argath/Ziekden crossbow-sniper kit. IDs resolved from the FFTPatcher PSX tables, which TIC
 # reuses 1:1 (verified vs 9 known item anchors: RuneBlade 30, FeatherMantle 234, CrystalShield 139,
 # TwistHeadband 163, PowerSleeve 195, etc.). Names cross PSX<->WotL but the ids are identical.
@@ -137,6 +140,8 @@ DEFENDER = 33       # weakest KnightSword (non-buyable) — Wiegraf's Ch3 rare a
 KIKU_ICHIMONJI = 45  # best buyable non-rare katana below Masamune; safe for fleeing Ch3 Elmdor
 KOGA_BLADE = 18
 IGA_BLADE = 17
+ASSASSINS_DAGGER = 8
+ZWILL_STRAIGHTBLADE = 10
 # --- Chapter 4 best-in-slot rares (Unknown20-reserved tier, unlocked tiered in Ch4 per docs/037) ---
 SAVE_THE_QUEEN = 34  # Tier-A KnightSword — Meliadoul (039). Best KnightSword below the Tier-S pair.
 CASHMERE = 120       # cloth weapon; former Bervenia Dancer test kit.
@@ -1618,7 +1623,7 @@ def besselat_sluice(data):
     # v3 keeps all eight static slots and the lever scripting untouched. The caster screen returns
     # to two Black Mages, with Summoner bucket data so Summon is the charged objective pressure.
     for s in (4, 5):
-        set_slot(data, E, s, level=102, jobrank=generic_job_rank(SUMMONER), joblevel=8,
+        set_slot(data, E, s, level=100, jobrank=generic_job_rank(SUMMONER), joblevel=8,
                  job=BMAGE, secondary=SUMMON, brave=60, faith=84,
                  reaction=REFLEXES, support=SWIFTSPELL, movement=MV2,
                  head=MAGE_HAT, body=BLACK_ROBE, acc=FEATHERWEAVE,
@@ -1636,14 +1641,14 @@ def besselat_sluice(data):
     # s2/s3 are the mobile battle screen and become MA-boosted Samurais with Masamune pressure.
     # Kaiser Shield remains guaranteed on s2 through the untouched 0x1e spoils byte.
     for s in (2, 3):
-        set_slot(data, E, s, level=101, jobrank=generic_job_rank(SAMURAI), joblevel=8,
+        set_slot(data, E, s, level=100, jobrank=generic_job_rank(SAMURAI), joblevel=8,
                  job=SAMURAI, secondary=0, brave=88, faith=42,
                  reaction=DRAGONHEART, support=MAGICK_BOOST, movement=MV3,
                  head=HEAVY_HELM, body=MIRROR_MAIL, acc=BRACERS,
                  rh=MASAMUNE, lh=CRYSTAL_SHIELD)
 
     # Former Archer lanes become Geomancers. Their terrain pressure keeps both approach lanes relevant.
-    for s, lvl in ((0, 102), (1, 101)):
+    for s, lvl in ((0, 100), (1, 100)):
         set_slot(data, E, s, level=lvl, jobrank=generic_job_rank(GEOMANCER), joblevel=8,
                  job=GEOMANCER, secondary=0, brave=82, faith=45,
                  reaction=SHIRAHADORI, support=MAGICK_BOOST, movement=MV2,
@@ -1654,29 +1659,35 @@ def besselat_sluice(data):
 
 # ---------------------------------------------------------------------------
 # Battle 040 — Mount Germinas (entry 452): 4/5-star vertical mobility/steal skirmish. Per docs/045.
-# Vanilla 452: s0 Ninja (89); s1,s2 Thief (83); s3,s4,s5 Archer (77). No boss, no rare; difficulty from
-# terrain + mobility (levels in-band 101-103). Multi-level plateau + buried Invisibility Cloak (scripting)
-# untouched.
-#   - ESCALATION: swap ONE Thief (s1) -> 2nd Ninja (apex wall-climbers). Remaining Thief keeps Steal harass.
+# v3: 2 Ninjas + 2 Thieves + 2 Archers. Three Martial Arts users check all-party Shihadori while the
+# Throw Thief and Yoichi Archers preserve the mountain-bandit crossfire. Positions, event data, buried
+# Invisibility Cloak, and guaranteed Ninja Gear/Koga/Iga spoils remain untouched.
 def germinas(data):
     E = 452
-    set_slot(data, E, 0, level=103, joblevel=8, job=NINJA,  # apex climber; visible Ninja Gear reward
-             secondary=ITEMS, brave=90, faith=35,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=NINJA_GEAR, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
-    set_slot(data, E, 1, level=102, joblevel=8, job=NINJA,  # second climber; visible Koga reward
-             secondary=ITEMS, brave=90, faith=35,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=KOGA_BLADE, lh=NINJA_BLADE)
-    set_slot(data, E, 2, level=101, joblevel=8, job=THIEF,  # fast Steal harass on the ledges
-             secondary=ITEMS, brave=88, faith=38,
-             reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=AIR_KNIFE, lh=LH_EMPTY)
-    for s, lvl in ((3, 102), (4, 101), (5, 101)):  # 3 Archers — tiered ledge crossfire
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
-                 brave=82, faith=45,
-                 reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+    set_slot(data, E, 0, level=102, jobrank=generic_job_rank(SAMURAI), joblevel=8, job=NINJA,
+             secondary=MARTIAL_ARTS, brave=90, faith=35,
+             reaction=SHIRAHADORI, support=BRAWLER, movement=JUMP3,
+             head=THIEFS_CAP, body=NINJA_GEAR, acc=BRACERS, rh=KOGA_BLADE, lh=IGA_BLADE)
+    set_slot(data, E, 1, level=101, jobrank=generic_job_rank(MONK), joblevel=8, job=NINJA,
+             secondary=MARTIAL_ARTS, brave=90, faith=38,
+             reaction=FIRST_STRIKE, support=BRAWLER, movement=MV3,
+             head=HEADBAND, body=POWER_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
+    set_slot(data, E, 2, level=101, jobrank=generic_job_rank(MONK), joblevel=8, job=THIEF,
+             secondary=MARTIAL_ARTS, brave=88, faith=38,
+             reaction=REFLEXES, support=BRAWLER, movement=MV3,
+             head=HEADBAND, body=POWER_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
+
+    # Slot 4's central ledge Archer becomes the roving Throw Thief; slots 3 and 5 keep separate bow angles.
+    set_slot(data, E, 4, level=100, jobrank=generic_job_rank(NINJA), joblevel=8, job=THIEF,
+             secondary=THROW, brave=88, faith=38,
+             reaction=SPEED_SURGE, support=DUAL_WIELD, movement=JUMP3,
+             head=THIEFS_CAP, body=POWER_GARB, acc=BRACERS,
+             rh=ZWILL_STRAIGHTBLADE, lh=ASSASSINS_DAGGER)
+    for s, lvl in ((3, 102), (5, 100)):
+        set_slot(data, E, s, level=lvl, jobrank=generic_job_rank(MIME), joblevel=8,
+                 job=ARCHER, secondary=ITEMS, brave=82, faith=45,
+                 reaction=REFLEXES, support=THROW_ITEMS, movement=JUMP3,
+                 head=THIEFS_CAP, body=POWER_GARB, acc=BRACERS, rh=YOICHI_BOW, lh=LH_TWOHAND)
     return [E]
 
 

@@ -428,7 +428,7 @@ def run() -> int:
     e = 450
     active = [0, 1, 2, 3, 4, 5, 6, 7]
     check("450 v3 active jobs", roster(entd, e, active, 0x0A) == [86, 86, 88, 88, 80, 80, 76, 76])
-    check("450 active levels", roster(entd, e, active, 0x03) == [102, 101, 101, 101, 102, 102, 102, 102])
+    check("450 active levels", roster(entd, e, active, 0x03) == [100, 100, 100, 100, 100, 100, 102, 102])
     check("450 v3 job buckets", roster(entd, e, active, 0x08) == [12, 12, 14, 14, 8, 8, 14, 14])
     check("450 active job levels", roster(entd, e, active, 0x09) == [8] * 8)
     check("450 v3 secondaries", roster(entd, e, active, 0x0B) == [0, 0, 0, 0, 13, 13, 8, 8])
@@ -490,55 +490,72 @@ def run() -> int:
     check("450 Kaiser Shield spoil preserved", field(entd, e, 2, 0x1E) == 141)
 
     # 045 - Mount Germinas, entry 452.
-    # Vertical mobility skirmish: two Ninjas, one Thief, three Archers; ninja arsenal paid via spoils.
+    # v3 vertical mobility skirmish: two Ninjas, two Thieves, two Archers; ninja arsenal paid via spoils.
     e = 452
     active = [0, 1, 2, 3, 4, 5]
-    check("452 active jobs", roster(entd, e, active, 0x0A) == [89, 89, 83, 77, 77, 77])
-    check("452 active levels", roster(entd, e, active, 0x03) == [103, 102, 101, 102, 101, 101])
+    check("452 active jobs", roster(entd, e, active, 0x0A) == [89, 89, 83, 77, 83, 77])
+    check("452 active levels", roster(entd, e, active, 0x03) == [102, 101, 101, 102, 100, 100])
+    check("452 job buckets", roster(entd, e, active, 0x08) == [14, 4, 4, 19, 15, 19])
     check("452 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("452 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6])
-    check("452 Brave targets", roster(entd, e, active, 0x06) == [90, 90, 88, 82, 82, 82])
-    check("452 Faith targets", roster(entd, e, active, 0x07) == [35, 35, 38, 45, 45, 45])
+    check("452 active secondaries", roster(entd, e, active, 0x0B) == [9, 9, 9, 6, 20, 6])
+    check("452 Brave targets", roster(entd, e, active, 0x06) == [90, 90, 88, 82, 88, 82])
+    check("452 Faith targets", roster(entd, e, active, 0x07) == [35, 38, 38, 45, 38, 45])
 
     check("452 s0 Apex Ninja R/S/M and visible Ninja Gear",
-          field16(entd, e, 0, 0x0C) == 453
-          and field16(entd, e, 0, 0x0E) == 465
-          and field16(entd, e, 0, 0x10) == 487
+          field16(entd, e, 0, 0x0C) == 451
+          and field16(entd, e, 0, 0x0E) == 472
+          and field16(entd, e, 0, 0x10) == 491
           and roster(entd, e, [0], 0x12) == [168]
           and roster(entd, e, [0], 0x13) == [197]
-          and roster(entd, e, [0], 0x14) == [210]
-          and roster(entd, e, [0], 0x15) == [14]
-          and roster(entd, e, [0], 0x16) == [14])
-    check("452 s1 Ninja R/S/M and visible Koga",
+          and roster(entd, e, [0], 0x14) == [218]
+          and roster(entd, e, [0], 0x15) == [18]
+          and roster(entd, e, [0], 0x16) == [17])
+    check("452 s1 barehand Ninja kit",
           field16(entd, e, 1, 0x0C) == 453
-          and field16(entd, e, 1, 0x0E) == 465
-          and field16(entd, e, 1, 0x10) == 487
-          and roster(entd, e, [1], 0x12) == [168]
-          and roster(entd, e, [1], 0x13) == [198]
-          and roster(entd, e, [1], 0x14) == [210]
-          and roster(entd, e, [1], 0x15) == [18]
-          and roster(entd, e, [1], 0x16) == [14])
-    check("452 s2 Thief R/S/M and legal gear",
-          field16(entd, e, 2, 0x0C) == 453
-          and field16(entd, e, 2, 0x0E) == 465
-          and field16(entd, e, 2, 0x10) == 487
-          and roster(entd, e, [2], 0x12) == [168]
-          and roster(entd, e, [2], 0x13) == [198]
-          and roster(entd, e, [2], 0x14) == [210]
-          and roster(entd, e, [2], 0x15) == [9]
+          and field16(entd, e, 1, 0x0E) == 472
+          and field16(entd, e, 1, 0x10) == 488
+          and roster(entd, e, [1], 0x12) == [163]
+          and roster(entd, e, [1], 0x13) == [195]
+          and roster(entd, e, [1], 0x14) == [218]
+          and roster(entd, e, [1], 0x15) == [255]
+          and roster(entd, e, [1], 0x16) == [255])
+    check("452 s2 martial Thief kit",
+          field16(entd, e, 2, 0x0C) == 449
+          and field16(entd, e, 2, 0x0E) == 472
+          and field16(entd, e, 2, 0x10) == 488
+          and roster(entd, e, [2], 0x12) == [163]
+          and roster(entd, e, [2], 0x13) == [195]
+          and roster(entd, e, [2], 0x14) == [218]
+          and roster(entd, e, [2], 0x15) == [255]
           and roster(entd, e, [2], 0x16) == [255])
 
-    for slot_no in (3, 4, 5):
+    for slot_no in (3, 5):
         check(f"452 s{slot_no} Archer R/S/M",
               field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 469
-              and field16(entd, e, slot_no, 0x10) == 486)
+              and field16(entd, e, slot_no, 0x0E) == 474
+              and field16(entd, e, slot_no, 0x10) == 491)
         check(f"452 s{slot_no} Archer gear",
               roster(entd, e, [slot_no], 0x12) == [168]
-              and roster(entd, e, [slot_no], 0x13) == [198]
+              and roster(entd, e, [slot_no], 0x13) == [195]
               and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x15) == [87]
+              and roster(entd, e, [slot_no], 0x15) == [90]
               and roster(entd, e, [slot_no], 0x16) == [254])
+
+    check("452 s4 Throw Thief kit",
+          field16(entd, e, 4, 0x0C) == 424
+          and field16(entd, e, 4, 0x0E) == 477
+          and field16(entd, e, 4, 0x10) == 491
+          and roster(entd, e, [4], 0x12) == [168]
+          and roster(entd, e, [4], 0x13) == [195]
+          and roster(entd, e, [4], 0x14) == [218]
+          and roster(entd, e, [4], 0x15) == [10]
+          and roster(entd, e, [4], 0x16) == [8])
+
+    check("452 static flags, positions, and unit ids preserved",
+          roster(entd, e, active, 0x18) == [0x90] * 6
+          and [(field(entd, e, s, 0x19), field(entd, e, s, 0x1A)) for s in active]
+          == [(4, 6), (1, 4), (5, 0), (9, 0), (4, 4), (7, 4)]
+          and roster(entd, e, active, 0x20) == [0x80, 0x81, 0x82, 0x83, 0x84, 0x85])
 
     check("452 ninja arsenal spoils preserved",
           field(entd, e, 0, 0x1E) == 197
