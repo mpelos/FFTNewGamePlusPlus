@@ -1611,31 +1611,44 @@ def besselat_wall(data):
 # Battle 039 — Fort Besselat Sluice Gate (entry 450): floodgate-lever objective map. Per docs/044.
 # Vanilla 450: s0,s1 Archer (77); s2,s3,s6,s7 Knight (76); s4,s5 Black Mage (80). No boss, no rare;
 # low Ch4 band. The "open the water gate" lever objective + lever tiles are scripting — untouched.
-#   - ESCALATION: swap ONE Black Mage (s5) -> Time Mage that SLOWS the lever-runner (jl4 =
-#     Haste/Slow/Float only, no hard lock) to tax the lever-race. The other BMage (s4) keeps the
-#     AoE-on-high-ground threat.
-#   - 4 Knights: gate wall (Rend innate, doc caps flavor at 2). 2 Archers: lane chip.
+#   - v3: both Black Mages carry Summon; s6/s7 are Samurai-bucket lever Knights; s2/s3 become
+#     battle Samurais; s0/s1 become Geomancers. No Time Mage, Rend wall, new slot, or script edit.
 def besselat_sluice(data):
     E = 450
-    set_slot(data, E, 4, level=102, joblevel=8, job=BMAGE,  # AoE on the high ground — priority kill
-             secondary=ITEMS, brave=60, faith=84,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, E, 5, level=102, joblevel=4, job=TMAGE,  # NEW: Slow the lever-runner (jl4, no hard lock)
-             secondary=ITEMS, brave=62, faith=80,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_STAFF, lh=LH_EMPTY)
-    for s, lvl, jl, shield in ((2, 102, 8, KAISER_SHIELD), (3, 102, 8, SHOP_SHIELD),
-                               (6, 101, 1, SHOP_SHIELD), (7, 101, 1, SHOP_SHIELD)):
-        set_slot(data, E, s, level=lvl, joblevel=jl, job=KNIGHT, secondary=ITEMS,
-                 brave=88, faith=42,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=shield)
-    for s, lvl in ((0, 102), (1, 101)):  # 2 Archers — lane chip over the approach
-        set_slot(data, E, s, level=lvl, joblevel=8, job=ARCHER, secondary=ITEMS,
-                 brave=82, faith=45,
-                 reaction=REFLEXES, support=CONCENTRATION, movement=MV1,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=WINDSLASH, lh=LH_TWOHAND)
+    # v3 keeps all eight static slots and the lever scripting untouched. The caster screen returns
+    # to two Black Mages, with Summoner bucket data so Summon is the charged objective pressure.
+    for s in (4, 5):
+        set_slot(data, E, s, level=102, jobrank=generic_job_rank(SUMMONER), joblevel=8,
+                 job=BMAGE, secondary=SUMMON, brave=60, faith=84,
+                 reaction=REFLEXES, support=SWIFTSPELL, movement=MV2,
+                 head=MAGE_HAT, body=BLACK_ROBE, acc=FEATHERWEAVE,
+                 rh=SHOP_ROD, lh=LH_EMPTY)
+
+    # In-game placement confirmation: s6/s7 are the two units protecting the lever tiles. They remain
+    # Knights, but use the documented Samurai bucket. Their job byte must stay Knight (76).
+    for s in (6, 7):
+        set_slot(data, E, s, level=102, jobrank=generic_job_rank(SAMURAI), joblevel=8,
+                 job=KNIGHT, secondary=AIM, brave=88, faith=42,
+                 reaction=REFLEXES, support=DEFENSE_BOOST, movement=MV2,
+                 head=HEAVY_HELM, body=MIRROR_MAIL, acc=BRACERS,
+                 rh=GASTROPHETES, lh=CRYSTAL_SHIELD)
+
+    # s2/s3 are the mobile battle screen and become MA-boosted Samurais with Masamune pressure.
+    # Kaiser Shield remains guaranteed on s2 through the untouched 0x1e spoils byte.
+    for s in (2, 3):
+        set_slot(data, E, s, level=101, jobrank=generic_job_rank(SAMURAI), joblevel=8,
+                 job=SAMURAI, secondary=0, brave=88, faith=42,
+                 reaction=DRAGONHEART, support=MAGICK_BOOST, movement=MV3,
+                 head=HEAVY_HELM, body=MIRROR_MAIL, acc=BRACERS,
+                 rh=MASAMUNE, lh=CRYSTAL_SHIELD)
+
+    # Former Archer lanes become Geomancers. Their terrain pressure keeps both approach lanes relevant.
+    for s, lvl in ((0, 102), (1, 101)):
+        set_slot(data, E, s, level=lvl, jobrank=generic_job_rank(GEOMANCER), joblevel=8,
+                 job=GEOMANCER, secondary=0, brave=82, faith=45,
+                 reaction=SHIRAHADORI, support=MAGICK_BOOST, movement=MV2,
+                 head=MAGE_HAT, body=WIZARD_ROBE, acc=GEMS_108,
+                 rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
     return [E]
 
 

@@ -1,31 +1,32 @@
 # 044 - Fort Besselat Sluice Gate (Bethla Garrison Sluice)
 
-Status: 📝 redesign v3 planned (docs-only) — v1 implementation exists for entry 450
+Status: ✅ v3 implemented and approved in-game (2026-07-10)
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 39 (after Fort Besselat South Wall or North Wall)
 Target version: Enhanced v1.5.0
 ENTD: global entry **450** (local entry 66, `battle_entd4_ent.bin`)
 File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py besselat_sluice`
 
-> **NG++ reward applied (2026-06-27):** Kaiser Shield (s2, Knight). Guaranteed Spoils of War (ENTD 0x1e),
+> **NG++ reward applied (2026-06-27):** Kaiser Shield (s2 reward carrier). Guaranteed Spoils of War (ENTD 0x1e),
 > NG+ only, within the 3-cap, no steal needed. Canonical map: `chapter-4-rewards-implementation.md`.
 
-Current implementation (entry 450, vanilla-dump verified) — slots: s0,s1 Archer; s2,s3,s6,s7 Knight; s4,s5 Black Mage:
-- s4 Black Mage L102 — AoE on high ground (priority); Mage Hat/shop Robe/Featherweave/shop Rod.
-- s5 Black Mage→**Time Mage** L102 — Slows the lever-runner; **jl4** (Haste/Slow/Float only); shop Staff.
-- s2,s3 Knight L102, s6,s7 Knight L101 — gate wall; Heavy gear/Runeblade/shop Shield; Rend innate.
-- s0 Archer L102, s1 Archer L101 — lane chip (Windslash, two-hand).
-- Lever objective + tiles (scripting) untouched; no boss; low Ch4 band. Kaiser Shield reward is applied
-  through spoils; selectable map treasure (other layer) untouched.
+Current v3 implementation (entry 450, vanilla-dump verified):
+- s0/s1 Geomancer L102/L101 — former Archer lanes; Shirahadori, Magick Attack Boost, Movement +2,
+  Rune Blade/Crystal Shield and MA gear.
+- s2/s3 Battle Samurai L101 — mobile screen; no secondary, Dragon's Heart, Magick Attack Boost,
+  Movement +3, Masamune/Crystal Shield and Reflect Mail.
+- s4/s5 Black Mage L102 — Summoner bucket + Summon, Reflexes, Swiftspell, Movement +2 and full mage kit.
+- s6/s7 Lever Knight L102 — confirmed on the lever tiles; main job Knight, Samurai bucket, Aim,
+  Reflexes, Defense Boost, Movement +2, Gastrophetes/Crystal Shield and Reflect Mail.
+- Lever objective, positions, static flags and event scripting remain untouched. Kaiser Shield stays a
+  guaranteed s2 spoil; selectable map treasure remains untouched.
 
-Planned v3 redesign (docs-only in this pass): restore the second Black Mage, remove the Time Mage
-lever-control engine, and make the floodgate pressure come from two Summon-secondary Black Mages, two
-Knight lever guards with Samurai bucket data, two battle Knights upgraded into Samurai, and two Geomancers
-that replace the Archer lane-chip slots.
+Implemented v3 redesign: the second Black Mage is restored, the Time Mage control engine is removed,
+and floodgate pressure comes from two Summon-secondary Black Mages, two lever Knights, two battle
+Samurais, and two Geomancers replacing the Archer lane-chip slots.
 
-> Data-layer fields (BattleId, ENTD entry, slot offsets) are placeholders until dumped from
-> the real game files. This doc is the design; the byte patch is applied on the Windows box.
-> See `037-chapter-4-overview.md`. Both Wall paths (`043`) converge HERE.
+> Entry 450 and slots s0-s7 are confirmed. This implementation is an ENTD-only retune of existing
+> static slots; no event script, objective tile, unit id, control flag, or position was changed.
 
 ## Design Goal
 
@@ -92,31 +93,33 @@ genuinely tense.**
 ```text
 CONFIRMED:
 - Entry 450 is the Bethla Sluice ENTD entry.
-- Current slots are 4 Knights + 2 Archers + 1 Black Mage + 1 Time Mage (swapped from Black Mage).
-- Planned v3 roster: 2 Black Mages + 2 lever Knights with Samurai bucket + 2 battle Samurais + 2
+- Vanilla slots are s0/s1 Archer, s2/s3/s6/s7 Knight, and s4/s5 Black Mage.
+- Implemented v3 roster: 2 Black Mages + 2 lever Knights with Samurai bucket + 2 battle Samurais + 2
   Geomancers.
+- In-game placement confirms s6/s7 are the lever protectors; s2/s3 are the mobile battle screen.
 - Lever objective scripting is present and must remain the win condition.
 - No active guest, no boss.
 - Reward ledger maps this battle to Kaiser Shield guaranteed spoils.
+- OverrideEntryData rows 450/0-7 leave the edited fields at `-1`; embedded ENTD is authoritative.
+- All eight slots retain vanilla `0x90` static flags, unit ids `0x80`-`0x87`, positions, and facing.
+- Sprite budget is vanilla 3 jobs -> v3 4 jobs, net `+1`, inside the documented safe band.
+- Selectable treasure (Crystal Shield/Helm/Mail, Lambent Hat) remains vanilla map loot.
 
-STILL NEEDED FOR V3 IMPLEMENTATION:
-- Confirm exact slot order before patching complete v3 kits.
-- Confirm floodgate lever panels/event tiles remain untouched.
-- Confirm whether OverrideEntryData carries level for this battle or leaves it at runtime scale.
-- Preserve high-ground caster placement and Knight wall geometry.
-- Confirm the former Archer slots can be converted to Geomancer with the documented gear.
-- Preserve selectable treasure (Crystal Shield/Helm/Mail, Lambent Hat) as vanilla map loot.
+STILL NEEDED:
+- In-game confirmation that the lever panels/objective behave unchanged.
+- Confirm both player lines remain viable: race the levers and clear the screen first.
+- Confirm learned Summons and forced crossbow/shield Samurai behavior are acceptable in practice.
 ```
 
 Job IDs (carry over known, verify the rest in-game):
 
 ```text
-77 = Archer            (confirmed)
-Knight job id          (TBD - verify)
-Black Mage job id      (TBD - verify)
-Samurai job id         (TBD - verify)
-Geomancer job id       (TBD - verify)
-Summoner job id        (TBD - verify; Black Mage job bucket / secondary)
+76 = Knight
+77 = Archer (vanilla slot identity; removed in v3)
+80 = Black Mage
+82 = Summoner (Black Mage bucket / secondary)
+86 = Geomancer
+88 = Samurai
 ```
 
 ## Enemy Party Escalation (Chapter 4 rule)
@@ -153,8 +156,8 @@ ROLE-FITTING KAISER SHIELD — allowed on one Knight as visible Chapter-4 gear b
 ```text
 Guaranteed spoils for entry 450: KAISER SHIELD.
 This is delivered by the Spoils of War reward channel; the player must never be required to Steal.
-COMBAT ROLE: Kaiser Shield may be equipped by one gate Knight as visible, role-fitting defensive
-pressure. If playtest turns the wall into a slog, move it to reward payload only and resimulate.
+COMBAT ROLE: v3 keeps Kaiser Shield in the reward payload only; both lever Knights use Crystal Shield.
+This preserves the gate-wall identity without adding another evasion spike to the objective screen.
 PRESERVE: selectable map treasure (Crystal Shield/Helm/Mail, Lambent Hat) remains vanilla map loot and
 is not the NG++ reward channel.
 ```
@@ -174,7 +177,7 @@ two lever Knights and two battle Samurais; replace both Archers with Geomancers.
 | n | Lever Knight | Knight, Samurai bucket | `102` | `88/42` | Second lever guard; mirrors the first. |
 | n | Battle Samurai | Samurai bucket | `101` | `88/42` | Mobile battle screen; Dragon's Heart pressure sink. |
 | n | Battle Samurai | Samurai bucket | `101` | `88/42` | Second battle Samurai; pushes the approach. |
-| n | Geomancer | Geomancer bucket | `102` | `82/45` | Former Archer lane slot; Rune Blade + Aegis pressure. |
+| n | Geomancer | Geomancer bucket | `102` | `82/45` | Former Archer lane slot; Rune Blade + Crystal Shield pressure. |
 | n | Geomancer | Geomancer bucket | `101` | `82/45` | Second former Archer; terrain pressure and magic-boosted chip. |
 
 Reasoning:
@@ -243,11 +246,11 @@ Role: hold the lever tiles from above/near the objective. They remain Knights, b
 ```text
 Job: Samurai
 Job bucket: Samurai   JobLevel: 8
-Secondary: Aim
+Secondary: None
 Reaction: Dragon's Heart
-Support: Attack Boost
+Support: Magick Attack Boost
 Movement: Movement +3
-Right hand: Gastrophetes   Left hand: Crystal Shield
+Right hand: Masamune   Left hand: Crystal Shield
 Head: Crystal Helm   Body: Reflect Mail   Accessory: Bracers
 ```
 
@@ -261,11 +264,11 @@ Secondary: None
 Reaction: Shihadori
 Support: Magic Attack Boost
 Movement: Movement +2
-Right hand: Rune Blade   Left hand: Aegis Shield
+Right hand: Rune Blade   Left hand: Crystal Shield
 Head: Lambent Hat   Body: Wizard's Robe   Accessory: Japa Mala
 ```
 
-Role: replace Archer lane chip with terrain pressure and magic-leaning durability. Aegis Shield and Japa
+Role: replace Archer lane chip with terrain pressure and magic-leaning durability. Crystal Shield and Japa
 Mala give them a defensive identity while Magic Attack Boost makes Geomancy matter.
 
 ## Positioning Plan
@@ -292,7 +295,10 @@ Simulation artifact:
 tmp/fft-level-design-044-fort-besselat-sluice/
   assumptions.md
   simulate.py
-  iteration-results.json
+  iteration-1-results.json
+  iteration-1-results.md
+  iteration-2-results.json
+  iteration-2-results.md
   iteration-results.md
 ```
 
@@ -304,54 +310,48 @@ It scores pressure, lever tension, clear-first viability, race viability, break 
 and hard-lock risk. It does not simulate exact FFT formulas.
 ```
 
-Result summary (v2 baseline; v3 needs refreshed simulation):
+Result summary:
 
-| Candidate | Pressure | Lever tension | Clear-first | Race | Break fairness | Answer | Hard lock | Verdict |
-|---|---:|---:|---:|---:|---:|---:|---:|---|
-| v1 partial lever screen | 183 | 100 | 84 | 76 | 74 | 82 | 0 | Rejected: incomplete setup |
-| v2 complete lever siege | 192 | 100 | 84 | 76 | 74 | 82 | 0 | **Accepted** |
-| no time mage clear map | 198 | 59 | 84 | 69 | 74 | 82 | 0 | Rejected: too little objective tension |
-| double time lock | 204 | 37 | 68 | 51 | 74 | 62 | 0 | Rejected: too much tempo control |
-| four-rend gate wall | 218 | 100 | 40 | 40 | 0 | 34 | 0 | Rejected: break cap violation |
-| hard-control runner trap | 257 | 68 | 52 | 40 | 74 | 42 | 60 | Rejected: hard control |
-| overlevelled gate | 216 | 100 | 76 | 68 | 66 | 74 | 0 | Rejected: too spiky |
-| spoils-only shield | 185 | 98 | 84 | 86 | 74 | 82 | 0 | Rejected: too soft |
+| Candidate | Pressure | Lever control | Clear-first | Race | Answer | Hard lock | Verdict |
+|---|---:|---:|---:|---:|---:|---:|---|
+| v3 uniform L102 | 19.69 | 22.46 | 70.0 | 53.8 | 71.9 | 0 | Rejected: race below threshold |
+| v3 L101-102, crossbow/Aim Samurais | 19.09 | 21.89 | 71.2 | 55.3 | 73.2 | 0 | Historical baseline; Samurai kit superseded |
 
 Iteration decision:
 
 ```text
-ACCEPT v2 complete lever siege.
-One Slow/Haste/Float Time Mage is enough to pressure the objective without deleting turns. Kaiser Shield
-may be visible on one Knight because it fits the gate-wall role; rewards still pay through guaranteed
-spoils. The two valid player lines remain: race the levers under fire, or clear the screen first.
-
-V3 note: this simulation is now stale. The Time Mage was removed, both Black Mages now carry Summon,
-the Knight wall split into lever Knights + battle Samurais, and the Archers became Geomancers. Re-simulate
-the completed v3 setup.
+The historical coarse model accepted the L101-102 band before the final Samurai equipment revision.
+The first uniform-L102 pass made the mobile screen slightly too sharp and dropped race viability below
+the model threshold. The final Battle Samurai kit — no secondary, Masamune, Magick Attack Boost — is not
+re-simulated by request; it will be validated directly in game. Required playtest questions are whether
+Masamune/Iaido pressure remains readable and whether the Crystal Shield screen creates cleanup drag.
 ```
 
 ## Implementation Checklist
 
-- [ ] Confirm current entry 450 slot order: 4 Knight + 2 Archer + 2 Black Mage + player slots, with one
-  current Black Mage currently implemented as Time Mage in v1.
-- [ ] Confirm lever objective tiles/event scripting remain untouched.
-- [ ] Keep the "open the water gate" lever objective intact (do NOT convert to plain defeat-all).
-- [ ] Remove the Time Mage and restore the slot to Black Mage.
-- [ ] Give both Black Mages Summoner JobLevel 8 bucket data, Summon secondary, Reflexes, Swift Spell,
+- [x] Confirm entry 450 vanilla slot order: 4 Knight + 2 Archer + 2 Black Mage.
+- [x] Preserve lever objective tiles/event scripting; no script or position bytes were edited.
+- [x] Keep the "open the water gate" lever objective intact (do NOT convert to plain defeat-all).
+- [x] Remove the Time Mage and restore the slot to Black Mage.
+- [x] Give both Black Mages Summoner JobLevel 8 bucket data, Summon secondary, Reflexes, Swift Spell,
   Movement +2, Lambent Hat, Black Robe, Featherweave Cloak, and Wizard's Rod.
-- [ ] Set the two Knights on the levers as Knights with Samurai bucket, Aim, Reflexes, Defense Boost,
+- [x] Set s6/s7 on the levers as Knights with Samurai bucket, Aim, Reflexes, Defense Boost,
   Movement +2, Gastrophetes, Crystal Shield, Crystal Helm, Reflect Mail, Bracers.
-- [ ] Convert the two battle Knights to Samurais with Samurai bucket, Aim, Dragon's Heart, Attack Boost,
-  Movement +3, Gastrophetes, Crystal Shield, Crystal Helm, Reflect Mail, Bracers.
-- [ ] Convert both Archer slots to Geomancer JobLevel 8 units with no secondary, Shihadori, Magic
-  Attack Boost, Movement +2, Rune Blade, Aegis Shield, Lambent Hat, Wizard's Robe, and Japa Mala.
-- [ ] Give every active human complete equipment plus secondary/reaction/support/movement.
-- [ ] Keep secondaries constrained; no Phoenix Down loops, Stop, Don't Act, or hard control.
-- [ ] Preserve guaranteed spoils: Kaiser Shield; preserve selectable map treasure.
-- [ ] Set levels low Ch4 band (`101`-`102`, no `103`); JobLevel `8` on all active slots.
-- [ ] Patch via the correct layer; keep the diff inside the Sluice window only.
-- [ ] Re-dump and diff; confirm changes are small and intentional; verify levers + objective intact.
-- [ ] Install mod, test from a New Game+ save; confirm BOTH lines (race the gate / clear first) work.
+- [x] Convert s2/s3 battle Knights to Samurais with Samurai bucket, no secondary, Dragon's Heart,
+  Magick Attack Boost, Movement +3, Masamune, Crystal Shield, Crystal Helm, Reflect Mail, Bracers.
+- [x] Convert both Archer slots to Geomancer JobLevel 8 units with no secondary, Shihadori, Magic
+  Attack Boost, Movement +2, Rune Blade, Crystal Shield, Lambent Hat, Wizard's Robe, and Japa Mala.
+- [x] Give every active human complete equipment plus secondary/reaction/support/movement.
+- [x] Keep secondaries constrained; no Phoenix Down loops, Stop, Don't Act, or hard control.
+- [x] Preserve guaranteed spoils: Kaiser Shield; preserve selectable map treasure.
+- [x] Set levels low Ch4 band (`101`-`102`, no `103`); JobLevel `8` on all active slots.
+- [x] Patch through the embedded ENTD; diff is confined to entry 450.
+- [x] Re-dump and validate the entry; flags, unit ids, positions and reward payload are preserved.
+- [x] Install the mod and approve the final v3 setup in game.
+
+In-game validation (2026-07-10): final v3 approved after correcting the lever-guard slot mapping,
+changing the Battle Samurais to Masamune/Magick Attack Boost, and replacing the Geomancers' Aegis
+Shields with Crystal Shields. Keep the race-vs-clear routes and reward delivery in the regression list.
 
 ## Test Questions
 

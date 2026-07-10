@@ -48,7 +48,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `042` | 37 | Beddha Sandwaste / Bed Desert | **Barich** (Templar gunner) — dies here | open-desert gun-duel; **Glacial Gun** steal (Tier A); no Hydra (that's `057`) | ✅ Done |
 | `043a` | 38A | Fort Besselat South Wall / Bethla | Wall assault (South path) | melee/stealth vertical wall; route-parity Yoichi/Perseus reward | ✅ Done |
 | `043b` | 38B | Fort Besselat North Wall / Bethla | Wall assault (North path) | ranged/AoE vertical wall; route-parity Yoichi/Perseus reward | ✅ Done |
-| `044` | 39 | Fort Besselat Sluice / Bethla Sluice | The floodgate; pull levers (open the gate) | lever objective-race + AoE on high ground; Time-Mage Slow; no rare | ✅ Done |
+| `044` | 39 | Fort Besselat Sluice / Bethla Sluice | The floodgate; pull levers (open the gate) | lever objective-race + dual Summon casters + Knight/Samurai/Geomancer screen; no boss rare | ✅ v3 approved in-game |
 | `045` | 40 | Mount Germinas / Germinas Peak | Climb; buried Invisibility Cloak | 4/5★ vertical mobility/steal; Thief→2nd Ninja; no rare | ✅ Done |
 | `046` | 41 | Lake Poescas / Poeskas Lake | All-undead lake (5★) | reraise permakill war; +Dark-heal Mystic; PD/Holy answer; no rare | ✅ Done |
 | `047` | 42 | Limberry Castle Gate | **Celia & Lettie** (Assassins; flee on critical) | 5★ assassin flee-race + Ultima/status-immunity tradeoff; chain 1/3; no rare | ✅ Done |
@@ -60,7 +60,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | undead brother; vampirism+break race; chain 3/3; **Tier-S Ragnarok + Ribbon** | ✅ Done |
 | `054` | 49 | Monastery Vaults 4th Floor | ENDGAME 1/5; 3 Knight (Rend cap 2) + 2 Monk + Ninja(was Archer) | light gear-preservation opener; no boss/no rare | ✅ Done |
 | `055` | 50 | Monastery Vaults 5th Floor | ENDGAME 2/5; **Loffrey** (Divine Knight) + 2 BlackMage/2 Summoner/Time Mage | caster crossfire; disarm-first; win-when-Loffrey-falls; no usable gauntlet reward | ✅ Done |
-| `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** (Magick Surge) + 2 Samurai/2 Ninja/2 Time Mage | **Samurai** debut (canon); Silence/burst-the-surge race; win-when-Cletienne-falls; no usable gauntlet reward | ✅ Done |
+| `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** (Magick Surge) + 2 Samurai/2 Ninja/2 Time Mage | **Samurai** endgame showcase; Silence/burst-the-surge race; win-when-Cletienne-falls; no usable gauntlet reward | ✅ Done |
 | `057` | 52 | Lost Halidom / Lost Sacred Precincts | ENDGAME 4/5 (**5★ peak**); **Barich** rematch + Chemist + 4 apex monsters | overlapping breath lanes + Disable/Immobilize control; win-when-Barich-falls; no usable gauntlet reward | ✅ Done |
 | `058` | 53 | Airship Graveyard | ENDGAME 5/5; **Hashmal -> Ultima** (FINAL, L106) + Ultima Demons | two-phase Lucavi finale; full restore between; Dispelja/Almagest + 2nd form; no usable gauntlet reward | ✅ Done |
 | `059` | — | Chapter 4 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
@@ -89,9 +89,9 @@ the cost of the fight's original strategy.
 
 ```text
 CHAPTER 4 CASTES / FOES TO DEPLOY (canon castes are texture, not a job-tier limit):
-- Samurai (enemy)   : Draw Out (katana spirits) — AoE elemental/heal/buff from the blade. Debut at
-                      the Necrohol (Cletienne's guard). Treat Draw Out like a telegraphed AoE: strong,
-                      spaceable, not a lock.
+- Samurai (enemy)   : Draw Out (katana spirits) — AoE elemental/heal/buff from the blade. Previewed
+                      at the Besselat Sluice and showcased at the Necrohol (Cletienne's guard). Treat
+                      Draw Out like a telegraphed AoE: strong, spaceable, not a lock.
 - Ultima/Archaeo    : elite demon minions flanking the Lucavi and the named demons (Elmdor, the
   Demons               assassins, Zalbaag's guard, the final fight). High stats; the "generic" of the
                       endgame. Used as the level-103-class body around the boss spikes.

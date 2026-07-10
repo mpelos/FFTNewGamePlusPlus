@@ -16,7 +16,7 @@ bosses. Chapter 4 is the **climax**: it takes the elite Ch3 roster and adds the 
 structural pressures.
 
 ```text
-- APEX CASTES & BOSSES: the SAMURAI debut (Necrohol), the Ultima-Demon caste (Limberry Keep on), apex
+- APEX CASTES & BOSSES: the SAMURAI preview at Sluice and showcase at Necrohol, the Ultima-Demon caste (Limberry Keep on), apex
   MONSTER PIT (Lost Halidom jobs 135/139/140/141), the vampire Ark Knight (Zalbaag), the triple-Templar last
   stand (Folmarv/Loffrey/Cletienne), the Magick-Surge sorcerer, THREE Lucavi (Zalera, Adrammelech, and
   the final Hashmal→Ultima), and named bosses paying out across the chapter.
@@ -38,7 +38,7 @@ structural pressures.
 | 37 | Bed Desert | `042` | 6 (**Barich** + 2 Knight + 2 Archer + Black Mage; recurs) | open-desert gun-duel; **Tier-A Glacial Gun** | desert | ▄ moderate+ |
 | 38A | Fort Besselat — South Wall | `043a` | 7 (3 Knight + 2 Archer + Thief + Ninja) | melee/stealth wall approach; no boss | wall | ▃ moderate |
 | 38B | Fort Besselat — North Wall | `043b` | 6 (2 Archer + 2 Dragoon + Summoner + Monk) | ranged/AoE wall approach; no boss | wall | ▃ moderate |
-| 39 | Fort Besselat — Sluice | `044` | 7 (4 Knight + 2 Archer + Black Mage + Slow Time Mage) | floodgate-lever objective; Rend cap 2/4 | sluice | ▅ hard |
+| 39 | Fort Besselat — Sluice | `044` | 8 (2 Black Mage + 2 lever Knight + 2 Samurai + 2 Geomancer) | floodgate race under charged caster/guard pressure; no hard control | sluice | ▅ hard |
 | 40 | Mount Germinas | `045` | 6 (2 **Ninja** + Thief + 3 Archer) | vertical skirmish; Invis-Cloak dig; no boss | mountain | ▄ moderate+ |
 | 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | all-undead reraise war; one-disruptor cap | frozen lake | ▅ hard |
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | flee-on-critical race; Ultima tradeoff; chain 1/3; no rare | gate | ▃ moderate (race) |
@@ -50,7 +50,7 @@ structural pressures.
 | 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | undead-brother; vampirism + break; **Tier-S Ragnarok + Ribbon**; chain 3/3 | sanctuary | ▆ harder |
 | 49 | Monastery Vaults — 4th | `054` | 6 (3 Knight Rend-cap 2 + 2 Monk + Ninja) | light gear-preservation opener; no rare; gauntlet 1/5 | vault | ▂ light (opener) |
 | 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** Divine Knight + 2 Black Mage + 2 Summoner + Time Mage) | caster crossfire; disarm-first; no usable gauntlet reward | wide vault | ▅ hard |
-| 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai debut**; Silence/burst the surge; no usable gauntlet reward | dead city | ▆ harder |
+| 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai endgame showcase**; Silence/burst the surge; no usable gauntlet reward | dead city | ▆ harder |
 | 52 | Lost Halidom | `057` | 6 (**Barich** + Chemist + 4 apex monsters) | 5★ overlapping breath pit + control; no usable gauntlet reward | holy ground | █ 5★ PEAK |
 | 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** (L106) + Ultima Demons/Lucavi support | two-phase Lucavi FINALE; no usable gauntlet reward | airship | █ FINALE |
 
@@ -122,12 +122,12 @@ and no hidden Brave/Faith assumptions.
 
 | Exception | Where | Why | Guardrail |
 |-----------|-------|-----|-----------|
-| Time-Mage Haste/Slow/Float | Dugeura (`038`), Sluice (`044`), Vaults-5th (`055`), Necrohol (`056`) | canonical tempo casters | Haste/Slow/Float only — no Stop/Don't Act; one effective disruptor per fight |
-| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend) | Bervenia (`039`), Church (`041`), Sluice (`044`), Eagrose P1 (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | telegraphed; Safeguard/Steal/Maintenance counter; **≤2 break sources/fight** (even with 4-5 Knights) |
+| Time-Mage Haste/Slow/Float | Dugeura (`038`), Vaults-5th (`055`), Necrohol (`056`) | canonical tempo casters | Haste/Slow/Float only — no Stop/Don't Act; one effective disruptor per fight |
+| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend) | Bervenia (`039`), Church (`041`), Eagrose P1 (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | telegraphed; Safeguard/Steal/Maintenance counter; **≤2 break sources/fight** (even with 4-5 Knights) |
 | De-randomized beasts | Finnath (`040`) | reliable, learnable flock | fixed kits (Choco-Meteor/Cure); no status beasts; no boss |
 | Healer/holy boss burst | Church (`041`) | Zalmo's revive/holy IS the puzzle | Silence/focus-burst answer; holy/soft-status only; he dies → Tier-A |
 | Branching mutually-exclusive approach | Besselat Wall (`043a`/`043b`) | the fort's two routes | each route self-contained; no boss; both lead to the Sluice |
-| Objective-race (floodgate lever) | Sluice (`044`) | the canonical flood mechanic | race vs clear-first; Rend capped 2/4 |
+| Objective-race (floodgate lever) | Sluice (`044`) | the canonical flood mechanic | race vs clear-first; charged damage and visible guards, no hard control or Rend wall |
 | Undead reraise + heal-weakness | Poeska (`046`), Sanctuary (`053`), Airship demons (`058`) | the undead/demon castes | PD/Holy/finish-while-down answers; one-disruptor cap; reraise is mechanic + counterplay |
 | Assassin status / instant-death / flee-on-critical | Limberry Gate (`047`) | the named Assassins | RESISTABLE + non-spam; status-immunity tradeoff; flee makes the danger window short; no rare (flee) |
 | Ark-Knight parry / Shirahadori | Limberry Keep (`048`) | Elmdore's identity | magic / Divine-Ruination answer; he dies → Tier-A Masamune+Genji |
@@ -137,7 +137,7 @@ and no hidden Brave/Faith assumptions.
 | Win-on-one-boss-falls (triple Templar) | Nave (`052`) | the canonical "defeat one, others flee" | the other two retreat → no drop; equip-break capped 2 |
 | Vampirism (Zalbaag) | Sanctuary (`053`) | the vampire Ark Knight | SOLE source; Holy Water/Japa Mala/Esuna; non-spreading; not a lock |
 | Magick Surge (comeback mechanic) | Necrohol (`056`) | Cletienne's identity | Silence shuts it / burst beats it; magic-only retaliation; telegraphed, not a wipe |
-| Samurai Draw Out (NEW caste) | Necrohol (`056`) | the chapter's Samurai debut | AoE/break race-able, spaceable; no hard lock |
+| Samurai Draw Out (NEW caste) | Sluice (`044`), Necrohol (`056`) | preview at the floodgate, endgame showcase in Cletienne's guard | AoE/break race-able, spaceable; no hard lock |
 | Monster breath lanes + Disable/Immobilize | Lost Halidom (`057`) | the 5★ four-monster pit + control boss | breath ELEMENTAL/resistable + monsters disable-able; Barich status ONE resistable source (Ribbon) |
 | Almagest / Dispelja / demon surround / 2nd form | Airship (`058`) | the Lucavi FINALE | Almagest telegraphed/sub-100%/survivable; Dispelja → re-buff; surround → Ribbon+spacing; transform telegraphed; full HP/MP restore between phases |
 
@@ -166,7 +166,8 @@ Mullonde Nave(052) : TRIPLE-TEMPLAR (Folmarv/Loffrey/Cletienne; one-falls); chai
 Mullonde San.(053) : ZALBAAG vampire Ark Knight + undead; chain 3/3         -> cleanse vampirism; holy the dead
 Vaults 4th   (054) : Archer -> Ninja; LIGHT gear-preservation opener; gauntlet 1/5 -> keep your gear (Rend cap 2)
 Vaults 5th   (055) : LOFFREY + caster crossfire; gauntlet 2/5              -> disperse, disarm, burst
-Necrohol     (056) : SAMURAI DEBUT + Cletienne Magick Surge; gauntlet 3/5   -> Silence/burst the surge
+Sluice       (044) : SAMURAI PREVIEW in the floodgate screen                -> race or clear the charged guard line
+Necrohol     (056) : SAMURAI SHOWCASE + Cletienne Magick Surge; gauntlet 3/5 -> Silence/burst the surge
 Lost Halidom (057) : APEX MONSTER PIT (4 monster/dragon slots) + Barich; gauntlet 4/5 -> disable + elemental resist
 Airship      (058) : HASHMAL -> ULTIMA two-phase FINALE (L106); gauntlet 5/5 -> spread, re-buff, end it
 

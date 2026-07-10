@@ -423,59 +423,70 @@ def run() -> int:
           field(entd, e, 0, 0x1E) == 90
           and field(entd, e, 3, 0x1E) == 91)
 
-    # 044 - Fort Besselat Sluice Gate, entry 450.
-    # Lever objective race: one Slow/Haste/Float Time Mage, one Black Mage, two Rend Knights, two bodyguards.
+    # 044 - Fort Besselat Sluice Gate v3, entry 450.
+    # Lever objective race: 2 Summon Black Mages, 2 lever Knights, 2 battle Samurais, 2 Geomancers.
     e = 450
     active = [0, 1, 2, 3, 4, 5, 6, 7]
-    check("450 active jobs", roster(entd, e, active, 0x0A) == [77, 77, 76, 76, 80, 81, 76, 76])
-    check("450 active levels", roster(entd, e, active, 0x03) == [102, 101, 102, 102, 102, 102, 101, 101])
-    check("450 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 4, 1, 1])
-    check("450 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6, 6, 6])
-    check("450 Brave targets", roster(entd, e, active, 0x06) == [82, 82, 88, 88, 60, 62, 88, 88])
-    check("450 Faith targets", roster(entd, e, active, 0x07) == [45, 45, 42, 42, 84, 80, 42, 42])
+    check("450 v3 active jobs", roster(entd, e, active, 0x0A) == [86, 86, 88, 88, 80, 80, 76, 76])
+    check("450 active levels", roster(entd, e, active, 0x03) == [102, 101, 101, 101, 102, 102, 102, 102])
+    check("450 v3 job buckets", roster(entd, e, active, 0x08) == [12, 12, 14, 14, 8, 8, 14, 14])
+    check("450 active job levels", roster(entd, e, active, 0x09) == [8] * 8)
+    check("450 v3 secondaries", roster(entd, e, active, 0x0B) == [0, 0, 0, 0, 13, 13, 8, 8])
+    check("450 Brave targets", roster(entd, e, active, 0x06) == [82, 82, 88, 88, 60, 60, 88, 88])
+    check("450 Faith targets", roster(entd, e, active, 0x07) == [45, 45, 42, 42, 84, 84, 42, 42])
 
     for slot_no in (0, 1):
-        check(f"450 s{slot_no} Archer R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 469
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"450 s{slot_no} Archer gear",
-              roster(entd, e, [slot_no], 0x12) == [168]
-              and roster(entd, e, [slot_no], 0x13) == [198]
-              and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x15) == [87]
-              and roster(entd, e, [slot_no], 0x16) == [254])
-
-    for slot_no, shield in ((2, 141), (3, 139), (6, 139), (7, 139)):
-        check(f"450 s{slot_no} Knight R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 442
-              and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"450 s{slot_no} Knight gear",
-              roster(entd, e, [slot_no], 0x12) == [154]
-              and roster(entd, e, [slot_no], 0x13) == [182]
-              and roster(entd, e, [slot_no], 0x14) == [218]
+        check(f"450 s{slot_no} Geomancer R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 451
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 487)
+        check(f"450 s{slot_no} Geomancer gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [202]
+              and roster(entd, e, [slot_no], 0x14) == [226]
               and roster(entd, e, [slot_no], 0x15) == [30]
-              and roster(entd, e, [slot_no], 0x16) == [shield])
+              and roster(entd, e, [slot_no], 0x16) == [139])
 
-    check("450 s4 Black Mage R/S/M and gear",
-          field16(entd, e, 4, 0x0C) == 449
-          and field16(entd, e, 4, 0x0E) == 467
-          and field16(entd, e, 4, 0x10) == 486
-          and roster(entd, e, [4], 0x12) == [167]
-          and roster(entd, e, [4], 0x13) == [206]
-          and roster(entd, e, [4], 0x14) == [234]
-          and roster(entd, e, [4], 0x15) == [56]
-          and roster(entd, e, [4], 0x16) == [255])
-    check("450 s5 Time Mage R/S/M and gear",
-          field16(entd, e, 5, 0x0C) == 449
-          and field16(entd, e, 5, 0x0E) == 467
-          and field16(entd, e, 5, 0x10) == 486
-          and roster(entd, e, [5], 0x12) == [167]
-          and roster(entd, e, [5], 0x13) == [206]
-          and roster(entd, e, [5], 0x14) == [234]
-          and roster(entd, e, [5], 0x15) == [64]
-          and roster(entd, e, [5], 0x16) == [255])
+    for slot_no in (6, 7):
+        check(f"450 s{slot_no} lever Knight R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 466
+              and field16(entd, e, slot_no, 0x10) == 487)
+        check(f"450 s{slot_no} lever Knight gear",
+              roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [184]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [82]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+
+    for slot_no in (4, 5):
+        check(f"450 s{slot_no} Summon Black Mage R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 482
+              and field16(entd, e, slot_no, 0x10) == 487)
+        check(f"450 s{slot_no} Summon Black Mage gear",
+              roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [205]
+              and roster(entd, e, [slot_no], 0x14) == [234]
+              and roster(entd, e, [slot_no], 0x15) == [56]
+              and roster(entd, e, [slot_no], 0x16) == [255])
+
+    for slot_no in (2, 3):
+        check(f"450 s{slot_no} battle Samurai R/S/M",
+              field16(entd, e, slot_no, 0x0C) == 427
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 488)
+        check(f"450 s{slot_no} battle Samurai gear",
+              roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [184]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [46]
+              and roster(entd, e, [slot_no], 0x16) == [139])
+
+    check("450 static flags and positions preserved",
+          roster(entd, e, active, 0x18) == [0x90] * 8
+          and [(field(entd, e, s, 0x19), field(entd, e, s, 0x1A)) for s in active]
+          == [(11, 9), (10, 0), (6, 0), (5, 1), (5, 8), (8, 5), (8, 7), (8, 2)])
     check("450 Kaiser Shield spoil preserved", field(entd, e, 2, 0x1E) == 141)
 
     # 045 - Mount Germinas, entry 452.
