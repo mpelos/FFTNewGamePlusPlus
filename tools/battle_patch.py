@@ -1723,19 +1723,17 @@ def poeskas(data):
 
 def limberry_gate(data):
     # Battle 42 - Limberry Castle Gate: the assassin flee-race, opening the no-resupply Limberry chain
-    #   (42 -> 43 -> 44, one loadout). Entry 454 = Celia (job 45) + Lettie (job 46), both eq=254 (fixed
-    #   boss gear, no equip slots) + 4 Reaver (job 150, monster, lvl 254 runtime).
+    #   (42 -> 43 -> 44, one loadout). Entry 454 = Celia (job 45) + Lettie (job 46) + 4 Reavers.
     # WIN SHAPE: fight ends when ONE assassin hits CRITICAL -> they FLEE. Flee => NO drop (no rare here;
     #   the Masamune/Genji reckoning is Elmdor's, at the Keep 048). Same assassins as Roof (433).
-    # CHANGE (faithful, minimal): re-stage at endgame intensity by LEVEL only. eq=254 means no gear to
-    #   set and there is no rare; the flee-trigger + teleport + status/Ultima scripting all live in the
-    #   unit data/AI and are preserved untouched. Assassins 104 (boss-tier chain opener), Reavers 103.
-    #   jl left as-is on the named assassins (their ability set is fixed; bumping jl risks their kit).
+    # v3 keeps the v2 flee race but gives the dual-wield Assassins explicit legal weapons: Celia's job
+    # equips Katana; Lettie's equips Ninja Blades. Their fixed head/body/accessory and all scripting stay
+    # untouched. Low-band rule: Assassins 102, Reavers 101/101/100/100.
     E = 454
-    set_slot(data, E, 0, level=104, brave=92, faith=90)  # Celia - flee-on-critical; fixed gear
-    set_slot(data, E, 1, level=104, brave=92, faith=90)  # Lettie - flee-on-critical; fixed gear
-    for s in (2, 3, 4, 5):           # 4 Reaver demon escort (monsters) - level only
-        set_slot(data, E, s, level=103, brave=88, faith=76)
+    set_slot(data, E, 0, level=102, brave=92, faith=90, rh=MASAMUNE, lh=MASAMUNE)
+    set_slot(data, E, 1, level=102, brave=92, faith=90, rh=KOGA_BLADE, lh=IGA_BLADE)
+    for s, lvl in ((2, 101), (3, 101), (4, 100), (5, 100)):
+        set_slot(data, E, s, level=lvl, brave=88, faith=76)
     return [E]
 
 
