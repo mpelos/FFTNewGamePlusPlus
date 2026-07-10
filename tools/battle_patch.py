@@ -158,6 +158,7 @@ RIBBON = 171         # Tier-S HairAdornment (best headgear) — Zalbaag (053).
 HAIRBAND = 169
 BARRETTE = 170
 NINJA_GEAR = 197
+RUBBER_SUIT = 199
 ENVOUTEMENT = 237
 ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; paid before the gauntlet at Mullonde Nave 052).
 MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; side/relic plan only, not awarded in Lost Halidom 057).
@@ -1692,19 +1693,31 @@ def germinas(data):
 
 
 def poeskas(data):
-    # Battle 41 - Lake Poescas: the all-undead lake (5*), the chapter's lone 5/5* skirmish.
-    # DATA REALITY: every slot is a MONSTER undead (eq=254, no equip slots), NOT human jobs.
-    #   slots 0-3 = "Float, Undead" floaters (jobs 70/63/63/71); slots 4-5 = Revenant family (job 114, Undead).
-    # The doc's "swap one Archer -> Mystic" escalation is MOOT here (no human jobs exist to escalate, and
-    #   changing a monster job would break its undead/reraise innates). The faithful NG+ change is to
-    #   SCALE THE BAND to the endgame curve (101-103) while preserving every undead innate + reraise +
-    #   monster identity. The reraise permakill war + the mixed undead band carry the 5*, not a number spike.
-    # No boss, no rare (per Ch4 overview tiering). Monsters: set LEVEL only; leave job/innates/eq untouched.
+    # Battle 41 - Lake Poescas: all-undead permakill field. Jobs 63/70/71 are special HUMAN undead jobs
+    # with legal equipment categories and innate Float + Undead; only s4/s5 (Revenant 114) are monsters.
+    # v3 completes the four human kits while preserving every main job, position, flag, objective, and
+    # reward payload. Four of six enemies stay at 100-101; only the Mystic/Summoner anchors reach 102.
     E = 453
-    for s, lvl in ((4, 103), (5, 102),     # 2 Revenants - reraising anchors (one 103 anchor)
-                   (0, 102), (3, 102),      # 2 floating-undead
-                   (1, 101), (2, 101)):     # 2 floating-undead
-        set_slot(data, E, s, level=lvl, brave=86, faith=35)
+    set_slot(data, E, 0, level=102, jobrank=generic_job_rank(MIME), joblevel=8, job=70,
+             secondary=GEOMANCY, brave=72, faith=84,
+             reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MV2,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
+    set_slot(data, E, 1, level=101, jobrank=generic_job_rank(MIME), joblevel=8, job=63,
+             secondary=ITEMS, brave=88, faith=70,
+             reaction=REFLEXES, support=THROW_ITEMS, movement=JUMP3,
+             head=THIEFS_CAP, body=POWER_GARB, acc=BRACERS, rh=YOICHI_BOW, lh=LH_TWOHAND)
+    set_slot(data, E, 2, level=100, jobrank=generic_job_rank(CHEMIST), joblevel=8, job=63,
+             secondary=ITEMS, brave=88, faith=70,
+             reaction=REFLEXES, support=THROW_ITEMS, movement=MV3,
+             head=THIEFS_CAP, body=RUBBER_SUIT, acc=FEATHERWEAVE, rh=YOICHI_BOW, lh=LH_TWOHAND)
+    set_slot(data, E, 3, level=102, jobrank=generic_job_rank(SUMMONER), joblevel=8, job=71,
+             secondary=BLACK_MAGICKS, brave=72, faith=84,
+             reaction=REFLEXES, support=SWIFTSPELL, movement=MOVE_MP_UP,
+             head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
+
+    # Monster records: level/Br-Fa only. Preserve equipment-zero shape and every innate monster field.
+    set_slot(data, E, 4, level=101, brave=90, faith=55)
+    set_slot(data, E, 5, level=100, brave=88, faith=55)
     return [E]
 
 

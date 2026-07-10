@@ -40,7 +40,7 @@ structural pressures.
 | 38B | Fort Besselat — North Wall | `043b` | 6 (2 Archer + 2 Dragoon + Summoner + Monk) | ranged/AoE wall approach; no boss | wall | ▃ moderate |
 | 39 | Fort Besselat — Sluice | `044` | 8 (2 Black Mage + 2 lever Knight + 2 Samurai + 2 Geomancer) | six L100; only lever Knights L102; level-regression pending | sluice | ▅ hard |
 | 40 | Mount Germinas | `045` | 6 (2 **Ninja** + 2 Thief + 2 Archer) | band 100-102; only Apex Ninja + primary Archer L102; playtest pending | mountain | ▄ moderate+ |
-| 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | all-undead reraise war; one-disruptor cap | frozen lake | ▅ hard |
+| 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | band 100-102; four complete human-undead kits; playtest pending | frozen lake | ▅ hard |
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | flee-on-critical race; Ultima tradeoff; chain 1/3; no rare | gate | ▃ moderate (race) |
 | 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | parry-race; **Tier-A Masamune + Genji Armor**; chain 2/3 | keep | ▆ harder |
 | 44 | Limberry — Undercroft | `049` | (**Zalera** Lucavi + undead guard) | mass-status Lucavi (constrained); **Tier-A Aegis Shield**; chain 3/3 | undercroft | █ SPIKE |
@@ -88,7 +88,7 @@ The endgame GAUNTLET (49-53) is the defining structural test; flagged as the #1 
 ## Level bands & boss policy
 
 ```text
-Generics: normally 100-103 (endgame-tier). Sluice and Germinas deliberately concentrate most units at
+Generics: normally 100-103 (endgame-tier). Sluice, Germinas, and Poeskas deliberately concentrate most units at
 100-101 and cap their few anchors at 102; their objective/terrain and complete kits carry the pressure.
 Elite/sub-bosses: 103-104 (Samurai, Ultima Demons, Hydra).
 Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletienne, Zalbaag, Dycedarg).
@@ -158,7 +158,7 @@ Bed Desert   (042) : open-desert gun-duel Barich                            -> c
 Besselat Wall(043a/043b) : split melee(S) vs ranged(N) approach            -> pick a route, no boss
 Besselat Slu.(044) : floodgate race; six L100 + two lever Knights L102      -> race the lever or clear first
 Mt Germinas  (045) : four L100-101 + two L102 anchors; Martial Arts       -> climb/intercept; dig the Cloak
-Poeska       (046) : all-undead reraise war + one disruptor                 -> permakill the dead (Holy/PD)
+Poeska       (046) : four L100-101 + Mystic/Summoner L102; all-undead       -> permakill the dead (Holy/PD)
 Limberry Gate(047) : ASSASSIN flee-race + Ultima tradeoff; chain 1/3        -> burst one to critical; no rare
 Limberry Keep(048) : ELMDORE Ark Knight -> Celia/Lettie ULTIMA-DEMON debut; chain 2/3 -> answer parry; Tier-A
 Limberry Und.(049) : ZALERA Lucavi (mass-status, constrained); chain 3/3    -> race the one status source
@@ -256,7 +256,7 @@ No conflicts found on paper.
 ### Level bands & boss kits
 
 ```text
-Consistent. Generics normally 100-103; Sluice/Germinas use low-band 100-102 distributions; elite/
+Consistent. Generics normally 100-103; Sluice/Germinas/Poeskas use low-band 100-102 distributions; elite/
 sub-bosses 103-104; human bosses 104-105; Lucavi 105; FINAL ULTIMA
 106 (the mod's single highest, +6 — one above Ch3's Belias +5, the intended capstone escalation).
 Summons kept MID-TIER with intact charge times; Draw Out (new) race-able; apex monster breath elemental/

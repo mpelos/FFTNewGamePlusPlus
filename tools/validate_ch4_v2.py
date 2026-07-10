@@ -563,23 +563,51 @@ def run() -> int:
           and field(entd, e, 2, 0x1E) == 17)
 
     # 046 - Lake Poescas / Poeskas Lake, entry 453.
-    # All-monster undead roster. Preserve monster jobs/equipment-empty shape; tune only levels and Br/Fa.
+    # v3 all-undead roster: four equipped special human undead jobs + two equipment-less Revenants.
     e = 453
     active = [0, 1, 2, 3, 4, 5]
-    check("453 undead monster jobs", roster(entd, e, active, 0x0A) == [70, 63, 63, 71, 114, 114])
-    check("453 undead monster levels", roster(entd, e, active, 0x03) == [102, 101, 101, 102, 103, 102])
-    check("453 undead monster job levels preserved", roster(entd, e, active, 0x09) == [7, 7, 7, 8, 0, 0])
-    check("453 undead monster Brave targets", roster(entd, e, active, 0x06) == [86, 86, 86, 86, 86, 86])
-    check("453 undead monster Faith targets", roster(entd, e, active, 0x07) == [35, 35, 35, 35, 35, 35])
+    check("453 undead jobs", roster(entd, e, active, 0x0A) == [70, 63, 63, 71, 114, 114])
+    check("453 v3 levels", roster(entd, e, active, 0x03) == [102, 101, 100, 102, 101, 100])
+    check("453 v3 job buckets", roster(entd, e, active, 0x08) == [19, 19, 1, 8, 0, 0])
+    check("453 v3 job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 0, 0])
+    check("453 v3 secondaries", roster(entd, e, active, 0x0B) == [17, 6, 6, 11, 0, 0])
+    check("453 Brave targets", roster(entd, e, active, 0x06) == [72, 88, 88, 72, 90, 88])
+    check("453 Faith targets", roster(entd, e, active, 0x07) == [84, 70, 70, 84, 55, 55])
     check("453 active flags preserved", roster(entd, e, active, 0x01) == [0x80, 0x80, 0x80, 0x40, 0x20, 0x20])
     check("453 unit ids preserved", roster(entd, e, active, 0x20) == [0x80, 0x81, 0x82, 0x83, 0x84, 0x85])
-    for slot_no in (0, 1, 2, 3):
-        check(f"453 s{slot_no} floater equipment empty",
-              roster(entd, e, [slot_no], 0x12) == [254]
-              and roster(entd, e, [slot_no], 0x13) == [254]
-              and roster(entd, e, [slot_no], 0x14) == [254]
-              and roster(entd, e, [slot_no], 0x15) == [254]
+    check("453 control flags and positions preserved",
+          roster(entd, e, active, 0x18) == [0x90] * 6
+          and [(field(entd, e, s, 0x19), field(entd, e, s, 0x1A)) for s in active]
+          == [(6, 9), (8, 11), (6, 11), (9, 6), (0, 2), (10, 3)])
+
+    check("453 s0 Mystic kit",
+          field16(entd, e, 0, 0x0C) == 445
+          and field16(entd, e, 0, 0x0E) == 467
+          and field16(entd, e, 0, 0x10) == 487
+          and roster(entd, e, [0], 0x12) == [167]
+          and roster(entd, e, [0], 0x13) == [202]
+          and roster(entd, e, [0], 0x14) == [217]
+          and roster(entd, e, [0], 0x15) == [56]
+          and roster(entd, e, [0], 0x16) == [255])
+    for slot_no, body, acc, movement in ((1, 195, 218, 491), (2, 199, 234, 488)):
+        check(f"453 s{slot_no} undead Archer kit",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 474
+              and field16(entd, e, slot_no, 0x10) == movement
+              and roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [body]
+              and roster(entd, e, [slot_no], 0x14) == [acc]
+              and roster(entd, e, [slot_no], 0x15) == [90]
               and roster(entd, e, [slot_no], 0x16) == [254])
+    check("453 s3 Summoner kit",
+          field16(entd, e, 3, 0x0C) == 449
+          and field16(entd, e, 3, 0x0E) == 482
+          and field16(entd, e, 3, 0x10) == 494
+          and roster(entd, e, [3], 0x12) == [167]
+          and roster(entd, e, [3], 0x13) == [205]
+          and roster(entd, e, [3], 0x14) == [217]
+          and roster(entd, e, [3], 0x15) == [56]
+          and roster(entd, e, [3], 0x16) == [255])
     for slot_no in (4, 5):
         check(f"453 s{slot_no} Revenant equipment empty",
               roster(entd, e, [slot_no], 0x12) == [0]

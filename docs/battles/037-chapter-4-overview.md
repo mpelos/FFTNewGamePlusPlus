@@ -50,7 +50,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `043b` | 38B | Fort Besselat North Wall / Bethla | Wall assault (North path) | ranged/AoE vertical wall; route-parity Yoichi/Perseus reward | ✅ Done |
 | `044` | 39 | Fort Besselat Sluice / Bethla Sluice | The floodgate; pull levers (open the gate) | v3 kits approved; six enemies retuned to 100, lever Knights stay 102 | 🧪 Retest |
 | `045` | 40 | Mount Germinas / Germinas Peak | Climb; buried Invisibility Cloak | 4/5★ v3: 2 Ninja + 2 Thief + 2 Archer; playtest pending | 🧪 Test |
-| `046` | 41 | Lake Poescas / Poeskas Lake | All-undead lake (5★) | reraise permakill war; +Dark-heal Mystic; PD/Holy answer; no rare | ✅ Done |
+| `046` | 41 | Lake Poescas / Poeskas Lake | All-undead lake (5★) | v3 complete undead shell; Mystic/Summoner anchors; playtest pending | 🧪 Test |
 | `047` | 42 | Limberry Castle Gate | **Celia & Lettie** (Assassins; flee on critical) | 5★ assassin flee-race + Ultima/status-immunity tradeoff; chain 1/3; no rare | ✅ Done |
 | `048` | 43 | Limberry Castle Keep | **Elmdor** (dies); Celia/Lettie → Ultima Demons | Shirahadori parry-puzzle race; **Masamune + Genji Armor** (Tier A); chain 2/3 | ✅ Done |
 | `049` | 44 | Limberry Undercroft | **Zalera** (3rd Lucavi) + undead guard | mass-status Lucavi (constrained); **Aegis Shield** (Tier A); chain 3/3 | ✅ Done |
@@ -193,7 +193,7 @@ Ultima `106` (the single highest band in the game).
 | Bethla North Wall (38B) | Ranged/AoE wall assault | 101-102 | Summoner + 2 Dragoon Jump pressure |
 | Bethla Sluice (39) | Floodgate objective | 100–102 | lever puzzle under casters; only lever Knights at 102 |
 | Germinas (40) | Vertical skirmish | 100–102 | 2 Ninja/2 Thief climb; only 2 anchors at 102; buried loot |
-| Poeskas Lake (41) | Undead lake | 100–103 | high undead + reraise |
+| Poeskas Lake (41) | Undead lake | 100–102 | four L100-101; only Mystic/Summoner L102; reraise |
 | Limberry Gate (42) | Assassins-as-demons | adds 103, bosses 104 | Celia/Lettie Ultima Demons; chain 1/3 |
 | Limberry Keep (43) | **Elmdor → demon** | boss 104→demon 105 | **Masamune + Genji (Tier A)**; chain 2/3 |
 | Limberry Undercroft (44) | **Zalera** Lucavi | Lucavi 105, adds 103 | 3rd Lucavi spike; **rare**; chain 3/3 |
