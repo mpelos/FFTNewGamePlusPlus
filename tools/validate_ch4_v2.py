@@ -362,7 +362,7 @@ def run() -> int:
     active = [0, 1, 2, 3, 4, 5]
     check("449 North v3 active jobs", roster(entd, e, active, 0x0A) == [76, 86, 86, 80, 82, 76])
     check("449 North v3 active levels", roster(entd, e, active, 0x03) == [102, 102, 101, 101, 102, 102])
-    check("449 North v3 job buckets", roster(entd, e, active, 0x08) == [2, 12, 12, 6, 8, 4])
+    check("449 North v3 job buckets", roster(entd, e, active, 0x08) == [4, 12, 12, 6, 8, 4])
     check("449 North v3 job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 0, 8, 8])
     check("449 North v3 secondaries", roster(entd, e, active, 0x0B) == [0x21, 0, 0, 0, 12, 9])
     check("449 North v3 Brave targets", roster(entd, e, active, 0x06) == [88, 86, 86, 62, 60, 88])
@@ -379,15 +379,15 @@ def run() -> int:
           and roster(entd, e, [0], 0x16) == [139])
 
     for slot_no in (1, 2):
-        check(f"449 s{slot_no} Geomancer armor kit",
+        check(f"449 s{slot_no} Geomancer MA kit",
               field16(entd, e, slot_no, 0x0C) == 437
-              and field16(entd, e, slot_no, 0x0E) == 454
+              and field16(entd, e, slot_no, 0x0E) == 467
               and field16(entd, e, slot_no, 0x10) == 487
-              and roster(entd, e, [slot_no], 0x12) == [154]
-              and roster(entd, e, [slot_no], 0x13) == [182]
-              and roster(entd, e, [slot_no], 0x14) == [217]
+              and roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [202]
+              and roster(entd, e, [slot_no], 0x14) == [226]
               and roster(entd, e, [slot_no], 0x15) == [30]
-              and roster(entd, e, [slot_no], 0x16) == [139])
+              and roster(entd, e, [slot_no], 0x16) == [136])
 
     check("449 s3 Black Mage shooter kit",
           field16(entd, e, 3, 0x0C) == 449
@@ -398,6 +398,9 @@ def run() -> int:
           and roster(entd, e, [3], 0x14) == [217]
           and roster(entd, e, [3], 0x15) == [75]
           and roster(entd, e, [3], 0x16) == [254])
+    check("449 s0/s3 position swap preserves talk slot",
+          (field(entd, e, 0, 0x19), field(entd, e, 0, 0x1A),
+           field(entd, e, 3, 0x19), field(entd, e, 3, 0x1A)) == (7, 4, 9, 7))
     check("449 s4 Summoner Time Magic kit",
           field16(entd, e, 4, 0x0C) == 446
           and field16(entd, e, 4, 0x0E) == 482
@@ -410,7 +413,7 @@ def run() -> int:
     check("449 s5 Knight Martial Arts kit",
           field16(entd, e, 5, 0x0C) == 453
           and field16(entd, e, 5, 0x0E) == 477
-          and field16(entd, e, 5, 0x10) == 487
+          and field16(entd, e, 5, 0x10) == 488
           and roster(entd, e, [5], 0x12) == [154]
           and roster(entd, e, [5], 0x13) == [182]
           and roster(entd, e, [5], 0x14) == [218]

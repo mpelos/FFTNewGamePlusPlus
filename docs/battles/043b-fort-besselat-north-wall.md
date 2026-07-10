@@ -19,9 +19,9 @@ Current implementation (entry 449, vanilla-dump verified):
 - s5 Monk L102 — bare-fist, Power Garb/Bracers.
 - No boss / no named boss rare; low Ch4 band (101-102). Map treasure (other layer) untouched.
 
-Planned v3 redesign (docs-only in this pass): keep the North ranged/AoE wall identity, but convert the
-two local Lancer/Dragoon slots into Geomancer-bucket terrain fighters. The route still asks the player
-to climb through ranged pressure toward the Summoner, but the former Jump threat becomes armor-backed
+Implemented v3 redesign: keep the North ranged/AoE wall identity, but convert the two local
+Lancer/Dragoon slots into offensive Geomancer-bucket terrain fighters. The route still asks the player
+to climb through ranged pressure toward the Summoner, but the former Jump threat becomes Magic-boosted
 Geomancy pressure across the wall geometry.
 
 ## Design Goal
@@ -143,16 +143,16 @@ Keep the local enemy count and the boss-less wall-skirmish feel. No `103`+ spike
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
 | n | Summoner | Summoner | `102` | `60/84` | Wide-area summon — priority kill; reaches you from start. |
-| n | Geomancer | Geomancer bucket | `102` | `86/40` | Former Lancer/Dragoon; armored Geomancy pressure on the ledges. |
+| n | Geomancer | Geomancer bucket | `102` | `86/40` | Former Lancer/Dragoon; Magic Attack Boost Geomancy pressure on the ledges. |
 | n | Geomancer | Geomancer bucket | `101` | `86/40` | Second former Lancer/Dragoon; mirrors terrain pressure. |
-| n | Knight | Knight, former Monk slot | `102` | `88/40` | Dual Rune Blade bruiser with Martial Arts secondary. |
-| n | Knight Leader | Holy Knight bucket, if possible | `102` | `88/42` | Former far/high Archer Leader; Defender + Crystal Shield anchor. |
+| n | Knight | Monk bucket, former Monk slot | `102` | `88/40` | Dual Rune Blade bruiser with Martial Arts secondary. |
+| n | Knight Leader | Monk bucket | `102` | `88/42` | Former far/high Archer Leader; Defender + Crystal Shield anchor. |
 | n | Near-side Black Mage shooter | Black Mage bucket | `101` | `62/84` | Former closer Archer; Blaze Gun pressure near the player approach. |
 
 Reasoning:
 
 North remains a ranged/AoE wall problem. The player must prioritize the Summoner, endure Geomancy from
-two armored former Lancer/Dragoon slots, and handle a far/high Knight Leader plus a near-side Black Mage
+two Magic-boosted former Lancer/Dragoon slots, and handle a far/high Knight Leader plus a near-side Black Mage
 shooter and dual-wield Knight while climbing narrow terrain. The second former Lancer/Dragoon slot is a
 local-data correction, not an added unit.
 
@@ -178,10 +178,11 @@ Forbidden: instant summons, Stop/Don't Act engines, unrelated hard status.
 Job bucket: Geomancer   JobLevel: 8
 Secondary: None
 Reaction: Nature's Wrath
-Support: Equip Armor
+Support: Magic Attack Boost
 Movement: Movement +2
 Right hand: Rune Blade
-Head: Crystal Helm   Body: Crystal Mail   Accessory: Magepower Glove
+Left hand: Aegis Shield
+Head: Lambent Hat   Body: Wizard's Robe   Accessory: Japa Mala
 ```
 
 ### Knight (former Monk slot, Lv 102)
@@ -192,7 +193,7 @@ Role/job: Knight, if implementation supports the requested Monk-bucket former-Mo
 Secondary: Martial Arts
 Reaction: First Strike
 Support: Dual Wield
-Movement: Movement +2
+Movement: Movement +3
 Right hand: Rune Blade   Left hand: Rune Blade
 Head: Crystal Helm   Body: Crystal Mail   Accessory: Bracers
 ```
@@ -200,7 +201,7 @@ Head: Crystal Helm   Body: Crystal Mail   Accessory: Bracers
 ### Knight Leader (former far/high Archer Leader slot, Lv 102)
 
 ```text
-Job bucket: Holy Knight, if possible   JobLevel: 8
+Job bucket: Monk   JobLevel: 8
 Secondary: Holy Knight, if possible
 Reaction: Counter (442)
 Support: Attack Boost (465)
@@ -212,8 +213,8 @@ Head: Crystal Helm   Body: Crystal Mail   Accessory: Bracers
 Implementation note:
 
 ```text
-If Holy Knight cannot be assigned cleanly for this generic slot, preserve the role as a Knight Leader:
-Defender + Crystal Shield anchor, Counter, Attack Boost, Movement +3, and no Rend wall plan.
+Keep the talk-trigger slot as the Knight Leader, but seed Monk Lv8 as the job bucket so the fallback
+learned ability economy matches the North/South martial-pressure plan.
 ```
 
 Role: copied from South Wall's Knight Leader and assigned to the Archer Leader that starts farthest/highest.
@@ -267,12 +268,13 @@ terrain pressure.
 - [ ] Keep objective = "Defeat all enemies" + the vertical wall / narrow-path geometry.
 - [ ] Keep Summoner charge times intact and rushable.
 - [ ] Former Lancer/Dragoon slots become Geomancer JobLevel 8 units with no secondary, Nature's Wrath,
-  Equip Armor, Movement +2.
+  Magic Attack Boost, Movement +2, Lambent Hat, Wizard's Robe, Japa Mala, Rune Blade, and Aegis Shield.
 - [ ] Former Monk slot becomes the requested Knight bruiser with Monk JobLevel 8 bucket note, Martial Arts,
-  First Strike, Dual Wield, Movement +2, and dual Rune Blades.
+  First Strike, Dual Wield, Movement +3, and dual Rune Blades.
 - [ ] Replace only the Archer closer to the player with a Black Mage shooter copied from South Wall's
   shooter model, using Blaze Gun.
-- [ ] Replace the farther/higher Archer Leader with a Knight Leader copied from South Wall's Knight Leader.
+- [ ] Replace the farther/higher Archer Leader with a Knight Leader that keeps the talk-trigger slot,
+  uses Monk JobLevel 8 bucket, and carries Defender + Crystal Shield.
 - [ ] Give every active human complete equipment plus secondary/reaction/support/movement.
 - [ ] Preserve guaranteed spoils: Yoichi Bow + Perseus Bow on this branch.
 - [ ] Set levels in the low Ch4 band (`101`-`102`, no `103`); JobLevel `8` on all active slots.

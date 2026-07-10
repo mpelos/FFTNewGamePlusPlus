@@ -1578,19 +1578,23 @@ def besselat_wall(data):
              head=BARRETTE, body=POWER_GARB, acc=BRACERS, rh=LH_EMPTY, lh=LH_EMPTY)
     # --- North Wall (449) — ranged/AoE v3 ---
     N = 449
-    set_slot(data, N, 0, level=102, joblevel=8, job=KNIGHT, secondary=HOLY_SWORD_AGRIAS,
+    set_slot(data, N, 0, level=102, jobrank=generic_job_rank(MONK), joblevel=8,
+             job=KNIGHT, secondary=HOLY_SWORD_AGRIAS,
              brave=88, faith=42,
              reaction=COUNTER, support=ATK_BOOST, movement=MV3,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=DEFENDER, lh=CRYSTAL_SHIELD)
     for s, lvl in ((1, 102), (2, 101)):
         set_slot(data, N, s, level=lvl, joblevel=8, job=GEOMANCER, secondary=0,
                  brave=86, faith=40,
-                 reaction=NATURES_WRATH, support=EQUIP_HEAVY_ARMOR, movement=MV2,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=MAGEPOWER_GLOVES, rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
+                 reaction=NATURES_WRATH, support=MAGICK_BOOST, movement=MV2,
+                 head=MAGE_HAT, body=WIZARD_ROBE, acc=GEMS_108, rh=RUNEBLADE, lh=AEGIS_SHIELD)
     set_slot(data, N, 3, level=101, joblevel=0, job=BMAGE, secondary=0,
              brave=62, faith=84,
              reaction=REFLEXES, support=EQUIP_GUNS, movement=TELEPORT,
              head=MAGE_HAT, body=WIZARD_ROBE, acc=MAGEPOWER_GLOVES, rh=BLAZE_GUN, lh=LH_TWOHAND)
+    # Keep the talk-trigger Knight in s0, but swap its battlefield position with the BMage shooter.
+    set_position(data, N, 0, x=7, y=4)
+    set_position(data, N, 3, x=9, y=7)
     set_slot(data, N, 4, level=102, joblevel=8, job=SUMMONER, secondary=TIME_MAGICKS,
              brave=60, faith=84,
              reaction=SOULBIND, support=SWIFTSPELL, movement=MV2,
@@ -1598,7 +1602,7 @@ def besselat_wall(data):
     set_slot(data, N, 5, level=102, jobrank=generic_job_rank(MONK), joblevel=8,
              job=KNIGHT, secondary=MARTIAL_ARTS,
              brave=88, faith=40,
-             reaction=FIRST_STRIKE, support=DUAL_WIELD, movement=MV2,
+             reaction=FIRST_STRIKE, support=DUAL_WIELD, movement=MV3,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=RUNEBLADE)
     return [S, N]
 
