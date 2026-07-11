@@ -1,6 +1,6 @@
 # 049 - Limberry Castle Undercroft
 
-Status: 📝 v3 planned (docs-only) — v1 implementation remains in entry 457
+Status: 🧪 v3 implemented — direct in-game playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 44 (Limberry chain 3 of 3 — NO resupply across 42→43→44)
 Target version: Enhanced v1.5.0
@@ -14,22 +14,26 @@ File: `battle_entd4_ent.bin`
 ## Current Implementation / Data Reality
 
 ```text
-DATA REALITY (verified from current embedded entd4 dump, entry 457):
+CURRENT V3 IMPLEMENTATION (verified from embedded entd4 dump, entry 457):
   slot 0 = Elmdor cameo/script record
            job 27, level 43, JobLevel 8, eq=255 no gear.
            Preserve until in-game testing proves whether he is active; do not treat as a reward carrier.
 
   slot 1 = Zalera / Death Seraph
-           job 62, level 105, JobLevel 8, secondary 108, eq=255 no normal equipment.
+           job 62, level 102, JobLevel 8, secondary 108, eq=255 no normal equipment.
            Spoils byte = 0x88 (Aegis Shield).
 
-  slots 2,3 = job 61 undead knight-like monster/fixed bodies
-              type=monster, level 103, JobLevel 8, eq=254 fixed/no normal gear.
-              slot 2 spoils byte = 0x41 (Zeus Mace).
+  slots 2,3 = Archaeodaemon, job 153, level 100, JobLevel 8.
+              Innate monster equipment/ability shape preserved; no human equipment.
+              Slot 2 retains spoils byte 0x41 (Zeus Mace).
 
-  slots 4,5,6 = active skeleton-family undead monsters observed in game
-                jobs 111/110/109: one Skeletal Fiend, one Bonesnatch, and one Skeleton.
-                Current level 103; no normal human equipment setup.
+  slot 4 = Undead Mystic, job 70, level 101, Mime bucket L8.
+           Geomancy / Mana Shield / Magic Attack Boost / Movement +2.
+           Wizard's Rod, Lambent Hat, Black Robe, Magepower Glove.
+
+  slots 5,6 = Undead Knight, job 61, level 101, Monk bucket L8.
+              Martial Arts / Counter / Dual Wield / Movement +3.
+              Dual Rune Blades, Crystal Helm, Crystal Mail, Bracers.
 
   slots 8,9 = duplicate job-111 records visible in the raw ENTD dump, but not active in the observed
               battle. Preserve as inactive/script records until their gating is understood.
@@ -39,22 +43,21 @@ DATA REALITY (verified from current embedded entd4 dump, entry 457):
            Public battle shape has no active guest. Treat this as a join/post-battle record unless
            playtest proves it is active; if active, NG++ guest-control rule applies immediately.
 
-Current v1 implementation:
-  Zalera = 105
-  active undead guard = 103 (2 Undead Knights + 1 Skeletal Fiend + 1 Bonesnatch + 1 Skeleton)
-  Win condition, Zalera mass-status identity, undead/reraise identity, slot 0 cameo, and slot 7 join
-  record are preserved.
+Preserved v3 data:
+  Win condition and Zalera mass-status identity.
+  Original control flags, positions, UnitIDs, reward bytes, slot 0 cameo, and slot 7 join record.
+  Inactive raw slots 8/9 remain byte-identical.
 ```
 
-Planned v3 redesign (docs-only in this pass): replace the active s2-s6 guard with two Archaeodaemons,
+Implemented v3 redesign: replace the active s2-s6 guard with two Archaeodaemons,
 one Undead Mystic copied from Lake Poescas, and two Undead Knights. The Knights move from s2/s3 to
 s5/s6 and copy the Martial Arts Knight build from Fort Besselat North Wall with Counter replacing
 First Strike. Zalera remains s1 and the sole headline mass-status engine.
 The player should resist/cleanse Zalera's curses, manage the dead, and focus the Death Seraph before the
 end of the Limberry chain collapses into item/status debt.
 
-> Data-layer fields are known for entry 457, but final implementation still needs a fresh dump/diff and
-> in-game verification of slot 0 and slot 7 behavior. This pass updates documentation only.
+> The embedded ENTD is implemented and mechanically validated. Direct playtest must still verify the
+> special-job equipment, innate Undead behavior, active roster, slot 0/7 behavior, and boss cadence.
 > LIMBERRY CHAIN: 42 (`047`) → 43 (`048`) → 44 (`049`), one loadout.
 
 ## Design Goal
@@ -128,22 +131,22 @@ For New Game++ the identity must stay: **resist, cleanse, permakill selectively,
 ## Local Data Confirmed / Data Still Needed
 
 ```text
-CONFIRMED:
+V3 IMPLEMENTATION CONFIRMED:
 - Entry 457 is the playable Limberry Undercroft battle data.
-- Slot 1 is Zalera, level 105, no normal equipment, reward payload Aegis Shield.
-- Slot 2 carries Zeus Mace as reward payload.
-- Slots 2/3 use job `61`, the Undead Knight job with innate Undead and Arts of War. Their current ENTD
-  records use monster-type/fixed-equipment flags; v3 plans explicit human-style ability and gear fields,
-  which must be verified in game when implementation begins.
-- Direct in-game observation confirms exactly three active skeleton-family enemies: slot 4 Skeletal
-  Fiend (job 111), slot 5 Bonesnatch (job 110), and slot 6 Skeleton (job 109).
+- Slot 1 is Zalera, level 102, no normal equipment, reward payload Aegis Shield.
+- Slots 2/3 are Archaeodaemons job `153`, level 100, with innate monster kits and no equipment.
+- Slot 2 retains Zeus Mace as reward payload after the job swap.
+- Slot 4 copies the Lake Poescas Undead Mystic build with Black Robe at level 101.
+- Slots 5/6 are job `61` Undead Knights with the adapted North Wall build at level 101.
 - Slots 8/9 are duplicate job-111 records in the raw dump but do not appear in the observed battle;
-  they are not part of the v3 active composition.
+  the patch leaves them byte-identical and outside the v3 active composition.
 - Slot 7 is a Meliadoul join/post-battle record in the data and should not be used as a guest-AI check.
 - No active guest is expected from the public battle shape.
 - Reward ledger maps this battle to Aegis Shield + Zeus Mace guaranteed spoils.
+- The patch changes only entry 457; positions, control flags, UnitIDs, objective/event data, and rewards
+  are preserved. Sprite-sheet delta is `+0`.
 
-STILL NEEDED FOR V3 IMPLEMENTATION:
+STILL NEEDED IN GAME:
 - In-game verify whether slot 0 Elmdor and slot 7 Meliadoul are active, hidden, or join/script records.
 - If slot 7 is active, set player control per global guest rule.
 - Confirm job `61` preserves innate Undead while accepting the copied Monk job bucket, abilities, and
@@ -151,8 +154,7 @@ STILL NEEDED FOR V3 IMPLEMENTATION:
 - Confirm s2/s3 accept Archaeodaemon job `153` with the innate monster kit and no human equipment.
 - Confirm s4 accepts the Lake Poescas Undead Mystic job `70`, innate Float + Undead, and its complete
   copied caster build.
-- Confirm the formation/event gating that keeps duplicate slots 8/9 inactive, and do not accidentally
-  activate them during the v3 patch.
+- Confirm duplicate slots 8/9 remain inactive.
 - Confirm Zalera's status cadence allows cleanse/resist windows and does not chain-lock the party.
 - Confirm undead/reraise behavior and Phoenix Down/Holy/Seal Evil answers.
 - Confirm the map has or can preserve a boss-focus lane through the dense undead screen.
@@ -394,24 +396,24 @@ is never a guest-AI skill check.
 
 ## Implementation Checklist
 
-- [ ] Re-dump entry 457 and verify slot order, levels, spoils bytes, and slot 7 behavior.
-- [ ] Preserve win condition: defeating Zalera ends the fight.
-- [ ] Set exact active composition: s1 Zalera; s2/s3 Archaeodaemon; s4 Undead Mystic; s5/s6 Undead Knight.
-- [ ] Set Zalera to `102`; Mystic and both Knights to `101`; both Archaeodaemons to `100`.
-- [ ] Copy Lake Poescas s0 Undead Mystic build to s4, lowering only its level from `102` to `101`.
-- [ ] Move the two Undead Knight builds from s2/s3 to s5/s6 without changing their job-61 identity.
-- [ ] Keep duplicate job-111 slots 8/9 inactive.
-- [ ] Keep slots 5/6 as job `61` Undead Knights with innate Undead and Arts of War primary.
-- [ ] Adapt the North Wall Martial Arts Knight build to both: Monk bucket/JobLevel 8, Martial Arts,
+- [x] Re-dump entry 457 and verify slot order, levels, spoils bytes, and slot 7 record bytes.
+- [x] Preserve win condition data: defeating Zalera ends the fight; no event/script patch.
+- [x] Set exact active composition: s1 Zalera; s2/s3 Archaeodaemon; s4 Undead Mystic; s5/s6 Undead Knight.
+- [x] Set Zalera to `102`; Mystic and both Knights to `101`; both Archaeodaemons to `100`.
+- [x] Copy Lake Poescas s0 Undead Mystic build to s4, lowering only its level from `102` to `101`.
+- [x] Move the two Undead Knight identities from s2/s3 to s5/s6.
+- [x] Preserve duplicate job-111 slots 8/9 byte-identically; verify they remain inactive in game.
+- [x] Keep slots 5/6 as job `61` Undead Knights with Arts of War primary.
+- [x] Adapt the North Wall Martial Arts Knight build to both: Monk bucket/JobLevel 8, Martial Arts,
   Counter, Dual Wield, Movement +3, dual Rune Blades, Crystal Helm, Crystal Mail, and Bracers.
 - [ ] Verify explicit abilities/equipment work on the job-61 monster-type records without removing Undead.
-- [ ] Preserve Zalera as the single mass-status source; no hard-lock cadence.
-- [ ] Preserve undead/reraise identity and Phoenix Down/Holy/Seal Evil answers.
-- [ ] Preserve or create at least one boss-focus lane through the undead screen.
-- [ ] Do not fake-equip Aegis Shield or Zeus Mace on no-equip/fixed slots.
-- [ ] Author/verify spoils: Aegis Shield + Zeus Mace, guaranteed and within the 3-item cap.
+- [x] Preserve Zalera's original mass-status kit; verify no hard-lock cadence in game.
+- [x] Preserve innate undead/reraise jobs; verify Phoenix Down/Holy/Seal Evil answers in game.
+- [x] Preserve original positions and boss-focus routes; verify their practical accessibility in game.
+- [x] Do not fake-equip Aegis Shield or Zeus Mace on no-equip/fixed slots.
+- [x] Preserve spoils: Aegis Shield + Zeus Mace, guaranteed and within the 3-item cap.
 - [ ] Verify slot 7 Meliadoul is not active; if active, make her player-controlled and update this doc.
-- [ ] Preserve buried map treasure as map treasure.
+- [x] Preserve buried map treasure by leaving map/event data untouched.
 - [ ] Test as Limberry chain 3/3 with resources carried from `047` and `048`.
 
 ## Test Questions

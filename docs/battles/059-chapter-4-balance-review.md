@@ -43,7 +43,7 @@ structural pressures.
 | 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | band 100-102; four complete human-undead kits; playtest pending | frozen lake | ▅ hard |
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | band 100-102; dual Masamune vs Koga/Iga flee-race; playtest pending | gate | ▃ moderate (race) |
 | 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | band 100-102; Chirijiraden + armed Assassin parry-race; playtest pending | keep | ▆ harder |
-| 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Martial Arts Undead Knights) | v3 docs-only; 6 enemies; band 100-102; **Tier-A Aegis Shield**; chain 3/3 | undercroft | ▆ harder |
+| 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Martial Arts Undead Knights) | v3 implemented; 6 enemies; band 100-102; **Tier-A Aegis Shield**; playtest pending | undercroft | ▆ harder |
 | 45 | Eagrose Castle | `050` | P1 5 Knight stair-wall → P2 **Dycedarg→Adrammelech** | 2-phase brother Lucavi; Rend cap 2/5; **Tier-A Grand Helm** | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | hidden-healer caster screen; split deploy; chain 1/3; no rare | cathedral ext | ▃ moderate |
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | triple-Templar equip-break race; **Tier-S Chaos Blade + Escutcheon + Lordly Robe**; chain 2/3 | nave | ▅ hard |

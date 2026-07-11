@@ -689,10 +689,10 @@ def run() -> int:
     check("456 Masamune/Genji/Chirijiraden spoils preserved",
           roster(entd, e, active, 0x1E) == [46, 183, 47, 0, 0])
 
-    # 049 - Limberry Castle Undercroft, entry 457.
-    # Zalera status-Lucavi plus dense undead screen. Preserve Elmdor placeholder and Meliadoul join data.
+    # 049 - Limberry Castle Undercroft v3, entry 457.
+    # Six active slots: Zalera + 2 Archaeodaemon + Undead Mystic + 2 Undead Knights.
     e = 457
-    active = [1, 2, 3, 4, 5, 6, 8, 9]
+    active = [1, 2, 3, 4, 5, 6]
     check("457 placeholder Elmdor preserved",
           field(entd, e, 0, 0x03) == 43
           and field(entd, e, 0, 0x0A) == 27
@@ -705,11 +705,19 @@ def run() -> int:
           and roster(entd, e, [7], 0x14) == [213]
           and roster(entd, e, [7], 0x15) == [34]
           and roster(entd, e, [7], 0x16) == [136])
-    check("457 active jobs", roster(entd, e, active, 0x0A) == [62, 61, 61, 111, 110, 109, 111, 111])
-    check("457 active levels", roster(entd, e, active, 0x03) == [105, 103, 103, 103, 103, 103, 103, 103])
-    check("457 active job levels preserved", roster(entd, e, active, 0x09) == [8, 8, 8, 0, 0, 0, 0, 0])
-    check("457 Brave targets", roster(entd, e, active, 0x06) == [92, 86, 86, 86, 86, 86, 86, 86])
-    check("457 Faith targets", roster(entd, e, active, 0x07) == [86, 35, 35, 35, 35, 35, 35, 35])
+    check("457 active identity bytes", roster(entd, e, active, 0x00) == [62, 130, 130, 70, 61, 61])
+    check("457 active jobs", roster(entd, e, active, 0x0A) == [62, 153, 153, 70, 61, 61])
+    check("457 active levels", roster(entd, e, active, 0x03) == [102, 100, 100, 101, 101, 101])
+    check("457 v3 job buckets", roster(entd, e, active, 0x08) == [0, 0, 0, 19, 4, 4])
+    check("457 v3 job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
+    check("457 v3 secondaries", roster(entd, e, active, 0x0B) == [108, 0, 0, 17, 9, 9])
+    check("457 Brave targets", roster(entd, e, active, 0x06) == [92, 88, 88, 72, 88, 88])
+    check("457 Faith targets", roster(entd, e, active, 0x07) == [86, 76, 76, 84, 40, 40])
+    check("457 control flags and positions preserved",
+          roster(entd, e, active, 0x18) == [0xD4, 0xD0, 0xD0, 0xD0, 0xD0, 0xD0]
+          and [(field(entd, e, s, 0x19), field(entd, e, s, 0x1A)) for s in active]
+          == [(2, 15), (4, 3), (1, 3), (4, 1), (4, 14), (1, 14)]
+          and roster(entd, e, active, 0x20) == [0x3E, 0x80, 0x81, 0x82, 0x83, 0x84])
     check("457 Zalera no-equipment shape",
           roster(entd, e, [1], 0x12) == [255]
           and roster(entd, e, [1], 0x13) == [255]
@@ -717,19 +725,38 @@ def run() -> int:
           and roster(entd, e, [1], 0x15) == [255]
           and roster(entd, e, [1], 0x16) == [255])
     for slot_no in (2, 3):
-        check(f"457 s{slot_no} undead fixed body shape",
-              roster(entd, e, [slot_no], 0x12) == [254]
-              and roster(entd, e, [slot_no], 0x13) == [254]
-              and roster(entd, e, [slot_no], 0x14) == [254]
-              and roster(entd, e, [slot_no], 0x15) == [254]
-              and roster(entd, e, [slot_no], 0x16) == [254])
-    for slot_no in (4, 5, 6, 8, 9):
-        check(f"457 s{slot_no} skeleton-family no-equipment shape",
-              roster(entd, e, [slot_no], 0x12) == [0]
+        check(f"457 s{slot_no} Archaeodaemon innate kit",
+              field16(entd, e, slot_no, 0x0C) == 510
+              and field16(entd, e, slot_no, 0x0E) == 510
+              and field16(entd, e, slot_no, 0x10) == 510
+              and roster(entd, e, [slot_no], 0x12) == [0]
               and roster(entd, e, [slot_no], 0x13) == [0]
               and roster(entd, e, [slot_no], 0x14) == [0]
               and roster(entd, e, [slot_no], 0x15) == [0]
               and roster(entd, e, [slot_no], 0x16) == [0])
+    check("457 s4 Undead Mystic kit",
+          field16(entd, e, 4, 0x0C) == 445
+          and field16(entd, e, 4, 0x0E) == 467
+          and field16(entd, e, 4, 0x10) == 487
+          and roster(entd, e, [4], 0x12) == [167]
+          and roster(entd, e, [4], 0x13) == [205]
+          and roster(entd, e, [4], 0x14) == [217]
+          and roster(entd, e, [4], 0x15) == [56]
+          and roster(entd, e, [4], 0x16) == [255])
+    for slot_no in (5, 6):
+        check(f"457 s{slot_no} Undead Knight kit",
+              field16(entd, e, slot_no, 0x0C) == 442
+              and field16(entd, e, slot_no, 0x0E) == 477
+              and field16(entd, e, slot_no, 0x10) == 488
+              and roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [30])
+    check("457 inactive raw records preserved",
+          roster(entd, e, [8, 9], 0x0A) == [111, 111]
+          and roster(entd, e, [8, 9], 0x03) == [103, 103]
+          and roster(entd, e, [8, 9], 0x20) == [0x85, 0x86])
     check("457 Aegis/Zeus spoils preserved",
           field(entd, e, 1, 0x1E) == 136
           and field(entd, e, 2, 0x1E) == 65)

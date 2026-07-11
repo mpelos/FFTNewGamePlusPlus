@@ -53,7 +53,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `046` | 41 | Lake Poescas / Poeskas Lake | All-undead lake (5★) | v3 complete undead shell; Mystic/Summoner anchors; playtest pending | 🧪 Test |
 | `047` | 42 | Limberry Castle Gate | **Celia & Lettie** (Assassins; flee on critical) | v3 dual-blade flee-race; band 100-102; playtest pending | 🧪 Test |
 | `048` | 43 | Limberry Castle Keep | **Elmdor** (dies); Celia/Lettie → Ultima Demons | v3 Chirijiraden boss + armed Assassins; band 100-102; playtest pending | 🧪 Test |
-| `049` | 44 | Limberry Undercroft | **Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Undead Knights | v3 docs-only; six enemies; band 100-102; chain 3/3 | 📝 Plan |
+| `049` | 44 | Limberry Undercroft | **Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Undead Knights | v3 implemented; six enemies; band 100-102; playtest pending | 🧪 Test |
 | `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | 2-phase brother duel: stair-wall → spread-or-die; **Grand Helm** (Tier A) | ✅ Done |
 | `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | hidden-healer caster screen; split deploy; chain 1/3 | ✅ Done |
 | `052` | 47 | Mullonde Nave | **Folmarv/Loffrey/Cletienne** (ends when ONE falls; others retreat) | triple-Templar boss; equip-break race; chain 2/3; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** | ✅ Done |

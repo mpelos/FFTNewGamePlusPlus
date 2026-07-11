@@ -1760,27 +1760,53 @@ def limberry_keep(data):
 
 
 def limberry_undercroft(data):
-    # Battle 44 - Limberry Castle Undercroft: the status-Lucavi capstone (Limberry chain 3/3, no resupply).
-    #   WIN = "Defeat Zalera". Entry 457 (verified via JobData InnateStatus):
-    #     slot 1 = Zalera (job 62 "Float", name n62, lvl 44 jl8, eq=255 Lucavi no-equip) -> the boss.
-    #     slots 2,3 = job 61 (Undead humanoid, gfx0) -> the 2 undead Knights.
-    #     slots 4,5,6,8,9 = jobs 109/110/111 (Undead, gfx6) -> Skeleton/Bonesnatch/Skeletal Fiend family.
-    #     slot 0 = job 27 / name 0x1b, lvl254/eq255 -> INACTIVE event placeholder (Elmdor name reused); leave.
-    #     slot 7 = job 42 / name 0x2a, tail "00.." (guest), eq=(153,206,213,34,136) = Save the Queen +
-    #              Aegis Shield + Luminous Robe -> Meliadoul, the guest who JOINS after this battle. Leave
-    #              untouched: her gear (incl. an AEGIS SHIELD) comes to the player when she recruits.
-    # CHANGE (faithful, minimal): LEVEL only on the active foes. Zalera 105 (the lone Lucavi spike),
-    #   undead guard 103. Win-cond, Zalera's mass-status kit, and every UNDEAD/reraise innate preserved.
-    # REWARD NOTE: Zalera is eq=255 (no equip slots) -> the Tier-A AEGIS SHIELD cannot be equipped on him
-    #   via ENTD (same as the Belias Defense Ring). It is delivered two ways already: Meliadoul joins with
-    #   an Aegis Shield (slot 7), and the map Move-Find layer is the clean place for a guaranteed copy.
-    #   Flagged to the reward layer; no fake equip on the boss.
+    # Battle 44 - Limberry Castle Undercroft v3: status-Lucavi capstone (chain 3/3, no resupply).
+    # WIN = "Defeat Zalera". Keep the six active slots and recast the guard in place:
+    #   s1 Zalera; s2/s3 Archaeodaemon; s4 Undead Mystic; s5/s6 Undead Knight.
+    # Slots 0 (Elmdor event placeholder), 7 (Meliadoul join record), and inactive raw records 8/9 stay
+    # byte-identical. This is a same-count ENTD job-swap: control flags, positions, UnitIDs, and spoils
+    # remain attached to the target slots. In particular, s2 keeps the Zeus Mace reward payload.
     E = 457
-    set_slot(data, E, 1, level=105, brave=92, faith=86)  # Zalera (Lucavi) - status spike; eq255
-    for s in (2, 3):                              # 2 undead Knights (job 61)
-        set_slot(data, E, s, level=103, brave=86, faith=35)
-    for s in (4, 5, 6, 8, 9):                     # skeleton family (109/110/111) - undead reraise screen
-        set_slot(data, E, s, level=103, brave=86, faith=35)
+
+    # Reset only the editable identity/build prefix from the vanilla target slots before authoring v3.
+    # This prevents stale fields from an older design or a previous partial run while preserving every
+    # target tail byte, including positions, control flags, UnitIDs, and reward payloads.
+    vanilla = VANILLA.read_bytes()
+    for s in (2, 3, 4, 5, 6):
+        b = (E % 128) * ENTRY + s * SLOT
+        data[b:b + 0x17] = vanilla[b:b + 0x17]
+
+    # Set the identity header explicitly so the patch remains idempotent after s2/s3 stop being Knights.
+    # Tail bytes 0x17-0x27 remain untouched: palette/control/position/spoils/UnitID/script context stay
+    # attached to the original target slot.
+    def set_identity(slot, char_id, flags, name=255):
+        b = (E % 128) * ENTRY + slot * SLOT
+        data[b + 0x00] = char_id
+        data[b + 0x01] = flags
+        data[b + 0x02] = name
+
+    set_slot(data, E, 1, level=102, brave=92, faith=86)  # Zalera; preserve status kit and eq=255.
+
+    for s in (2, 3):
+        set_identity(s, 130, 0x20)
+        set_slot(data, E, s, level=100, jobrank=0, joblevel=8, job=153,
+                 secondary=0, brave=88, faith=76,
+                 reaction=510, support=510, movement=510,
+                 head=0, body=0, acc=0, rh=0, lh=0)
+
+    set_identity(4, 70, 0x80)
+    set_slot(data, E, 4, level=101, jobrank=generic_job_rank(MIME), joblevel=8, job=70,
+             secondary=GEOMANCY, brave=72, faith=84,
+             reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MV2,
+             head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
+
+    for s in (5, 6):
+        set_identity(s, 61, 0x20)
+        set_slot(data, E, s, level=101, jobrank=generic_job_rank(MONK), joblevel=8, job=61,
+                 secondary=MARTIAL_ARTS, brave=88, faith=40,
+                 reaction=COUNTER, support=DUAL_WIELD, movement=MV3,
+                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
+                 rh=RUNEBLADE, lh=RUNEBLADE)
     return [E]
 
 
