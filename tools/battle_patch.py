@@ -1701,7 +1701,7 @@ def poeskas(data):
     set_slot(data, E, 0, level=102, jobrank=generic_job_rank(MIME), joblevel=8, job=70,
              secondary=GEOMANCY, brave=72, faith=84,
              reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MV2,
-             head=MAGE_HAT, body=WIZARD_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
+             head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
     set_slot(data, E, 1, level=101, jobrank=generic_job_rank(MIME), joblevel=8, job=63,
              secondary=ITEMS, brave=88, faith=70,
              reaction=REFLEXES, support=THROW_ITEMS, movement=JUMP3,

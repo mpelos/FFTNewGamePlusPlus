@@ -14,7 +14,7 @@ File: `battle_entd4_ent.bin` (embedded NG+ swap) — `tools/battle_patch.py poes
 Current v3 implementation:
 
 ```text
-s0 undead Mystic (job 70)   L102 — full Geomancy/Mana Shield caster kit
+s0 undead Mystic (job 70)   L102 — Geomancy/Mana Shield caster kit with Black Robe
 s1 undead Archer (job 63)   L101 — Mime bucket, Yoichi/Items package
 s2 undead Archer (job 63)   L100 — Chemist bucket, Rubber Suit support package
 s3 undead Summoner (job 71) L102 — Black Magicks/Swiftspell/Manafont caster kit
@@ -222,13 +222,13 @@ Movement: Movement +2
 Right hand: Wizard's Rod
 Left hand: none
 Head: Lambent Hat
-Body: Wizard's Robe
+Body: Black Robe
 Accessory: Magepower Glove
 ```
 
 Intuit: the durable magical anchor. Mystic Arts and Geomancy give the enemy side non-physical pressure,
 while Mana Shield prevents a single opening finisher from deleting the role. It deliberately has no
-Manafont: once its MP is exhausted, its burst protection is gone. Wizard's Robe + Magepower Glove makes
+Manafont: once its MP is exhausted, its burst protection is gone. Black Robe + Magepower Glove makes
 the build MA-focused rather than a high-HP stall body.
 
 Random-skill note: Mime bucket `L8` seeds a strong generated ability pool; it does not guarantee one

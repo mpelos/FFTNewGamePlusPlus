@@ -43,7 +43,7 @@ structural pressures.
 | 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | band 100-102; four complete human-undead kits; playtest pending | frozen lake | ▅ hard |
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | band 100-102; dual Masamune vs Koga/Iga flee-race; playtest pending | gate | ▃ moderate (race) |
 | 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | band 100-102; Chirijiraden + armed Assassin parry-race; playtest pending | keep | ▆ harder |
-| 44 | Limberry — Undercroft | `049` | (**Zalera** Lucavi + undead guard) | mass-status Lucavi (constrained); **Tier-A Aegis Shield**; chain 3/3 | undercroft | █ SPIKE |
+| 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Martial Arts Undead Knights) | v3 docs-only; 6 enemies; band 100-102; **Tier-A Aegis Shield**; chain 3/3 | undercroft | ▆ harder |
 | 45 | Eagrose Castle | `050` | P1 5 Knight stair-wall → P2 **Dycedarg→Adrammelech** | 2-phase brother Lucavi; Rend cap 2/5; **Tier-A Grand Helm** | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | hidden-healer caster screen; split deploy; chain 1/3; no rare | cathedral ext | ▃ moderate |
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | triple-Templar equip-break race; **Tier-S Chaos Blade + Escutcheon + Lordly Robe**; chain 2/3 | nave | ▅ hard |
@@ -88,11 +88,12 @@ The endgame GAUNTLET (49-53) is the defining structural test; flagged as the #1 
 ## Level bands & boss policy
 
 ```text
-Generics: normally 100-103 (endgame-tier). Sluice through Limberry Keep deliberately concentrate most units at
-100-101 and cap their few anchors at 102; their objective/terrain and complete kits carry the pressure.
+Generics: normally 100-103 (endgame-tier). Sluice through Limberry Undercroft deliberately concentrate most units
+at 100-101 and cap their few anchors at 102; their objective/terrain and complete kits carry the pressure.
 Elite/sub-bosses: 103-104 (Samurai, Ultima Demons, Hydra).
 Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletienne, Zalbaag, Dycedarg).
-LUCAVI: 105 (Zalera, Adrammelech, Hashmal).  FINAL ULTIMA: 106 — the single highest band in the mod (+6).
+LUCAVI: normally 105 (Adrammelech, Hashmal); Zalera is the low-band exception at 102 because it closes
+the three-battle Limberry chain. FINAL ULTIMA: 106 — the single highest band in the mod (+6).
 Apex monsters: the final Lost Halidom monster pit reaches 105 across four monster slots; pressure comes
 from overlapping breath lanes, sustain, and Barich control, with elemental/disable answers preserved.
 
@@ -125,12 +126,12 @@ and no hidden Brave/Faith assumptions.
 | Exception | Where | Why | Guardrail |
 |-----------|-------|-----|-----------|
 | Time-Mage Haste/Slow/Float | Dugeura (`038`), Vaults-5th (`055`), Necrohol (`056`) | canonical tempo casters | Haste/Slow/Float only — no Stop/Don't Act; one effective disruptor per fight |
-| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend) | Bervenia (`039`), Church (`041`), Eagrose P1 (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | telegraphed; Safeguard/Steal/Maintenance counter; **≤2 break sources/fight** (even with 4-5 Knights) |
+| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend/Arts of War) | Bervenia (`039`), Church (`041`), Undercroft (`049`), Eagrose P1 (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | telegraphed; Safeguard/Steal/Maintenance counter; **≤2 break sources/fight** (Undercroft: exactly its 2 Undead Knights) |
 | De-randomized beasts | Finnath (`040`) | reliable, learnable flock | fixed kits (Choco-Meteor/Cure); no status beasts; no boss |
 | Healer/holy boss burst | Church (`041`) | Zalmo's revive/holy IS the puzzle | Silence/focus-burst answer; holy/soft-status only; he dies → Tier-A |
 | Branching mutually-exclusive approach | Besselat Wall (`043a`/`043b`) | the fort's two routes | each route self-contained; no boss; both lead to the Sluice |
 | Objective-race (floodgate lever) | Sluice (`044`) | the canonical flood mechanic | race vs clear-first; charged damage and visible guards, no hard control or Rend wall |
-| Undead reraise + heal-weakness | Poeska (`046`), Sanctuary (`053`), Airship demons (`058`) | the undead/demon castes | PD/Holy/finish-while-down answers; one-disruptor cap; reraise is mechanic + counterplay |
+| Undead reraise + heal-weakness | Poeska (`046`), Undercroft (`049`), Sanctuary (`053`), Airship demons (`058`) | the undead/demon castes | PD/Holy/finish-while-down answers; one-disruptor cap; reraise is mechanic + counterplay |
 | Assassin status / instant-death / flee-on-critical | Limberry Gate (`047`) | the named Assassins | RESISTABLE + non-spam; status-immunity tradeoff; flee makes the danger window short; no rare (flee) |
 | Ark-Knight parry / Shirahadori | Limberry Keep (`048`) | Elmdore's identity | magic / Divine-Ruination answer; he dies → Tier-A Masamune+Genji |
 | Lucavi mass-status (Zalera) | Undercroft (`049`) | the chapter's first Lucavi | ONE telegraphed source; resistable/cleansable/non-locking; Doom race-able |
@@ -161,7 +162,7 @@ Mt Germinas  (045) : four L100-101 + two L102 anchors; Martial Arts       -> cli
 Poeska       (046) : four L100-101 + Mystic/Summoner L102; all-undead       -> permakill the dead (Holy/PD)
 Limberry Gate(047) : L102 Assassins + L100-101 Reavers; dual blades         -> burst one to critical; no rare
 Limberry Keep(048) : L102 Elmdor + L101 Assassins + L100 demons            -> answer parry; Tier-A
-Limberry Und.(049) : ZALERA Lucavi (mass-status, constrained); chain 3/3    -> race the one status source
+Limberry Und.(049) : L102 ZALERA + L101 Mystic/Knights + 2 L100 Archaeodaemons -> race status
 Eagrose      (050) : stair-wall Knights -> DYCEDARG->ADRAMMELECH 2-phase Lucavi -> spread vs summons
 Mullonde Ext.(051) : hidden-roof White Mage sustain + caster screen; chain 1/3 -> kill the healer first
 Mullonde Nave(052) : TRIPLE-TEMPLAR (Folmarv/Loffrey/Cletienne; one-falls); chain 2/3 -> commit to Folmarv
@@ -256,8 +257,8 @@ No conflicts found on paper.
 ### Level bands & boss kits
 
 ```text
-Consistent. Generics normally 100-103; Sluice through Limberry Keep use low-band 100-102 distributions; elite/
-sub-bosses 103-104; human bosses 104-105; Lucavi 105; FINAL ULTIMA
+Consistent. Generics normally 100-103; Sluice through Limberry Undercroft use low-band 100-102 distributions;
+elite/sub-bosses 103-104; later human bosses 104-105; later Lucavi 105; FINAL ULTIMA
 106 (the mod's single highest, +6 — one above Ch3's Belias +5, the intended capstone escalation).
 Summons kept MID-TIER with intact charge times; Draw Out (new) race-able; apex monster breath elemental/
 resistable. Every Lucavi/finale ultimate telegraphed + sub-lethal.

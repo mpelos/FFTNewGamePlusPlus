@@ -1,6 +1,6 @@
 # 049 - Limberry Castle Undercroft
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 457
+Status: 📝 v3 planned (docs-only) — v1 implementation remains in entry 457
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 44 (Limberry chain 3 of 3 — NO resupply across 42→43→44)
 Target version: Enhanced v1.5.0
@@ -27,8 +27,12 @@ DATA REALITY (verified from current embedded entd4 dump, entry 457):
               type=monster, level 103, JobLevel 8, eq=254 fixed/no normal gear.
               slot 2 spoils byte = 0x41 (Zeus Mace).
 
-  slots 4,5,6,8,9 = skeleton-family undead monsters
-                    jobs 111/110/109/111/111, level 103, no normal human equipment setup.
+  slots 4,5,6 = active skeleton-family undead monsters observed in game
+                jobs 111/110/109: one Skeletal Fiend, one Bonesnatch, and one Skeleton.
+                Current level 103; no normal human equipment setup.
+
+  slots 8,9 = duplicate job-111 records visible in the raw ENTD dump, but not active in the observed
+              battle. Preserve as inactive/script records until their gating is understood.
 
   slot 7 = Meliadoul join/post-battle record
            job 42, level 254, gear includes Save the Queen + Aegis Shield.
@@ -37,15 +41,17 @@ DATA REALITY (verified from current embedded entd4 dump, entry 457):
 
 Current v1 implementation:
   Zalera = 105
-  undead guard = 103
+  active undead guard = 103 (2 Undead Knights + 1 Skeletal Fiend + 1 Bonesnatch + 1 Skeleton)
   Win condition, Zalera mass-status identity, undead/reraise identity, slot 0 cameo, and slot 7 join
   record are preserved.
 ```
 
-Planned v2 redesign (docs-only in this pass): keep the local ENTD reality and make the fight a **status
-Lucavi capstone with a dense undead screen but a real boss-focus lane**. The player should resist/cleanse
-Zalera's curses, use Holy/Phoenix Down/Seal Evil to manage the dead, and focus the Death Seraph before
-the end of the Limberry chain collapses into item/status debt.
+Planned v3 redesign (docs-only in this pass): replace the active s2-s6 guard with two Archaeodaemons,
+one Undead Mystic copied from Lake Poescas, and two Undead Knights. The Knights move from s2/s3 to
+s5/s6 and copy the Martial Arts Knight build from Fort Besselat North Wall with Counter replacing
+First Strike. Zalera remains s1 and the sole headline mass-status engine.
+The player should resist/cleanse Zalera's curses, manage the dead, and focus the Death Seraph before the
+end of the Limberry chain collapses into item/status debt.
 
 > Data-layer fields are known for entry 457, but final implementation still needs a fresh dump/diff and
 > in-game verification of slot 0 and slot 7 behavior. This pass updates documentation only.
@@ -85,13 +91,18 @@ Zalera (Death Seraph)   (Lucavi boss; mass status)
 Skeleton / Bonesnatch / Skeletal Fiend
 ```
 
-Local ENTD correction:
+In-game roster correction:
 
 ```text
-The embedded data exposes a denser undead guard than the public guide lists:
-  Zalera + two job-61 undead/fixed knight-like monster bodies + five skeleton-family undead monsters.
+The raw ENTD contains five skeleton-family records, including three job-111 records, but direct in-game
+observation confirms that only three skeleton-family units are active:
+  one Skeleton (job 109) + one Bonesnatch (job 110) + one Skeletal Fiend (job 111).
 
-Design consequence: preserve the local roster, but positioning/scripting must leave at least one
+Active enemy roster:
+  Zalera + two job-61 Undead Knights + one of each skeleton-family unit = six enemies total.
+
+Design consequence: preserve the observed six-enemy roster. Do not activate the duplicate job-111
+records from slots 8/9. Positioning must still leave at least one
 boss-focus lane. The undead are a screen and resource tax, not mandatory full cleanup before Zalera.
 ```
 
@@ -121,15 +132,27 @@ CONFIRMED:
 - Entry 457 is the playable Limberry Undercroft battle data.
 - Slot 1 is Zalera, level 105, no normal equipment, reward payload Aegis Shield.
 - Slot 2 carries Zeus Mace as reward payload.
-- Slots 2/3 are undead/fixed monster-type knight bodies, not editable full human Knight kits.
-- Slots 4/5/6/8/9 are skeleton-family undead monsters.
+- Slots 2/3 use job `61`, the Undead Knight job with innate Undead and Arts of War. Their current ENTD
+  records use monster-type/fixed-equipment flags; v3 plans explicit human-style ability and gear fields,
+  which must be verified in game when implementation begins.
+- Direct in-game observation confirms exactly three active skeleton-family enemies: slot 4 Skeletal
+  Fiend (job 111), slot 5 Bonesnatch (job 110), and slot 6 Skeleton (job 109).
+- Slots 8/9 are duplicate job-111 records in the raw dump but do not appear in the observed battle;
+  they are not part of the v3 active composition.
 - Slot 7 is a Meliadoul join/post-battle record in the data and should not be used as a guest-AI check.
 - No active guest is expected from the public battle shape.
 - Reward ledger maps this battle to Aegis Shield + Zeus Mace guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
+STILL NEEDED FOR V3 IMPLEMENTATION:
 - In-game verify whether slot 0 Elmdor and slot 7 Meliadoul are active, hidden, or join/script records.
 - If slot 7 is active, set player control per global guest rule.
+- Confirm job `61` preserves innate Undead while accepting the copied Monk job bucket, abilities, and
+  explicit equipment fields after both Undead Knights move to slots 5/6.
+- Confirm s2/s3 accept Archaeodaemon job `153` with the innate monster kit and no human equipment.
+- Confirm s4 accepts the Lake Poescas Undead Mystic job `70`, innate Float + Undead, and its complete
+  copied caster build.
+- Confirm the formation/event gating that keeps duplicate slots 8/9 inactive, and do not accidentally
+  activate them during the v3 patch.
 - Confirm Zalera's status cadence allows cleanse/resist windows and does not chain-lock the party.
 - Confirm undead/reraise behavior and Phoenix Down/Holy/Seal Evil answers.
 - Confirm the map has or can preserve a boss-focus lane through the dense undead screen.
@@ -142,11 +165,14 @@ STILL NEEDED FOR V2 IMPLEMENTATION:
 ```text
 Headline engine: Zalera's mass-status Lucavi pressure.
 Supporting roles:
-  - Undead/fixed knight-like bodies create the first screen and punish careless physical routing.
-  - Skeleton-family undead bodies widen the screen and tax permakill resources.
+  - Two Archaeodaemons create undead/reraise and drain pressure without equipment.
+  - The Lake Poescas Undead Mystic adds Geomancy and one Mana Shield anchor, not a second authored
+    hard-status engine.
+  - Two Undead Knights adapted from the North Wall Martial Arts Knight create the physical screen:
+    Arts of War primary, Martial Arts secondary, Counter, Dual Wield, and dual Rune Blades.
   - Slot 7 Meliadoul is not a difficulty lever; she is join/post-battle data unless proven active.
 
-WHY: this is the Limberry capstone. The enemy party can be dense and punishing, but it must remain one
+WHY: this is the Limberry capstone. The six-enemy party is punishing, but it must remain one
 readable puzzle: stop the status engine while managing undead bodies.
 
 CONSTRAINTS:
@@ -154,6 +180,8 @@ CONSTRAINTS:
   - Status must be resistable, cleansable, and non-locking.
   - Undead bodies must not seal every route to the boss.
   - No extra support caster, healer, or additional status engine.
+  - Exactly two Arts of War sources: the s5/s6 Undead Knights, with no additional equipment breaker.
+  - Exactly one Mana Shield source: the s4 Undead Mystic, with no Manafont loop.
   - No fake equipment on Zalera's no-equip Lucavi slot.
   - No guest AI survival test.
 ```
@@ -169,9 +197,17 @@ UNDEAD RERAISE / PERMAKILL:
   Allowed as the guard's identity. The player answers with Phoenix Down, Holy, Seal Evil, or selective
   focus fire while downed. The undead are not all mandatory kills because Zalera is the win condition.
 
-DENSE LOCAL ENTD ROSTER:
-  Allowed because the embedded data proves more undead slots than the public guide lists. Guardrail:
-  preserve or create at least one boss-focus lane.
+INACTIVE DUPLICATE ENTD RECORDS:
+  Slots 8/9 are present in the raw data but absent from the observed battle. They are not active v3
+  enemies and must remain inactive; the playable v3 roster is limited to s1-s6.
+
+TWO ARTS OF WAR SOURCES:
+  Allowed because both existing job-61 bodies are Undead Knights. This is the battle's equipment-break
+  cap: exactly two sources, with no third breaker and no added hard-control engine.
+
+ONE MANA SHIELD:
+  Allowed on the copied Undead Mystic as opening-burst protection. It has no Manafont, so the MP shield
+  can be exhausted and does not become a regeneration loop.
 
 JOIN/POST-BATTLE MELIADOUL RECORD:
   Preserve the slot without making guest AI part of the challenge. If she appears active in battle,
@@ -186,7 +222,7 @@ These are delivered by the Spoils of War reward channel; the player must never b
 
 COMBAT ROLE:
   - Zalera cannot equip normal gear (`eq=255`), so Aegis Shield is reward payload only.
-  - Zeus Mace is reward payload on the undead screen, not a required active caster weapon.
+  - Zeus Mace remains reward payload on s2 after that slot becomes an Archaeodaemon; it is not equipped.
   - Meliadoul's join gear is not the canonical reward path.
 
 PRESERVE:
@@ -194,21 +230,19 @@ PRESERVE:
   - Slot 7 join gear remains a separate recruitment/script concern.
 ```
 
-## Proposed Composition (New Game++ Limberry Undercroft v2)
+## Proposed Composition (New Game++ Limberry Undercroft v3)
 
-Keep the local roster and levels. The redesign is positioning/guardrail clarity: dense undead screen,
-one status engine, and at least one route to focus Zalera.
+Use exactly the requested active s1-s6 roster. Zalera is the only `102`; the Mystic and Knights are
+`101`; both Archaeodaemons are `100`. Do not activate raw duplicate records s8/s9.
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
-| s1 | Boss / objective | Zalera, Death Seraph Lucavi | `105` | `92/86` | Single mass-status engine; defeat ends fight; Aegis Shield spoil. |
-| s2 | Screen / reward payload | Job 61 undead/fixed knight-like monster | `103` | `86/35` | First undead body; Zeus Mace spoil; screens a direct route. |
-| s3 | Screen | Job 61 undead/fixed knight-like monster | `103` | `86/35` | Second undead body; forces route choice. |
-| s4 | Undead pressure | Skeleton-family monster job 111 | `103` | `86/35` | Reraise/permakill action tax. |
-| s5 | Undead pressure | Skeleton-family monster job 110 | `103` | `86/35` | Second skeleton-family pressure body. |
-| s6 | Undead pressure | Skeleton-family monster job 109 | `103` | `86/35` | Lower-route undead body. |
-| s8 | Undead pressure | Skeleton-family monster job 111 | `103` | `86/35` | Outer screen body; must not seal boss access. |
-| s9 | Undead pressure | Skeleton-family monster job 111 | `103` | `86/35` | Outer screen body; cleanup risk control. |
+| s1 | Boss / objective | Zalera, Death Seraph Lucavi | `102` | `92/86` | Single mass-status engine; defeat ends fight; Aegis Shield spoil. |
+| s2 | Demon / reward payload | Archaeodaemon, job 153 | `100` | `88/76` | Innate undead demon kit; reraise/drain pressure; Zeus Mace spoil remains payload only. |
+| s3 | Demon | Archaeodaemon, job 153 | `100` | `88/76` | Second innate undead demon body on the opposite approach. |
+| s4 | Mystic anchor | Undead Mystic, job 70; Mime bucket | `101` | `72/84` | Copied Lake Poescas build: Geomancy + Mana Shield magical pressure. |
+| s5 | Bruiser | Job 61 Undead Knight, Monk bucket | `101` | `88/40` | Adapted North Wall Martial Arts Knight build; first Arts of War source. |
+| s6 | Bruiser | Job 61 Undead Knight, Monk bucket | `101` | `88/40` | Same adapted build; second and final Arts of War source. |
 
 Non-combat/script records to preserve and verify:
 
@@ -216,13 +250,14 @@ Non-combat/script records to preserve and verify:
 |------|--------|----------|
 | s0 | Elmdor cameo/script record | Preserve untouched unless playtest proves active; if active, redesign separately before implementation. |
 | s7 | Meliadoul join/post-battle record | Preserve as join data; if active, make player-controlled in NG++. |
+| s8/s9 | Duplicate job-111 raw records | Preserve inactive; do not include in the v3 enemy party. |
 
 Reasoning:
 
-The accepted design is **v2 status-Lucavi with undead screen** after one iteration. The first simulation
-flagged the dense local undead roster as too much if the bodies formed a sealed wall. The revised design
-keeps the data-faithful roster but requires a boss-focus lane: the player may need to permakill or push
-through part of the screen, but does not have to clear every undead body while Zalera rolls status.
+The v3 design preserves the status-Lucavi objective while replacing the vanilla skeleton-family line.
+Archaeodaemons provide innate undead/drain pressure, the copied Lake Poescas Mystic supplies one durable
+non-physical anchor, and the relocated Undead Knights provide capped break and melee pressure. All five
+adds amplify the boss race instead of replacing Zalera as the priority target.
 
 Rejected variants:
 
@@ -239,7 +274,7 @@ Rejected variants:
 - Sealed undead wall: ignores the required boss-focus lane.
 ```
 
-## Builds (Lucavi + monster/fixed undead screen)
+## Builds (Lucavi + Archaeodaemons + Undead Mystic + Undead Knights)
 
 ```text
 Zalera:
@@ -249,17 +284,38 @@ Zalera:
   - Status is the one headline engine: visible, resistable, cleansable, non-locking.
   - Reward payload: Aegis Shield via spoils, not equipped gear.
 
-Job 61 undead/fixed knight-like bodies:
-  - Type is monster in the dump; equipment is fixed/no normal gear.
-  - Preserve undead/fixed body identity and level 103.
-  - Do not promise complete human Knight equipment or ability slots unless future data proves these are
-    editable active humans instead of monster/fixed bodies.
-  - Slot 2 carries Zeus Mace as reward payload only.
+Archaeodaemon x2 (slots 2/3, Lv 100):
+  - Main job: Archaeodaemon (job 153); JobLevel 8.
+  - Equipment: none; preserve the innate monster kit.
+  - Preserve Undead/reraise and HP-drain pressure.
+  - Brave/Faith: 88/76.
+  - Slot 2 keeps Zeus Mace as reward payload only; it is not active equipment.
 
-Skeleton-family monsters:
-  - Preserve innate undead monster kits and level 103.
-  - No human equipment, secondary, reaction, support, or movement planning.
-  - Use placement to create pressure without sealing the boss.
+Undead Mystic (slot 4, Lv 101), copied from Lake Poescas s0:
+  - Main job: Undead Mystic (job 70); preserve innate Float + Undead and primary Mystic Arts.
+  - Job bucket: Mime; Main JobLevel 8; Bucket JobLevel 8.
+  - Secondary: Geomancy.
+  - Reaction: Mana Shield.
+  - Support: Magic Attack Boost.
+  - Movement: Movement +2.
+  - Right hand: Wizard's Rod.   Left hand: none.
+  - Head: Lambent Hat.   Body: Black Robe.   Accessory: Magepower Glove.
+  - Brave/Faith: 72/84.
+  - No Manafont: once its MP is exhausted, Mana Shield no longer protects it.
+  - The Lake build is copied exactly except for the level, reduced from `102` to `101` for this battle.
+
+Undead Knight x2 (slots 5/6, Lv 101):
+  - Main job: Undead Knight (job 61); preserve innate Undead and primary Arts of War.
+  - Job bucket: Monk; JobLevel: 8.
+  - Secondary: Martial Arts.
+  - Reaction: Counter.
+  - Support: Dual Wield.
+  - Movement: Movement +3.
+  - Right hand: Rune Blade.   Left hand: Rune Blade.
+  - Head: Crystal Helm.   Body: Crystal Mail.   Accessory: Bracers.
+  - Brave/Faith: 88/40.
+  - This adapts the North Wall Martial Arts Knight build onto both bodies. The intentional differences
+    are the Undead Knight main job and Counter in place of First Strike.
 
 Meliadoul slot:
   - Treat as join/post-battle record.
@@ -269,9 +325,10 @@ Meliadoul slot:
 ## Positioning Plan
 
 ```text
-Undercroft: Zalera starts central/back with clear mass-status sightlines. Undead bodies form a dense
-screen in two clusters, but at least one route must let a prepared party reach or target Zalera without
-full undead cleanup.
+Undercroft: Zalera starts central/back with clear mass-status sightlines. Archaeodaemons s2/s3 take
+separate approaches, the Undead Mystic s4 occupies a protected mid/back caster lane, and Undead Knights
+s5/s6 form the physical screen. At least one route must let a prepared party reach or target Zalera
+without full add cleanup. Slots 8/9 remain inactive.
 
 The player should see three valid lines:
   1. Resist/cleanse enough status to keep turns.
@@ -282,7 +339,13 @@ The player should see three valid lines:
 The crypt should say: "the dead crowd the way while the Seraph steals your turns; keep your people
 acting, open one lane, and end the status engine."
 
-## Simulation Plan and Results
+## Historical Simulation Record / v3 Test Plan
+
+No new simulation was run for v3. Per the current workflow, this docs-only build will be validated by
+direct in-game playtest after implementation. The artifact below records the older v2 screen/positioning
+analysis only; it does not validate the v3 Archaeodaemons, copied Mystic, relocated Knights, or the
+`100`-`102` level distribution. It also modeled raw duplicate skeleton records as active, an assumption
+disproved by direct in-game observation; its roster-pressure numbers therefore remain historical only.
 
 Simulation artifact:
 
@@ -321,17 +384,27 @@ Result summary:
 Iteration decision:
 
 ```text
-ACCEPT v2 status-Lucavi with undead screen.
+HISTORICAL RESULT: accept v2 status-Lucavi with undead screen as the structural base only.
 Iteration 1 rejected the dense roster as too high-pressure if the undead form a sealed wall. Iteration 2
-keeps the local ENTD roster but requires at least one boss-focus lane. Zalera remains the sole headline
-engine, rewards stay guaranteed, and Meliadoul's slot is never a guest-AI skill check.
+required at least one boss-focus lane. The old simulation assumed the two raw duplicate job-111 records
+were active. The new v3 roster instead uses two Archaeodaemons, one Undead Mystic, and two relocated
+Undead Knights. Zalera remains the sole headline engine, rewards stay guaranteed, and Meliadoul's slot
+is never a guest-AI skill check.
 ```
 
 ## Implementation Checklist
 
 - [ ] Re-dump entry 457 and verify slot order, levels, spoils bytes, and slot 7 behavior.
 - [ ] Preserve win condition: defeating Zalera ends the fight.
-- [ ] Keep Zalera at `105`; undead guard at `103`.
+- [ ] Set exact active composition: s1 Zalera; s2/s3 Archaeodaemon; s4 Undead Mystic; s5/s6 Undead Knight.
+- [ ] Set Zalera to `102`; Mystic and both Knights to `101`; both Archaeodaemons to `100`.
+- [ ] Copy Lake Poescas s0 Undead Mystic build to s4, lowering only its level from `102` to `101`.
+- [ ] Move the two Undead Knight builds from s2/s3 to s5/s6 without changing their job-61 identity.
+- [ ] Keep duplicate job-111 slots 8/9 inactive.
+- [ ] Keep slots 5/6 as job `61` Undead Knights with innate Undead and Arts of War primary.
+- [ ] Adapt the North Wall Martial Arts Knight build to both: Monk bucket/JobLevel 8, Martial Arts,
+  Counter, Dual Wield, Movement +3, dual Rune Blades, Crystal Helm, Crystal Mail, and Bracers.
+- [ ] Verify explicit abilities/equipment work on the job-61 monster-type records without removing Undead.
 - [ ] Preserve Zalera as the single mass-status source; no hard-lock cadence.
 - [ ] Preserve undead/reraise identity and Phoenix Down/Holy/Seal Evil answers.
 - [ ] Preserve or create at least one boss-focus lane through the undead screen.
@@ -344,8 +417,17 @@ engine, rewards stay guaranteed, and Meliadoul's slot is never a guest-AI skill 
 ## Test Questions
 
 - Does Zalera's status cadence allow cleanse/resist windows and avoid unavoidable party-wide lock?
+- Are both job-61 units visibly Undead Knights—not Samurai or normal Knights—with innate Undead and
+  Arts of War primary?
+- Do both s5/s6 Undead Knights have the adapted North Wall build—including Counter, dual Rune Blades, and
+  Martial Arts secondary—while slot 2 still awards Zeus Mace only as spoils?
+- Is the two-source Arts of War pressure fair without creating an equipment-break wall?
 - Can the player reach or target Zalera without clearing every undead body?
 - Do undead bodies force real Phoenix Down/Holy/Seal Evil decisions without becoming a cleanup slog?
+- Are s2/s3 Archaeodaemons using only their innate monster kit, with s2 still awarding Zeus Mace?
+- Does s4 match the Lake Poescas Undead Mystic build and remain an Undead Mystic with Float + Undead?
+- Does the active roster contain exactly Zalera, two Archaeodaemons, one Undead Mystic, and two Undead
+  Knights, with slots 8/9 inactive?
 - Is Meliadoul inactive/join-only, or controllable if she appears active?
 - Do Aegis Shield + Zeus Mace appear as guaranteed spoils without Steal or join-gear dependency?
 - Does the full Limberry chain feel like Gate race -> Keep parry -> Undercroft status spike?

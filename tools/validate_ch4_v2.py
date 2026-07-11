@@ -585,7 +585,7 @@ def run() -> int:
           and field16(entd, e, 0, 0x0E) == 467
           and field16(entd, e, 0, 0x10) == 487
           and roster(entd, e, [0], 0x12) == [167]
-          and roster(entd, e, [0], 0x13) == [202]
+          and roster(entd, e, [0], 0x13) == [205]
           and roster(entd, e, [0], 0x14) == [217]
           and roster(entd, e, [0], 0x15) == [56]
           and roster(entd, e, [0], 0x16) == [255])
