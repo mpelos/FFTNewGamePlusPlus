@@ -1,6 +1,6 @@
 # 050 - Eagrose Castle (Igros Castle)
 
-Status: 📝 v3 design complete (docs-only) — ready for implementation
+Status: 🧪 v3 implemented and deployed — in-game playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 45 (after the Limberry chain)
 Target version: Enhanced v1.5.0
@@ -10,6 +10,10 @@ File: `battle_entd4_ent.bin`
 > **NG++ rewards applied (2026-06-27):** Maximillian + Grand Helm + Venetian Shield through guaranteed
 > Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Canonical map:
 > `chapter-4-rewards-implementation.md`.
+
+> **V3 implementation (2026-07-11):** entry 459 patched in the embedded ENTD and deployed through a
+> successful Release build. All 358 Chapter-4 validation checks pass. `event436.e` was not modified;
+> its SHA-256 remains `132FE1DB670F85079BF31BF881B5B48BD79CC1540BC92B564346CC0436998318`.
 
 ## Current Implementation / Data Reality
 
@@ -50,8 +54,8 @@ sources, and preserve a sequential transform into a spaceable Lucavi AoE puzzle.
 V3 planning is complete. This pass locks s0 Zalbaag, s1 Dycedarg, Adrammelech's level, and the
 complete levels, Brave/Faith targets, builds, and event-script positions for all five Knight bodies.
 
-> This pass updates documentation only. No ENTD, patch code, binary, build, or Reloaded-II artifact is
-> changed. V3 is now fully specified in documentation and ready for implementation.
+> V3 is implemented in the ENTD patch path and deployed to Reloaded-II. Runtime transform behavior,
+> secondary-skill availability, and battle feel remain pending direct in-game validation.
 
 ## V3 Locked Decisions
 
@@ -430,21 +434,21 @@ only for phase/guest/AoE context and does not validate v3's five-source Rend pre
 
 ## Implementation Checklist
 
-- [ ] Re-dump entry 459 and verify slot order, rewards, placeholder behavior, and transform.
-- [ ] Verify slot 0 is active and controllable; if active but not controllable, set player control.
+- [x] Re-dump entry 459 and verify slot order, rewards, and placeholder bytes.
+- [x] Set slot 0 player-control bit (`0x18 = 0x8C`); verify actual control in game.
 - [ ] Preserve win condition and Dycedarg -> Adramelk transform.
-- [ ] Set Zalbaag and Dycedarg to `103`; s2/s3/s6 to `100`; s4/s5 to `101`; Adrammelech to `105`.
-- [ ] Set Br/Fa: s0 `70/65`, s1 `88/60`, s2 `88/42`, s3 `86/44`, s4 `88/58`,
+- [x] Set Zalbaag and Dycedarg to `103`; s2/s3/s6 to `100`; s4/s5 to `101`; Adrammelech to `105`.
+- [x] Set Br/Fa: s0 `70/65`, s1 `88/60`, s2 `88/42`, s3 `86/44`, s4 `88/58`,
       s5 `88/52`, and s6 `86/56`.
-- [ ] Equip Zalbaag with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
-- [ ] Equip Dycedarg with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
+- [x] Equip Zalbaag with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
+- [x] Equip Dycedarg with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
 - [x] Define every Knight v3 build: s2/s3 Monk-bucket Martial Artists, s4 Samurai-bucket Knight,
       s5/s6 Ninja-bucket Knights.
-- [ ] Preserve the event-script final combat positions: s2 `(8,4)`, s3 `(9,5)`, s4 `(7,7)`,
+- [x] Preserve unmodified `event436.e` final combat positions: s2 `(8,4)`, s3 `(9,5)`, s4 `(7,7)`,
       s5 `(1,5)`, s6 `(1,3)`.
 - [ ] Keep Phase 2 AoE/status telegraphed, spaceable, resistable, and non-locking.
-- [ ] Author/verify spoils: Maximillian + Grand Helm + Venetian Shield, guaranteed and within the 3-item cap.
-- [ ] Preserve buried map treasure as map treasure.
+- [x] Verify spoils: Maximillian + Grand Helm + Venetian Shield, guaranteed and within the 3-item cap.
+- [x] Preserve buried map treasure by leaving the event/map layers untouched.
 
 ## Test Questions
 

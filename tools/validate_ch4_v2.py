@@ -766,38 +766,60 @@ def run() -> int:
     e = 459
     active = [0, 1, 2, 3, 4, 5, 6, 7]
     check("459 active jobs", roster(entd, e, active, 0x0A) == [8, 9, 76, 76, 76, 76, 76, 69])
-    check("459 active levels", roster(entd, e, active, 0x03) == [103, 104, 103, 103, 103, 103, 103, 105])
-    check("459 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 1, 1, 1, 0])
-    check("459 active secondaries", roster(entd, e, active, 0x0B) == [254, 71, 6, 6, 6, 6, 6, 120])
-    check("459 Brave targets", roster(entd, e, active, 0x06) == [70, 88, 88, 88, 84, 84, 84, 92])
-    check("459 Faith targets", roster(entd, e, active, 0x07) == [65, 60, 42, 42, 55, 55, 55, 86])
+    check("459 active levels", roster(entd, e, active, 0x03) == [103, 103, 100, 100, 101, 101, 100, 105])
+    check("459 active job buckets", roster(entd, e, active, 0x08) == [19, 0, 4, 4, 14, 15, 15, 0])
+    check("459 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8, 8, 0])
+    check("459 active secondaries", roster(entd, e, active, 0x0B) == [254, 71, 9, 9, 19, 20, 20, 120])
+    check("459 Brave targets", roster(entd, e, active, 0x06) == [70, 88, 88, 86, 88, 88, 86, 92])
+    check("459 Faith targets", roster(entd, e, active, 0x07) == [65, 60, 42, 44, 58, 52, 56, 86])
     check("459 guest player-control bit", field(entd, e, 0, 0x18) == 0x8C)
     check("459 guest gear preserved",
-          roster(entd, e, [0], 0x12) == [154]
-          and roster(entd, e, [0], 0x13) == [182]
-          and roster(entd, e, [0], 0x14) == [210]
-          and roster(entd, e, [0], 0x15) == [30]
-          and roster(entd, e, [0], 0x16) == [139])
+          roster(entd, e, [0], 0x12) == [156]
+          and roster(entd, e, [0], 0x13) == [185]
+          and roster(entd, e, [0], 0x14) == [218]
+          and roster(entd, e, [0], 0x15) == [37]
+          and roster(entd, e, [0], 0x16) == [142])
     check("459 Dycedarg gear and R/S/M",
           field16(entd, e, 1, 0x0C) == 450
           and field16(entd, e, 1, 0x0E) == 479
           and field16(entd, e, 1, 0x10) == 486
           and roster(entd, e, [1], 0x12) == [156]
-          and roster(entd, e, [1], 0x13) == [181]
-          and roster(entd, e, [1], 0x14) == [215]
-          and roster(entd, e, [1], 0x15) == [33]
-          and roster(entd, e, [1], 0x16) == [136])
+          and roster(entd, e, [1], 0x13) == [207]
+          and roster(entd, e, [1], 0x14) == [218]
+          and roster(entd, e, [1], 0x15) == [37]
+          and roster(entd, e, [1], 0x16) == [142])
 
-    for slot_no in (2, 3, 4, 5, 6):
-        check(f"459 s{slot_no} Knight R/S/M",
+    for slot_no in (2, 3):
+        check(f"459 s{slot_no} Martial Knight kit",
               field16(entd, e, slot_no, 0x0C) == 442
               and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"459 s{slot_no} Knight armor",
-              roster(entd, e, [slot_no], 0x12) == [154]
+              and field16(entd, e, slot_no, 0x10) == 488
+              and roster(entd, e, [slot_no], 0x12) == [154]
               and roster(entd, e, [slot_no], 0x13) == [182]
               and roster(entd, e, [slot_no], 0x14) == [218]
+              and roster(entd, e, [slot_no], 0x15) == [30]
               and roster(entd, e, [slot_no], 0x16) == [139])
+
+    check("459 s4 Samurai-bucket Knight kit",
+          field16(entd, e, 4, 0x0C) == 451
+          and field16(entd, e, 4, 0x0E) == 476
+          and field16(entd, e, 4, 0x10) == 488
+          and roster(entd, e, [4], 0x12) == [154]
+          and roster(entd, e, [4], 0x13) == [182]
+          and roster(entd, e, [4], 0x14) == [217]
+          and roster(entd, e, [4], 0x15) == [30]
+          and roster(entd, e, [4], 0x16) == [255])
+
+    for slot_no in (5, 6):
+        check(f"459 s{slot_no} Ninja-bucket Knight kit",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 477
+              and field16(entd, e, slot_no, 0x10) == 492
+              and roster(entd, e, [slot_no], 0x12) == [154]
+              and roster(entd, e, [slot_no], 0x13) == [182]
+              and roster(entd, e, [slot_no], 0x14) == [213]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [30])
 
     check("459 Adramelk no-equipment shape",
           roster(entd, e, [7], 0x12) == [255]

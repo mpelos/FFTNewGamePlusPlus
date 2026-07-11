@@ -122,6 +122,7 @@ GOLD_HAIRPIN = 166  # Hat (Princess-legal), MP+50/HP+80, buyable (Chapter3_SaveR
 GASTROPHETES = 82  # best buyable crossbow (WP 10, PSX "Gastrafitis"); one-handed -> shield-compatible
 CRYSTAL_SHIELD = 139  # best buyable shield (== SHOP_SHIELD); high evade -> "hard to hit"
 KAISER_SHIELD = 141
+VENETIAN_SHIELD = 142
 # Dorter additions — strongest SHOP-tier per category (no Unknown20 treasure tier):
 HEAVY_HELM, HEAVY_ARMOR, SHOP_SHIELD = 154, 182, 139   # Knight heavy gear (Helmet/Armor/Shield)
 MAGE_HAT, SHOP_ROBE, SHOP_ROD = 167, 206, 56           # Black Mage gear (Hat/Robe/Rod)
@@ -153,6 +154,7 @@ GENJI_ARMOR = 183    # Tier-A Armor — Elmdor (048).
 GENJI_GLOVES = 216
 AEGIS_SHIELD = 136   # Tier-A Shield (best magic-evade + status ward) — Zalera (049).
 GRAND_HELM = 156     # Tier-A Helmet (best non-Genji) — Adramelk/Dycedarg (050).
+MAXIMILLIAN = 185
 CHAOS_BLADE = 37     # Tier-S KnightSword — Folmarv (052).
 RIBBON = 171         # Tier-S HairAdornment (best headgear) — Zalbaag (053).
 HAIRBAND = 169
@@ -1824,23 +1826,45 @@ def eagrose(data):
     #     slots 2-6 = 5 Knights (job 76) -> the upper-stair wall; armed (were near-naked) + scaled.
     #     slot 7 = Adramelk (name 69, job 69, eq=255 Lucavi no-equip) -> Phase-2 transform spike; lvl only.
     #     slots 8,9 = job 8, eq=0, lvl254 -> scripting placeholders; left untouched.
-    # Rend cap: only s2/s3 keep full JobLevel 8. s4-s6 stay Knights for the stair-wall identity but use
-    #   JobLevel 1 so they are heavy guards rather than three extra effective break sources.
+    # V3 keeps all five bodies as main-job Knights, so Arts of War remains primary for all of them.
+    # JobUnlock seeds the requested secondary-job bucket (Monk/Samurai/Ninja); it does not replace the
+    # Knight main job or its primary command. event436.e keeps the existing registration/choreography.
     E = 459
-    set_slot(data, E, 0, level=103, brave=70, faith=65)  # guest ally - direct-level scale
+    set_slot(data, E, 0, level=103, brave=70, faith=65,
+             head=GRAND_HELM, body=MAXIMILLIAN, acc=BRACERS,
+             rh=CHAOS_BLADE, lh=VENETIAN_SHIELD)  # Zalbaag guest ally - direct-level scale
     set_player_control(data, E, 0)
-    set_slot(data, E, 1, level=104, brave=88, faith=60,
-             head=GRAND_HELM)  # Dycedarg (Phase 1) - Grand Helm Tier-A reward
-    for s in (2, 3):                                    # 2 effective breakers - stair-wall cap
-        set_slot(data, E, s, level=103, joblevel=8, job=KNIGHT, secondary=ITEMS,
-                 brave=88, faith=42,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, lh=SHOP_SHIELD)
-    for s in (4, 5, 6):                                  # heavy guards - no full Rend kit
-        set_slot(data, E, s, level=103, joblevel=1, job=KNIGHT, secondary=ITEMS,
-                 brave=84, faith=55,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, lh=SHOP_SHIELD)
+    set_slot(data, E, 1, level=103, brave=88, faith=60,
+             head=GRAND_HELM, body=ROBE_OF_LORDS, acc=BRACERS,
+             rh=CHAOS_BLADE, lh=VENETIAN_SHIELD)  # Dycedarg; preserve existing abilities/transform
+
+    set_slot(data, E, 2, level=100, jobrank=generic_job_rank(MONK), joblevel=8,
+             job=KNIGHT, secondary=MARTIAL_ARTS, brave=88, faith=42,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
+             rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
+    set_slot(data, E, 3, level=100, jobrank=generic_job_rank(MONK), joblevel=8,
+             job=KNIGHT, secondary=MARTIAL_ARTS, brave=86, faith=44,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
+             rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
+
+    set_slot(data, E, 4, level=101, jobrank=generic_job_rank(SAMURAI), joblevel=8,
+             job=KNIGHT, secondary=IAIDO, brave=88, faith=58,
+             reaction=SHIRAHADORI, support=DOUBLEHAND, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=MAGEPOWER_GLOVES,
+             rh=RUNEBLADE, lh=LH_EMPTY)
+
+    set_slot(data, E, 5, level=101, jobrank=generic_job_rank(NINJA), joblevel=8,
+             job=KNIGHT, secondary=THROW, brave=88, faith=52,
+             reaction=REFLEXES, support=DUAL_WIELD, movement=IGNORE_HEIGHT,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=HERMES_SHOES,
+             rh=RUNEBLADE, lh=RUNEBLADE)
+    set_slot(data, E, 6, level=100, jobrank=generic_job_rank(NINJA), joblevel=8,
+             job=KNIGHT, secondary=THROW, brave=86, faith=56,
+             reaction=REFLEXES, support=DUAL_WIELD, movement=IGNORE_HEIGHT,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=HERMES_SHOES,
+             rh=RUNEBLADE, lh=RUNEBLADE)
     set_slot(data, E, 7, level=105, brave=92, faith=86)  # Adramelk (Lucavi, Phase 2)
     return [E]
 
