@@ -841,50 +841,61 @@ def run() -> int:
     e = 460
     active = [0, 1, 2, 3, 4, 5]
     check("460 active jobs", roster(entd, e, active, 0x0A) == [79, 82, 86, 86, 84, 84])
-    check("460 active levels", roster(entd, e, active, 0x03) == [103, 102, 102, 102, 102, 102])
+    check("460 gender flags", roster(entd, e, active, 0x01) == [0x80, 0x40, 0x40, 0x40, 0x40, 0x40])
+    check("460 active levels", roster(entd, e, active, 0x03) == [102, 101, 100, 100, 101, 101])
     check("460 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("460 active secondaries", roster(entd, e, active, 0x0B) == [6, 6, 6, 6, 6, 6])
+    check("460 active secondaries", roster(entd, e, active, 0x0B) == [6, 0, 9, 9, 0, 0])
     check("460 Brave targets", roster(entd, e, active, 0x06) == [60, 60, 68, 68, 68, 68])
     check("460 Faith targets", roster(entd, e, active, 0x07) == [84, 84, 78, 78, 78, 78])
 
-    for slot_no in (0, 1):
-        check(f"460 s{slot_no} pure caster R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 467
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"460 s{slot_no} caster gear",
-              roster(entd, e, [slot_no], 0x12) == [167]
-              and roster(entd, e, [slot_no], 0x13) == [206]
-              and roster(entd, e, [slot_no], 0x14) == [234])
-
-    check("460 White Mage staff and reward",
-          field(entd, e, 0, 0x15) == 64
+    check("460 male White Mage v3 kit",
+          field16(entd, e, 0, 0x0C) == 427
+          and field16(entd, e, 0, 0x0E) == 482
+          and field16(entd, e, 0, 0x10) == 487
+          and roster(entd, e, [0], 0x12) == [171]
+          and roster(entd, e, [0], 0x13) == [206]
+          and roster(entd, e, [0], 0x14) == [239]
+          and roster(entd, e, [0], 0x15) == [66]
+          and roster(entd, e, [0], 0x16) == [255]
           and field(entd, e, 0, 0x1E) == 66)
-    check("460 Summoner Dragon Rod and minor spoil",
-          field(entd, e, 1, 0x15) == 57
+
+    check("460 female Summoner v3 kit",
+          field16(entd, e, 1, 0x0C) == 427
+          and field16(entd, e, 1, 0x0E) == 467
+          and field16(entd, e, 1, 0x10) == 487
+          and roster(entd, e, [1], 0x12) == [171]
+          and roster(entd, e, [1], 0x13) == [205]
+          and roster(entd, e, [1], 0x14) == [239]
+          and roster(entd, e, [1], 0x15) == [58]
+          and roster(entd, e, [1], 0x16) == [255]
           and field(entd, e, 1, 0x1E) == 242)
 
     for slot_no in (2, 3):
-        check(f"460 s{slot_no} Geomancer R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 442
-              and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"460 s{slot_no} Geomancer gear",
-              roster(entd, e, [slot_no], 0x12) == [167]
-              and roster(entd, e, [slot_no], 0x13) == [206]
-              and roster(entd, e, [slot_no], 0x14) == [234]
-              and roster(entd, e, [slot_no], 0x15) == [56])
+        check(f"460 s{slot_no} female Geomancer v3 kit",
+              field16(entd, e, slot_no, 0x0C) == 437
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 488
+              and roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [195]
+              and roster(entd, e, [slot_no], 0x14) == [226]
+              and roster(entd, e, [slot_no], 0x15) == [30]
+              and roster(entd, e, [slot_no], 0x16) == [255])
 
     for slot_no in (4, 5):
-        check(f"460 s{slot_no} Orator R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 466
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"460 s{slot_no} Orator gear",
-              roster(entd, e, [slot_no], 0x12) == [167]
-              and roster(entd, e, [slot_no], 0x13) == [206]
-              and roster(entd, e, [slot_no], 0x14) == [234]
-              and roster(entd, e, [slot_no], 0x15) == [72])
+        check(f"460 s{slot_no} female Orator v3 kit",
+              field16(entd, e, slot_no, 0x0C) == 445
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 494
+              and roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [202]
+              and roster(entd, e, [slot_no], 0x14) == [238]
+              and roster(entd, e, [slot_no], 0x15) == [73]
+              and roster(entd, e, [slot_no], 0x16) == [254])
+
+    check("460 control flags and positions preserved",
+          roster(entd, e, active, 0x18) == [0x90] * 6
+          and [(field(entd, e, s, 0x19), field(entd, e, s, 0x1A)) for s in active]
+          == [(2, 5), (2, 7), (3, 7), (6, 7), (2, 11), (3, 11)])
 
     check("460 Faerie Harp spoil preserved", field(entd, e, 2, 0x1E) == 94)
 

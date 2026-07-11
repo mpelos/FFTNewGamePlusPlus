@@ -32,6 +32,8 @@ SLOT = 0x28
 SPOILS_OFFSET = 0x1E
 CONTROL_OFFSET = 0x18
 PLAYER_CONTROL_BIT = 0x08
+GENDER_MALE = 0x80
+GENDER_FEMALE = 0x40
 EMPTY_SLOT = bytes.fromhex(
     "00 00 ff fe fe fe fe fe 00 00 00 00 fe 01 fe 01 fe 01 fe fe"
     " fe fe fe 00 00 00 00 00 fe ff 00 00 ff 00 00 00 00 00 00 00"
@@ -115,7 +117,7 @@ OBELISK = 103
 SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
 X_POTION, ELIXIR, PHOENIX_DOWN = 242, 245, 253
 HERMES_SHOES = 213
-SORTILEGE = 239  # reserved (Unknown20) female-only Perfume = Always Protect+Shell (EquipBonus 68); used on
+SORTILEGE = 239  # reserved Perfume = Always Protect+Shell (EquipBonus 68); TIC allows either gender.
                  # must-survive caster VIP Ovelia (Zeirchele) so Protect halves her charging one-shot
 GOLDEN_STAFF = 64  # == SHOP_STAFF; Ovelia's MA staff (alias for readability in her VIP slot)
 GOLD_HAIRPIN = 166  # Hat (Princess-legal), MP+50/HP+80, buyable (Chapter3_SaveRafa); Ovelia head — HP cushion
@@ -166,6 +168,9 @@ ESCUTCHEON = 143     # Tier-S Shield (Unknown20 best; paid before the gauntlet a
 MATERIA_BLADE = 32   # Tier-S Sword (Unknown20; side/relic plan only, not awarded in Lost Halidom 057).
 RAGNAROK = 36        # Tier-S KnightSword capstone; paid before the final gauntlet at Sanctuary 053.
 STONESHOOTER = 73    # Barich v3 active gun/disarm bait (042).
+STAFF_OF_THE_MAGI = 66
+ROD_OF_FAITH = 58
+SEPTIEME_SENS = 238
 GLACIAL_GUN = 74     # Tier-A Gun — Barich (042).
 BLAZE_GUN = 75
 BLASTER = 76
@@ -229,6 +234,12 @@ def set_player_control(data, global_entry, slot):
 def set_control_flags(data, global_entry, slot, flags):
     b = (global_entry % 128) * ENTRY + slot * SLOT
     data[b + CONTROL_OFFSET] = flags
+
+
+def set_gender(data, global_entry, slot, gender_flags):
+    """Set the generic-human gender/appearance byte at slot offset 0x01."""
+    b = (global_entry % 128) * ENTRY + slot * SLOT
+    data[b + 0x01] = gender_flags
 
 
 def clone_slot(data, global_entry, src_slot, dst_slot, *, unitid, x=None, y=None, facing=None,
@@ -1876,28 +1887,39 @@ def mullonde_exterior(data):
     #     slot 1 = Summoner (job 82, rh=57 Dragon Rod) -> AoE; Dragon Rod remains steal flavor (KEEP rh).
     #     slots 2,3 = Geomancer (job 86; were naked) -> terrain elemental.
     #     slots 4,5 = Orator (job 84, rh=72 gun) -> soft status (one-disruptor cap).
-    # CHANGE (v2): complete the caster kits while keeping this lighter than the Nave/Sanctuary bosses.
-    #   Items is the safe secondary across the team: useful chain pressure, no Stop/Charm hard-lock.
-    #   Staff of the Magi + Faerie Harp rewards are handled through spoils, not Steal requirements.
+    # V3: preserve the six static slots and positions. Keep s0 male; change s1-s5 to female. The
+    # gender byte is ENTD +0x01 (male=0x80, female=0x40), previously exercised and validated in this
+    # project. Staff/Faerie/minor spoils remain attached to s0/s2/s1 respectively.
     E = 460
-    set_slot(data, E, 0, level=103, joblevel=8, job=WMAGE,       # hidden rooftop sustain - priority kill
+    set_gender(data, E, 0, GENDER_MALE)
+    set_slot(data, E, 0, level=102, joblevel=8, job=WMAGE,       # hidden rooftop sustain - priority kill
              secondary=ITEMS, brave=60, faith=84,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE)    # keep rh=64 staff
-    set_slot(data, E, 1, level=102, joblevel=8, job=SUMMONER,    # AoE; KEEP rh=57 Dragon Rod (steal)
-             secondary=ITEMS, brave=60, faith=84,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE)
-    for s in (2, 3):                                              # 2 Geomancer - terrain (were naked)
-        set_slot(data, E, s, level=102, joblevel=8, job=GEOMANCER, secondary=ITEMS,
+             reaction=DRAGONHEART, support=SWIFTSPELL, movement=MV2,
+             head=RIBBON, body=SHOP_ROBE, acc=SORTILEGE,
+             rh=STAFF_OF_THE_MAGI, lh=LH_EMPTY)
+
+    set_gender(data, E, 1, GENDER_FEMALE)
+    set_slot(data, E, 1, level=101, joblevel=8, job=SUMMONER,
+             secondary=0, brave=60, faith=84,
+             reaction=DRAGONHEART, support=MAGICK_BOOST, movement=MV2,
+             head=RIBBON, body=BLACK_ROBE, acc=SORTILEGE,
+             rh=ROD_OF_FAITH, lh=LH_EMPTY)
+
+    for s in (2, 3):
+        set_gender(data, E, s, GENDER_FEMALE)
+        set_slot(data, E, s, level=100, joblevel=8, job=GEOMANCER, secondary=MARTIAL_ARTS,
                  brave=68, faith=78,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD)
-    for s in (4, 5):                                              # 2 Orator - soft status (one-disruptor)
-        set_slot(data, E, s, level=102, joblevel=8, job=ORATOR, secondary=ITEMS,
+                 reaction=NATURES_WRATH, support=MAGICK_BOOST, movement=MV3,
+                 head=MAGE_HAT, body=POWER_GARB, acc=GEMS_108,
+                 rh=RUNEBLADE, lh=LH_EMPTY)
+
+    for s in (4, 5):
+        set_gender(data, E, s, GENDER_FEMALE)
+        set_slot(data, E, s, level=101, joblevel=8, job=ORATOR, secondary=0,
                  brave=68, faith=78,
-                 reaction=REFLEXES, support=DEFENSE_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE)  # keep rh=72 gun
+                 reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MOVE_MP_UP,
+                 head=MAGE_HAT, body=WIZARD_ROBE, acc=SEPTIEME_SENS,
+                 rh=STONESHOOTER, lh=LH_TWOHAND)
     return [E]
 
 

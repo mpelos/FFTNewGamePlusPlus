@@ -55,7 +55,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `048` | 43 | Limberry Castle Keep | **Elmdor** (dies); Celia/Lettie → Ultima Demons | v3 Chirijiraden boss + armed Assassins; band 100-102; playtest pending | 🧪 Test |
 | `049` | 44 | Limberry Undercroft | **Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Undead Knights | v3 implemented; six enemies; band 100-102; playtest pending | 🧪 Test |
 | `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | v3 implemented/deployed: named builds + Monk/Samurai/Ninja-bucket Knight wall; s2/s3/s6 L100, s4/s5 L101 | 🧪 Test |
-| `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | v3 docs-only: gender recast + protected healer + Rod-of-Faith Summoner + Stoneshooter Orators | 📝 Ready |
+| `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | v3 implemented/deployed: gender recast + protected healer + Rod-of-Faith Summoner + Stoneshooter Orators | 🧪 Test |
 | `052` | 47 | Mullonde Nave | **Folmarv/Loffrey/Cletienne** (ends when ONE falls; others retreat) | triple-Templar boss; equip-break race; chain 2/3; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** | ✅ Done |
 | `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | undead brother; vampirism+break race; chain 3/3; **Tier-S Ragnarok + Ribbon** | ✅ Done |
 | `054` | 49 | Monastery Vaults 4th Floor | ENDGAME 1/5; 3 Knight (Rend cap 2) + 2 Monk + Ninja(was Archer) | light gear-preservation opener; no boss/no rare | ✅ Done |

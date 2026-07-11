@@ -1,6 +1,6 @@
 # 051 - Mullonde Cathedral Exterior (Murond Holy Place)
 
-Status: 📝 v3 design complete (docs-only) — ready for implementation
+Status: 🧪 v3 implemented and deployed — in-game playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 46 (Mullonde chain 1 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
@@ -10,6 +10,10 @@ File: `battle_entd4_ent.bin`
 > **NG++ rewards applied (2026-06-27):** Staff of the Magi + Faerie Harp + kept minor spoil through
 > guaranteed Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Dragon Rod
 > remains optional steal flavor only. Canonical map: `chapter-4-rewards-implementation.md`.
+
+> **V3 implementation (2026-07-11):** entry 460 patched in the embedded ENTD and deployed through a
+> successful Release build. Gender uses ENTD `0x01`: s0 male `0x80`, s1-s5 female `0x40`. All 352
+> Chapter-4 validation checks pass; positions, UnitIDs, control flags, and Spoils remain preserved.
 
 ## Current Implementation / Data Reality
 
@@ -42,9 +46,9 @@ Historical v2 redesign: preserve the six-caster opener and make the hidden roof 
 sustain engine. V3 now locks complete builds for all six slots, changes s1-s5 to female while keeping
 the White Mage male, and preserves the healer-priority puzzle.
 
-> This pass changes documentation only. No ENTD, patch code, binary, build, or Reloaded-II artifact is
-> changed. The single `Geomancer Female` build supplied for v3 applies to both s2 and s3 so the original
-> two-Geomancer composition remains intact.
+> V3 is implemented in the ENTD patch path and deployed to Reloaded-II. The single `Geomancer Female`
+> build applies to both s2 and s3 so the original two-Geomancer composition remains intact. Direct
+> in-game validation remains pending.
 
 ## V3 Locked Decisions
 
@@ -351,18 +355,18 @@ guaranteed Staff/Faerie spoils.
 
 ## Implementation Checklist
 
-- [ ] Re-dump entry 460 and verify slot order, rewards, and rooftop placement.
-- [ ] Preserve split deployment and roof/height puzzle.
-- [ ] Set genders: s0 male; s1-s5 female.
-- [ ] Set levels: s0 `102`; s1/s4/s5 `101`; s2/s3 `100`.
-- [ ] Preserve Br/Fa targets: s0/s1 `60/84`; s2-s5 `68/78`.
-- [ ] Apply the complete v3 abilities and equipment documented for every slot.
+- [x] Re-dump entry 460 and verify slot order, rewards, and rooftop placement.
+- [x] Preserve split deployment, positions, control flags, UnitIDs, and roof/height puzzle data.
+- [x] Set genders at ENTD `0x01`: s0 male `0x80`; s1-s5 female `0x40`.
+- [x] Set levels: s0 `102`; s1/s4/s5 `101`; s2/s3 `100`.
+- [x] Preserve Br/Fa targets: s0/s1 `60/84`; s2-s5 `68/78`.
+- [x] Apply the complete v3 abilities and equipment documented for every slot.
 - [ ] Keep hidden White Mage sustain reachable/silenceable.
 - [ ] Keep Orator status soft; no hard-control pile-up.
 - [ ] Keep Summoner charge times intact.
-- [ ] Author/verify spoils: Staff of the Magi + Faerie Harp + minor/Hi-Ether spoil.
-- [ ] Equip s1 with Rod of Faith, removing the old Dragon Rod active steal flavor.
-- [ ] Preserve buried map treasure separately from guaranteed rewards.
+- [x] Verify spoils: Staff of the Magi + Faerie Harp + minor spoil.
+- [x] Equip s1 with Rod of Faith, removing the old Dragon Rod active steal flavor.
+- [x] Preserve buried map treasure by leaving map/event data untouched.
 - [ ] Test as Mullonde chain 1/3 with resources carried into `052` and `053`.
 
 ## Test Questions

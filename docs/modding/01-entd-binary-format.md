@@ -60,7 +60,7 @@ this project's shipped, in-production code.
 |---|---|---|---|
 | `0x00` | 1 | SpriteSet | Visual spritesheet index. |
 | `0x00` | 1 | CharId | Same byte as SpriteSet in practice — this project's code treats `0x00` as the unit/character id. Named characters use a low, stable id (e.g. `0x04` = Delita, `0x07` = Argath); generic/templated enemies use `0xFF` or values in the `0x80+` range. See the CharId vs SpriteSet note below. |
-| `0x01` | 1 | Flags | A first flags byte (gender/appearance-class bits in the classic FFT layout). Not used by this project's guest/team logic — see `0x18` for the byte that actually gates team/control behavior. |
+| `0x01` | 1 | Gender/appearance flags | `0x80` = male human, `0x40` = female human, `0x20` = monster. This selects the generic human gender/sprite variant and is distinct from the actor-table gender byte at live offset `+0x06`. Not used by guest/team logic — see ENTD `0x18` for control behavior. |
 | `0x02` | 1 | SpecialName | Special-name/portrait id. |
 | `0x03` | 1 | Level | Unit level. Uses the **relative-encoding scheme** — see dedicated section below. |
 | `0x04` | 1 | Month | Birth month (flavor data). |
@@ -98,6 +98,22 @@ this project's shipped, in-production code.
 | `0x27` | 1 | Unk27 | Undecoded. |
 
 Total: 40 bytes (`0x28`), matching `SLOT_SIZE` exactly with no gaps.
+
+### Gender/appearance flags at `0x01`
+
+Confirmed ENTD values:
+
+```text
+0x80 = male generic human
+0x40 = female generic human
+0x20 = monster
+```
+
+Entry 460 (Mullonde Exterior) v3 is the first deliberate battle-wide gender recast in this project:
+s0 remains male (`0x80`), while s1-s5 change from male (`0x80`) to female (`0x40`). Jobs, UnitIDs,
+control flags (`0x18`), positions, and event delivery remain unchanged. The existing `entd_tool.py`
+decoder and Chapter-4 validator both use these same masks. Do not confuse this ENTD byte with the
+live actor table's gender flags at actor offset `+0x06`; the values match, but the structures do not.
 
 ### CharId vs SpriteSet at offset `0x00`
 
