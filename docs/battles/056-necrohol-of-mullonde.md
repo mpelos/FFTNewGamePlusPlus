@@ -1,6 +1,6 @@
 # 056 - Necrohol of Mullonde (Endgame Gauntlet 3/5)
 
-Status: redesigned (documentation only; not implemented in game data by this task)
+Status: v3 implemented/deployed - direct playtest pending
 Chapter: 4 - "In the Name of Love"
 Battle order: Battle 51 (ENDGAME GAUNTLET 3 of 5 - no resupply across 054 -> 055 -> 056 -> 057 -> 058)
 Target version: Enhanced v1.5.0
@@ -8,9 +8,40 @@ ENTD: `entd4` global entry `438`
 Local slot: `054`
 Simulation artifact: `tmp/fft-level-design-056-necrohol-of-mullonde/`
 
-> Docs-only redesign note: this document is the intended NG++ level design. It does not change the
-> embedded ENTD, scripts, binaries, or patch code. Implementation must later patch entry `438` and
-> preserve the win-on-Cletienne behavior.
+> V3 docs-only revision: preserve entry 438, positions and win-on-Cletienne behavior. Copy Cletienne
+> from Mullonde Nave, Time Mages from Vaults Fifth Level, and the nearest true-job Samurai build from
+> Fort Besselat Sluice. Generic levels are capped at 102-103.
+
+> **V3 implementation (2026-07-11):** entry 438 patched in the embedded ENTD and deployed through a
+> successful Release build. The installed DLL resource matches the source binary byte-for-byte; levels,
+> genders, jobs, complete kits, positions and zero-spoil bytes were mechanically verified.
+
+## V3 Locked Decisions
+
+```text
+s0 CLETIENNE - copy Mullonde Nave s2:
+  Level 104; JobLevel 8; Brave/Faith 65/88.
+  Sorcerer primary; secondary None; Magick Counter; Magick Defense Boost; Ignore Elevation.
+  Dragon Rod / None / Lambent Hat / Black Robe / Featherweave Cloak.
+
+s1/s2 TIME MAGE FEMALE - copy Vaults Fifth Level s5:
+  Level 102; Time Mage bucket JL8; Brave/Faith 62/80; secondary None.
+  Mana Shield / Swiftness / Teleport.
+  Zeus Mace / None / Ribbon / Luminous Robe / Featherweave Cloak.
+
+s3/s4 NINJA:
+  Level 103; Ninja bucket JL8; Brave/Faith 90/35; secondary Martial Arts.
+  Reflexes / Concentration / Movement +3.
+  Koga's Blade / Iga's Blade / Thief's Cap / Ninja Gear / Hermes Shoes.
+
+s5/s6 SAMURAI - copy Fort Besselat Sluice battle Samurai build:
+  Level 102; main job Samurai; Samurai bucket JL8; Brave/Faith 88/42; secondary None.
+  Dragon's Heart / Magick Attack Boost / Movement +3.
+  Masamune / Crystal Shield / Crystal Helm / Crystal Mail / Bracers.
+
+PRESERVE:
+  All vanilla positions, Defeat Cletienne objective and zero special-spoil bytes.
+```
 
 ## Gate Answers / Constraints
 
@@ -19,11 +50,12 @@ Scope: redesign battle doc 056 only; no game data or code changes.
 Allowed changes in design: active enemy kit/level/gear/ability plan, positioning, reward policy, and tests.
 Chapter target: Chapter 4 broken-but-readable puzzle; gauntlet 3/5 should be harder than 055 but not
   the 057 peak.
-Must preserve: Cletienne boss, Magick Surge / punish-slow-chip identity, Samurai/Ninja/Time Mage elite
+Must preserve: Cletienne boss, Samurai/Ninja/Time Mage elite
   screen, ruined Necrohol terrain, and "Defeat Cletienne" objective.
 Guests: no active guest. If future testing discovers any active guest/NPC, it must be player-controlled
   in NG+ and never used as a skill check.
-Reward rule: no usable rewards inside 054-058. Lordly Robe already pays at 052.
+Reward rule: no special spoils inside 054-058. V3 deliberately copies active Zeus Mace/Ribbon gear
+  from 055 onto both Time Mages; Lordly Robe already pays at 052.
 ```
 
 ## Original Battle
@@ -87,106 +119,108 @@ Data implications:
 
 ## Design Goal
 
-Make Necrohol a true gauntlet 3/5 tempo puzzle:
+Make Necrohol a true gauntlet 3/5 focus puzzle:
 
 ```text
-Silence or burst Cletienne before Magick Surge punishes slow chip, while a level-104 elite screen
-threatens space, tempo, and flanks without forcing full cleanup before the 057 dragon pit.
+Burst Cletienne through Magick Counter pressure while a level-102/103 elite screen threatens space,
+tempo, and flanks without forcing full cleanup before the 057 dragon pit.
 ```
 
-The headline engine is **Cletienne's surge race**. Samurai/Ninja/Time Mage units exist to delay or
+The headline engine is **Cletienne's copied Nave build and Magick Counter race**. Samurai/Ninja/Time Mage units exist to delay or
 complicate the boss kill, not to become separate hard-lock engines.
 
 ## Enemy Party Escalation
 
-Accepted redesign: **v2 no-reward surge race elite screen**.
+Accepted redesign: **v3 copied-build Magick Counter boss race**.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ---: | --- | --- | ---: | --- | --- |
-| 0 | Boss objective | Cletienne / Sorcerer | 105 | `65/88` | Magick Surge comeback mage; Silence/burst target. |
-| 1 | Soft tempo | Time Mage | 104 | `62/80` | Slow/Haste lane, but not hard control. |
-| 2 | Soft tempo | Time Mage | 104 | `62/80` | Secondary tempo caster; together they create one effective Slow lane. |
-| 3 | Flanker | Ninja | 104 | `90/35` | Fast pressure on exposed casters and stalled boss rushes. |
-| 4 | Flanker | Ninja | 104 | `90/35` | Second flank route; punishes slow formation. |
-| 5 | AoE pressure | Samurai | 104 | `88/60` | Draw Out/Iaido space pressure; no hard lock. |
-| 6 | AoE pressure | Samurai | 104 | `88/60` | Second Samurai; makes the screen real. |
+| 0 | Boss objective | Cletienne / Sorcerer | 104 | `65/88` | Mullonde Nave copy; Magick Counter caster target. |
+| 1 | Soft tempo | Time Mage female | 102 | `62/80` | Fifth Level Mana Shield/Swiftness copy. |
+| 2 | Soft tempo | Time Mage female | 102 | `62/80` | Second identical Time Mage. |
+| 3 | Flanker | Ninja | 103 | `90/35` | Martial Arts/Concentration dual-blade flanker. |
+| 4 | Flanker | Ninja | 103 | `90/35` | Second identical Ninja. |
+| 5 | AoE pressure | Samurai | 102 | `88/42` | True-job Sluice Samurai build with Masamune. |
+| 6 | AoE pressure | Samurai | 102 | `88/42` | Second identical true-job Samurai. |
 
 Why this works:
 
 ```text
-- The level-104 screen makes 056 meaningfully harder than 055.
-- The boss-focus lane is mandatory: the player must be able to reach, Silence, and burst Cletienne
+- The level-102/103 screen makes 056 meaningfully harder than 055 through builds rather than raw levels.
+- The boss-focus lane is mandatory: the player must be able to reach and burst Cletienne
   without clearing all six support units.
-- Time Mage pressure is capped to one effective Slow lane. No Stop, Don't Act, Death, or repeated hard
-  turn denial.
+- The two Time Mages exactly copy the accepted 055 build.
 - The Samurai debut stays prominent and canonical, but Draw Out is spaceable/raceable.
 - No reward appears here; Lordly Robe already pays before the point of no return at 052.
 ```
 
 ## Builds
 
-### Cletienne Duroi - surge boss
-
-```text
-Level: 105
-JobLevel: 8
-Primary: Sorcerer magic plus Magick Surge identity
-Secondary: intentional utility that does not remove Silence/burst counterplay
-Reaction: existing boss reaction or defensive reaction
-Support: magic/offense support
-Movement: boss mobility
-Gear: complete caster gear; keep Black Garb-class body or equivalent standard gear
-Reward: none
-```
-
-Guardrail: the dangerous magic must remain meaningfully answerable by Silence and decisive burst. An
-unsilenceable surge build fails the battle.
-
-### Time Mage x2 - one effective Slow lane
+### Cletienne Duroi - Nave-copy boss
 
 ```text
 Level: 104
 JobLevel: 8
-Primary: Time Magic with Haste/Slow/Float style tempo
-Secondary: low-impact caster utility
-Reaction: Reflexes
-Support: intentional MA/defense support; current `510` empty support must be fixed
-Movement: Move +1
-Gear: complete caster gear
+Primary: Sorcerer
+Secondary: None
+Reaction: Magick Counter
+Support: Magick Defense Boost
+Movement: Ignore Elevation
+Gear: Dragon Rod / None / Lambent Hat / Black Robe / Featherweave Cloak
+Brave/Faith: 65/88
 Reward: none
 ```
 
-Guardrail: two Time Mages are allowed, but only one effective Slow/disruptor lane. No Stop, Don't Act,
-Death, or hard turn deletion.
+Guardrail: Magick Counter must pressure magic without making physical or ranged burst nonviable.
+
+### Time Mage x2 - Fifth Level copies
+
+```text
+Female; Level: 102
+JobLevel: 8
+Primary: Time Magicks
+Secondary: None
+Reaction: Mana Shield
+Support: Swiftness
+Movement: Teleport
+Gear: Zeus Mace / None / Ribbon / Luminous Robe / Featherweave Cloak
+Brave/Faith: 62/80
+Reward: none
+```
+
+Guardrail: validate the exact copied build in-game, especially Mana Shield sustain and Teleport routing.
 
 ### Ninja x2 - flank tempo
 
 ```text
-Level: 104
+Level: 103
 JobLevel: 8
-Primary: Ninja / Throw / dual-wield pressure
-Secondary: utility, not status lock
-Reaction: existing evasion/counter reaction
-Support: Attack Boost or equivalent offense support
-Movement: Move +2
-Gear: complete ninja gear, no reward payload
+Primary: Throw
+Secondary: Martial Arts
+Reaction: Reflexes
+Support: Concentration
+Movement: Movement +3
+Gear: Koga's Blade / Iga's Blade / Thief's Cap / Ninja Gear / Hermes Shoes
+Brave/Faith: 90/35
 Reward: none
 ```
 
 Guardrail: Ninjas punish stalled play and exposed casters; they should not become instant-delete units
-that decide the fight before Cletienne's surge matters.
+that decide the fight before Cletienne matters.
 
 ### Samurai x2 - Draw Out pressure
 
 ```text
-Level: 104
+Level: 102
 JobLevel: 8
-Primary: Draw Out / Iaido pressure
-Secondary: utility, not hard status
-Reaction: Counter or defensive reaction
-Support: Attack/MA support
-Movement: Move +1
-Gear: complete heavy/samurai gear
+Main job: Samurai
+Primary: Iaido
+Secondary: None
+Reaction: Dragon's Heart
+Support: Magick Attack Boost
+Movement: Movement +3
+Gear: Masamune / Crystal Shield / Crystal Helm / Crystal Mail / Bracers
+Brave/Faith: 88/42
 Reward: none
 ```
 
@@ -197,14 +231,17 @@ positionally readable.
 
 ```text
 Use the ruined Necrohol tiers. Cletienne starts protected but reachable: there must be a real lane for
-Silence/burst. Samurai hold mid-field lanes, Ninjas start wide/flanking, and Time Mages sit back enough
+boss burst. Samurai hold mid-field lanes, Ninjas start wide/flanking, and Time Mages sit back enough
 to slow a reckless rush without sealing the map.
 ```
 
-The player read should be: pick a lane, blunt tempo, Silence Cletienne, and finish him before surge and
+The player read should be: pick a lane, blunt tempo, and finish Cletienne before counter pressure and
 screen pressure turn the fight into a resource bleed.
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
+
+The simulation below is historical v2 context. It does not validate the v3 removal of Magick Surge,
+the lower generic levels, or the copied equipment packages; those require direct playtest.
 
 Artifact:
 
@@ -251,34 +288,40 @@ Residual risks:
 ## Rare / Reward Handling
 
 ```text
-None. No usable NG++ reward is added inside the final gauntlet.
+No special NG++ spoil is added inside the final gauntlet.
 Lordly Robe already pays at `052` through guaranteed Spoils of War.
-Cletienne should not carry Lordly Robe, and no support unit should carry a hidden rare payload.
+Cletienne does not carry Lordly Robe. Both Time Mages visibly carry Zeus Mace and Ribbon as an
+intentional active-equipment exception; these are not spoil payloads.
 Keep standard/vanilla loot and buried Elixirs only.
 ```
 
 ## Implementation Checklist
 
-- [ ] Preserve entry `438` and the "Defeat Cletienne" objective.
-- [ ] Keep Cletienne level `105`; keep the elite screen level `104`.
-- [ ] Keep roster identity: 2 Time Mage, 2 Ninja, 2 Samurai.
-- [ ] Ensure Cletienne remains Silence/burst-answerable.
-- [ ] Cap Time Mage pressure to one effective Slow lane; no Stop/Don't Act/hard control.
-- [ ] Fill Time Mage support slots and verify every active human has complete equipment plus intentional
+- [x] Preserve entry `438` and the "Defeat Cletienne" objective data.
+- [x] Copy Cletienne's Mullonde Nave build at level `104`.
+- [x] Keep every generic within level `102-103`.
+- [x] Copy both female Time Mages from Vaults Fifth Level at `102`.
+- [x] Apply both level-103 Ninja builds exactly as locked.
+- [x] Copy the true-job Sluice Samurai build twice at level `102`, using Crystal Mail.
+- [x] Keep roster identity: 2 Time Mage, 2 Ninja, 2 Samurai.
+- [x] Apply Cletienne's Magick Counter setup.
+- [x] Apply the exact copied Time Mage builds, including Mana Shield and Teleport.
+- [x] Fill Time Mage support slots and verify every active human has complete equipment plus intentional
       secondary/reaction/support/move.
-- [ ] Preserve a playable boss-focus lane; do not force full cleanup.
-- [ ] Add no usable reward, no Lordly Robe, and no steal-dependent rare.
-- [ ] Re-dump entry `438` after implementation and verify only intended kit/ability changes.
+- [x] Preserve all positions and the existing boss-focus lane data.
+- [x] Preserve zero special-spoil bytes and document active Zeus Mace/Ribbon Steal exposure.
+- [x] Re-dump entry `438` after implementation and verify only intended kit/ability changes.
 - [ ] Playtest `055 -> 056 -> 057` as a no-resupply unit.
 
 ## Test Questions
 
-- Does Silence/burst Cletienne feel like the correct plan?
-- Does Magick Surge punish slow chip without becoming unavoidable?
-- Does the level-104 elite screen feel stronger than `055` but below the `057` peak?
+- Does focused burst against Cletienne feel like the correct plan?
+- Does Magick Counter punish careless casting without shutting down the fight?
+- Does the level-102/103 elite screen feel stronger than `055` but below the `057` peak?
 - Do the two Time Mages create soft tempo rather than hard control?
 - Can the player reach Cletienne without clearing all six support units?
-- Are no usable NG++ rewards or unique steal payloads present?
+- Are zero special spoils preserved, with Zeus Mace/Ribbon exposure limited to the intended equipment?
+- Do both Time Mages appear female while Ninjas and Samurais retain their existing gender?
 
 ## Sources
 

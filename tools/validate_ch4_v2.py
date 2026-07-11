@@ -1108,50 +1108,51 @@ def run() -> int:
     e = 438
     active = [0, 1, 2, 3, 4, 5, 6]
     check("438 active jobs", roster(entd, e, active, 0x0A) == [39, 81, 81, 89, 89, 88, 88])
-    check("438 active levels", roster(entd, e, active, 0x03) == [105, 104, 104, 104, 104, 104, 104])
+    check("438 active levels", roster(entd, e, active, 0x03) == [104, 102, 102, 103, 103, 102, 102])
     check("438 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8, 8])
-    check("438 active secondaries", roster(entd, e, active, 0x0B) == [5, 6, 6, 6, 6, 6, 6])
+    check("438 active secondaries", roster(entd, e, active, 0x0B) == [0, 0, 0, 9, 9, 0, 0])
     check("438 Brave targets", roster(entd, e, active, 0x06) == [65, 62, 62, 90, 90, 88, 88])
-    check("438 Faith targets", roster(entd, e, active, 0x07) == [88, 80, 80, 35, 35, 60, 60])
-    check("438 Cletienne no-reward surge kit",
-          field16(entd, e, 0, 0x0C) == 423
+    check("438 Faith targets", roster(entd, e, active, 0x07) == [88, 80, 80, 35, 35, 42, 42])
+    check("438 female Time Mages", roster(entd, e, [1, 2], 0x01) == [0x40, 0x40])
+    check("438 Cletienne Nave-copy kit",
+          field16(entd, e, 0, 0x0C) == 435
           and field16(entd, e, 0, 0x0E) == 468
-          and field16(entd, e, 0, 0x10) == 507
+          and field16(entd, e, 0, 0x10) == 492
           and roster(entd, e, [0], 0x12) == [167]
-          and roster(entd, e, [0], 0x13) == [198]
+          and roster(entd, e, [0], 0x13) == [205]
           and roster(entd, e, [0], 0x14) == [234]
-          and roster(entd, e, [0], 0x15) == [65]
+          and roster(entd, e, [0], 0x15) == [57]
           and roster(entd, e, [0], 0x16) == [254])
     for slot_no in (1, 2):
-        check(f"438 s{slot_no} Time Mage kit",
-              field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 467
-              and field16(entd, e, slot_no, 0x10) == 486
-              and roster(entd, e, [slot_no], 0x12) == [167]
+        check(f"438 s{slot_no} Fifth Level Time Mage kit",
+              field16(entd, e, slot_no, 0x0C) == 445
+              and field16(entd, e, slot_no, 0x0E) == 482
+              and field16(entd, e, slot_no, 0x10) == 498
+              and roster(entd, e, [slot_no], 0x12) == [171]
               and roster(entd, e, [slot_no], 0x13) == [206]
               and roster(entd, e, [slot_no], 0x14) == [234]
-              and roster(entd, e, [slot_no], 0x15) == [56]
+              and roster(entd, e, [slot_no], 0x15) == [65]
               and roster(entd, e, [slot_no], 0x16) == [255])
     for slot_no in (3, 4):
-        check(f"438 s{slot_no} Ninja flanker kit",
-              field16(entd, e, slot_no, 0x0C) == 453
-              and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 487
+        check(f"438 s{slot_no} Ninja v3 kit",
+              field16(entd, e, slot_no, 0x0C) == 449
+              and field16(entd, e, slot_no, 0x0E) == 469
+              and field16(entd, e, slot_no, 0x10) == 488
               and roster(entd, e, [slot_no], 0x12) == [168]
-              and roster(entd, e, [slot_no], 0x13) == [198]
-              and roster(entd, e, [slot_no], 0x14) == [210]
-              and roster(entd, e, [slot_no], 0x15) == [14]
-              and roster(entd, e, [slot_no], 0x16) == [14])
+              and roster(entd, e, [slot_no], 0x13) == [197]
+              and roster(entd, e, [slot_no], 0x14) == [213]
+              and roster(entd, e, [slot_no], 0x15) == [18]
+              and roster(entd, e, [slot_no], 0x16) == [17])
     for slot_no in (5, 6):
-        check(f"438 s{slot_no} Samurai screen kit",
-              field16(entd, e, slot_no, 0x0C) == 442
-              and field16(entd, e, slot_no, 0x0E) == 465
-              and field16(entd, e, slot_no, 0x10) == 486
+        check(f"438 s{slot_no} Sluice Samurai Crystal Mail kit",
+              field16(entd, e, slot_no, 0x0C) == 427
+              and field16(entd, e, slot_no, 0x0E) == 467
+              and field16(entd, e, slot_no, 0x10) == 488
               and roster(entd, e, [slot_no], 0x12) == [154]
               and roster(entd, e, [slot_no], 0x13) == [182]
               and roster(entd, e, [slot_no], 0x14) == [218]
-              and roster(entd, e, [slot_no], 0x15) == [45]
-              and roster(entd, e, [slot_no], 0x16) == [254])
+              and roster(entd, e, [slot_no], 0x15) == [46]
+              and roster(entd, e, [slot_no], 0x16) == [139])
     check("438 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0, 0])
 
     # 057 - Lost Halidom / Lost Sacred Precincts, entry 439.

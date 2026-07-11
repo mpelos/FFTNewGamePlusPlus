@@ -2055,26 +2055,33 @@ def vaults_5th(data):
 def capitoline(data):
     # Battle 51 - Necrohol of Mullonde / The Capitoline (entry 438): Cletienne's death battle.
     # Win = "Defeat Cletienne". Roster is Cletienne + 2 Time Mage + 2 Ninja + 2 Samurai.
-    # Keep the Magick Surge race, fill the elite screen's kits, and add no gauntlet reward.
+    # V3 copies Cletienne from Nave, Time Mages from Vaults Fifth, and the true-job Samurai build from
+    # Besselat Sluice (with Crystal Mail). Generic levels stay in the 102-103 band; spoils stay zero.
     E = 438
-    set_slot(data, E, 0, level=105, joblevel=8, secondary=FUNDAMENTS,
-             brave=65, faith=88, body=BLACK_GARB)  # Cletienne - Silence/burst remains the answer.
-    for s in (1, 2):                                                  # 2 Time Mage - Slow/Haste tempo
-        set_slot(data, E, s, level=104, joblevel=8, job=TMAGE, secondary=ITEMS,
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=0,
+             brave=65, faith=88,
+             reaction=MAGICK_COUNTER, support=MAGICK_DEFENSE_BOOST, movement=IGNORE_HEIGHT,
+             head=MAGE_HAT, body=BLACK_ROBE, acc=FEATHERWEAVE,
+             rh=DRAGON_ROD, lh=LH_TWOHAND)
+    for s in (1, 2):
+        set_gender(data, E, s, GENDER_FEMALE)
+        set_slot(data, E, s, level=102, joblevel=8, job=TMAGE, secondary=0,
                  brave=62, faith=80,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s in (3, 4):                                                  # 2 Ninja - dual-wield flankers
-        set_slot(data, E, s, level=104, joblevel=8, job=NINJA, secondary=ITEMS,
+                 reaction=MANA_SHIELD, support=SWIFTSPELL, movement=TELEPORT,
+                 head=RIBBON, body=LIGHT_ROBE, acc=FEATHERWEAVE,
+                 rh=ZEUS_MACE, lh=LH_EMPTY)
+    for s in (3, 4):
+        set_slot(data, E, s, level=103, joblevel=8, job=NINJA, secondary=MARTIAL_ARTS,
                  brave=90, faith=35,
-                 reaction=FIRST_STRIKE, support=ATK_BOOST, movement=MV2,
-                 head=THIEFS_CAP, body=BLACK_GARB, acc=GERMINAS, rh=NINJA_BLADE, lh=NINJA_BLADE)
-    for s in (5, 6):                                                  # 2 Samurai - Draw Out (katana auto)
-        set_slot(data, E, s, level=104, joblevel=8, job=SAMURAI, secondary=ITEMS,
-                 brave=88, faith=60,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
+                 reaction=REFLEXES, support=CONCENTRATION, movement=MV3,
+                 head=THIEFS_CAP, body=NINJA_GEAR, acc=HERMES_SHOES,
+                 rh=KOGA_BLADE, lh=IGA_BLADE)
+    for s in (5, 6):
+        set_slot(data, E, s, level=102, joblevel=8, job=SAMURAI, secondary=0,
+                 brave=88, faith=42,
+                 reaction=DRAGONHEART, support=MAGICK_BOOST, movement=MV3,
                  head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
-                 rh=KIKU_ICHIMONJI, lh=LH_TWOHAND)
+                 rh=MASAMUNE, lh=CRYSTAL_SHIELD)
     return [E]
 
 
