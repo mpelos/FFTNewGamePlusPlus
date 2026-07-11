@@ -15,6 +15,11 @@ File: `battle_entd4_ent.bin`
 > successful Release build. All 358 Chapter-4 validation checks pass. `event436.e` was not modified;
 > its SHA-256 remains `132FE1DB670F85079BF31BF881B5B48BD79CC1540BC92B564346CC0436998318`.
 
+> **Dragoon revision (2026-07-11):** s5/s6 converted from Ninja-bucket Knights to true Dragoons with
+> Dragoon bucket JL8, no secondary, Reflexes, Doublehand, Ignore Elevation and Javelin "II". The Release
+> build was deployed to Reloaded-II and the installed DLL was read back successfully. Sprite-sheet count
+> rises from 5 to 6; direct playtest must confirm both Dragoon sprites and event choreography.
+
 ## Current Implementation / Data Reality
 
 ```text
@@ -29,9 +34,8 @@ DATA REALITY (verified from current embedded entd4 dump, entry 459):
            gear includes Grand Helm (156), Maximillian-tier body (181), Defender (33), Aegis Shield (136).
            Spoils payload = 0xB9 (Maximillian).
 
-  slots 2-6 = five Knight stair-wall bodies
-              job 76, level 103, JobLevel 8, full equipment and R/S/M setup:
-              Counter (442), Attack Boost (465), Movement +1 (486), heavy gear + Bracers.
+  slots 2-4 = three Knight stair-wall bodies (two Martial Artists + one Samurai).
+  slots 5-6 = two Dragoon stair-wall bodies with Javelin "II" and Doublehand.
               slot 2 spoils payload = 0x9C (Grand Helm).
               slot 3 spoils payload = 0x8E (Venetian Shield).
 
@@ -52,7 +56,7 @@ Historical v2 baseline: keep the two-phase brother fight, control the active gue
 sources, and preserve a sequential transform into a spaceable Lucavi AoE puzzle.
 
 V3 planning is complete. This pass locks s0 Zalbaag, s1 Dycedarg, Adrammelech's level, and the
-complete levels, Brave/Faith targets, builds, and event-script positions for all five Knight bodies.
+complete levels, Brave/Faith targets, builds, and event-script positions for all five stair-wall bodies.
 
 > V3 is implemented in the ENTD patch path and deployed to Reloaded-II. Runtime transform behavior,
 > secondary-skill availability, and battle feel remain pending direct in-game validation.
@@ -66,8 +70,8 @@ LEVELS:
   s2 Knight Martial Artist: 100.
   s3 Knight Martial Artist: 100.
   s4 Knight Samurai: 101.
-  s5 Knight Ninja: 101.
-  s6 Knight Ninja: 100.
+  s5 Dragoon: 101.
+  s6 Dragoon: 100.
   s7 Adrammelech: 105.
 
 s0 ZALBAAG — complete equipment locked:
@@ -98,7 +102,7 @@ PRESERVE:
 
 ```text
 Make Eagrose the second major Chapter 4 Lucavi spike: Phase 1 is a controlled high-stair physical wall
-around Dycedarg, built from Knight bodies using Martial Arts, Iaido, and Throw; Phase 2 is Adramelk's
+around Dycedarg, built from Martial Arts/Iaido Knights and Javelin "II" Dragoons; Phase 2 is Adramelk's
 spread-or-die summon pressure. The player must read and crack three distinct physical styles, then
 spread and burst the Lucavi. The fight must never become an unreadable damage pile-up, an AI-guest
 failure, or a non-spaceable AoE/status lock.
@@ -143,13 +147,13 @@ Design reading:
 
 Eagrose is **the brother fight**. Its shape is not just "another Lucavi": the human phase forces Ramza
 through the institutional Beoulve wall first, then reveals the monster underneath. That means the two
-demands must remain sequential and readable. All five v3 bodies remain main-job Knights and therefore
-retain Arts of War as their primary command. Monk, Samurai, and Ninja job buckets define their seeded
-Job Levels/learned skills; their secondary commands differentiate how each Knight fights alongside
-Arts of War. If Adramelk's AoE is non-spaceable, the second phase becomes a wipe check. If the guest is
+demands must remain sequential and readable. Three v3 bodies remain main-job Knights and retain Arts
+of War as their primary command. The former Ninja-bucket Knights become true Dragoons with Jump primary,
+no secondary, Doublehand, and Javelin "II". If Adramelk's AoE is non-spaceable, the second phase
+becomes a wipe check. If the guest is
 AI-controlled, the fight asks the player to babysit a bad decision engine.
 
-For New Game++ the identity must stay: **controlled guest, three-style physical Knight wall, then space
+For New Game++ the identity must stay: **controlled guest, Knight/Dragoon physical wall, then space
 against the Lucavi.**
 
 ## Local Data Confirmed / Data Still Needed
@@ -180,9 +184,8 @@ Phase 1 support structure:
   - Dycedarg anchors the upper stairs.
   - s2/s3 are Monk-bucket Knight Martial Artists with shielded counter-pressure.
   - s4 is a Samurai-bucket Knight whose Doublehand/Iaido build is the central melee threat.
-  - s5/s6 are Ninja-bucket Knight Ninjas with dual Runeblades, Throw, and vertical freedom.
-  - All five retain primary Arts of War because their main job is Knight. Martial Arts, Iaido, and
-    Throw are their secondaries, creating three styles on top of the shared Rend pressure.
+  - s5/s6 are true Dragoons with Javelin "II", Doublehand, no secondary, and vertical freedom.
+  - s2-s4 retain primary Arts of War because their main job is Knight. The Dragoons use Jump primary.
 
 Phase 2 support structure:
   - Adramelk is the single Lucavi engine.
@@ -197,14 +200,12 @@ both halves matter while keeping them sequential and answerable.
 
 ```text
 KNIGHT JOB-BUCKET CASTES:
-  The five bodies remain main-job Knights, so Arts of War is primary for every one of them. Their job
-  buckets are Monk (s2/s3), Samurai (s4), and Ninja (s5/s6), all at JobLevel 8. A bucket does not
-  replace the primary command; it seeds Job Levels and learned skills across jobs. The selected
-  secondary commands are Martial Arts, Iaido, and Throw.
+  s2/s3 remain main-job Knights with Monk buckets and s4 remains a main-job Knight with Samurai bucket.
+  Arts of War is primary for those three. s5/s6 are true Dragoons with Jump primary and no secondary.
 
-FIVE ARTS-OF-WAR SOURCES:
-  Eagrose intentionally exceeds the chapter's normal two-break-source guardrail because the vanilla
-  formation is five Knights and v3 preserves their main job. The pressure is explicit and visible;
+THREE ARTS-OF-WAR SOURCES:
+  Eagrose retains three main-job Knights and therefore three visible Arts-of-War sources. The pressure
+  is explicit and visible;
   Safeguard, disarm, status, range, and focusing individual Knights remain the intended answers.
 
 TWO-PHASE TRANSFORM:
@@ -240,8 +241,8 @@ PRESERVE:
 
 ## Proposed Composition (New Game++ Eagrose Castle v3)
 
-Keep the local two-phase roster. Named-unit builds and all five Knight levels, Brave/Faith targets,
-job buckets, abilities, equipment, and final combat positions below are locked.
+Keep the local two-phase roster. Named-unit builds and all five stair-wall levels, Brave/Faith targets,
+jobs/buckets, abilities, equipment, and final combat positions below are locked.
 
 ### Phase 1 - Dycedarg + High-Stair Wall
 
@@ -252,8 +253,8 @@ job buckets, abilities, equipment, and final combat positions below are locked.
 | s2 | Knight Martial Artist / reward payload | Knight body; Monk bucket Lv8 | `100` | `88/42` | Shielded Counter bruiser at final event tile `(8,4)`; Grand Helm spoil remains current baseline. |
 | s3 | Knight Martial Artist / reward payload | Knight body; Monk bucket Lv8 | `100` | `86/44` | Shielded Counter bruiser at final event tile `(9,5)`; Venetian Shield spoil remains current baseline. |
 | s4 | Knight Samurai | Knight body; Samurai bucket Lv8 | `101` | `88/58` | Doublehand/Iaido central threat at final event tile `(7,7)`. |
-| s5 | Knight Ninja | Knight body; Ninja bucket Lv8 | `101` | `88/52` | Dual-wield/Throw flank threat at final event tile `(1,5)`. |
-| s6 | Knight Ninja | Knight body; Ninja bucket Lv8 | `100` | `86/56` | Dual-wield/Throw flank threat at final event tile `(1,3)`. |
+| s5 | Dragoon | Dragoon bucket Lv8 | `101` | `88/52` | Doublehand Javelin "II" flank threat at final event tile `(1,5)`. |
+| s6 | Dragoon | Dragoon bucket Lv8 | `100` | `86/56` | Doublehand Javelin "II" flank threat at final event tile `(1,3)`. |
 
 ### Phase 2 - Adramelk / Adrammelech
 
@@ -270,16 +271,16 @@ Script placeholders to preserve:
 
 Reasoning:
 
-The v3 design is a **three-style Arts-of-War Knight wall followed by the Lucavi duel**. The human phase
-uses two shielded Martial Artists, one Doublehand Samurai, and two dual-wield Ninja-bucket Knights.
-Every body retains primary Arts of War from the Knight main job; the bucket and secondary layer add
-the three distinct styles. The transform remains sequential, the guest remains controlled, and the
+The v3 design is a **Knight/Dragoon physical wall followed by the Lucavi duel**. The human phase uses
+two shielded Martial Artists, one Doublehand Samurai, and two Javelin "II" Dragoons. The three Knights
+retain primary Arts of War; the Dragoons use Jump primary and no secondary. The transform remains
+sequential, the guest remains controlled, and the
 reward ledger is the full armor/shield set rather than the old single-Grand-Helm plan.
 
 Rejected variants:
 
 ```text
-- Five identical Knight builds: rejected in favor of distinct Martial Arts/Iaido/Throw secondaries.
+- Five identical Knight builds: rejected in favor of Martial Arts/Iaido Knights plus Dragoons.
 - AI guest hostage: guest AI becomes a failure condition.
 - Unavoidable summon lock: Phase 2 loses spacing counterplay.
 - Extra caster support: adds a second engine to an already two-phase fight.
@@ -343,18 +344,18 @@ Knight s4 — Knight Samurai:
   - Body: Crystal Mail.
   - Accessory: Magepower Glove.
 
-Knights s5-s6 — Knight Ninjas:
+Dragoons s5-s6:
   - Levels: s5 101; s6 100.
   - Brave/Faith: s5 88/52; s6 86/56.
-  - Main job/body: Knight.
-  - Primary: Arts of War.
-  - Job bucket: Ninja; JobLevel: 8.
-  - Secondary: Throw.
+  - Main job/body: Dragoon.
+  - Job bucket: Dragoon; JobLevel: 8.
+  - Primary: Jump.
+  - Secondary: None.
   - Reaction: Reflexes.
-  - Support: Dual Wield.
+  - Support: Doublehand.
   - Movement: Ignore Elevation.
-  - Right hand: Runeblade.
-  - Left hand: Runeblade.
+  - Right hand: Javelin "II".
+  - Left hand: None.
   - Head: Crystal Helm.
   - Body: Crystal Mail.
   - Accessory: Hermes Shoes.
@@ -371,7 +372,7 @@ Adramelk / Adrammelech:
 Phase 1: Dycedarg and the stair wall hold the upper level. The event script `event436.e` overrides the
 provisional ENTD coordinates. Final combat tiles are s2 `(8,4)`, s3 `(9,5)`, s4 `(7,7)`, s5 `(1,5)`,
 and s6 `(1,3)`. The two Martial Artists hold the central approach, the Samurai supplies the central
-Doublehand/Iaido threat, and the two Ninja-bucket Knights exploit the left side and elevation. Slot 0
+Doublehand/Iaido threat, and the two Dragoons exploit the left side and elevation. Slot 0
 guest starts controllable and must not be exposed to unavoidable failure.
 
 Phase 2: After the transform, Adramelk's threat becomes spacing. The player should have room to spread,
@@ -384,7 +385,7 @@ scatter when the demon rises."
 ## Historical v2 Simulation / v3 Test Plan
 
 The table below is historical v2 analysis. It does not validate the new v3 named builds or the locked
-Martial Artist/Samurai/Ninja Knight redesign. No new simulation is requested; direct in-game validation
+Martial Artist/Samurai/Dragoon redesign. No new simulation is requested; direct in-game validation
 will follow implementation.
 
 Simulation artifact:
@@ -427,9 +428,9 @@ Historical iteration decision (superseded for the v3 Knight kits):
 ACCEPT v2 hard-capped brother duel as the historical baseline.
 Iteration 2 treats the fight as sequential phases. The stair wall is allowed only with two effective
 breakers, slot 0 must be controllable if active, and Phase 2 must remain spaceable.
-V3 intentionally supersedes the two-breaker cap with five main-job Knights, all retaining primary
-Arts of War, split across Monk, Samurai, and Ninja buckets. This historical simulation is retained
-only for phase/guest/AoE context and does not validate v3's five-source Rend pressure.
+V3 intentionally uses three main-job Knights retaining primary Arts of War plus two true Dragoons.
+This historical simulation is retained only for phase/guest/AoE context and does not validate the
+three-source Rend pressure or Javelin "II" Dragoon damage.
 ```
 
 ## Implementation Checklist
@@ -442,8 +443,9 @@ only for phase/guest/AoE context and does not validate v3's five-source Rend pre
       s5 `88/52`, and s6 `86/56`.
 - [x] Equip Zalbaag with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
 - [x] Equip Dycedarg with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
-- [x] Define every Knight v3 build: s2/s3 Monk-bucket Martial Artists, s4 Samurai-bucket Knight,
-      s5/s6 Ninja-bucket Knights.
+- [x] Define s2/s3 Monk-bucket Knight Martial Artists and s4 Samurai-bucket Knight.
+- [x] Convert s5/s6 to Dragoon bucket Lv8 with no secondary, Reflexes, Doublehand, Ignore Elevation,
+      and Javelin "II".
 - [x] Preserve unmodified `event436.e` final combat positions: s2 `(8,4)`, s3 `(9,5)`, s4 `(7,7)`,
       s5 `(1,5)`, s6 `(1,3)`.
 - [ ] Keep Phase 2 AoE/status telegraphed, spaceable, resistable, and non-locking.
@@ -455,9 +457,10 @@ only for phase/guest/AoE context and does not validate v3's five-source Rend pre
 - Is slot 0 player-controlled if active, and does the battle avoid guest-AI failure?
 - Does Zalbaag appear at level 103 with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers?
 - Does Dycedarg appear at level 103 with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers?
-- Do all five units remain visibly Knights while receiving the correct Monk/Samurai/Ninja buckets?
-- Does the five-source Arts of War wall remain answerable through Safeguard, disarm, status, range,
-  or focus fire despite deliberately exceeding the normal two-break-source guardrail?
+- Do s5/s6 appear as Dragoons with Dragoon bucket Lv8, no secondary, and the exact Javelin "II" build?
+- Do both Dragoon sprites load correctly without corrupting named-unit or Lucavi sprites?
+- Does the three-source Arts of War wall remain answerable through Safeguard, disarm, status, range,
+  or focus fire?
 - Does each Knight begin combat on the event-script tile documented above, especially s2 after its
   scripted walk from `(8,8)` to `(8,4)`?
 - Does the transform fire cleanly and make Phase 2 sequential rather than simultaneous with Phase 1?

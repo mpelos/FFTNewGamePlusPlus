@@ -44,11 +44,11 @@ structural pressures.
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | band 100-102; dual Masamune vs Koga/Iga flee-race; playtest pending | gate | ▃ moderate (race) |
 | 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | band 100-102; Chirijiraden + armed Assassin parry-race; playtest pending | keep | ▆ harder |
 | 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Martial Arts Undead Knights) | v3 implemented; 6 enemies; band 100-102; **Tier-A Aegis Shield**; playtest pending | undercroft | ▆ harder |
-| 45 | Eagrose Castle | `050` | Zalbaag + **Dycedarg** + 5 Knight → **Adrammelech** | v3 implemented/deployed; playtest pending; s2/s3/s6 L100, s4/s5 L101; named 103; Lucavi 105 | castle | █ SPIKE |
+| 45 | Eagrose Castle | `050` | Zalbaag + **Dycedarg** + 2 Martial Knights + Samurai Knight + 2 Dragoons → **Adrammelech** | v3 Javelin "II" Dragoons; playtest pending | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | v3 implemented/deployed; playtest pending; gender recast; band 100-102; Stoneshooter/Mana-Shield Orators | cathedral ext | ▃ moderate |
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | v3 implemented/deployed; boss equipment refresh; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** unchanged; chain 2/3; playtest pending | nave | ▅ hard |
 | 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | v3 implemented/deployed: Eagrose guest loadout; **Tier-S Ragnarok + Ribbon** unchanged; chain 3/3; playtest pending | sanctuary | ▆ harder |
-| 49 | Monastery Vaults — 4th | `054` | 6 (3 Knight Rend-cap 2 + 2 Monk + Ninja) | light gear-preservation opener; no rare; gauntlet 1/5 | vault | ▂ light (opener) |
+| 49 | Monastery Vaults — 4th | `054` | 6 (2 Eagrose Knight Martial Artists + Eagrose Knight Samurai + 2 South Wall Monks + South Wall Ninja) | v3 docs-only imported-build opener; no reward; gauntlet 1/5 | vault | ▂ light (opener) |
 | 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** Divine Knight + 2 Black Mage + 2 Summoner + Time Mage) | caster crossfire; disarm-first; no usable gauntlet reward | wide vault | ▅ hard |
 | 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai endgame showcase**; Silence/burst the surge; no usable gauntlet reward | dead city | ▆ harder |
 | 52 | Lost Halidom | `057` | 6 (**Barich** + Chemist + 4 apex monsters) | 5★ overlapping breath pit + control; no usable gauntlet reward | holy ground | █ 5★ PEAK |
@@ -126,8 +126,8 @@ and no hidden Brave/Faith assumptions.
 | Exception | Where | Why | Guardrail |
 |-----------|-------|-----|-----------|
 | Time-Mage Haste/Slow/Float | Dugeura (`038`), Vaults-5th (`055`), Necrohol (`056`) | canonical tempo casters | Haste/Slow/Float only — no Stop/Don't Act; one effective disruptor per fight |
-| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend/Arts of War) | Bervenia (`039`), Church (`041`), Undercroft (`049`), Eagrose (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | normally **≤2 break sources/fight**; Eagrose is the documented exception with five main-job Knights retaining Arts of War |
-| Knight job-bucket castes | Eagrose P1 (`050`) | five main-job Knight bodies split into Monk, Samurai, and Ninja buckets | bucket seeds Job Levels/learned skills but does not replace primary Arts of War; Martial Arts/Iaido/Throw are secondaries |
+| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend/Arts of War) | Bervenia (`039`), Church (`041`), Undercroft (`049`), Eagrose (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | normally **≤2 break sources/fight**; Eagrose is the documented exception with three main-job Knights retaining Arts of War |
+| Knight/Dragoon castes | Eagrose P1 (`050`) | 2 Monk-bucket Knights + Samurai-bucket Knight + 2 true Dragoons | Knights retain Arts of War; Dragoons use Jump, no secondary, Doublehand and Javelin "II" |
 | De-randomized beasts | Finnath (`040`) | reliable, learnable flock | fixed kits (Choco-Meteor/Cure); no status beasts; no boss |
 | Healer/holy boss burst | Church (`041`) | Zalmo's revive/holy IS the puzzle | Silence/focus-burst answer; holy/soft-status only; he dies → Tier-A |
 | Branching mutually-exclusive approach | Besselat Wall (`043a`/`043b`) | the fort's two routes | each route self-contained; no boss; both lead to the Sluice |
@@ -146,7 +146,7 @@ and no hidden Brave/Faith assumptions.
 | Almagest / Dispelja / demon surround / 2nd form | Airship (`058`) | the Lucavi FINALE | Almagest telegraphed/sub-100%/survivable; Dispelja → re-buff; surround → Ribbon+spacing; transform telegraphed; full HP/MP restore between phases |
 
 Hard control (Stop/Don't Act/Petrify spam) remains banned everywhere. Equip-break normally stays at
-≤2 sources/fight; Eagrose is the explicit exception with five main-job Knights and therefore five
+≤2 sources/fight; Eagrose is the explicit exception with three main-job Knights and therefore three
 primary Arts of War sources. Every Lucavi/finale ultimate is telegraphed and sub-lethal by design — no
 scripted unavoidable wipe in the entire chapter.
 
@@ -165,7 +165,7 @@ Poeska       (046) : four L100-101 + Mystic/Summoner L102; all-undead       -> p
 Limberry Gate(047) : L102 Assassins + L100-101 Reavers; dual blades         -> burst one to critical; no rare
 Limberry Keep(048) : L102 Elmdor + L101 Assassins + L100 demons            -> answer parry; Tier-A
 Limberry Und.(049) : L102 ZALERA + L101 Mystic/Knights + 2 L100 Archaeodaemons -> race status
-Eagrose      (050) : L103 Zalbaag/Dycedarg + L100-101 Monk/Samurai/Ninja-bucket Knights -> L105 Adrammelech
+Eagrose      (050) : L103 Zalbaag/Dycedarg + L100-101 Martial/Samurai Knights + Javelin "II" Dragoons -> L105 Adrammelech
 Mullonde Ext.(051) : hidden-roof White Mage sustain + caster screen; chain 1/3 -> kill the healer first
 Mullonde Nave(052) : TRIPLE-TEMPLAR (Folmarv/Loffrey/Cletienne; one-falls); chain 2/3 -> commit to Folmarv
 Mullonde San.(053) : ZALBAAG vampire Ark Knight + undead; chain 3/3         -> cleanse vampirism; holy the dead

@@ -1,6 +1,6 @@
 # 054 - Monastery Vaults, Fourth Level (Endgame Gauntlet 1/5)
 
-Status: redesigned (documentation only; not implemented in game data by this task)
+Status: v3 design complete (docs-only) - ready for implementation
 Chapter: 4 - "In the Name of Love"
 Battle order: Battle 49 (ENDGAME GAUNTLET 1 of 5 - no resupply across 054 -> 055 -> 056 -> 057 -> 058)
 Target version: Enhanced v1.5.0
@@ -8,9 +8,23 @@ ENTD: `entd4` global entry `435`
 Local slot: `051`
 Simulation artifact: `tmp/fft-level-design-054-monastery-vaults-fourth-level/`
 
-> Docs-only redesign note: this document is the intended NG++ level design. It does not change the
-> embedded ENTD, scripts, binaries, or patch code. Implementation must later patch entry `435` and
-> preserve the event behavior verified below.
+> V3 docs-only revision: preserve the event behavior, objective, positions, Loffrey cutscene exit,
+> enemy count and no-reward rule. Replace the six active generic builds with exact copies from Eagrose
+> Castle and Fort Besselat South Wall. No embedded ENTD, script, binary or patch code changes in this pass.
+
+## V3 Locked Decisions
+
+```text
+s1/s2 = Eagrose Knight Martial Artists (slots 2/3), copied respectively.
+s3    = Eagrose Knight Samurai (slot 4).
+s4/s5 = two exact copies of Fort Besselat South Wall Monk (slot 6).
+s6    = exact copy of Fort Besselat South Wall Ninja (slot 5; replaces vanilla Archer).
+
+PRESERVE:
+  s0 Loffrey exits by script and remains non-combatant.
+  Defeat-all objective, six active generics and all vanilla positions.
+  No usable rewards or rare payloads.
+```
 
 ## Gate Answers / Constraints
 
@@ -90,37 +104,36 @@ Turn the old 1/5 warm-up into a readable NG++ opener: still the lightest fight o
 but no longer free for a tuned party. The fight should ask:
 
 ```text
-Can you preserve weapons/armor under capped Rend pressure while a fast flanker punishes loose formation,
+Can you preserve weapons/armor against three distinct Knight styles while an unarmed Ninja flanker
+punishes loose formation,
 without spending too much HP/MP/items before the first real boss at 055?
 ```
 
-The headline engine is **gear preservation under capped Rend**. The Ninja is support tempo, not a
-second puzzle. Monks add Chakra-first sustain, not a revive engine. No hard status, no boss, no reward.
+The headline engine is **gear preservation against the imported Eagrose Knight trio**. The Ninja and
+Monks reproduce the South Wall martial package without adding a second puzzle. No hard status, boss,
+or reward is added.
 
 ## Enemy Party Escalation
 
-Accepted redesign: **v2 capped-Rend tempo opener**.
+Accepted redesign: **v3 imported-build gauntlet opener**.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ---: | --- | --- | ---: | --- | --- |
 | 0 | Cutscene | Loffrey / Divine Knight | 1 | `90/55` | Exits by script. Do not activate as a combatant. |
-| 1 | Rend carrier | Knight | 103 | `88/42` | Equipment-break source #1; telegraphed gear-preservation test. |
-| 2 | Rend carrier | Knight | 103 | `88/42` | Equipment-break source #2; the last allowed break source. |
-| 3 | Guard body | Knight | 102 | `88/42` | Armored wall without meaningful Rend pressure. |
-| 4 | Sustain body | Monk | 102 | `88/40` | Chakra-first melee sustain; no dedicated revive loop. |
-| 5 | Sustain body | Monk | 102 | `88/40` | Second martial body; pressure and emergency sustain. |
-| 6 | Tempo flanker | Ninja | 103 | `90/35` | Replaces Archer; melee flank tempo with tempered Throw/no high-tier payload. |
+| 1 | Knight Martial Artist | Eagrose s2 copy | 100 | `88/42` | Shielded Arts of War + Martial Arts bruiser. |
+| 2 | Knight Martial Artist | Eagrose s3 copy | 100 | `86/44` | Second shielded Arts of War + Martial Arts bruiser. |
+| 3 | Knight Samurai | Eagrose s4 copy | 101 | `88/58` | Arts of War + Iaido, Shirahadori and Doublehand. |
+| 4 | Monk | South Wall s6 copy | 101 | `88/38` | Counter/Dual Wield martial body with Jump +3. |
+| 5 | Monk | South Wall s6 copy | 101 | `88/38` | Exact second copy of the same Monk build. |
+| 6 | Ninja | South Wall s5 copy | 102 | `90/35` | Unarmed Martial Arts/Brawler flanker with Jump +3. |
 
 Why this works:
 
 ```text
-- Two Rend sources keep the vanilla gear-loss lesson and remain answerable by Safeguard/Maintenance,
-  Steal Weapon, disabling the carriers, or quick focus fire.
-- The third Knight preserves the front wall but must not become a third effective break source.
-- The Archer becomes a Ninja because a late-game Archer is too passive against NG++ builds; the Ninja
-  forces formation discipline without adding hard control.
-- Monk sustain is useful but bounded. This fight must not become a revive-loop slog before the gauntlet
-  bosses start.
+- All three Knights retain primary Arts of War because their main job remains Knight. Their Martial
+  Arts/Iaido split makes the visible gear threat readable through three imported Eagrose builds.
+- The Archer becomes the South Wall Ninja, forcing formation discipline through unarmed Brawler pressure.
+- The two South Wall Monks reproduce the Counter/Dual Wield/Jump +3 build without adding hard control.
 - The fight stays all-generic, defeat-all, and clearly lighter than 055-058.
 ```
 
@@ -133,66 +146,87 @@ Preserve event behavior: enters/exits by script and does not fight.
 Do not turn him into a boss, target, reward carrier, or meaningful source of pressure.
 ```
 
-### Knight x2 - capped Rend carriers
+### Knight x2 - Eagrose Knight Martial Artists
 
 ```text
-Level: 103
+Levels: s1 100; s2 100
 JobLevel: 8
-Primary: Knight / Battle Skill with Rend Weapon and Rend Armor as the visible threat
-Secondary: Item or another low-impact utility, intentionally set
-Reaction: Counter or Reflexes-tier defensive reaction
-Support: Attack Boost / Defense Boost-tier role fit
-Movement: Move +1
-Gear: complete late-Chapter-4 heavy gear, shop-tier or non-reward role gear only
-Reward: none
-```
-
-Guardrail: only these two may act as real break sources.
-
-### Knight x1 - front guard without break pressure
-
-```text
-Level: 102
-JobLevel: 8
-Primary: Knight body, but implementation must suppress meaningful Rend use through ability selection,
-AI priority, command setup, or a nearby equivalent job if the engine cannot cap Knight skills directly.
-Secondary: Item or Basic Skill-style utility, intentionally set
-Reaction/Support/Movement: complete defensive kit
-Gear: complete heavy gear
-Reward: none
-```
-
-Guardrail: if all three Knights can reliably Rend, the design fails. The cap of two break sources is
-more important than preserving the third unit's exact command list.
-
-### Monk x2 - Chakra-first sustain
-
-```text
-Level: 102
-JobLevel: 8
-Primary: Martial Arts; emphasize Chakra and melee pressure
-Secondary: low-impact utility, no Phoenix Down spam engine
+Main job: Knight
+Primary: Arts of War
+Job bucket: Monk, Job Level 8
+Secondary: Martial Arts
+Brave/Faith: s1 88/42; s2 86/44
 Reaction: Counter
 Support: Attack Boost
-Movement: Move +1
-Gear: complete martial gear
+Movement: Movement +3
+Right hand: Runeblade
+Left hand: Crystal Shield
+Head: Crystal Helm
+Body: Crystal Mail
+Accessory: Bracers
 Reward: none
 ```
 
-Guardrail: Monks may keep the skirmish from collapsing instantly, but they should not produce a long
-revive-loop cleanup before 055.
-
-### Ninja x1 - tempered tempo flanker
+### Knight x1 - Eagrose Knight Samurai
 
 ```text
-Level: 103
+Level: 101
 JobLevel: 8
-Primary: Ninja/Throw, but no high-tier Throw payload
-Secondary: Steal, Item, or another utility that does not add status lock
-Reaction: Reflexes
-Support: Attack Boost / Concentration-tier offense, not a second engine
-Movement: Move +2
-Gear: complete shop-tier ninja gear; dual-wield melee pressure
+Main job: Knight
+Primary: Arts of War
+Job bucket: Samurai, Job Level 8
+Secondary: Iaido
+Brave/Faith: 88/58
+Reaction: Shirahadori
+Support: Doublehand
+Movement: Movement +3
+Right hand: Runeblade
+Left hand: None
+Head: Crystal Helm
+Body: Crystal Mail
+Accessory: Magepower Glove
+Reward: none
+```
+
+### Monk x2 - Fort Besselat South Wall copies
+
+```text
+Level: 101
+JobLevel: 8
+Main job: Monk
+Primary: Martial Arts
+Secondary: None
+Brave/Faith: 88/38
+Reaction: Counter
+Support: Dual Wield
+Movement: Jump +3
+Right hand: None
+Left hand: None
+Head: Barrette
+Body: Power Garb
+Accessory: Bracers
+Reward: none
+```
+
+Both Monks use the exact same build.
+
+### Ninja x1 - Fort Besselat South Wall copy
+
+```text
+Level: 102
+JobLevel: 8
+Main job: Ninja
+Primary: Throw
+Secondary: Martial Arts
+Brave/Faith: 90/35
+Reaction: Counter
+Support: Brawler
+Movement: Jump +3
+Right hand: None
+Left hand: None
+Head: Thief's Cap
+Body: Power Garb
+Accessory: Bracers
 Reward: none
 ```
 
@@ -202,15 +236,16 @@ burst-delete unit or hidden reward carrier.
 ## Positioning Plan
 
 ```text
-Use the cramped vault corridors. Put the two Rend Knights forward enough that the player sees the gear
-threat immediately. The third Knight anchors the wall. Monks sit behind/adjacent as Chakra-first sustain.
+Use the existing cramped-vault positions. The two Martial Artist Knights and Knight Samurai form the
+visible Arts-of-War wall. The Monks occupy their vanilla lanes, while the Ninja retains the old Archer
+position as a distant approach threat.
 The Ninja starts on a side route or flank so the party cannot simply turtle behind one frontliner.
 ```
 
 The intended player read is: protect the loadout, isolate one break Knight, keep the Ninja from slipping
 onto casters, and end the guard fight with resources intact.
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
 
 Artifact:
 
@@ -218,7 +253,7 @@ Artifact:
 tmp/fft-level-design-054-monastery-vaults-fourth-level/
 ```
 
-Accepted candidate:
+Historical accepted candidate, superseded by the locked v3 imported builds:
 
 ```text
 v2 capped-rend tempo opener
@@ -247,7 +282,7 @@ Residual risks:
 
 ```text
 - Confirm Loffrey exits before combat and cannot be targeted or rewarded.
-- Confirm only two Knights can meaningfully use Rend/break pressure.
+- Confirm the three Arts-of-War Knights remain answerable through Safeguard, disarm, range or focus fire.
 - Confirm the Ninja adds tempo without causing unrecoverable losses before 055.
 - Test 054 immediately into 055; this opener should cost attention, not consume the run.
 ```
@@ -256,10 +291,10 @@ Residual risks:
 
 - [ ] Preserve entry `435`, slot `0` Loffrey as cutscene exit / non-combat unit.
 - [ ] Keep active enemy count at 6.
-- [ ] Convert the Archer slot (`s6`) to a tempered Ninja, level `103`, complete kit.
-- [ ] Keep two Knight Rend carriers at level `103`.
-- [ ] Keep the third Knight at level `102` and prevent it from becoming a third effective break source.
-- [ ] Keep both Monks level `102`, complete kits, Chakra-first sustain, no revive-loop engine.
+- [ ] Set s1/s2 as exact copies of Eagrose Knight Martial Artists s2/s3.
+- [ ] Set s3 as an exact copy of Eagrose Knight Samurai s4.
+- [ ] Set s4/s5 as exact copies of Fort Besselat South Wall Monk s6.
+- [ ] Convert the Archer slot s6 into an exact copy of Fort Besselat South Wall Ninja s5.
 - [ ] Ensure every active human has complete equipment plus intentional secondary/reaction/support/move.
 - [ ] Add no usable rewards, no Tier-A/Tier-S payloads, and no steal-dependent reward hooks.
 - [ ] Re-dump entry `435` after implementation and verify only the intended slot/kit changes.
@@ -268,7 +303,7 @@ Residual risks:
 ## Test Questions
 
 - Does the fight still read as the gauntlet's light all-generic opener?
-- Is gear preservation the felt lesson, with Rend capped at two answerable sources?
+- Is gear preservation still the felt lesson with the three imported Eagrose Knight styles?
 - Does the Ninja punish loose formation without turning the opener into a burst wall?
 - Do the Monks add limited sustain without causing a cleanup slog?
 - Is there zero usable reward or rare leak inside the no-resupply gauntlet?

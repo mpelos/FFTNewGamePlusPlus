@@ -765,11 +765,11 @@ def run() -> int:
     # Two-phase Dycedarg -> Adramelk fight. Slot 0 guest must be player-controlled if active.
     e = 459
     active = [0, 1, 2, 3, 4, 5, 6, 7]
-    check("459 active jobs", roster(entd, e, active, 0x0A) == [8, 9, 76, 76, 76, 76, 76, 69])
+    check("459 active jobs", roster(entd, e, active, 0x0A) == [8, 9, 76, 76, 76, 87, 87, 69])
     check("459 active levels", roster(entd, e, active, 0x03) == [103, 103, 100, 100, 101, 101, 100, 105])
-    check("459 active job buckets", roster(entd, e, active, 0x08) == [19, 0, 4, 4, 14, 15, 15, 0])
+    check("459 active job buckets", roster(entd, e, active, 0x08) == [19, 0, 4, 4, 14, 13, 13, 0])
     check("459 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8, 8, 0])
-    check("459 active secondaries", roster(entd, e, active, 0x0B) == [254, 71, 9, 9, 19, 20, 20, 120])
+    check("459 active secondaries", roster(entd, e, active, 0x0B) == [254, 71, 9, 9, 19, 0, 0, 120])
     check("459 Brave targets", roster(entd, e, active, 0x06) == [70, 88, 88, 86, 88, 88, 86, 92])
     check("459 Faith targets", roster(entd, e, active, 0x07) == [65, 60, 42, 44, 58, 52, 56, 86])
     check("459 guest player-control bit", field(entd, e, 0, 0x18) == 0x8C)
@@ -811,15 +811,15 @@ def run() -> int:
           and roster(entd, e, [4], 0x16) == [255])
 
     for slot_no in (5, 6):
-        check(f"459 s{slot_no} Ninja-bucket Knight kit",
+        check(f"459 s{slot_no} Dragoon Javelin II kit",
               field16(entd, e, slot_no, 0x0C) == 449
-              and field16(entd, e, slot_no, 0x0E) == 477
+              and field16(entd, e, slot_no, 0x0E) == 476
               and field16(entd, e, slot_no, 0x10) == 492
               and roster(entd, e, [slot_no], 0x12) == [154]
               and roster(entd, e, [slot_no], 0x13) == [182]
               and roster(entd, e, [slot_no], 0x14) == [213]
-              and roster(entd, e, [slot_no], 0x15) == [30]
-              and roster(entd, e, [slot_no], 0x16) == [30])
+              and roster(entd, e, [slot_no], 0x15) == [106]
+              and roster(entd, e, [slot_no], 0x16) == [255])
 
     check("459 Adramelk no-equipment shape",
           roster(entd, e, [7], 0x12) == [255]

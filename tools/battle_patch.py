@@ -130,6 +130,7 @@ HEAVY_HELM, HEAVY_ARMOR, SHOP_SHIELD = 154, 182, 139   # Knight heavy gear (Helm
 MAGE_HAT, SHOP_ROBE, SHOP_ROD = 167, 206, 56           # Black Mage gear (Hat/Robe/Rod)
 SHOP_STAFF = 64                                          # White Mage weapon (Staff, MA/heal)
 PARTISAN = 102   # strongest pre-Ch4 SHOP-tier spear (Holy Lance/Dragon Whisker are Unknown20/reserved)
+JAVELIN_II = 106  # ultimate rare polearm (30 WP); displayed as Javelin in-game.
 WHALE_WHISKER = 114  # rare pole for Zalmo (041); two-handed marker required in LH.
 GEMS_108 = 226  # TIC English name: Japa Mala. Docs call it 108 Gems; Ch2 Cuchulainn reward.
 BLOOD_SWORD = 23  # HP-drain sword — Ch2 rare boss loot (overview-named); IS Gaffgarion's Shadowblade
@@ -1838,9 +1839,8 @@ def eagrose(data):
     #     slots 2-6 = 5 Knights (job 76) -> the upper-stair wall; armed (were near-naked) + scaled.
     #     slot 7 = Adramelk (name 69, job 69, eq=255 Lucavi no-equip) -> Phase-2 transform spike; lvl only.
     #     slots 8,9 = job 8, eq=0, lvl254 -> scripting placeholders; left untouched.
-    # V3 keeps all five bodies as main-job Knights, so Arts of War remains primary for all of them.
-    # JobUnlock seeds the requested secondary-job bucket (Monk/Samurai/Ninja); it does not replace the
-    # Knight main job or its primary command. event436.e keeps the existing registration/choreography.
+    # V3 keeps s2-s4 as main-job Knights and converts s5/s6 into true Dragoons. event436.e keeps the
+    # existing registration/choreography and final combat positions.
     E = 459
     set_slot(data, E, 0, level=103, brave=70, faith=65,
              head=GRAND_HELM, body=MAXIMILLIAN, acc=BRACERS,
@@ -1867,16 +1867,16 @@ def eagrose(data):
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=MAGEPOWER_GLOVES,
              rh=RUNEBLADE, lh=LH_EMPTY)
 
-    set_slot(data, E, 5, level=101, jobrank=generic_job_rank(NINJA), joblevel=8,
-             job=KNIGHT, secondary=THROW, brave=88, faith=52,
-             reaction=REFLEXES, support=DUAL_WIELD, movement=IGNORE_HEIGHT,
+    set_slot(data, E, 5, level=101, jobrank=generic_job_rank(LANCER), joblevel=8,
+             job=LANCER, secondary=0, brave=88, faith=52,
+             reaction=REFLEXES, support=DOUBLEHAND, movement=IGNORE_HEIGHT,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=HERMES_SHOES,
-             rh=RUNEBLADE, lh=RUNEBLADE)
-    set_slot(data, E, 6, level=100, jobrank=generic_job_rank(NINJA), joblevel=8,
-             job=KNIGHT, secondary=THROW, brave=86, faith=56,
-             reaction=REFLEXES, support=DUAL_WIELD, movement=IGNORE_HEIGHT,
+             rh=JAVELIN_II, lh=LH_EMPTY)
+    set_slot(data, E, 6, level=100, jobrank=generic_job_rank(LANCER), joblevel=8,
+             job=LANCER, secondary=0, brave=86, faith=56,
+             reaction=REFLEXES, support=DOUBLEHAND, movement=IGNORE_HEIGHT,
              head=HEAVY_HELM, body=HEAVY_ARMOR, acc=HERMES_SHOES,
-             rh=RUNEBLADE, lh=RUNEBLADE)
+             rh=JAVELIN_II, lh=LH_EMPTY)
     set_slot(data, E, 7, level=105, brave=92, faith=86)  # Adramelk (Lucavi, Phase 2)
     return [E]
 
