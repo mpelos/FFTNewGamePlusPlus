@@ -908,31 +908,31 @@ def run() -> int:
     check("461 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8])
     check("461 Brave targets", roster(entd, e, active, 0x06) == [90, 90, 65])
     check("461 Faith targets", roster(entd, e, active, 0x07) == [55, 55, 88])
-    check("461 Folmarv Chaos Blade kit",
+    check("461 Folmarv v3 equipment kit",
           field16(entd, e, 0, 0x0C) == 442
           and field16(entd, e, 0, 0x0E) == 466
           and field16(entd, e, 0, 0x10) == 486
-          and roster(entd, e, [0], 0x12) == [154]
-          and roster(entd, e, [0], 0x13) == [182]
-          and roster(entd, e, [0], 0x14) == [232]
+          and roster(entd, e, [0], 0x12) == [156]
+          and roster(entd, e, [0], 0x13) == [207]
+          and roster(entd, e, [0], 0x14) == [218]
           and roster(entd, e, [0], 0x15) == [37]
-          and roster(entd, e, [0], 0x16) == [139])
-    check("461 Loffrey break kit",
+          and roster(entd, e, [0], 0x16) == [141])
+    check("461 Loffrey v3 equipment kit",
           field16(entd, e, 1, 0x0C) == 437
           and field16(entd, e, 1, 0x0E) == 466
           and field16(entd, e, 1, 0x10) == 489
-          and roster(entd, e, [1], 0x12) == [152]
-          and roster(entd, e, [1], 0x13) == [180]
-          and roster(entd, e, [1], 0x14) == [224]
-          and roster(entd, e, [1], 0x15) == [29]
-          and roster(entd, e, [1], 0x16) == [138])
-    check("461 Cletienne caster kit",
+          and roster(entd, e, [1], 0x12) == [156]
+          and roster(entd, e, [1], 0x13) == [185]
+          and roster(entd, e, [1], 0x14) == [218]
+          and roster(entd, e, [1], 0x15) == [36]
+          and roster(entd, e, [1], 0x16) == [142])
+    check("461 Cletienne v3 equipment kit",
           field16(entd, e, 2, 0x0C) == 435
           and field16(entd, e, 2, 0x0E) == 468
           and field16(entd, e, 2, 0x10) == 492
-          and roster(entd, e, [2], 0x12) == [166]
-          and roster(entd, e, [2], 0x13) == [196]
-          and roster(entd, e, [2], 0x14) == [232]
+          and roster(entd, e, [2], 0x12) == [167]
+          and roster(entd, e, [2], 0x13) == [205]
+          and roster(entd, e, [2], 0x14) == [234]
           and roster(entd, e, [2], 0x15) == [57]
           and roster(entd, e, [2], 0x16) == [254])
     check("461 script placeholder preserved",

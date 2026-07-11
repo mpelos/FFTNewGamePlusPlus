@@ -176,6 +176,7 @@ BLAZE_GUN = 75
 BLASTER = 76
 LIGHT_ROBE = 206     # Tier-A robe — Zalmo (041). TIC's Luminous Robe = top robe BELOW Lordly; == SHOP_ROBE
 ROBE_OF_LORDS = 207  # Tier-S robe (Lordly Robe, Unknown20 best; paid before the gauntlet at 052).
+DRAGON_ROD = 57
 # --- Ch4 monster job ids (Finath chocobo flock, 040) ---
 CHOCOBO, BLACK_CHOCOBO, RED_CHOCOBO, PIG = 94, 95, 96, 121
 GOBLIN, BLACK_GOBLIN, GOBBLEDYGOOK = 97, 98, 99
@@ -1936,14 +1937,18 @@ def mullonde_nave(data):
     #     slot 2 = Cletienne (name 39, job 39 Sorcerer; rh=57 rod) -> caster, denies turtling. RETREATS
     #              but the reward ledger pays Lordly Robe here through guaranteed spoils. Gear kept.
     #     slot 3 = job 39 clone (name255, lvl65, eq=0) -> scripting/summon placeholder; left untouched.
-    # CHANGE: scale to the human-boss band + jl8 (full kit incl. the equip-break). Folmarv 105 (leader),
-    #   Loffrey & Cletienne 104. Win-on-one-falls, equip-break (Folmarv+Loffrey only), and caster pressure
-    #   all preserved. Br/Fa tunes two physical break bosses and one high-Faith caster.
+    # V3: preserve the complete v2 battle and replace equipment only. Levels, Br/Fa, abilities,
+    #   positions, retreat behavior, placeholder and guaranteed spoils remain unchanged.
     E = 461
     set_slot(data, E, 0, level=105, joblevel=8, brave=90, faith=55,
-             rh=CHAOS_BLADE)                                    # Folmarv - Tier-S Chaos Blade (KnightSword)
-    set_slot(data, E, 1, level=104, joblevel=8, brave=90, faith=55)  # Loffrey - second break source
-    set_slot(data, E, 2, level=104, joblevel=8, brave=65, faith=88)  # Cletienne - caster pressure
+             head=GRAND_HELM, body=ROBE_OF_LORDS, acc=BRACERS,
+             rh=CHAOS_BLADE, lh=KAISER_SHIELD)
+    set_slot(data, E, 1, level=104, joblevel=8, brave=90, faith=55,
+             head=GRAND_HELM, body=MAXIMILLIAN, acc=BRACERS,
+             rh=RAGNAROK, lh=VENETIAN_SHIELD)
+    set_slot(data, E, 2, level=104, joblevel=8, brave=65, faith=88,
+             head=MAGE_HAT, body=BLACK_ROBE, acc=FEATHERWEAVE,
+             rh=DRAGON_ROD, lh=LH_TWOHAND)
     return [E]
 
 

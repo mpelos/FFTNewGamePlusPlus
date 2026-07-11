@@ -1,6 +1,6 @@
 # 052 - Mullonde Cathedral Nave (Murond Holy Place)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 461
+Status: 🧪 v3 implemented/deployed — direct playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 47 (Mullonde chain 2 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
@@ -11,6 +11,10 @@ File: `battle_entd4_ent.bin`
 > Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. These are paid here so
 > the player has the best pre-gauntlet gear before the point of no return. Canonical map:
 > `chapter-4-rewards-implementation.md`.
+
+> **V3 implementation (2026-07-11):** entry 461 patched in the embedded ENTD and deployed through a
+> clean Release build to Reloaded-II. The deployed resource matches the source binary byte-for-byte;
+> equipment rows and unchanged Spoils payloads were read back from the installed DLL.
 
 ## Current Implementation / Data Reality
 
@@ -39,9 +43,17 @@ Current v1 implementation:
   Win-on-one-falls and retreat behavior must be preserved.
 ```
 
-Planned v2 redesign (docs-only in this pass): keep the pure triple-boss Nave, preserve the win-on-one
-focus race, and align the reward language with the current ledger. Loffrey and Cletienne may retreat,
-but their best-in-slot items are still paid as guaranteed battle spoils here by project rule.
+Locked v3 redesign: keep the complete v2 battle and change **equipment only**.
+Levels, Brave/Faith, jobs, abilities, positions, genders, objective, retreat scripting, placeholder and
+guaranteed spoils remain exactly as specified by v2. Loffrey and Cletienne may retreat, but their
+best-in-slot reward payloads are still paid as guaranteed battle spoils here by project rule.
+
+```text
+V3 EQUIPMENT LOCK:
+  Folmarv   = Chaos Blade / Kaiser Shield / Grand Helm / Lordly Robe / Bracers
+  Loffrey   = Ragnarok / Venetian Shield / Grand Helm / Maximillian / Bracers
+  Cletienne = Dragon Rod / None / Lambent Hat / Black Robe / Featherweave Cloak
+```
 
 > MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout.
 
@@ -109,7 +121,7 @@ CONFIRMED:
 - Rewards are Chaos Blade + Escutcheon + Lordly Robe guaranteed spoils.
 - No active guests.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
+STILL NEEDED FOR V3 IMPLEMENTATION:
 - Verify the fight ends when any one boss falls and the others retreat.
 - Verify all three authored spoils are awarded despite the retreat behavior.
 - Confirm Folmarv and Loffrey are the only effective break sources.
@@ -162,8 +174,13 @@ Guaranteed spoils for entry 461: CHAOS BLADE + ESCUTCHEON + LORDLY ROBE.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
 
 COMBAT ROLE:
-  - Chaos Blade is active on Folmarv and is both threat identity and reward payload.
-  - Escutcheon and Lordly Robe are reward payloads here, not a demand to kill Loffrey/Cletienne.
+  - Folmarv actively carries Chaos Blade and wears Lordly Robe.
+  - Loffrey actively carries Ragnarok.
+  - Cletienne uses Dragon Rod, Black Robe and Featherweave Cloak as her caster package.
+  - Active equipment does not alter the reward ledger: Chaos Blade, Escutcheon and Lordly Robe remain
+    the three guaranteed payloads, without requiring Loffrey/Cletienne to die.
+  - Ragnarok remains a Sanctuary reward in the canonical ledger; its active use here is an intentional
+    v3 equipment exposure and must be checked for Steal/break consequences in-game.
 
 PRESERVE:
   - The other bosses can retreat when one falls.
@@ -171,7 +188,7 @@ PRESERVE:
   - No Excalibur. Excalibur stays Orlandeau's.
 ```
 
-## Proposed Composition (New Game++ Mullonde Nave v2)
+## Proposed Composition (New Game++ Mullonde Nave v3)
 
 Keep the local three-boss roster. Folmarv is `105`; Loffrey and Cletienne are `104`.
 
@@ -184,7 +201,8 @@ Keep the local three-boss roster. Folmarv is `105`; Loffrey and Cletienne are `1
 
 Reasoning:
 
-The accepted design is **v2 triple-Templar focus race**. The simulation rejects every attempt to add
+The accepted design is **v3 equipment refresh over the v2 triple-Templar focus race**. The roster,
+stats, abilities and scripting remain unchanged. The historical simulation rejects every attempt to add
 generics, require clearing all three, add a third breaker, or keep the old one-reward logic. The fight
 is hard because three boss-quality kits pressure one party of five on no resupply, but the win condition
 keeps it fair: choose one, solve the break/caster screen, and end the battle.
@@ -208,19 +226,33 @@ Folmarv:
   - Level 105, JobLevel 8.
   - Primary: Divine Knight / equipment-break package.
   - Reaction/Support/Move: complete boss setup already present.
-  - Active gear: Chaos Blade as threat and story reward.
+  - Right hand: Chaos Blade.
+  - Left hand: Kaiser Shield.
+  - Head: Grand Helm.
+  - Body: Lordly Robe.
+  - Accessory: Bracers.
   - Role: intended kill target and first break source.
 
 Loffrey:
   - Level 104, JobLevel 8.
   - Primary: Divine Knight / equipment-break package.
   - Reaction/Support/Move: complete boss setup already present.
+  - Right hand: Ragnarok.
+  - Left hand: Venetian Shield.
+  - Head: Grand Helm.
+  - Body: Maximillian.
+  - Accessory: Bracers.
   - Role: second break source; pincer pressure.
 
 Cletienne:
   - Level 104, JobLevel 8.
   - Primary: Sorcerer/caster pressure.
   - Reaction/Support/Move: complete caster setup already present.
+  - Right hand: Dragon Rod.
+  - Left hand: None.
+  - Head: Lambent Hat.
+  - Body: Black Robe.
+  - Accessory: Featherweave Cloak.
   - Guardrail: no hard-lock status engine, no third break source, no instant wipe magic.
 ```
 
@@ -241,7 +273,7 @@ The player should see the intended line:
 The nave should say: "three Templars bar the altar; choose one throat, protect your steel, and end the
 stand before the chain bleeds you dry."
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
 
 Simulation artifact:
 
@@ -274,7 +306,7 @@ Result summary:
 | steal-required chaos blade | 338 | 96 | 82 | 88 | 98 | 40 | 100 | 52 | Rejected: reward policy |
 | overlevelled nave | 366 | 96 | 92 | 80 | 88 | 100 | 100 | 62 | Rejected: raw levels |
 
-Iteration decision:
+Historical iteration decision:
 
 ```text
 ACCEPT v2 triple-Templar focus race.
@@ -282,16 +314,22 @@ The battle stays pure: three bosses, two break sources, one caster, win when one
 rewards delivered through guaranteed spoils.
 ```
 
+The v3 equipment-only revision is not re-simulated. Per project playtest workflow, its combat impact,
+Steal exposure and equipment-break interactions will be validated directly in-game.
+
 ## Implementation Checklist
 
-- [ ] Re-dump entry 461 and verify slots 0-3.
-- [ ] Preserve win-on-one-falls and retreat behavior.
-- [ ] Preserve no-generic roster.
-- [ ] Keep levels: Folmarv `105`; Loffrey/Cletienne `104`.
-- [ ] Keep no more than two effective break sources: Folmarv + Loffrey only.
-- [ ] Keep Cletienne caster pressure answerable, not hard-lock or instant wipe.
-- [ ] Author/verify spoils: Chaos Blade + Escutcheon + Lordly Robe, guaranteed and within the 3-item cap.
-- [ ] Preserve buried map treasure as map treasure.
+- [x] Re-dump entry 461 and verify slots 0-3.
+- [x] Preserve win-on-one-falls and retreat data.
+- [x] Preserve no-generic roster.
+- [x] Keep levels: Folmarv `105`; Loffrey/Cletienne `104`.
+- [x] Equip Folmarv: Chaos Blade / Kaiser Shield / Grand Helm / Lordly Robe / Bracers.
+- [x] Equip Loffrey: Ragnarok / Venetian Shield / Grand Helm / Maximillian / Bracers.
+- [x] Equip Cletienne: Dragon Rod / None / Lambent Hat / Black Robe / Featherweave Cloak.
+- [x] Keep no more than two effective break sources: Folmarv + Loffrey only.
+- [x] Preserve Cletienne's existing caster abilities.
+- [x] Preserve spoils: Chaos Blade + Escutcheon + Lordly Robe, guaranteed and within the 3-item cap.
+- [x] Preserve buried map treasure data.
 - [ ] Test as Mullonde chain 2/3 with resources from `051` and into `053`.
 
 ## Test Questions
@@ -299,6 +337,8 @@ rewards delivered through guaranteed spoils.
 - Does the fight end when any one boss falls, with the other two retreating?
 - Are all three rewards awarded even when only one boss dies?
 - Are Folmarv/Loffrey's break threats strong but answerable?
+- Do all three bosses begin with the exact v3 equipment and retain every v2 ability/stat/position?
+- Does active Ragnarok or Lordly Robe create an unintended Steal/break/reward exploit?
 - Does Cletienne pressure turtling without becoming a hard-lock engine?
 - Does the fight remain a pure boss rush, not a mob fight?
 - Does the party enter Sanctuary taxed but still functional?
