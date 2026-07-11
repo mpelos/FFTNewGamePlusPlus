@@ -1159,30 +1159,31 @@ def run() -> int:
     # Barich control boss plus raceable Chemist sustain and four apex monsters; no usable gauntlet reward.
     e = 439
     active = [0, 1, 2, 3, 4, 5]
-    check("439 active jobs", roster(entd, e, active, 0x0A) == [43, 75, 139, 140, 141, 135])
-    check("439 active levels", roster(entd, e, active, 0x03) == [105, 104, 105, 105, 105, 105])
+    check("439 active jobs", roster(entd, e, active, 0x0A) == [43, 78, 134, 140, 141, 135])
+    check("439 active levels", roster(entd, e, active, 0x03) == [104, 102, 103, 102, 103, 102])
     check("439 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 8])
-    check("439 active secondaries", roster(entd, e, active, 0x0B) == [6, 5, 0, 0, 0, 0])
-    check("439 Brave targets", roster(entd, e, active, 0x06) == [84, 72, 90, 90, 90, 90])
-    check("439 Faith targets", roster(entd, e, active, 0x07) == [55, 68, 30, 30, 30, 30])
-    check("439 Barich non-reward gun kit",
-          field16(entd, e, 0, 0x0C) == 442
-          and field16(entd, e, 0, 0x0E) == 472
-          and field16(entd, e, 0, 0x10) == 493
+    check("439 active secondaries", roster(entd, e, active, 0x0B) == [0, 6, 0, 0, 0, 0])
+    check("439 Brave targets", roster(entd, e, active, 0x06) == [84, 88, 90, 90, 90, 90])
+    check("439 Faith targets", roster(entd, e, active, 0x07) == [55, 38, 30, 30, 30, 30])
+    check("439 Barich first-battle Stoneshooter kit",
+          field16(entd, e, 0, 0x0C) == 449
+          and field16(entd, e, 0, 0x0E) == 466
+          and field16(entd, e, 0, 0x10) == 491
           and roster(entd, e, [0], 0x12) == [168]
-          and roster(entd, e, [0], 0x13) == [206]
+          and roster(entd, e, [0], 0x13) == [198]
           and roster(entd, e, [0], 0x14) == [234]
-          and roster(entd, e, [0], 0x15) == [72]
+          and roster(entd, e, [0], 0x15) == [73]
           and roster(entd, e, [0], 0x16) == [254])
-    check("439 Chemist sustain kit",
-          field16(entd, e, 1, 0x0C) == 441
-          and field16(entd, e, 1, 0x0E) == 466
-          and field16(entd, e, 1, 0x10) == 486
-          and roster(entd, e, [1], 0x12) == [168]
-          and roster(entd, e, [1], 0x13) == [198]
-          and roster(entd, e, [1], 0x14) == [234]
-          and roster(entd, e, [1], 0x15) == [72]
-          and roster(entd, e, [1], 0x16) == [254])
+    check("439 Monk Mime-bucket kit",
+          field(entd, e, 1, 0x08) == 19
+          and field16(entd, e, 1, 0x0C) == 442
+          and field16(entd, e, 1, 0x0E) == 477
+          and field16(entd, e, 1, 0x10) == 488
+          and roster(entd, e, [1], 0x12) == [170]
+          and roster(entd, e, [1], 0x13) == [195]
+          and roster(entd, e, [1], 0x14) == [218]
+          and roster(entd, e, [1], 0x15) == [255]
+          and roster(entd, e, [1], 0x16) == [255])
     for slot_no in (2, 3, 4, 5):
         check(f"439 s{slot_no} monster unchanged shell",
               field16(entd, e, slot_no, 0x0C) == 510

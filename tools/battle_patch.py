@@ -190,6 +190,7 @@ GHOUL, GHAST, REVENANT = 112, 113, 114
 FLOATING_EYE, PLAGUE_HORROR = 115, 117
 WILD_BOAR = 123
 MALBORO, OCHU = 130, 131
+KING_BEHEMOTH = 134
 
 
 def generic_job_rank(job):
@@ -2087,17 +2088,21 @@ def capitoline(data):
 
 def lost_halidom(data):
     # Battle 52 - Necrohol of Mullonde / Lost Halidom (entry 439): Barich rematch.
-    # Win = "Defeat Barich". Roster is Barich + Chemist + 4 apex monsters. This is the
-    # gauntlet 4/5 peak: one answerable control boss, raceable sustain, no usable reward.
+    # V3: copy first-battle Barich, replace Chemist with Monk/Mime, replace Hydra with King Behemoth,
+    # and keep every monster in the 102-103 band. Objective, positions and zero spoils stay unchanged.
     E = 439
-    set_slot(data, E, 0, level=105, joblevel=8, secondary=ITEMS,
-             brave=84, faith=55, rh=MYTHRIL_GUN, lh=LH_TWOHAND)  # Barich - no 042 gun duplicate.
-    set_slot(data, E, 1, level=104, joblevel=8, job=CHEMIST, secondary=FUNDAMENTS,
-             brave=72, faith=68,
-             reaction=AUTO_POTION, support=DEFENSE_BOOST, movement=MV1,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE, rh=MYTHRIL_GUN, lh=LH_TWOHAND)
-    for s in (2, 3, 4, 5):                                      # 4 dragons - apex beasts, scale only
-        set_slot(data, E, s, level=105, joblevel=8, brave=90, faith=30)
+    set_slot(data, E, 0, level=104, joblevel=8, secondary=0,
+             brave=84, faith=55,
+             reaction=REFLEXES, support=DEFENSE_BOOST, movement=JUMP3,
+             head=THIEFS_CAP, body=BLACK_GARB, acc=FEATHERWEAVE,
+             rh=STONESHOOTER, lh=LH_TWOHAND)
+    set_slot(data, E, 1, level=102, jobrank=generic_job_rank(MIME), joblevel=8,
+             job=MONK, secondary=ITEMS, brave=88, faith=38,
+             reaction=COUNTER, support=DUAL_WIELD, movement=MV3,
+             head=BARRETTE, body=POWER_GARB, acc=BRACERS,
+             rh=LH_EMPTY, lh=LH_EMPTY)
+    for s, job, level in ((2, KING_BEHEMOTH, 103), (3, 140, 102), (4, 141, 103), (5, 135, 102)):
+        set_slot(data, E, s, level=level, joblevel=8, job=job, brave=90, faith=30)
     return [E]
 
 

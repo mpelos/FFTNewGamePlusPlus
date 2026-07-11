@@ -51,7 +51,7 @@ structural pressures.
 | 49 | Monastery Vaults — 4th | `054` | 6 (2 Eagrose Knight Martial Artists + Eagrose Knight Samurai + 2 South Wall Monks + South Wall Ninja) | v3 implemented/deployed; no reward; gauntlet 1/5; playtest pending | vault | ▂ light (opener) |
 | 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** + 2 female Black Mage + 2 female Summoner + female Time Mage) | v3 implemented/deployed; level-102 caster crossfire; active Zeus Mace exception; playtest pending | wide vault | ▅ hard |
 | 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** + 2 true **Samurai** + 2 Ninja + 2 female Time Mage) | v3 implemented/deployed; generics 102-103; no special spoil; playtest pending | dead city | ▆ harder |
-| 52 | Lost Halidom | `057` | 6 (**Barich** + Chemist + 4 apex monsters) | 5★ overlapping breath pit + control; no usable gauntlet reward | holy ground | █ 5★ PEAK |
+| 52 | Lost Halidom | `057` | 6 (**Barich** + Monk + King Behemoth + Greater Hydra + Tiamat + Dark Behemoth) | v3 implemented/deployed; monsters 102-103; copied Stoneshooter Barich; playtest pending | holy ground | █ 5★ PEAK |
 | 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** (L106) + Ultima Demons/Lucavi support | two-phase Lucavi FINALE; no usable gauntlet reward | airship | █ FINALE |
 
 Reading: Chapter 4 is a **long rising arc broken into three no-resupply chains, with two mid-chapter
