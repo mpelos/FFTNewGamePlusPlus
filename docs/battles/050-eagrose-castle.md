@@ -1,6 +1,6 @@
 # 050 - Eagrose Castle (Igros Castle)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 459
+Status: 📝 v3 design complete (docs-only) — ready for implementation
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 45 (after the Limberry chain)
 Target version: Enhanced v1.5.0
@@ -44,22 +44,60 @@ Current v1 implementation:
   Two-phase transform and buried map treasure are preserved.
 ```
 
-Planned v2 redesign (docs-only in this pass): keep the two-phase brother fight, but make the fairness
-requirements explicit. The active guest must be controlled. The stair wall may contain five bodies, but
-no more than two can be **effective break sources**. Phase 2 must remain a sequential transform into a
-spaceable Lucavi AoE puzzle, not simultaneous pressure layered on top of the full Knight wall.
+Historical v2 baseline: keep the two-phase brother fight, control the active guest, cap effective break
+sources, and preserve a sequential transform into a spaceable Lucavi AoE puzzle.
 
-> Data-layer fields are known for entry 459, but final implementation still needs a fresh dump/diff and
-> in-game verification of guest control, transform behavior, and the hard break-source cap. This pass
-> updates documentation only.
+V3 planning is complete. This pass locks s0 Zalbaag, s1 Dycedarg, Adrammelech's level, and the
+complete levels, Brave/Faith targets, builds, and event-script positions for all five Knight bodies.
+
+> This pass updates documentation only. No ENTD, patch code, binary, build, or Reloaded-II artifact is
+> changed. V3 is now fully specified in documentation and ready for implementation.
+
+## V3 Locked Decisions
+
+```text
+LEVELS:
+  s0 Zalbaag: 103.
+  s1 Dycedarg: 103.
+  s2 Knight Martial Artist: 100.
+  s3 Knight Martial Artist: 100.
+  s4 Knight Samurai: 101.
+  s5 Knight Ninja: 101.
+  s6 Knight Ninja: 100.
+  s7 Adrammelech: 105.
+
+s0 ZALBAAG — complete equipment locked:
+  Right hand: Chaos Blade
+  Left hand: Venetian Shield
+  Head: Grand Helm
+  Body: Maximillian
+  Accessory: Bracers
+
+s1 DYCEDARG — complete equipment locked:
+  Right hand: Chaos Blade
+  Left hand: Venetian Shield
+  Head: Grand Helm
+  Body: Lordly Robe
+  Accessory: Bracers
+
+BRAVE/FAITH:
+  s0 Zalbaag: 70/65.
+  s1 Dycedarg: 88/60.
+  s2: 88/42.  s3: 86/44.  s4: 88/58.  s5: 88/52.  s6: 86/56.
+
+PRESERVE:
+  Zalbaag and Dycedarg keep their existing ability setup except for the equipment changes above.
+  The reward ledger remains Maximillian + Grand Helm + Venetian Shield.
+```
 
 ## Design Goal
 
 ```text
-Make Eagrose the second major Chapter 4 Lucavi spike: Phase 1 is a controlled high-stair gear-pressure
-wall around Dycedarg, Phase 2 is Adramelk's spread-or-die summon pressure. The player must protect key
-gear, crack the stair wall, then spread and burst the Lucavi. The fight must never become a five-Rend
-gear deletion wall, an AI-guest failure, or a non-spaceable AoE/status lock.
+Make Eagrose the second major Chapter 4 Lucavi spike: Phase 1 is a controlled high-stair physical wall
+around Dycedarg, built from Knight bodies using Martial Arts, Iaido, and Throw; Phase 2 is Adramelk's
+spread-or-die summon pressure. The player must read and crack three distinct physical styles, then
+spread and burst the Lucavi. The fight must never become an unreadable damage pile-up, an AI-guest
+failure, or a non-spaceable AoE/status lock.
 ```
 
 Slot 0 is an active-guest concern. If present in battle, this unit must be player-controlled in NG++.
@@ -101,12 +139,14 @@ Design reading:
 
 Eagrose is **the brother fight**. Its shape is not just "another Lucavi": the human phase forces Ramza
 through the institutional Beoulve wall first, then reveals the monster underneath. That means the two
-demands must remain sequential and readable. If all five Knights are effective Rend users, the first
-phase becomes a gear-destruction tax. If Adramelk's AoE is non-spaceable, the second phase becomes a
-wipe check. If the guest is AI-controlled, the fight asks the player to babysit a bad decision engine.
+demands must remain sequential and readable. All five v3 bodies remain main-job Knights and therefore
+retain Arts of War as their primary command. Monk, Samurai, and Ninja job buckets define their seeded
+Job Levels/learned skills; their secondary commands differentiate how each Knight fights alongside
+Arts of War. If Adramelk's AoE is non-spaceable, the second phase becomes a wipe check. If the guest is
+AI-controlled, the fight asks the player to babysit a bad decision engine.
 
-For New Game++ the identity must stay: **controlled guest, capped break wall, then space against the
-Lucavi.**
+For New Game++ the identity must stay: **controlled guest, three-style physical Knight wall, then space
+against the Lucavi.**
 
 ## Local Data Confirmed / Data Still Needed
 
@@ -120,12 +160,9 @@ CONFIRMED:
 - Slots 8/9 are job-8 placeholders and should be preserved.
 - Rewards are already mapped to Maximillian + Grand Helm + Venetian Shield guaranteed spoils.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
+STILL NEEDED FOR V3 IMPLEMENTATION:
 - Verify slot 0 is active and player-controllable; if not, set the guest-control bit.
 - Verify the transform from Dycedarg to Adramelk fires correctly.
-- Enforce the two-effective-breaker cap. If Knight primary command makes all five job-76 bodies real
-  break sources, implementation must change three bodies' job/command/AI/ability layer to non-break
-  heavy guards. Leaving a five-Rend wall is not acceptable v2 behavior.
 - Confirm Adramelk's AoE/status cadence is telegraphed, spaceable, resistable, and non-locking.
 - Confirm all three spoils land in the first three awarded `0x1e` items.
 - Preserve buried map treasure as vanilla map loot.
@@ -137,9 +174,11 @@ STILL NEEDED FOR V2 IMPLEMENTATION:
 Headline engine: two-phase brother-to-Lucavi fight.
 Phase 1 support structure:
   - Dycedarg anchors the upper stairs.
-  - Two effective breakers threaten gear and force Safeguard/Maintenance/Steal/disarm decisions.
-  - Three non-break heavy guards preserve the Knight-wall feeling without creating a five-source break
-    lock.
+  - s2/s3 are Monk-bucket Knight Martial Artists with shielded counter-pressure.
+  - s4 is a Samurai-bucket Knight whose Doublehand/Iaido build is the central melee threat.
+  - s5/s6 are Ninja-bucket Knight Ninjas with dual Runeblades, Throw, and vertical freedom.
+  - All five retain primary Arts of War because their main job is Knight. Martial Arts, Iaido, and
+    Throw are their secondaries, creating three styles on top of the shared Rend pressure.
 
 Phase 2 support structure:
   - Adramelk is the single Lucavi engine.
@@ -153,9 +192,16 @@ both halves matter while keeping them sequential and answerable.
 ## Sanctioned Exceptions
 
 ```text
-KNIGHT REND / BREAK:
-  Allowed because Phase 1 is a gear-preservation wall. Guardrail: hard cap of two effective break
-  sources. Five coordinated breakers are banned.
+KNIGHT JOB-BUCKET CASTES:
+  The five bodies remain main-job Knights, so Arts of War is primary for every one of them. Their job
+  buckets are Monk (s2/s3), Samurai (s4), and Ninja (s5/s6), all at JobLevel 8. A bucket does not
+  replace the primary command; it seeds Job Levels and learned skills across jobs. The selected
+  secondary commands are Martial Arts, Iaido, and Throw.
+
+FIVE ARTS-OF-WAR SOURCES:
+  Eagrose intentionally exceeds the chapter's normal two-break-source guardrail because the vanilla
+  formation is five Knights and v3 preserves their main job. The pressure is explicit and visible;
+  Safeguard, disarm, status, range, and focusing individual Knights remain the intended answers.
 
 TWO-PHASE TRANSFORM:
   Preserved as the emotional and tactical beat. Phase pressure is sequential, not simultaneous.
@@ -178,30 +224,32 @@ Guaranteed spoils for entry 459: MAXIMILLIAN + GRAND HELM + VENETIAN SHIELD.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
 
 COMBAT ROLE:
-  - Dycedarg may visibly carry defensive lord gear as threat identity.
+  - V3 Zalbaag visibly carries Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
+  - V3 Dycedarg visibly carries Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
   - The armor set is still guaranteed through spoils, not dependent on stealing from him.
+  - These active equipment decisions do not change the guaranteed-spoils ledger.
 
 PRESERVE:
   - Buried map treasure remains vanilla map loot.
   - No Excalibur. Excalibur stays Orlandeau's.
 ```
 
-## Proposed Composition (New Game++ Eagrose Castle v2)
+## Proposed Composition (New Game++ Eagrose Castle v3)
 
-Keep the local two-phase roster and levels. The required redesign is not more bodies; it is hard
-fairness around break count, guest control, reward handling, and phase separation.
+Keep the local two-phase roster. Named-unit builds and all five Knight levels, Brave/Faith targets,
+job buckets, abilities, equipment, and final combat positions below are locked.
 
 ### Phase 1 - Dycedarg + High-Stair Wall
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
-| s0 | Allied guest/story unit | Guest record | `103` | `70/65` | Player-controlled ally if active; not a failure condition engine. |
-| s1 | Boss / phase trigger | Dycedarg | `104` | `88/60` | High-stair anchor; defeat triggers Lucavi phase; reward payload. |
-| s2 | Breaker 1 / reward payload | Knight body | `103` | `88/42` | Effective break source 1; Grand Helm spoil. |
-| s3 | Breaker 2 / reward payload | Knight body | `103` | `88/42` | Effective break source 2; Venetian Shield spoil. |
-| s4 | Heavy guard | Non-break effective stair guard | `103` | `84/55` | Body pressure without break-lock. |
-| s5 | Heavy guard | Non-break effective stair guard | `103` | `84/55` | Second guard; preserves wall. |
-| s6 | Heavy guard | Non-break effective stair guard | `103` | `84/55` | Third guard; blocks route without extra Rend pressure. |
+| s0 | Allied guest/story unit | Zalbaag | `103` | `70/65` | Player-controlled; Chaos Blade/Maximillian build locked. |
+| s1 | Boss / phase trigger | Dycedarg | `103` | `88/60` | Chaos Blade/Lordly Robe build locked; defeat triggers Lucavi phase. |
+| s2 | Knight Martial Artist / reward payload | Knight body; Monk bucket Lv8 | `100` | `88/42` | Shielded Counter bruiser at final event tile `(8,4)`; Grand Helm spoil remains current baseline. |
+| s3 | Knight Martial Artist / reward payload | Knight body; Monk bucket Lv8 | `100` | `86/44` | Shielded Counter bruiser at final event tile `(9,5)`; Venetian Shield spoil remains current baseline. |
+| s4 | Knight Samurai | Knight body; Samurai bucket Lv8 | `101` | `88/58` | Doublehand/Iaido central threat at final event tile `(7,7)`. |
+| s5 | Knight Ninja | Knight body; Ninja bucket Lv8 | `101` | `88/52` | Dual-wield/Throw flank threat at final event tile `(1,5)`. |
+| s6 | Knight Ninja | Knight body; Ninja bucket Lv8 | `100` | `86/56` | Dual-wield/Throw flank threat at final event tile `(1,3)`. |
 
 ### Phase 2 - Adramelk / Adrammelech
 
@@ -218,16 +266,16 @@ Script placeholders to preserve:
 
 Reasoning:
 
-The accepted design is **v2 hard-capped brother duel**. The first simulation overcounted pressure by
-treating both phases as simultaneous; iteration 2 correctly models the transform as sequential. Under
-that model, the fight is a valid Chapter 4 spike only if the five-body stair wall has no more than two
-effective breakers and the guest is controlled. The reward ledger is the full armor/shield set, not the
-old single-Grand-Helm plan.
+The v3 design is a **three-style Arts-of-War Knight wall followed by the Lucavi duel**. The human phase
+uses two shielded Martial Artists, one Doublehand Samurai, and two dual-wield Ninja-bucket Knights.
+Every body retains primary Arts of War from the Knight main job; the bucket and secondary layer add
+the three distinct styles. The transform remains sequential, the guest remains controlled, and the
+reward ledger is the full armor/shield set rather than the old single-Grand-Helm plan.
 
 Rejected variants:
 
 ```text
-- Five-Rend stair wall: gear deletion tax, violates break-source cap.
+- Five identical Knight builds: rejected in favor of distinct Martial Arts/Iaido/Throw secondaries.
 - AI guest hostage: guest AI becomes a failure condition.
 - Unavoidable summon lock: Phase 2 loses spacing counterplay.
 - Extra caster support: adds a second engine to an already two-phase fight.
@@ -235,33 +283,77 @@ Rejected variants:
 - One-rare old ledger: contradicts Maximillian + Grand Helm + Venetian Shield reward map.
 - Steal-required armor set: contradicts guaranteed spoils.
 - Overlevelled brother spike: replaces puzzle pressure with raw stats.
-- No-break stair wall: loses Phase 1's gear-preservation lesson.
 - Simultaneous pressure pile-up: makes phase 1 and phase 2 feel like one overloaded fight.
 ```
 
-## Builds (two-phase boss fight)
+## Builds (v3 — named units and Knight kits locked)
 
 ```text
-Guest/story ally slot 0:
-  - Keep level 103 and current gear unless implementation data says otherwise.
+Zalbaag — guest ally slot 0:
+  - Level: 103.
+  - Right hand: Chaos Blade.
+  - Left hand: Venetian Shield.
+  - Head: Grand Helm.
+  - Body: Maximillian.
+  - Accessory: Bracers.
   - Must be player-controlled if active.
-  - Do not tune the battle around this unit's AI survival.
 
 Dycedarg:
-  - Level 104, JobLevel 8, complete setup already present.
-  - Preserve lord/defender identity and transform trigger.
-  - Defensive gear is allowed as visible identity; rewards are spoils.
+  - Level: 103.
+  - Right hand: Chaos Blade.
+  - Left hand: Venetian Shield.
+  - Head: Grand Helm.
+  - Body: Lordly Robe.
+  - Accessory: Bracers.
+  - Preserve the transform trigger.
 
-Breaker Knights x2:
-  - Level 103, JobLevel 8, full gear/R/S/M.
-  - These are the only effective break sources.
-  - Their purpose is to force gear protection/disarm routing.
+Knights s2-s3 — Knight Martial Artists:
+  - Levels: s2 100; s3 100.
+  - Brave/Faith: s2 88/42; s3 86/44.
+  - Main job/body: Knight.
+  - Primary: Arts of War.
+  - Job bucket: Monk; JobLevel: 8.
+  - Secondary: Martial Arts.
+  - Reaction: Counter.
+  - Support: Attack Boost.
+  - Movement: Movement +3.
+  - Right hand: Runeblade.
+  - Left hand: Crystal Shield.
+  - Head: Crystal Helm.
+  - Body: Crystal Mail.
+  - Accessory: Bracers.
 
-Heavy guards x3:
-  - Level 103, full gear/R/S/M.
-  - Must not function as additional effective break sources.
-  - If job 76 primary makes Rend unavoidable, implementation must solve it by job/command/AI/ability
-    layer changes rather than accepting five breakers.
+Knight s4 — Knight Samurai:
+  - Level: 101.
+  - Brave/Faith: 88/58.
+  - Main job/body: Knight.
+  - Primary: Arts of War.
+  - Job bucket: Samurai; JobLevel: 8.
+  - Secondary: Iaido.
+  - Reaction: Shirahadori.
+  - Support: Doublehand.
+  - Movement: Movement +3.
+  - Right hand: Runeblade.
+  - Left hand: None.
+  - Head: Crystal Helm.
+  - Body: Crystal Mail.
+  - Accessory: Magepower Glove.
+
+Knights s5-s6 — Knight Ninjas:
+  - Levels: s5 101; s6 100.
+  - Brave/Faith: s5 88/52; s6 86/56.
+  - Main job/body: Knight.
+  - Primary: Arts of War.
+  - Job bucket: Ninja; JobLevel: 8.
+  - Secondary: Throw.
+  - Reaction: Reflexes.
+  - Support: Dual Wield.
+  - Movement: Ignore Elevation.
+  - Right hand: Runeblade.
+  - Left hand: Runeblade.
+  - Head: Crystal Helm.
+  - Body: Crystal Mail.
+  - Accessory: Hermes Shoes.
 
 Adramelk / Adrammelech:
   - Level 105 Lucavi transform, no normal equipment.
@@ -272,18 +364,24 @@ Adramelk / Adrammelech:
 ## Positioning Plan
 
 ```text
-Phase 1: Dycedarg and the stair wall hold the upper level. The two breakers cover the most direct
-approach; the three heavy guards block lanes and bodyguard without adding more break pressure. Slot 0
+Phase 1: Dycedarg and the stair wall hold the upper level. The event script `event436.e` overrides the
+provisional ENTD coordinates. Final combat tiles are s2 `(8,4)`, s3 `(9,5)`, s4 `(7,7)`, s5 `(1,5)`,
+and s6 `(1,3)`. The two Martial Artists hold the central approach, the Samurai supplies the central
+Doublehand/Iaido threat, and the two Ninja-bucket Knights exploit the left side and elevation. Slot 0
 guest starts controllable and must not be exposed to unavoidable failure.
 
 Phase 2: After the transform, Adramelk's threat becomes spacing. The player should have room to spread,
-re-buff, and focus the Lucavi instead of being pinned in the stair-wall geometry by leftover break spam.
+re-buff, and focus the Lucavi instead of being pinned in the stair-wall geometry by leftover enemies.
 ```
 
 The keep should say: "your brother hides behind the house's steel; break through the stair wall, then
 scatter when the demon rises."
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
+
+The table below is historical v2 analysis. It does not validate the new v3 named builds or the locked
+Martial Artist/Samurai/Ninja Knight redesign. No new simulation is requested; direct in-game validation
+will follow implementation.
 
 Simulation artifact:
 
@@ -319,12 +417,15 @@ Result summary:
 | no-break stair wall | 282 | 94 | 78 | 88 | 96 | 100 | 100 | 100 | Rejected: loses gear lesson |
 | simultaneous pressure pile-up | 420 | 94 | 92 | 88 | 96 | 100 | 100 | 100 | Rejected: phase pile-up |
 
-Iteration decision:
+Historical iteration decision (superseded for the v3 Knight kits):
 
 ```text
-ACCEPT v2 hard-capped brother duel.
+ACCEPT v2 hard-capped brother duel as the historical baseline.
 Iteration 2 treats the fight as sequential phases. The stair wall is allowed only with two effective
 breakers, slot 0 must be controllable if active, and Phase 2 must remain spaceable.
+V3 intentionally supersedes the two-breaker cap with five main-job Knights, all retaining primary
+Arts of War, split across Monk, Samurai, and Ninja buckets. This historical simulation is retained
+only for phase/guest/AoE context and does not validate v3's five-source Rend pressure.
 ```
 
 ## Implementation Checklist
@@ -332,9 +433,15 @@ breakers, slot 0 must be controllable if active, and Phase 2 must remain spaceab
 - [ ] Re-dump entry 459 and verify slot order, rewards, placeholder behavior, and transform.
 - [ ] Verify slot 0 is active and controllable; if active but not controllable, set player control.
 - [ ] Preserve win condition and Dycedarg -> Adramelk transform.
-- [ ] Keep Dycedarg at `104`; Knight bodies at `103`; Adramelk at `105`; guest at `103`.
-- [ ] Enforce hard cap: no more than two effective break sources in Phase 1.
-- [ ] Preserve complete gear/R/S/M on active human enemies, but do not let all five Knights be breakers.
+- [ ] Set Zalbaag and Dycedarg to `103`; s2/s3/s6 to `100`; s4/s5 to `101`; Adrammelech to `105`.
+- [ ] Set Br/Fa: s0 `70/65`, s1 `88/60`, s2 `88/42`, s3 `86/44`, s4 `88/58`,
+      s5 `88/52`, and s6 `86/56`.
+- [ ] Equip Zalbaag with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
+- [ ] Equip Dycedarg with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
+- [x] Define every Knight v3 build: s2/s3 Monk-bucket Martial Artists, s4 Samurai-bucket Knight,
+      s5/s6 Ninja-bucket Knights.
+- [ ] Preserve the event-script final combat positions: s2 `(8,4)`, s3 `(9,5)`, s4 `(7,7)`,
+      s5 `(1,5)`, s6 `(1,3)`.
 - [ ] Keep Phase 2 AoE/status telegraphed, spaceable, resistable, and non-locking.
 - [ ] Author/verify spoils: Maximillian + Grand Helm + Venetian Shield, guaranteed and within the 3-item cap.
 - [ ] Preserve buried map treasure as map treasure.
@@ -342,8 +449,13 @@ breakers, slot 0 must be controllable if active, and Phase 2 must remain spaceab
 ## Test Questions
 
 - Is slot 0 player-controlled if active, and does the battle avoid guest-AI failure?
-- Are only two enemies functioning as effective break sources in Phase 1?
-- Does the stair wall still feel like Eagrose without becoming a gear deletion lock?
+- Does Zalbaag appear at level 103 with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers?
+- Does Dycedarg appear at level 103 with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers?
+- Do all five units remain visibly Knights while receiving the correct Monk/Samurai/Ninja buckets?
+- Does the five-source Arts of War wall remain answerable through Safeguard, disarm, status, range,
+  or focus fire despite deliberately exceeding the normal two-break-source guardrail?
+- Does each Knight begin combat on the event-script tile documented above, especially s2 after its
+  scripted walk from `(8,8)` to `(8,4)`?
 - Does the transform fire cleanly and make Phase 2 sequential rather than simultaneous with Phase 1?
 - Is Adramelk's summon/status pressure spaceable and resistable?
 - Do Maximillian + Grand Helm + Venetian Shield appear as guaranteed spoils?

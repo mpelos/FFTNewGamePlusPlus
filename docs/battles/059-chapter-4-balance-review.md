@@ -44,7 +44,7 @@ structural pressures.
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | band 100-102; dual Masamune vs Koga/Iga flee-race; playtest pending | gate | ▃ moderate (race) |
 | 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | band 100-102; Chirijiraden + armed Assassin parry-race; playtest pending | keep | ▆ harder |
 | 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Martial Arts Undead Knights) | v3 implemented; 6 enemies; band 100-102; **Tier-A Aegis Shield**; playtest pending | undercroft | ▆ harder |
-| 45 | Eagrose Castle | `050` | P1 5 Knight stair-wall → P2 **Dycedarg→Adrammelech** | 2-phase brother Lucavi; Rend cap 2/5; **Tier-A Grand Helm** | castle | █ SPIKE |
+| 45 | Eagrose Castle | `050` | Zalbaag + **Dycedarg** + 5 Knight → **Adrammelech** | v3 design complete; s2/s3/s6 L100, s4/s5 L101; named 103; Lucavi 105 | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | hidden-healer caster screen; split deploy; chain 1/3; no rare | cathedral ext | ▃ moderate |
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | triple-Templar equip-break race; **Tier-S Chaos Blade + Escutcheon + Lordly Robe**; chain 2/3 | nave | ▅ hard |
 | 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | undead-brother; vampirism + break; **Tier-S Ragnarok + Ribbon**; chain 3/3 | sanctuary | ▆ harder |
@@ -126,7 +126,8 @@ and no hidden Brave/Faith assumptions.
 | Exception | Where | Why | Guardrail |
 |-----------|-------|-----|-----------|
 | Time-Mage Haste/Slow/Float | Dugeura (`038`), Vaults-5th (`055`), Necrohol (`056`) | canonical tempo casters | Haste/Slow/Float only — no Stop/Don't Act; one effective disruptor per fight |
-| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend/Arts of War) | Bervenia (`039`), Church (`041`), Undercroft (`049`), Eagrose P1 (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | telegraphed; Safeguard/Steal/Maintenance counter; **≤2 break sources/fight** (Undercroft: exactly its 2 Undead Knights) |
+| Templar/Knight equip-break (Mighty/Unyielding Blade, Rend/Arts of War) | Bervenia (`039`), Church (`041`), Undercroft (`049`), Eagrose (`050`), Nave (`052`), Sanctuary (`053`), Vaults-4th (`054`), Vaults-5th (`055`) | the break castes | normally **≤2 break sources/fight**; Eagrose is the documented exception with five main-job Knights retaining Arts of War |
+| Knight job-bucket castes | Eagrose P1 (`050`) | five main-job Knight bodies split into Monk, Samurai, and Ninja buckets | bucket seeds Job Levels/learned skills but does not replace primary Arts of War; Martial Arts/Iaido/Throw are secondaries |
 | De-randomized beasts | Finnath (`040`) | reliable, learnable flock | fixed kits (Choco-Meteor/Cure); no status beasts; no boss |
 | Healer/holy boss burst | Church (`041`) | Zalmo's revive/holy IS the puzzle | Silence/focus-burst answer; holy/soft-status only; he dies → Tier-A |
 | Branching mutually-exclusive approach | Besselat Wall (`043a`/`043b`) | the fort's two routes | each route self-contained; no boss; both lead to the Sluice |
@@ -144,9 +145,10 @@ and no hidden Brave/Faith assumptions.
 | Monster breath lanes + Disable/Immobilize | Lost Halidom (`057`) | the 5★ four-monster pit + control boss | breath ELEMENTAL/resistable + monsters disable-able; Barich status ONE resistable source (Ribbon) |
 | Almagest / Dispelja / demon surround / 2nd form | Airship (`058`) | the Lucavi FINALE | Almagest telegraphed/sub-100%/survivable; Dispelja → re-buff; surround → Ribbon+spacing; transform telegraphed; full HP/MP restore between phases |
 
-Hard control (Stop/Don't Act/Petrify spam) remains banned everywhere. Equip-break stays ≤2 sources/fight
-across all break battles, even those fielding 4-5 Knights. Every Lucavi/finale ultimate is telegraphed
-and sub-lethal by design — no scripted unavoidable wipe in the entire chapter.
+Hard control (Stop/Don't Act/Petrify spam) remains banned everywhere. Equip-break normally stays at
+≤2 sources/fight; Eagrose is the explicit exception with five main-job Knights and therefore five
+primary Arts of War sources. Every Lucavi/finale ultimate is telegraphed and sub-lethal by design — no
+scripted unavoidable wipe in the entire chapter.
 
 ## Job-escalation ledger (rule 1)
 
@@ -163,7 +165,7 @@ Poeska       (046) : four L100-101 + Mystic/Summoner L102; all-undead       -> p
 Limberry Gate(047) : L102 Assassins + L100-101 Reavers; dual blades         -> burst one to critical; no rare
 Limberry Keep(048) : L102 Elmdor + L101 Assassins + L100 demons            -> answer parry; Tier-A
 Limberry Und.(049) : L102 ZALERA + L101 Mystic/Knights + 2 L100 Archaeodaemons -> race status
-Eagrose      (050) : stair-wall Knights -> DYCEDARG->ADRAMMELECH 2-phase Lucavi -> spread vs summons
+Eagrose      (050) : L103 Zalbaag/Dycedarg + L100-101 Monk/Samurai/Ninja-bucket Knights -> L105 Adrammelech
 Mullonde Ext.(051) : hidden-roof White Mage sustain + caster screen; chain 1/3 -> kill the healer first
 Mullonde Nave(052) : TRIPLE-TEMPLAR (Folmarv/Loffrey/Cletienne; one-falls); chain 2/3 -> commit to Folmarv
 Mullonde San.(053) : ZALBAAG vampire Ark Knight + undead; chain 3/3         -> cleanse vampirism; holy the dead
@@ -305,8 +307,9 @@ CHAIN 3 — ENDGAME GAUNTLET (49-53 / 054-058), 5 battles, one loadout — THE L
    second-form transform fire correctly. Ultima L106 must be hard but FAIR — no unavoidable wipe.
 6. **Win-on-one-falls integrity (Nave 052)**: verify defeating ONE of the three Templars ends the fight
    and the other two RETREAT, while the guaranteed spoils still pay the documented Nave reward set.
-7. **Break-pressure stacking** (≤2 sources across 039/041/044/050/052/053/054/055): confirm Safeguard/
-   Steal stays a fair answer, never a mandatory tax, even in 4-5 Knight fights.
+7. **Break-pressure stacking**: confirm the normal ≤2-source fights remain fair, and separately verify
+   that Eagrose's documented five-Arts-of-War exception remains answerable through Safeguard, disarm,
+   status, range, or focus fire rather than becoming an unavoidable equipment-deletion tax.
 8. **Final-gauntlet reward leakage**: confirm no usable reward, steal-only unique, dormant reward, or
    duplicate best gear leaks from `054`-`058` (especially Save the Queen-like scripted gear at `055/058`,
    Barich gun-trio duplication at `057`, and any dormant Hashmal/Ultima reward data).

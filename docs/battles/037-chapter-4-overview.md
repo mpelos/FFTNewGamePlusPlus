@@ -54,7 +54,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `047` | 42 | Limberry Castle Gate | **Celia & Lettie** (Assassins; flee on critical) | v3 dual-blade flee-race; band 100-102; playtest pending | 🧪 Test |
 | `048` | 43 | Limberry Castle Keep | **Elmdor** (dies); Celia/Lettie → Ultima Demons | v3 Chirijiraden boss + armed Assassins; band 100-102; playtest pending | 🧪 Test |
 | `049` | 44 | Limberry Undercroft | **Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Undead Knights | v3 implemented; six enemies; band 100-102; playtest pending | 🧪 Test |
-| `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | 2-phase brother duel: stair-wall → spread-or-die; **Grand Helm** (Tier A) | ✅ Done |
+| `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | v3 design complete: named builds + Monk/Samurai/Ninja-bucket Knight wall; s2/s3/s6 L100, s4/s5 L101 | 📝 Ready |
 | `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | hidden-healer caster screen; split deploy; chain 1/3 | ✅ Done |
 | `052` | 47 | Mullonde Nave | **Folmarv/Loffrey/Cletienne** (ends when ONE falls; others retreat) | triple-Templar boss; equip-break race; chain 2/3; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** | ✅ Done |
 | `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | undead brother; vampirism+break race; chain 3/3; **Tier-S Ragnarok + Ribbon** | ✅ Done |
@@ -197,7 +197,7 @@ Ultima `106` (the single highest band in the game).
 | Limberry Gate (42) | Assassin flee-race | 100–102 | Celia/Lettie L102; Reavers L100-101; chain 1/3 |
 | Limberry Keep (43) | **Elmdor → demon** | 100–102 | Elmdor L102; Assassins L101; demons L100; chain 2/3 |
 | Limberry Undercroft (44) | **Zalera** Lucavi | 100–102 | Zalera L102; Mystic/Knights L101; 2 Archaeodaemons L100; chain 3/3 |
-| Eagrose (45) | **Dycedarg → Adramelk** | duel 104, Lucavi 105 | brother → Lucavi (2-phase); **rare** |
+| Eagrose (45) | **Dycedarg → Adramelk** | s2/s3/s6 L100; s4/s5 L101; named 103; Lucavi 105 | v3 three-style Knight wall complete; **rare** |
 | Mullonde Exterior (46) | Holy-ground casters | 100–103 | Geomancer/Orator; hidden W.Mage; chain 1/3 |
 | Mullonde Nave (47) | Triple-Templar boss | bosses 104–105 | **Folmarv/Loffrey/Cletienne**; Tier-S spoils; chain 2/3 |
 | Mullonde Sanctuary (48) | Undead **Zalbaag** | boss 105, demons 103 | undead brother + Ultima Demons; Tier-S spoils; chain 3/3 |
