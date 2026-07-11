@@ -1,6 +1,6 @@
 # 054 - Monastery Vaults, Fourth Level (Endgame Gauntlet 1/5)
 
-Status: v3 design complete (docs-only) - ready for implementation
+Status: v3 implemented/deployed - direct playtest pending
 Chapter: 4 - "In the Name of Love"
 Battle order: Battle 49 (ENDGAME GAUNTLET 1 of 5 - no resupply across 054 -> 055 -> 056 -> 057 -> 058)
 Target version: Enhanced v1.5.0
@@ -8,9 +8,9 @@ ENTD: `entd4` global entry `435`
 Local slot: `051`
 Simulation artifact: `tmp/fft-level-design-054-monastery-vaults-fourth-level/`
 
-> V3 docs-only revision: preserve the event behavior, objective, positions, Loffrey cutscene exit,
-> enemy count and no-reward rule. Replace the six active generic builds with exact copies from Eagrose
-> Castle and Fort Besselat South Wall. No embedded ENTD, script, binary or patch code changes in this pass.
+> **V3 implementation (2026-07-11):** entry 435 patched in the embedded ENTD and deployed through a
+> successful Release build. Loffrey's cutscene record, objective, positions, enemy count and no-reward
+> rule are preserved. Sprite-sheet count remains unchanged at four.
 
 ## V3 Locked Decisions
 
@@ -289,15 +289,15 @@ Residual risks:
 
 ## Implementation Checklist
 
-- [ ] Preserve entry `435`, slot `0` Loffrey as cutscene exit / non-combat unit.
-- [ ] Keep active enemy count at 6.
-- [ ] Set s1/s2 as exact copies of Eagrose Knight Martial Artists s2/s3.
-- [ ] Set s3 as an exact copy of Eagrose Knight Samurai s4.
-- [ ] Set s4/s5 as exact copies of Fort Besselat South Wall Monk s6.
-- [ ] Convert the Archer slot s6 into an exact copy of Fort Besselat South Wall Ninja s5.
-- [ ] Ensure every active human has complete equipment plus intentional secondary/reaction/support/move.
-- [ ] Add no usable rewards, no Tier-A/Tier-S payloads, and no steal-dependent reward hooks.
-- [ ] Re-dump entry `435` after implementation and verify only the intended slot/kit changes.
+- [x] Preserve entry `435`, slot `0` Loffrey as cutscene exit / non-combat unit.
+- [x] Keep active enemy count at 6.
+- [x] Set s1/s2 as exact copies of Eagrose Knight Martial Artists s2/s3.
+- [x] Set s3 as an exact copy of Eagrose Knight Samurai s4.
+- [x] Set s4/s5 as exact copies of Fort Besselat South Wall Monk s6.
+- [x] Convert the Archer slot s6 into an exact copy of Fort Besselat South Wall Ninja s5.
+- [x] Ensure every active human has complete equipment plus intentional secondary/reaction/support/move.
+- [x] Add no usable rewards, no Tier-A/Tier-S payloads, and no steal-dependent reward hooks.
+- [x] Re-dump entry `435` after implementation and verify only the intended slot/kit changes.
 - [ ] Playtest `054 -> 055` back-to-back from the point-of-no-return save.
 
 ## Test Questions

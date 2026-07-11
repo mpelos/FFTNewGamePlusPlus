@@ -1985,28 +1985,36 @@ def vaults_4th(data):
     # Battle 49 - Monastery Vaults, Fourth Level (entry 435): the gauntlet OPENER. CONFIRMED in-game =
     #   Loffrey only ENTERS in a cutscene and walks out the door (a scripted NPC exit, NOT a fightable
     #   boss here — his real fight is the Fifth Level, 436). The actual enemies are slots 1-6 = 3 Knight/
-    #   2 Monk/1 Archer in vanilla. v2 keeps the all-generic opener but swaps the Archer to a tempered
-    #   Ninja. No boss, no rare, no usable gauntlet reward. slot0 Loffrey is cutscene-only.
+    #   2 Monk/1 Archer in vanilla. V3 imports exact builds from Eagrose (2 Martial Knights + Samurai
+    #   Knight) and Besselat South Wall (2 Monks + Ninja). No boss, rare or usable gauntlet reward.
+    #   slot0 Loffrey is cutscene-only and is not edited here.
     E = 435
-    set_slot(data, E, 0, brave=90, faith=55)  # Loffrey cutscene unit; preserve level/gear/event behavior.
-    for s in (1, 2):                                             # 2 Knight - capped Rend sources
-        set_slot(data, E, s, level=103, joblevel=8, job=KNIGHT, secondary=ITEMS,
-                 brave=88, faith=42,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    set_slot(data, E, 3, level=102, joblevel=1, job=KNIGHT, secondary=ITEMS,
-             brave=88, faith=42,
-             reaction=COUNTER, support=DEFENSE_BOOST, movement=MV1,
-             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS, rh=RUNEBLADE, lh=SHOP_SHIELD)
-    for s in (4, 5):                                             # 2 Monk - Chakra sustain
-        set_slot(data, E, s, level=102, joblevel=8, job=MONK, secondary=FUNDAMENTS,
-                 brave=88, faith=40,
-                 reaction=COUNTER, support=ATK_BOOST, movement=MV1,
-                 head=HEADBAND, body=POWER_GARB, acc=BRACERS)
-    set_slot(data, E, 6, level=103, joblevel=8, job=NINJA, secondary=STEAL,  # tempered tempo flanker
+    set_slot(data, E, 1, level=100, jobrank=generic_job_rank(MONK), joblevel=8,
+             job=KNIGHT, secondary=MARTIAL_ARTS, brave=88, faith=42,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
+             rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
+    set_slot(data, E, 2, level=100, jobrank=generic_job_rank(MONK), joblevel=8,
+             job=KNIGHT, secondary=MARTIAL_ARTS, brave=86, faith=44,
+             reaction=COUNTER, support=ATK_BOOST, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=BRACERS,
+             rh=RUNEBLADE, lh=CRYSTAL_SHIELD)
+    set_slot(data, E, 3, level=101, jobrank=generic_job_rank(SAMURAI), joblevel=8,
+             job=KNIGHT, secondary=IAIDO, brave=88, faith=58,
+             reaction=SHIRAHADORI, support=DOUBLEHAND, movement=MV3,
+             head=HEAVY_HELM, body=HEAVY_ARMOR, acc=MAGEPOWER_GLOVES,
+             rh=RUNEBLADE, lh=LH_EMPTY)
+    for s in (4, 5):
+        set_slot(data, E, s, level=101, joblevel=8, job=MONK, secondary=0,
+                 brave=88, faith=38,
+                 reaction=COUNTER, support=DUAL_WIELD, movement=JUMP3,
+                 head=BARRETTE, body=POWER_GARB, acc=BRACERS,
+                 rh=LH_EMPTY, lh=LH_EMPTY)
+    set_slot(data, E, 6, level=102, joblevel=8, job=NINJA, secondary=MARTIAL_ARTS,
              brave=90, faith=35,
-             reaction=REFLEXES, support=ATK_BOOST, movement=MV2,
-             head=THIEFS_CAP, body=BLACK_GARB, acc=BRACERS, rh=NINJA_BLADE, lh=NINJA_BLADE)
+             reaction=COUNTER, support=BRAWLER, movement=JUMP3,
+             head=THIEFS_CAP, body=POWER_GARB, acc=BRACERS,
+             rh=LH_EMPTY, lh=LH_EMPTY)
     return [E]
 
 
