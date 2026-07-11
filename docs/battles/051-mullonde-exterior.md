@@ -1,6 +1,6 @@
 # 051 - Mullonde Cathedral Exterior (Murond Holy Place)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 460
+Status: 📝 v3 design complete (docs-only) — ready for implementation
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 46 (Mullonde chain 1 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
@@ -38,9 +38,33 @@ Current v1 implementation:
   planning before any future implementation pass.
 ```
 
-Planned v2 redesign (docs-only in this pass): preserve the six-caster opener and make the hidden roof
-White Mage the single sustain engine. The enemy side gets complete Chapter 4 caster kits, but the
-secondaries must support the healer-priority puzzle rather than adding another headline engine.
+Historical v2 redesign: preserve the six-caster opener and make the hidden roof White Mage the single
+sustain engine. V3 now locks complete builds for all six slots, changes s1-s5 to female while keeping
+the White Mage male, and preserves the healer-priority puzzle.
+
+> This pass changes documentation only. No ENTD, patch code, binary, build, or Reloaded-II artifact is
+> changed. The single `Geomancer Female` build supplied for v3 applies to both s2 and s3 so the original
+> two-Geomancer composition remains intact.
+
+## V3 Locked Decisions
+
+```text
+GENDER:
+  s0 White Mage: male.
+  s1 Summoner: female.
+  s2/s3 Geomancers: female.
+  s4/s5 Orators: female.
+
+LEVELS:
+  s0: 102.  s1: 101.  s2/s3: 100.  s4/s5: 101.
+
+BRAVE/FAITH:
+  Preserve v2 targets: s0/s1 60/84; s2-s5 68/78.
+
+REWARDS:
+  Preserve guaranteed Staff of the Magi + Faerie Harp + minor spoil.
+  Dragon Rod is no longer active steal flavor; s1 equips Rod of Faith.
+```
 
 > MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout. This opener may tax actions and
 > items, but it must leave enough resources for the triple-Templar Nave and Zalbaag Sanctuary.
@@ -111,11 +135,10 @@ CONFIRMED:
 - Reward ledger maps this battle to Staff of the Magi + Faerie Harp + minor/Hi-Ether spoil.
 - No active guests.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
+STILL NEEDED FOR V3 IMPLEMENTATION:
 - Verify hidden rooftop White Mage placement and at least two answers: reach, Silence, height-ignoring
   damage, or fast ranged pressure.
-- Give every active human an intentional secondary that supports the role without creating a second
-  headline engine.
+- Apply the locked v3 gender, level, ability, and equipment setup for s0-s5.
 - Confirm Orator status remains soft and limited.
 - Confirm Summoner charge times remain intact and race-able.
 - Confirm Staff of the Magi + Faerie Harp + minor spoil land as guaranteed spoils.
@@ -167,34 +190,35 @@ Guaranteed spoils for entry 460: STAFF OF THE MAGI + FAERIE HARP + kept minor/Hi
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
 
 COMBAT ROLE:
-  - Staff of the Magi may be visible on the White Mage only if legal and playtest-safe.
+  - Staff of the Magi is visible on the White Mage and also remains in the guaranteed reward ledger.
   - Faerie Harp is reward payload only unless a future implementation intentionally creates a Bard role,
     which this design does not require.
-  - Dragon Rod stays optional steal flavor, not the canonical reward.
+  - Summoner equips Rod of Faith; Dragon Rod is removed from the v3 active loadout.
 
 PRESERVE:
   - Buried map treasure remains vanilla map loot.
 ```
 
-## Proposed Composition (New Game++ Mullonde Exterior v2)
+## Proposed Composition (New Game++ Mullonde Exterior v3)
 
-Keep the local six-caster roster. White Mage is the priority target at `103`; the rest sit at `102`.
+Keep the local six-caster roster and positions. White Mage remains the hidden sustain priority target;
+the Summoner and Orators sit at `101`, while the two Geomancers form the level-`100` floor.
 
 | Slot | Role | Job | Level | Br/Fa | Purpose |
 | ------ | ------ | ----- | ------- | --- | --------- |
-| s0 | Sustain engine / reward payload | White Mage | `103` | `60/84` | Hidden roof heal/Raise engine; Staff of the Magi spoil. |
-| s1 | Charged AoE | Summoner | `102` | `60/84` | Punishes clumping/regrouping; Dragon Rod steal flavor; minor spoil. |
-| s2 | Terrain pressure / reward payload | Geomancer | `102` | `68/78` | Flank pressure; Faerie Harp spoil payload. |
-| s3 | Terrain pressure | Geomancer | `102` | `68/78` | Second flank pressure piece. |
-| s4 | Soft disruptor | Orator | `102` | `68/78` | Speech/status harassment, not hard lock. |
-| s5 | Soft disruptor | Orator | `102` | `68/78` | Second Orator, still under soft-status cap. |
+| s0 | Male sustain engine / reward payload | White Mage | `102` | `60/84` | Hidden roof healer; Staff of the Magi; Ribbon + Sortilège protection. |
+| s1 | Female charged AoE | Summoner | `101` | `60/84` | Rod of Faith summon pressure; Dragon's Heart safety. |
+| s2 | Female terrain bruiser / reward payload | Geomancer | `100` | `68/78` | Martial Arts secondary; Faerie Harp spoil payload. |
+| s3 | Female terrain bruiser | Geomancer | `100` | `68/78` | Second copy of the same Geomancer build. |
+| s4 | Female ranged disruptor | Orator | `101` | `68/78` | Stoneshooter + Mana Shield/Manafont pressure. |
+| s5 | Female ranged disruptor | Orator | `101` | `68/78` | Second copy of the same Orator build. |
 
 Reasoning:
 
-The accepted design is **v2 reachable hidden-healer screen**. Iteration 1 flagged raw caster pressure
-above the original opener budget, but chain tax and hard-lock risk were controlled, so iteration 2
-accepts the local six-caster roster as long as the healer is reachable and the Orators/Summoner do not
-become a second hard engine.
+V3 preserves the reachable hidden-healer screen while making every caste distinct. The White Mage is
+a protected fast sustain anchor; the Summoner is a Rod-of-Faith AoE threat; the Geomancers combine
+Geomancy with Martial Arts; and the Orators become Mana-Shield Stoneshooter batteries. The unchanged
+six-body roster and low `100-102` band keep this as the chain opener rather than the Mullonde spike.
 
 Rejected variants:
 
@@ -209,38 +233,54 @@ Rejected variants:
 - Weak healer screen: loses the original tactical lesson.
 ```
 
-## Builds (complete caster kits)
+## Builds (v3 locked)
 
 ```text
-White Mage:
-  - Level 103, JobLevel 8.
-  - Primary: White Magic with real Cure/Raise sustain.
-  - Secondary: limited Time Magic or Item, if legal; no Stop/hard control.
-  - Reaction: Reflexes or current reaction 449.
-  - Support: caster support if legal; avoid turning sustain into invulnerability.
-  - Movement: Movement +1 or roof-appropriate mobility.
-  - Gear: mage gear; Staff of the Magi visible only if legal/playtest-safe.
+White Mage s0 — male:
+  - Level: 102.  Brave/Faith: 60/84.
+  - Job bucket: White Mage; JobLevel: 8.
+  - Primary: White Magicks.
+  - Secondary: Items.
+  - Reaction: Dragon's Heart.
+  - Support: Swiftness (Swiftspell).
+  - Movement: Movement +2.
+  - Right hand: Staff of the Magi.  Left hand: None.
+  - Head: Ribbon.  Body: Luminous Robe.  Accessory: Sortilège.
+  - Ivalice Chronicles allows male units to equip Ribbon and perfumes; this loadout is legal and
+    requires no gender-restriction exception or special verification.
 
-Summoner:
-  - Level 102, JobLevel 8.
-  - Primary: Summon with intact charge times.
-  - Secondary: Item or light White Magic; no second sustain engine.
-  - Reaction/Support/Move: complete caster setup.
-  - Gear: Dragon Rod may remain optional steal flavor.
+Summoner s1 — female:
+  - Level: 101.  Brave/Faith: 60/84.
+  - Job bucket: Summoner; JobLevel: 8.
+  - Primary: Summon.
+  - Secondary: None.
+  - Reaction: Dragon's Heart.
+  - Support: Magic Attack Boost.
+  - Movement: Movement +2.
+  - Right hand: Rod of Faith.  Left hand: None.
+  - Head: Ribbon.  Body: Black Robe.  Accessory: Sortilège.
 
-Geomancers x2:
-  - Level 102, JobLevel 8.
+Geomancers s2/s3 — female, identical builds:
+  - Level: 100.  Brave/Faith: 68/78.
+  - Job bucket: Geomancer; JobLevel: 8.
   - Primary: Geomancy.
-  - Secondary: Item/Fundaments/light utility.
-  - Reaction/Support/Move: complete role setup.
-  - Role: flank terrain pressure, not status lock.
+  - Secondary: Martial Arts.
+  - Reaction: Nature's Wrath.
+  - Support: Magic Attack Boost.
+  - Movement: Movement +3.
+  - Right hand: Rune Blade.  Left hand: None.
+  - Head: Lambent Hat.  Body: Power Garb.  Accessory: Japa Mala.
 
-Orators x2:
-  - Level 102, JobLevel 8.
-  - Primary: speech/status pressure.
-  - Secondary: Item or light utility.
-  - Reaction/Support/Move: complete role setup.
-  - Guardrail: soft disruption only; no hard-control pile-up.
+Orators s4/s5 — female, identical builds:
+  - Level: 101.  Brave/Faith: 68/78.
+  - Job bucket: Orator; JobLevel: 8.
+  - Primary: Speechcraft.
+  - Secondary: None.
+  - Reaction: Mana Shield.
+  - Support: Arcane Strength (Magic Attack Boost).
+  - Movement: Manafont.
+  - Right hand: Stoneshooter.  Left hand: None.
+  - Head: Lambent Hat.  Body: Wizard's Robe.  Accessory: Septième Sens.
 ```
 
 ## Positioning Plan
@@ -250,6 +290,9 @@ Cathedral exterior: White Mage starts hidden on the roof with healing sightlines
 NG++ answers must reach it: height-ignoring damage, Silence, fast ranged pressure, Teleport/Ignore Height,
 or a split-team route.
 
+Preserve the vanilla ENTD tiles: s0 `(2,5)`, s1 `(2,7)`, s2 `(3,7)`, s3 `(6,7)`, s4 `(2,11)`,
+and s5 `(3,11)`.
+
 Summoner and Geomancers punish clumping as the party regroups. Orators occupy side lanes where they can
 harass without hard-locking either deployment group. The player should feel the intended sequence:
 identify the sustain, solve the roof, then clean the casters while preserving resources for Nave.
@@ -258,7 +301,12 @@ identify the sustain, solve the roof, then clean the casters while preserving re
 The cathedral steps should say: "the choir will not fall while the hidden healer keeps singing; reach
 the roof, stop the sustain, and save strength for the altar."
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
+
+The results below describe the historical v2 caster screen. They do not validate v3's gender changes,
+Rod-of-Faith Summoner, Martial Arts Geomancers, or the two
+Stoneshooter/Mana-Shield Orators. No new simulation is requested; direct in-game validation follows
+implementation.
 
 Simulation artifact:
 
@@ -305,21 +353,26 @@ guaranteed Staff/Faerie spoils.
 
 - [ ] Re-dump entry 460 and verify slot order, rewards, and rooftop placement.
 - [ ] Preserve split deployment and roof/height puzzle.
-- [ ] Keep levels: White Mage `103`; all other enemies `102`.
-- [ ] Add/verify intentional secondaries for every active human caster.
+- [ ] Set genders: s0 male; s1-s5 female.
+- [ ] Set levels: s0 `102`; s1/s4/s5 `101`; s2/s3 `100`.
+- [ ] Preserve Br/Fa targets: s0/s1 `60/84`; s2-s5 `68/78`.
+- [ ] Apply the complete v3 abilities and equipment documented for every slot.
 - [ ] Keep hidden White Mage sustain reachable/silenceable.
 - [ ] Keep Orator status soft; no hard-control pile-up.
 - [ ] Keep Summoner charge times intact.
 - [ ] Author/verify spoils: Staff of the Magi + Faerie Harp + minor/Hi-Ether spoil.
-- [ ] Preserve Dragon Rod steal flavor and buried map treasure separately from guaranteed rewards.
+- [ ] Equip s1 with Rod of Faith, removing the old Dragon Rod active steal flavor.
+- [ ] Preserve buried map treasure separately from guaranteed rewards.
 - [ ] Test as Mullonde chain 1/3 with resources carried into `052` and `053`.
 
 ## Test Questions
 
 - Is the White Mage discoverable and reachable by at least two common NG++ answers?
+- Are s1-s5 female while s0 remains male?
 - Does the caster band fold once the healer is stopped?
 - Does split deployment create route pressure without isolating one group into hard status?
-- Are Orator status and Summoner AoE answerable, with no hard lock?
+- Are the two Mana-Shield/Manafont Stoneshooter Orators answerable without becoming a ranged sustain lock?
+- Does the Rod-of-Faith Summoner remain raceable with normal Summon charge times?
 - Do Staff of the Magi + Faerie Harp appear as guaranteed spoils?
 - Does the party enter Nave taxed but not drained?
 
