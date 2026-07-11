@@ -57,7 +57,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `050` | 45 | Eagrose Castle / Igros Castle | **Dycedarg → Adrammelech** (Lucavi) | v3 implemented/deployed: named builds + Monk/Samurai/Ninja-bucket Knight wall; s2/s3/s6 L100, s4/s5 L101 | 🧪 Test |
 | `051` | 46 | Mullonde Cathedral / Murond | Exterior; 2 Geomancer/2 Orator/Summoner + hidden roof W.Mage | v3 implemented/deployed: gender recast + protected healer + Rod-of-Faith Summoner + Stoneshooter Orators | 🧪 Test |
 | `052` | 47 | Mullonde Nave | **Folmarv/Loffrey/Cletienne** (ends when ONE falls; others retreat) | v3 implemented/deployed: boss equipment refresh; chain 2/3; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** unchanged | 🧪 Test |
-| `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | undead brother; vampirism+break race; chain 3/3; **Tier-S Ragnarok + Ribbon** | ✅ Done |
+| `053` | 48 | Mullonde Sanctuary | **Zalbaag** (vampire Ark Knight) + 2 Archaeodaemon + Ultima Demon | v3 implemented/deployed: Eagrose guest loadout; chain 3/3; **Tier-S Ragnarok + Ribbon** unchanged | 🧪 Test |
 | `054` | 49 | Monastery Vaults 4th Floor | ENDGAME 1/5; 3 Knight (Rend cap 2) + 2 Monk + Ninja(was Archer) | light gear-preservation opener; no boss/no rare | ✅ Done |
 | `055` | 50 | Monastery Vaults 5th Floor | ENDGAME 2/5; **Loffrey** (Divine Knight) + 2 BlackMage/2 Summoner/Time Mage | caster crossfire; disarm-first; win-when-Loffrey-falls; no usable gauntlet reward | ✅ Done |
 | `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** (Magick Surge) + 2 Samurai/2 Ninja/2 Time Mage | **Samurai** endgame showcase; Silence/burst-the-surge race; win-when-Cletienne-falls; no usable gauntlet reward | ✅ Done |

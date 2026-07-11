@@ -1,6 +1,6 @@
 # 053 - Mullonde Cathedral Sanctuary (Murond Holy Place)
 
-Status: 📝 redesign v2 planned (docs-only) — v1 implementation exists for entry 462
+Status: 🧪 v3 implemented/deployed — direct playtest pending
 Chapter: 4 — "In the Name of Love"
 Battle order: Battle 48 (Mullonde chain 3 of 3 — NO resupply across 46→47→48)
 Target version: Enhanced v1.5.0
@@ -9,8 +9,12 @@ File: `battle_entd4_ent.bin`
 
 > **NG++ rewards applied (2026-06-27):** Ragnarok + Ribbon + Elixir/minor spoil through guaranteed
 > Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Ragnarok is reward
-> payload only; Runeblade remains Zalbaag's active combat identity. Canonical map:
+> payload only; the reward ledger is independent from Zalbaag's active equipment. Canonical map:
 > `chapter-4-rewards-implementation.md`.
+
+> **V3 implementation (2026-07-11):** Zalbaag received the complete equipment set from his Eagrose
+> guest version. Entry 462 was patched in the embedded ENTD and deployed through a clean Release build;
+> the installed DLL resource matches the source binary byte-for-byte.
 
 ## Current Implementation / Data Reality
 
@@ -20,7 +24,7 @@ DATA REALITY (verified from current embedded entd4 dump, entry 462):
            level 254, no gear; preserve untouched.
 
   slot 1 = Zalbaag
-           job 51, level 105, JobLevel 8, complete setup, Runeblade, shield, Ribbon accessory.
+           job 51, level 105, JobLevel 8, complete setup, Eagrose guest equipment set.
            Secondary 63, reaction 424, support 466, movement 493.
            Spoils payload = 0x24 (Ragnarok).
 
@@ -35,17 +39,26 @@ DATA REALITY (verified from current embedded entd4 dump, entry 462):
   slot 5 = job-51 script placeholder
            level 254; preserve untouched.
 
-Current v1 implementation:
+Current v3 implementation:
   Zalbaag = 105.
   Archaeodaemons and Ultima Demon = 103.
-  Zalbaag keeps Runeblade/vampire identity and active Ribbon.
+  Zalbaag carries Chaos Blade / Venetian Shield / Grand Helm / Maximillian / Bracers.
   Ragnarok + Ribbon + Elixir are guaranteed reward payloads.
   Win-on-Zalbaag-falls must be preserved.
 ```
 
-Planned v2 redesign (docs-only in this pass): keep the tragic undead-brother focus fight. Do not turn
-Zalbaag into an active Ragnarok sword boss just because Ragnarok is awarded here; the combat puzzle is
-vampirism plus Runeblade break pressure, screened by undead demons.
+Locked v3 revision: preserve the complete v2 battle and change only Zalbaag's equipment. His undead
+version uses the same loadout as guest Zalbaag in Eagrose. Levels, Brave/Faith, abilities, demon screen,
+positions, placeholders, objective and guaranteed spoils remain unchanged.
+
+```text
+ZALBAAG V3 EQUIPMENT:
+  Right hand: Chaos Blade
+  Left hand: Venetian Shield
+  Head: Grand Helm
+  Body: Maximillian
+  Accessory: Bracers
+```
 
 > MULLONDE CHAIN: 46 (`051`) → 47 (`052`) → 48 (`053`), one loadout. This is the chain closer and the
 > last reward payout before the no-resupply endgame gauntlet.
@@ -53,7 +66,7 @@ vampirism plus Runeblade break pressure, screened by undead demons.
 ## Design Goal
 
 ```text
-Make Mullonde Sanctuary the tragic chain closer: Zalbaag is the sole vampirism source and the Runeblade
+Make Mullonde Sanctuary the tragic chain closer: Zalbaag is the sole vampirism source and a Chaos Blade
 break threat, demons screen him with undead/reraise and Ultima pressure, and the player wins by freeing
 the brother rather than clearing the room. Ragnarok + Ribbon are guaranteed spoils; the fight must not
 become spreading vampire lock, sealed demon cleanup, or active-Ragnarok stat pressure.
@@ -98,7 +111,7 @@ is Zalbaag, a Beoulve brother turned into an undead weapon. The player should fe
 recoverable boss demands: vampirism and Runeblade break. The demons matter because they make reaching
 him costly, but they must not become the real objective.
 
-For New Game++ the identity must stay: **cleanse or resist vampirism, answer the Runeblade, open the
+For New Game++ the identity must stay: **cleanse or resist vampirism, answer Zalbaag's break threat, open the
 demon screen, and defeat Zalbaag.**
 
 ## Local Data Confirmed / Data Still Needed
@@ -106,17 +119,17 @@ demon screen, and defeat Zalbaag.**
 ```text
 CONFIRMED:
 - Entry 462 is Mullonde Sanctuary.
-- Slot 1 is active Zalbaag at level 105 with complete setup, Runeblade, and Ribbon accessory.
+- Slot 1 is active Zalbaag at level 105 with complete setup and the Eagrose guest equipment set.
 - Slots 2/3 are Archaeodaemon undead monster/fixed bodies at level 103.
 - Slot 4 is an Ultima Demon at level 103.
 - Slots 0/5 are placeholders and should be preserved unless playtest proves active.
 - Rewards are Ragnarok + Ribbon + Elixir/minor spoil guaranteed spoils.
 - No active guests.
 
-STILL NEEDED FOR V2 IMPLEMENTATION:
+STILL NEEDED FOR V3 PLAYTEST:
 - Verify win-on-Zalbaag-falls and optional demon cleanup.
 - Confirm vampirism is sourced only from Zalbaag and is cleansable/non-spreading.
-- Confirm Runeblade break is the only gear-break source and remains answerable.
+- Confirm Zalbaag's Chaos Blade break pressure remains answerable.
 - Confirm demons screen without sealing Zalbaag behind mandatory cleanup.
 - Confirm Ultima pressure is telegraphed/spaceable.
 - Confirm Ragnarok + Ribbon + Elixir/minor spoil land as guaranteed spoils.
@@ -127,7 +140,7 @@ STILL NEEDED FOR V2 IMPLEMENTATION:
 ```text
 Headline engine: undead brother focus fight.
 Supporting roles:
-  - Zalbaag brings vampirism and Runeblade break as the sole boss engine.
+  - Zalbaag brings vampirism and Chaos Blade break pressure as the sole boss engine.
   - Archaeodaemons create undead/reraise pressure and drain tax.
   - Ultima Demon punishes clustering and slow play with telegraphed Ultima pressure.
 
@@ -137,7 +150,7 @@ Chapter 4 escalation is the layered undead/break/status stack around one named b
 CONSTRAINTS:
   - Win-on-Zalbaag remains.
   - Vampirism is one source only.
-  - Runeblade remains active combat identity.
+  - The Eagrose guest equipment set is reused exactly.
   - Ragnarok is reward payload only.
   - Demons screen, but do not seal, the boss.
   - No generic padding.
@@ -170,22 +183,21 @@ Guaranteed spoils for entry 462: RAGNAROK + RIBBON + ELIXIR/minor spoil.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
 
 COMBAT ROLE:
-  - Zalbaag keeps Runeblade as active weapon because it defines the break puzzle.
-  - Ribbon may remain active on Zalbaag as status-warding identity and reward visibility.
-  - Ragnarok is reward payload only; do not replace Runeblade with active Ragnarok for this fight.
+  - Zalbaag actively carries Chaos Blade and the complete equipment set copied from his Eagrose guest.
+  - Ragnarok and Ribbon remain guaranteed reward payloads; they do not need to be actively equipped.
 
 PRESERVE:
   - No buried map treasure.
   - No Excalibur. Excalibur stays Orlandeau's.
 ```
 
-## Proposed Composition (New Game++ Mullonde Sanctuary v2)
+## Proposed Composition (New Game++ Mullonde Sanctuary v3)
 
 Keep the local boss + demon screen roster. Zalbaag is `105`; demons are `103`.
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
-| s1 | Boss / objective / reward payload | Zalbaag, undead Ark Knight | `105` | `90/78` | Sole vampirism source; Runeblade break; defeat ends fight; Ragnarok spoil. |
+| s1 | Boss / objective / reward payload | Zalbaag, undead Ark Knight | `105` | `90/78` | Sole vampirism source; Chaos Blade break; defeat ends fight; Ragnarok spoil. |
 | s2 | Undead screen / reward payload | Archaeodaemon | `103` | `88/76` | Reraise/drain pressure; Ribbon spoil. |
 | s3 | Undead screen / minor reward | Archaeodaemon | `103` | `88/76` | Second undead screen body; Elixir/minor spoil. |
 | s4 | Demon pressure | Ultima Demon | `103` | `88/76` | Telegraphed Ultima pressure; optional target. |
@@ -223,8 +235,11 @@ Rejected variants:
 ```text
 Zalbaag:
   - Level 105, JobLevel 8.
-  - Active weapon: Runeblade, preserving the break identity.
-  - Accessory: Ribbon may remain active.
+  - Right hand: Chaos Blade.
+  - Left hand: Venetian Shield.
+  - Head: Grand Helm.
+  - Body: Maximillian.
+  - Accessory: Bracers.
   - Vampirism: sole source, cleansable, non-spreading.
   - Reaction/Support/Move: complete boss setup already present.
   - Role: tragic focus target; defeat ends fight.
@@ -249,7 +264,7 @@ sealed wall. Ultima Demon sits on a flank where Ultima pressure is visible and s
 
 The player should see the intended line:
   1. Prevent or cleanse vampirism.
-  2. Disarm/protect against Runeblade break.
+  2. Disarm/protect against Chaos Blade break pressure.
   3. Open one lane through undead demons.
   4. Focus Zalbaag and end the chain.
 ```
@@ -257,7 +272,7 @@ The player should see the intended line:
 The sanctuary should say: "your brother is the curse at the altar; quiet the demons only enough to
 reach him, break the blade, and free him."
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
 
 Simulation artifact:
 
@@ -300,24 +315,27 @@ Zalbaag remains the objective and sole vampirism/break engine. Demons are pressu
 cleanup. Ragnarok and Ribbon are guaranteed rewards, with Ragnarok kept out of active combat gear.
 ```
 
+The v3 equipment-only revision is not re-simulated. Its combat impact will be validated directly
+in-game; the v2 simulation above remains historical design context.
+
 ## Implementation Checklist
 
-- [ ] Re-dump entry 462 and verify slots, rewards, and placeholder behavior.
-- [ ] Preserve win-on-Zalbaag-falls.
-- [ ] Keep Zalbaag at `105`; demons at `103`.
-- [ ] Preserve Runeblade as active weapon; do not replace it with Ragnarok.
-- [ ] Keep vampirism sole-source, cleansable, and non-spreading.
-- [ ] Keep demon screen partial, with a focus lane to Zalbaag.
-- [ ] Keep Ultima pressure telegraphed/spaceable.
-- [ ] Author/verify spoils: Ragnarok + Ribbon + Elixir/minor spoil, guaranteed and within the 3-item cap.
-- [ ] Preserve no buried treasure.
+- [x] Re-dump entry 462 and verify slots, rewards, and placeholder data.
+- [x] Preserve win-on-Zalbaag-falls data.
+- [x] Keep Zalbaag at `105`; demons at `103`.
+- [x] Equip Zalbaag: Chaos Blade / Venetian Shield / Grand Helm / Maximillian / Bracers.
+- [x] Preserve vampirism setup.
+- [x] Preserve the demon screen.
+- [x] Preserve Ultima Demon setup.
+- [x] Preserve spoils: Ragnarok + Ribbon + Elixir, guaranteed and within the 3-item cap.
+- [x] Preserve no buried treasure data.
 - [ ] Test as Mullonde chain 3/3 after `051` and `052`.
 
 ## Test Questions
 
 - Does the fight end immediately when Zalbaag falls?
 - Is vampirism cleansable, single-source, and non-spreading?
-- Does Runeblade break create pressure without becoming a gear lock?
+- Does Chaos Blade break pressure remain fair without becoming a gear lock?
 - Can the player reach Zalbaag without clearing every demon?
 - Is Ultima pressure spaceable?
 - Do Ragnarok + Ribbon appear as guaranteed spoils?

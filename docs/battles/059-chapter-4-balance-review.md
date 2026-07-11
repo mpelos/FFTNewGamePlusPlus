@@ -47,7 +47,7 @@ structural pressures.
 | 45 | Eagrose Castle | `050` | Zalbaag + **Dycedarg** + 5 Knight → **Adrammelech** | v3 implemented/deployed; playtest pending; s2/s3/s6 L100, s4/s5 L101; named 103; Lucavi 105 | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | v3 implemented/deployed; playtest pending; gender recast; band 100-102; Stoneshooter/Mana-Shield Orators | cathedral ext | ▃ moderate |
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | v3 implemented/deployed; boss equipment refresh; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** unchanged; chain 2/3; playtest pending | nave | ▅ hard |
-| 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | undead-brother; vampirism + break; **Tier-S Ragnarok + Ribbon**; chain 3/3 | sanctuary | ▆ harder |
+| 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | v3 implemented/deployed: Eagrose guest loadout; **Tier-S Ragnarok + Ribbon** unchanged; chain 3/3; playtest pending | sanctuary | ▆ harder |
 | 49 | Monastery Vaults — 4th | `054` | 6 (3 Knight Rend-cap 2 + 2 Monk + Ninja) | light gear-preservation opener; no rare; gauntlet 1/5 | vault | ▂ light (opener) |
 | 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** Divine Knight + 2 Black Mage + 2 Summoner + Time Mage) | caster crossfire; disarm-first; no usable gauntlet reward | wide vault | ▅ hard |
 | 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai endgame showcase**; Silence/burst the surge; no usable gauntlet reward | dead city | ▆ harder |

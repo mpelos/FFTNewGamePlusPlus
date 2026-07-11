@@ -957,17 +957,17 @@ def run() -> int:
     check("462 active levels", roster(entd, e, active, 0x03) == [105, 103, 103, 103])
     check("462 Brave targets", roster(entd, e, active, 0x06) == [90, 88, 88, 88])
     check("462 Faith targets", roster(entd, e, active, 0x07) == [78, 76, 76, 76])
-    check("462 Zalbaag Runeblade/Ribbon kit",
+    check("462 Zalbaag v3 Eagrose equipment kit",
           field(entd, e, 1, 0x09) == 8
           and field(entd, e, 1, 0x0B) == 63
           and field16(entd, e, 1, 0x0C) == 424
           and field16(entd, e, 1, 0x0E) == 466
           and field16(entd, e, 1, 0x10) == 493
-          and roster(entd, e, [1], 0x12) == [154]
-          and roster(entd, e, [1], 0x13) == [182]
-          and roster(entd, e, [1], 0x14) == [171]
-          and roster(entd, e, [1], 0x15) == [30]
-          and roster(entd, e, [1], 0x16) == [139])
+          and roster(entd, e, [1], 0x12) == [156]
+          and roster(entd, e, [1], 0x13) == [185]
+          and roster(entd, e, [1], 0x14) == [218]
+          and roster(entd, e, [1], 0x15) == [37]
+          and roster(entd, e, [1], 0x16) == [142])
     for slot_no in (2, 3, 4):
         check(f"462 s{slot_no} demon no-equipment shape",
               roster(entd, e, [slot_no], 0x12) == [0]
