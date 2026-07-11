@@ -59,6 +59,8 @@ TEMPLAR = 38  # Knights Templar (Izlude's job, 028) — Mighty Sword ranged brea
 # skills
 COUNTER, PARRY, ATK_BOOST, MV1, MV2, MV3 = 442, 447, 465, 486, 487, 488
 DRAGONHEART = 427
+CRITICAL_RECOVER_MP = 428
+MAGICK_COUNTER = 435
 NATURES_WRATH = 437
 VIGILANCE = 426
 VANISH = 425
@@ -113,6 +115,7 @@ POWER_GAUNTLETS = 215  # docs sometimes call this "Magic Gauntlet"; table name i
 RED_SHOES = 214
 WIZARD_ROBE = 202
 BLACK_ROBE = 205
+ZEUS_MACE = 65
 OBELISK = 103
 SLASHER = 50  # strongest buyable axe (Chapter3_Zalmo shop tier)
 X_POTION, ELIXIR, PHOENIX_DOWN = 242, 245, 253
@@ -2020,25 +2023,32 @@ def vaults_4th(data):
 
 def vaults_5th(data):
     # Battle 50 - Monastery Vaults, Fifth Level (entry 436): Loffrey's death battle.
-    # Roster matches doc 055: Loffrey + 2 Black Mage + 2 Summoner + 1 Time Mage. The final
-    # gauntlet has no usable rewards, so Loffrey uses standard gear instead of duplicate uniques.
+    # V3: Loffrey copies his Fourth Level cutscene build except for retaining boss level 105. All five
+    # generic casters become female level-102 complete builds. Objective, positions and spoils stay put.
     E = 436
-    set_slot(data, E, 0, level=105, joblevel=8, brave=90, faith=55,
-             rh=RUNEBLADE, lh=SHOP_SHIELD, movement=MV2)  # Loffrey - one break boss, no gauntlet rare
-    for s in (1, 2):                                             # 2 Black Mage - heavy AoE magic
-        set_slot(data, E, s, level=103, joblevel=8, job=BMAGE, secondary=ITEMS,
+    set_slot(data, E, 0, level=105, joblevel=4, brave=90, faith=55,
+             secondary=61, reaction=PARRY, support=DEFENSE_BOOST, movement=IGNORE_HEIGHT,
+             head=153, body=181, acc=211, rh=DEFENDER, lh=AEGIS_SHIELD)
+    for s in (1, 2):
+        set_gender(data, E, s, GENDER_FEMALE)
+        set_slot(data, E, s, level=102, joblevel=8, job=BMAGE, secondary=0,
                  brave=60, faith=84,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    for s in (3, 4):                                             # 2 Summoner - AoE summon damage
-        set_slot(data, E, s, level=103, joblevel=8, job=SUMMONER, secondary=ITEMS,
+                 reaction=MAGICK_COUNTER, support=MAGICK_BOOST, movement=TELEPORT,
+                 head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES,
+                 rh=SHOP_ROD, lh=LH_EMPTY)
+    for s in (3, 4):
+        set_gender(data, E, s, GENDER_FEMALE)
+        set_slot(data, E, s, level=102, joblevel=8, job=SUMMONER, secondary=0,
                  brave=60, faith=84,
-                 reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-                 head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
-    set_slot(data, E, 5, level=103, joblevel=4, job=TMAGE, secondary=ITEMS,  # Haste/Slow/Float, no Stop
+                 reaction=CRITICAL_RECOVER_MP, support=SWIFTSPELL, movement=TELEPORT,
+                 head=THIEFS_CAP, body=BLACK_ROBE, acc=HERMES_SHOES,
+                 rh=SHOP_ROD, lh=LH_EMPTY)
+    set_gender(data, E, 5, GENDER_FEMALE)
+    set_slot(data, E, 5, level=102, joblevel=8, job=TMAGE, secondary=0,
              brave=62, faith=80,
-             reaction=REFLEXES, support=MAGICK_BOOST, movement=MV1,
-             head=MAGE_HAT, body=SHOP_ROBE, acc=FEATHERWEAVE, rh=SHOP_ROD, lh=LH_EMPTY)
+             reaction=MANA_SHIELD, support=SWIFTSPELL, movement=TELEPORT,
+             head=RIBBON, body=LIGHT_ROBE, acc=FEATHERWEAVE,
+             rh=ZEUS_MACE, lh=LH_EMPTY)
     return [E]
 
 

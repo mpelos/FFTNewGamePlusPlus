@@ -1057,31 +1057,50 @@ def run() -> int:
     e = 436
     active = [0, 1, 2, 3, 4, 5]
     check("436 active jobs", roster(entd, e, active, 0x0A) == [37, 80, 80, 82, 82, 81])
-    check("436 active levels", roster(entd, e, active, 0x03) == [105, 103, 103, 103, 103, 103])
-    check("436 active job levels", roster(entd, e, active, 0x09) == [8, 8, 8, 8, 8, 4])
-    check("436 active secondaries", roster(entd, e, active, 0x0B) == [61, 6, 6, 6, 6, 6])
+    check("436 active levels", roster(entd, e, active, 0x03) == [105, 102, 102, 102, 102, 102])
+    check("436 active job levels", roster(entd, e, active, 0x09) == [4, 8, 8, 8, 8, 8])
+    check("436 active secondaries", roster(entd, e, active, 0x0B) == [61, 0, 0, 0, 0, 0])
     check("436 Brave targets", roster(entd, e, active, 0x06) == [90, 60, 60, 60, 60, 62])
     check("436 Faith targets", roster(entd, e, active, 0x07) == [55, 84, 84, 84, 84, 80])
-    check("436 Loffrey non-rare break kit",
+    check("436 caster gender recast", roster(entd, e, [1, 2, 3, 4, 5], 0x01) == [0x40] * 5)
+    check("436 Loffrey Fourth Level build at boss level",
           field16(entd, e, 0, 0x0C) == 447
           and field16(entd, e, 0, 0x0E) == 466
-          and field16(entd, e, 0, 0x10) == 487
-          and roster(entd, e, [0], 0x12) == [154]
-          and roster(entd, e, [0], 0x13) == [182]
-          and roster(entd, e, [0], 0x14) == [210]
-          and roster(entd, e, [0], 0x15) == [30]
-          and roster(entd, e, [0], 0x16) == [139])
-    for slot_no in (1, 2, 3, 4, 5):
-        check(f"436 s{slot_no} caster R/S/M",
-              field16(entd, e, slot_no, 0x0C) == 449
+          and field16(entd, e, 0, 0x10) == 492
+          and roster(entd, e, [0], 0x12) == [153]
+          and roster(entd, e, [0], 0x13) == [181]
+          and roster(entd, e, [0], 0x14) == [211]
+          and roster(entd, e, [0], 0x15) == [33]
+          and roster(entd, e, [0], 0x16) == [136])
+    for slot_no in (1, 2):
+        check(f"436 s{slot_no} female Black Mage v3 kit",
+              field16(entd, e, slot_no, 0x0C) == 435
               and field16(entd, e, slot_no, 0x0E) == 467
-              and field16(entd, e, slot_no, 0x10) == 486)
-        check(f"436 s{slot_no} caster gear",
-              roster(entd, e, [slot_no], 0x12) == [167]
-              and roster(entd, e, [slot_no], 0x13) == [206]
-              and roster(entd, e, [slot_no], 0x14) == [234]
+              and field16(entd, e, slot_no, 0x10) == 498
+              and roster(entd, e, [slot_no], 0x12) == [167]
+              and roster(entd, e, [slot_no], 0x13) == [205]
+              and roster(entd, e, [slot_no], 0x14) == [217]
               and roster(entd, e, [slot_no], 0x15) == [56]
               and roster(entd, e, [slot_no], 0x16) == [255])
+    for slot_no in (3, 4):
+        check(f"436 s{slot_no} female Summoner v3 kit",
+              field16(entd, e, slot_no, 0x0C) == 428
+              and field16(entd, e, slot_no, 0x0E) == 482
+              and field16(entd, e, slot_no, 0x10) == 498
+              and roster(entd, e, [slot_no], 0x12) == [168]
+              and roster(entd, e, [slot_no], 0x13) == [205]
+              and roster(entd, e, [slot_no], 0x14) == [213]
+              and roster(entd, e, [slot_no], 0x15) == [56]
+              and roster(entd, e, [slot_no], 0x16) == [255])
+    check("436 s5 female Time Mage v3 kit",
+          field16(entd, e, 5, 0x0C) == 445
+          and field16(entd, e, 5, 0x0E) == 482
+          and field16(entd, e, 5, 0x10) == 498
+          and roster(entd, e, [5], 0x12) == [171]
+          and roster(entd, e, [5], 0x13) == [206]
+          and roster(entd, e, [5], 0x14) == [234]
+          and roster(entd, e, [5], 0x15) == [65]
+          and roster(entd, e, [5], 0x16) == [255])
     check("436 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
 
     # 056 - Necrohol of Mullonde / The Capitoline, entry 438.

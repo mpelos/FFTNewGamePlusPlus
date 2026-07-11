@@ -1,15 +1,20 @@
 # 055 - Monastery Vaults, Fifth Level (Orbonne descent / Murond Death City)
 
-Status: redesign v2 planned (documentation only; v1 implementation exists for entry 436)
+Status: v3 implemented/deployed - direct playtest pending
 Chapter: 4 - "In the Name of Love"
 Battle order: Battle 50 (ENDGAME GAUNTLET 2 of 5 - no resupply across 054 -> 055 -> 056 -> 057 -> 058)
 Target version: Enhanced v1.5.0
 ENTD: global entry **436** (entd4)
 File: `battle_entd4_ent.bin`
 
-> Final-gauntlet reward rule: no usable NG++ reward is added inside battles `054`-`058`. Escutcheon was
+> Final-gauntlet reward rule: no usable NG++ spoil is added inside battles `054`-`058`. V3 makes one
+> explicit active-equipment exception by placing Zeus Mace on the Time Mage. Escutcheon was
 > moved to the Nave reward set (`052`) before the point of no return. This battle keeps standard/vanilla
 > rewards and buried Elixirs only. See `chapter-4-rewards-implementation.md`.
+
+> **V3 implementation (2026-07-11):** entry 436 patched in the embedded ENTD and deployed through a
+> successful Release build. The installed DLL resource matches the source binary byte-for-byte; caster
+> genders, complete kits, levels, positions and zero-spoil bytes were mechanically verified.
 
 ## Current Implementation (v1, entry 436)
 
@@ -36,9 +41,39 @@ Current dump:
 | 4 | Active | 81 | 104 | 8 | 0 | 449 | 510 | 486 | 167,206,234,56,255 | Time Mage; v2 needs intentional support. |
 | 5 | Active | 82 | 104 | 8 | 0 | 449 | 465 | 486 | 167,206,234,56,255 | Summoner; v2 target level `103`. |
 
-Planned v2 redesign (docs-only in this pass): keep the caster-crossfire boss race, but remove outdated
-reward assumptions. Loffrey is still the objective and still dies here; he just no longer pays Escutcheon
-inside the no-resupply gauntlet.
+Locked v3 redesign: preserve the caster-crossfire boss race, objective, positions and v2 Brave/Faith.
+Copy Loffrey's Fourth Level build while keeping him at boss level 105. Convert all five generic casters
+from male to female and apply the complete builds below.
+
+## V3 Locked Decisions
+
+```text
+s0 LOFFREY:
+  Copy the Fourth Level Loffrey build and equipment.
+  Keep level 105 because he is the active objective here; do not copy the cutscene-only level 1.
+  Brave/Faith: 90/55.
+
+s1/s2 BLACK MAGE FEMALE:
+  Level 102; Black Mage bucket JL8; secondary None.
+  Magick Counter / Arcane Strength / Teleport.
+  Wizard's Rod / None / Lambent Hat / Black Robe / Magepower Glove.
+  Brave/Faith: 60/84.
+
+s3/s4 SUMMONER FEMALE:
+  Level 102; Summoner bucket JL8; secondary None.
+  Critical: Recover MP / Swiftness / Teleport.
+  Wizard's Rod / None / Thief's Cap / Black Robe / Hermes Shoes.
+  Brave/Faith: 60/84.
+
+s5 TIME MAGE FEMALE:
+  Level 102; Time Mage bucket JL8; secondary None.
+  Mana Shield / Swiftness / Teleport.
+  Zeus Mace / None / Ribbon / Luminous Robe / Featherweave Cloak.
+  Brave/Faith: 62/80.
+
+PRESERVE:
+  Defeat-Loffrey objective, all six positions, caster count, charge-time counterplay and no special spoil.
+```
 
 ## Design Goal
 
@@ -146,24 +181,24 @@ NO-REWARD GAUNTLET RULE — enforced even though Loffrey dies here.
 ## Rare/reward handling
 
 ```text
-None. No usable NG++ reward is added inside the final gauntlet.
+No special NG++ spoil is added inside the final gauntlet.
 Escutcheon is already paid at `052`.
 Do not duplicate Save the Queen or place Tier-S gear here.
 Keep standard/vanilla loot and buried Elixirs only.
 ```
 
-## Proposed Composition (New Game++ Vaults Fifth Level v2)
+## Proposed Composition (New Game++ Vaults Fifth Level v3)
 
 Keep six active enemies. Loffrey `105`; casters `103`.
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
 | 0 | Boss objective | Loffrey, Divine Knight | `105` | `90/55` | One break source; disarm/burst target. |
-| 1 | AoE caster | Black Mage | `103` | `60/84` | Heavy magic from one flank. |
-| 2 | AoE caster | Black Mage | `103` | `60/84` | Second Black Mage; crossfire pressure. |
-| 3 | AoE caster | Summoner | `103` | `60/84` | Summon AoE with charge-time counterplay. |
-| 4 | AoE caster | Summoner | `103` | `60/84` | Second summon line; widens killzone. |
-| 5 | Tempo caster | Time Mage | `103` | `62/80` | Slow/Haste-style tempo pressure; no hard lock. |
+| 1 | AoE caster | Black Mage female | `102` | `60/84` | Magick Counter/Arcane Strength flank caster. |
+| 2 | AoE caster | Black Mage female | `102` | `60/84` | Second identical Black Mage. |
+| 3 | AoE caster | Summoner female | `102` | `60/84` | Critical MP recovery and Swiftness. |
+| 4 | AoE caster | Summoner female | `102` | `60/84` | Second identical Summoner. |
+| 5 | Tempo caster | Time Mage female | `102` | `62/80` | Mana Shield/Swiftness Zeus Mace caster. |
 
 Rejected variants:
 
@@ -183,26 +218,31 @@ Rejected variants:
 ```text
 Loffrey:
 - Level 105, JobLevel 8.
-- One equipment-break source only.
-- Use a strong non-unique sword/shield setup; do not duplicate Save the Queen or add Tier-S gear.
-- Defensive reaction, Defense Boost/Attack Boost, Move +1/+2.
+- Copy Fourth Level build: Divine Knight setup, Unyielding Blade, Parry, Defense Boost, Ignore Elevation.
+- Defender / Aegis Shield / Platinum Helm / Platinum Armor / Diamond Armlet.
+- Brave/Faith 90/55.
 
 Black Mages:
-- Level 103, JobLevel 8.
-- Heavy Black Magic with intact charge times.
-- Complete caster gear, defensive reaction, MA support, Move +1.
+- Female; Level 102; Black Mage bucket JobLevel 8; Brave/Faith 60/84.
+- Primary Black Magicks; secondary None.
+- Magick Counter / Arcane Strength / Teleport.
+- Wizard's Rod / None / Lambent Hat / Black Robe / Magepower Glove.
 
 Summoners:
-- Level 103, JobLevel 8.
-- Summon AoE with intact charge times.
-- Complete caster gear, defensive reaction, MA support, Move +1.
+- Female; Level 102; Summoner bucket JobLevel 8; Brave/Faith 60/84.
+- Primary Summon; secondary None.
+- Critical: Recover MP / Swiftness / Teleport.
+- Wizard's Rod / None / Thief's Cap / Black Robe / Hermes Shoes.
 
 Time Mage:
-- Level 103, JobLevel 8.
-- Haste/Slow/Float style tempo only.
-- No Stop, Don't Act, Death, or hard control.
-- Complete caster gear, defensive reaction, MA support, Move +1.
+- Female; Level 102; Time Mage bucket JobLevel 8; Brave/Faith 62/80.
+- Primary Time Magicks; secondary None.
+- Mana Shield / Swiftness / Teleport.
+- Zeus Mace / None / Ribbon / Luminous Robe / Featherweave Cloak.
 ```
+
+V3 sanctioned equipment exception: Zeus Mace is active equipment on s5, not a spoil payload. Direct
+playtest must verify the intended Steal/Break exposure because this bends the gauntlet's no-reward rule.
 
 ## Positioning Plan
 
@@ -215,7 +255,7 @@ The player should spread, choose a lane, disarm or burst Loffrey, and avoid full
 The vault floor should say: "the casters own the open ground; scatter through the fire, strip Loffrey's
 blade if needed, and end the fight before the crossfire drains the run."
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
 
 Simulation artifact:
 
@@ -258,14 +298,16 @@ because it deletes turns or gives unusable late rewards.
 
 ## Implementation Checklist
 
-- [ ] Confirm entry 436 slot order.
-- [ ] Preserve win condition: `Defeat Loffrey`.
-- [ ] Keep Loffrey at `105`; casters at `103`.
-- [ ] Keep exactly one functional equipment-break source.
-- [ ] Remove/avoid Save the Queen duplication.
-- [ ] Keep caster charge times intact.
-- [ ] Keep Time Mage to Haste/Slow/Float only; no hard control.
-- [ ] Preserve standard loot and buried Elixirs only; no usable NG++ reward.
+- [x] Confirm entry 436 slot order.
+- [x] Preserve win-condition data: `Defeat Loffrey`.
+- [x] Copy the Fourth Level Loffrey build while keeping him at `105` and `90/55`.
+- [x] Set all five casters to female, level `102`, with v2 Brave/Faith preserved.
+- [x] Apply the exact Black Mage, Summoner and Time Mage v3 builds.
+- [x] Keep exactly one functional equipment-break source.
+- [x] Remove/avoid Save the Queen duplication.
+- [x] Preserve caster charge-time mechanics.
+- [x] Preserve the Time Mage job command and requested complete kit.
+- [x] Preserve zero special-spoil bytes and buried Elixirs; Zeus Mace exists only as active s5 equipment.
 - [ ] Test as gauntlet 2/5 with resources carried into 056-058.
 
 ## Test Questions
@@ -274,7 +316,8 @@ because it deletes turns or gives unusable late rewards.
 - Is Loffrey one disarmable break source, not a gear-lock wall?
 - Does the caster screen force spreading while preserving charge-time counterplay?
 - Is Slow soft and recoverable?
-- Are no usable NG++ rewards added?
+- Are no special NG++ spoils added?
+- Does equipped Zeus Mace create the intended rather than accidental Steal/Break reward exposure?
 - Is the party taxed but still ready for Necrohol, Lost Halidom, and Airship?
 
 ## Sources

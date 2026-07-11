@@ -49,7 +49,7 @@ structural pressures.
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | v3 implemented/deployed; boss equipment refresh; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** unchanged; chain 2/3; playtest pending | nave | ▅ hard |
 | 48 | Mullonde — Sanctuary | `053` | (**Zalbaag** vampire Ark Knight + 2 Archaeodaemon + Ultima Demon; dies) | v3 implemented/deployed: Eagrose guest loadout; **Tier-S Ragnarok + Ribbon** unchanged; chain 3/3; playtest pending | sanctuary | ▆ harder |
 | 49 | Monastery Vaults — 4th | `054` | 6 (2 Eagrose Knight Martial Artists + Eagrose Knight Samurai + 2 South Wall Monks + South Wall Ninja) | v3 implemented/deployed; no reward; gauntlet 1/5; playtest pending | vault | ▂ light (opener) |
-| 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** Divine Knight + 2 Black Mage + 2 Summoner + Time Mage) | caster crossfire; disarm-first; no usable gauntlet reward | wide vault | ▅ hard |
+| 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** + 2 female Black Mage + 2 female Summoner + female Time Mage) | v3 implemented/deployed; level-102 caster crossfire; active Zeus Mace exception; playtest pending | wide vault | ▅ hard |
 | 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** Magick Surge + 2 **Samurai** + 2 Ninja + 2 Time Mage) | **Samurai endgame showcase**; Silence/burst the surge; no usable gauntlet reward | dead city | ▆ harder |
 | 52 | Lost Halidom | `057` | 6 (**Barich** + Chemist + 4 apex monsters) | 5★ overlapping breath pit + control; no usable gauntlet reward | holy ground | █ 5★ PEAK |
 | 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** (L106) + Ultima Demons/Lucavi support | two-phase Lucavi FINALE; no usable gauntlet reward | airship | █ FINALE |
