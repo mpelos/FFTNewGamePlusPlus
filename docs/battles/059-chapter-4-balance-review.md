@@ -43,7 +43,7 @@ structural pressures.
 | 41 | Poeska's Lake | `046` | 6 (2 Revenant + 2 Archer + Mystic + Summoner) | band 100-102; four complete human-undead kits; playtest pending | frozen lake | ▅ hard |
 | 42 | Limberry — Gate | `047` | 6 (Celia & Lettie **Assassins**, flee + 4 Reaver) | band 100-102; dual Masamune vs Koga/Iga flee-race; playtest pending | gate | ▃ moderate (race) |
 | 43 | Limberry — Keep | `048` | (**Elmdore** Ark Knight; dies → Celia/Lettie transform to **Ultima Demons**) | band 100-102; Chirijiraden + armed Assassin parry-race; playtest pending | keep | ▆ harder |
-| 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + Undead Mystic + 2 Martial Arts Undead Knights) | v3 implemented; 6 enemies; band 100-102; **Tier-A Aegis Shield**; playtest pending | undercroft | ▆ harder |
+| 44 | Limberry — Undercroft | `049` | (**Zalera** + 2 Archaeodaemon + 3 Martial Arts Undead Knights) | v3 implemented; 6 enemies; sprite-budget-safe guard; band 100-102; **Tier-A Aegis Shield**; playtest pending | undercroft | ▆ harder |
 | 45 | Eagrose Castle | `050` | Zalbaag + **Dycedarg** + 2 Martial Knights + Samurai Knight + 2 Dragoons → **Adrammelech** | v3 Javelin "II" Dragoons; playtest pending | castle | █ SPIKE |
 | 46 | Mullonde — Exterior | `051` | 6 (hidden roof **White Mage** + 2 Geomancer + 2 Orator + Summoner) | v3 implemented/deployed; playtest pending; gender recast; band 100-102; Stoneshooter/Mana-Shield Orators | cathedral ext | ▃ moderate |
 | 47 | Mullonde — Nave | `052` | 3 (**Folmarv + Loffrey + Cletienne**; win when ONE falls) | v3 implemented/deployed; boss equipment refresh; **Tier-S Chaos Blade + Escutcheon + Lordly Robe** unchanged; chain 2/3; playtest pending | nave | ▅ hard |
@@ -164,7 +164,7 @@ Mt Germinas  (045) : four L100-101 + two L102 anchors; Martial Arts       -> cli
 Poeska       (046) : four L100-101 + Mystic/Summoner L102; all-undead       -> permakill the dead (Holy/PD)
 Limberry Gate(047) : L102 Assassins + L100-101 Reavers; dual blades         -> burst one to critical; no rare
 Limberry Keep(048) : L102 Elmdor + L101 Assassins + L100 demons            -> answer parry; Tier-A
-Limberry Und.(049) : L102 ZALERA + L101 Mystic/Knights + 2 L100 Archaeodaemons -> race status
+Limberry Und.(049) : L102 ZALERA + 3 L101 Undead Knights + 2 L100 Archaeodaemons -> race status
 Eagrose      (050) : L103 Zalbaag/Dycedarg + L100-101 Martial/Samurai Knights + Javelin "II" Dragoons -> L105 Adrammelech
 Mullonde Ext.(051) : hidden-roof White Mage sustain + caster screen; chain 1/3 -> kill the healer first
 Mullonde Nave(052) : TRIPLE-TEMPLAR (Folmarv/Loffrey/Cletienne; one-falls); chain 2/3 -> commit to Folmarv

@@ -27,11 +27,7 @@ CURRENT V3 IMPLEMENTATION (verified from embedded entd4 dump, entry 457):
               Innate monster equipment/ability shape preserved; no human equipment.
               Slot 2 retains spoils byte 0x41 (Zeus Mace).
 
-  slot 4 = Undead Mystic, job 70, level 101, Mime bucket L8.
-           Geomancy / Mana Shield / Magic Attack Boost / Movement +2.
-           Wizard's Rod, Lambent Hat, Black Robe, Magepower Glove.
-
-  slots 5,6 = Undead Knight, job 61, level 101, Monk bucket L8.
+  slots 4,5,6 = Undead Knight, job 61, level 101, Monk bucket L8.
               Martial Arts / Counter / Dual Wield / Movement +3.
               Dual Rune Blades, Crystal Helm, Crystal Mail, Bracers.
 
@@ -49,10 +45,10 @@ Preserved v3 data:
   Inactive raw slots 8/9 remain byte-identical.
 ```
 
-Implemented v3 redesign: replace the active s2-s6 guard with two Archaeodaemons,
-one Undead Mystic copied from Lake Poescas, and two Undead Knights. The Knights move from s2/s3 to
-s5/s6 and copy the Martial Arts Knight build from Fort Besselat North Wall with Counter replacing
-First Strike. Zalera remains s1 and the sole headline mass-status engine.
+Implemented v3 redesign: replace the active s2-s6 guard with two Archaeodaemons and three Undead
+Knights. All three copy the Martial Arts Knight build from Fort Besselat North Wall with Counter
+replacing First Strike. Sharing one Knight sprite identity keeps the observed battle sprite budget
+safe. Zalera remains s1 and the sole headline mass-status engine.
 The player should resist/cleanse Zalera's curses, manage the dead, and focus the Death Seraph before the
 end of the Limberry chain collapses into item/status debt.
 
@@ -136,24 +132,23 @@ V3 IMPLEMENTATION CONFIRMED:
 - Slot 1 is Zalera, level 102, no normal equipment, reward payload Aegis Shield.
 - Slots 2/3 are Archaeodaemons job `153`, level 100, with innate monster kits and no equipment.
 - Slot 2 retains Zeus Mace as reward payload after the job swap.
-- Slot 4 copies the Lake Poescas Undead Mystic build with Black Robe at level 101.
-- Slots 5/6 are job `61` Undead Knights with the adapted North Wall build at level 101.
+- Slots 4/5/6 are job `61` Undead Knights with the adapted North Wall build at level 101.
 - Slots 8/9 are duplicate job-111 records in the raw dump but do not appear in the observed battle;
   the patch leaves them byte-identical and outside the v3 active composition.
 - Slot 7 is a Meliadoul join/post-battle record in the data and should not be used as a guest-AI check.
 - No active guest is expected from the public battle shape.
 - Reward ledger maps this battle to Aegis Shield + Zeus Mace guaranteed spoils.
 - The patch changes only entry 457; positions, control flags, UnitIDs, objective/event data, and rewards
-  are preserved. Sprite-sheet delta is `+0`.
+  are preserved. Sprite-sheet delta is `-1`; the Mystic sheet was removed to respect the observed
+  in-game budget.
 
 STILL NEEDED IN GAME:
 - In-game verify whether slot 0 Elmdor and slot 7 Meliadoul are active, hidden, or join/script records.
 - If slot 7 is active, set player control per global guest rule.
 - Confirm job `61` preserves innate Undead while accepting the copied Monk job bucket, abilities, and
-  explicit equipment fields after both Undead Knights move to slots 5/6.
+  explicit equipment fields in slots 4/5/6.
 - Confirm s2/s3 accept Archaeodaemon job `153` with the innate monster kit and no human equipment.
-- Confirm s4 accepts the Lake Poescas Undead Mystic job `70`, innate Float + Undead, and its complete
-  copied caster build.
+- Confirm s4 matches the s5/s6 Undead Knight identity and build without sprite/palette corruption.
 - Confirm duplicate slots 8/9 remain inactive.
 - Confirm Zalera's status cadence allows cleanse/resist windows and does not chain-lock the party.
 - Confirm undead/reraise behavior and Phoenix Down/Holy/Seal Evil answers.
@@ -168,9 +163,7 @@ STILL NEEDED IN GAME:
 Headline engine: Zalera's mass-status Lucavi pressure.
 Supporting roles:
   - Two Archaeodaemons create undead/reraise and drain pressure without equipment.
-  - The Lake Poescas Undead Mystic adds Geomancy and one Mana Shield anchor, not a second authored
-    hard-status engine.
-  - Two Undead Knights adapted from the North Wall Martial Arts Knight create the physical screen:
+  - Three Undead Knights adapted from the North Wall Martial Arts Knight create the physical screen:
     Arts of War primary, Martial Arts secondary, Counter, Dual Wield, and dual Rune Blades.
   - Slot 7 Meliadoul is not a difficulty lever; she is join/post-battle data unless proven active.
 
@@ -182,8 +175,7 @@ CONSTRAINTS:
   - Status must be resistable, cleansable, and non-locking.
   - Undead bodies must not seal every route to the boss.
   - No extra support caster, healer, or additional status engine.
-  - Exactly two Arts of War sources: the s5/s6 Undead Knights, with no additional equipment breaker.
-  - Exactly one Mana Shield source: the s4 Undead Mystic, with no Manafont loop.
+  - Exactly three Arts of War sources: the s4/s5/s6 Undead Knights.
   - No fake equipment on Zalera's no-equip Lucavi slot.
   - No guest AI survival test.
 ```
@@ -203,13 +195,9 @@ INACTIVE DUPLICATE ENTD RECORDS:
   Slots 8/9 are present in the raw data but absent from the observed battle. They are not active v3
   enemies and must remain inactive; the playable v3 roster is limited to s1-s6.
 
-TWO ARTS OF WAR SOURCES:
-  Allowed because both existing job-61 bodies are Undead Knights. This is the battle's equipment-break
-  cap: exactly two sources, with no third breaker and no added hard-control engine.
-
-ONE MANA SHIELD:
-  Allowed on the copied Undead Mystic as opening-burst protection. It has no Manafont, so the MP shield
-  can be exhausted and does not become a regeneration loop.
+THREE ARTS OF WAR SOURCES:
+  Allowed because all three job-61 bodies are Undead Knights. This raises equipment-break pressure,
+  but removes the separate Mystic sprite sheet that exceeded the battle's observed sprite budget.
 
 JOIN/POST-BATTLE MELIADOUL RECORD:
   Preserve the slot without making guest AI part of the challenge. If she appears active in battle,
@@ -234,15 +222,15 @@ PRESERVE:
 
 ## Proposed Composition (New Game++ Limberry Undercroft v3)
 
-Use exactly the requested active s1-s6 roster. Zalera is the only `102`; the Mystic and Knights are
-`101`; both Archaeodaemons are `100`. Do not activate raw duplicate records s8/s9.
+Use exactly the requested active s1-s6 roster. Zalera is the only `102`; all three Knights are `101`;
+both Archaeodaemons are `100`. Do not activate raw duplicate records s8/s9.
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
 | s1 | Boss / objective | Zalera, Death Seraph Lucavi | `102` | `92/86` | Single mass-status engine; defeat ends fight; Aegis Shield spoil. |
 | s2 | Demon / reward payload | Archaeodaemon, job 153 | `100` | `88/76` | Innate undead demon kit; reraise/drain pressure; Zeus Mace spoil remains payload only. |
 | s3 | Demon | Archaeodaemon, job 153 | `100` | `88/76` | Second innate undead demon body on the opposite approach. |
-| s4 | Mystic anchor | Undead Mystic, job 70; Mime bucket | `101` | `72/84` | Copied Lake Poescas build: Geomancy + Mana Shield magical pressure. |
+| s4 | Bruiser | Job 61 Undead Knight, Monk bucket | `101` | `88/40` | Same adapted North Wall build; shares the Knight sprite sheet. |
 | s5 | Bruiser | Job 61 Undead Knight, Monk bucket | `101` | `88/40` | Adapted North Wall Martial Arts Knight build; first Arts of War source. |
 | s6 | Bruiser | Job 61 Undead Knight, Monk bucket | `101` | `88/40` | Same adapted build; second and final Arts of War source. |
 
@@ -257,8 +245,8 @@ Non-combat/script records to preserve and verify:
 Reasoning:
 
 The v3 design preserves the status-Lucavi objective while replacing the vanilla skeleton-family line.
-Archaeodaemons provide innate undead/drain pressure, the copied Lake Poescas Mystic supplies one durable
-non-physical anchor, and the relocated Undead Knights provide capped break and melee pressure. All five
+Archaeodaemons provide innate undead/drain pressure, while the three Undead Knights provide capped
+break and melee pressure on one shared sprite identity. All five
 adds amplify the boss race instead of replacing Zalera as the priority target.
 
 Rejected variants:
@@ -276,7 +264,7 @@ Rejected variants:
 - Sealed undead wall: ignores the required boss-focus lane.
 ```
 
-## Builds (Lucavi + Archaeodaemons + Undead Mystic + Undead Knights)
+## Builds (Lucavi + Archaeodaemons + Undead Knights)
 
 ```text
 Zalera:
@@ -293,20 +281,7 @@ Archaeodaemon x2 (slots 2/3, Lv 100):
   - Brave/Faith: 88/76.
   - Slot 2 keeps Zeus Mace as reward payload only; it is not active equipment.
 
-Undead Mystic (slot 4, Lv 101), copied from Lake Poescas s0:
-  - Main job: Undead Mystic (job 70); preserve innate Float + Undead and primary Mystic Arts.
-  - Job bucket: Mime; Main JobLevel 8; Bucket JobLevel 8.
-  - Secondary: Geomancy.
-  - Reaction: Mana Shield.
-  - Support: Magic Attack Boost.
-  - Movement: Movement +2.
-  - Right hand: Wizard's Rod.   Left hand: none.
-  - Head: Lambent Hat.   Body: Black Robe.   Accessory: Magepower Glove.
-  - Brave/Faith: 72/84.
-  - No Manafont: once its MP is exhausted, Mana Shield no longer protects it.
-  - The Lake build is copied exactly except for the level, reduced from `102` to `101` for this battle.
-
-Undead Knight x2 (slots 5/6, Lv 101):
+Undead Knight x3 (slots 4/5/6, Lv 101):
   - Main job: Undead Knight (job 61); preserve innate Undead and primary Arts of War.
   - Job bucket: Monk; JobLevel: 8.
   - Secondary: Martial Arts.
@@ -328,8 +303,8 @@ Meliadoul slot:
 
 ```text
 Undercroft: Zalera starts central/back with clear mass-status sightlines. Archaeodaemons s2/s3 take
-separate approaches, the Undead Mystic s4 occupies a protected mid/back caster lane, and Undead Knights
-s5/s6 form the physical screen. At least one route must let a prepared party reach or target Zalera
+separate approaches, while Undead Knights s4/s5/s6 form the physical screen. At least one route must
+let a prepared party reach or target Zalera
 without full add cleanup. Slots 8/9 remain inactive.
 
 The player should see three valid lines:
@@ -389,8 +364,8 @@ Iteration decision:
 HISTORICAL RESULT: accept v2 status-Lucavi with undead screen as the structural base only.
 Iteration 1 rejected the dense roster as too high-pressure if the undead form a sealed wall. Iteration 2
 required at least one boss-focus lane. The old simulation assumed the two raw duplicate job-111 records
-were active. The new v3 roster instead uses two Archaeodaemons, one Undead Mystic, and two relocated
-Undead Knights. Zalera remains the sole headline engine, rewards stay guaranteed, and Meliadoul's slot
+were active. The corrected v3 roster instead uses two Archaeodaemons and three Undead Knights sharing
+one sprite identity. Zalera remains the sole headline engine, rewards stay guaranteed, and Meliadoul's slot
 is never a guest-AI skill check.
 ```
 
@@ -398,13 +373,12 @@ is never a guest-AI skill check.
 
 - [x] Re-dump entry 457 and verify slot order, levels, spoils bytes, and slot 7 record bytes.
 - [x] Preserve win condition data: defeating Zalera ends the fight; no event/script patch.
-- [x] Set exact active composition: s1 Zalera; s2/s3 Archaeodaemon; s4 Undead Mystic; s5/s6 Undead Knight.
-- [x] Set Zalera to `102`; Mystic and both Knights to `101`; both Archaeodaemons to `100`.
-- [x] Copy Lake Poescas s0 Undead Mystic build to s4, lowering only its level from `102` to `101`.
+- [x] Set exact active composition: s1 Zalera; s2/s3 Archaeodaemon; s4/s5/s6 Undead Knight.
+- [x] Set Zalera to `102`; all three Knights to `101`; both Archaeodaemons to `100`.
 - [x] Move the two Undead Knight identities from s2/s3 to s5/s6.
 - [x] Preserve duplicate job-111 slots 8/9 byte-identically; verify they remain inactive in game.
-- [x] Keep slots 5/6 as job `61` Undead Knights with Arts of War primary.
-- [x] Adapt the North Wall Martial Arts Knight build to both: Monk bucket/JobLevel 8, Martial Arts,
+- [x] Keep slots 4/5/6 as job `61` Undead Knights with Arts of War primary.
+- [x] Adapt the North Wall Martial Arts Knight build to all three: Monk bucket/JobLevel 8, Martial Arts,
   Counter, Dual Wield, Movement +3, dual Rune Blades, Crystal Helm, Crystal Mail, and Bracers.
 - [ ] Verify explicit abilities/equipment work on the job-61 monster-type records without removing Undead.
 - [x] Preserve Zalera's original mass-status kit; verify no hard-lock cadence in game.
@@ -419,17 +393,17 @@ is never a guest-AI skill check.
 ## Test Questions
 
 - Does Zalera's status cadence allow cleanse/resist windows and avoid unavoidable party-wide lock?
-- Are both job-61 units visibly Undead Knights—not Samurai or normal Knights—with innate Undead and
+- Are all three job-61 units visibly Undead Knights—not Samurai or normal Knights—with innate Undead and
   Arts of War primary?
-- Do both s5/s6 Undead Knights have the adapted North Wall build—including Counter, dual Rune Blades, and
+- Do s4/s5/s6 have the adapted North Wall build—including Counter, dual Rune Blades, and
   Martial Arts secondary—while slot 2 still awards Zeus Mace only as spoils?
-- Is the two-source Arts of War pressure fair without creating an equipment-break wall?
+- Is the three-source Arts of War pressure fair without creating an equipment-break wall?
 - Can the player reach or target Zalera without clearing every undead body?
 - Do undead bodies force real Phoenix Down/Holy/Seal Evil decisions without becoming a cleanup slog?
 - Are s2/s3 Archaeodaemons using only their innate monster kit, with s2 still awarding Zeus Mace?
-- Does s4 match the Lake Poescas Undead Mystic build and remain an Undead Mystic with Float + Undead?
-- Does the active roster contain exactly Zalera, two Archaeodaemons, one Undead Mystic, and two Undead
-  Knights, with slots 8/9 inactive?
+- Does s4 match the other Undead Knights and render without sprite/palette corruption?
+- Does the active roster contain exactly Zalera, two Archaeodaemons, and three Undead Knights, with
+  slots 8/9 inactive?
 - Is Meliadoul inactive/join-only, or controllable if she appears active?
 - Do Aegis Shield + Zeus Mace appear as guaranteed spoils without Steal or join-gear dependency?
 - Does the full Limberry chain feel like Gate race -> Keep parry -> Undercroft status spike?

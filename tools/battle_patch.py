@@ -1781,7 +1781,7 @@ def limberry_keep(data):
 def limberry_undercroft(data):
     # Battle 44 - Limberry Castle Undercroft v3: status-Lucavi capstone (chain 3/3, no resupply).
     # WIN = "Defeat Zalera". Keep the six active slots and recast the guard in place:
-    #   s1 Zalera; s2/s3 Archaeodaemon; s4 Undead Mystic; s5/s6 Undead Knight.
+    #   s1 Zalera; s2/s3 Archaeodaemon; s4/s5/s6 Undead Knight.
     # Slots 0 (Elmdor event placeholder), 7 (Meliadoul join record), and inactive raw records 8/9 stay
     # byte-identical. This is a same-count ENTD job-swap: control flags, positions, UnitIDs, and spoils
     # remain attached to the target slots. In particular, s2 keeps the Zeus Mace reward payload.
@@ -1813,13 +1813,9 @@ def limberry_undercroft(data):
                  reaction=510, support=510, movement=510,
                  head=0, body=0, acc=0, rh=0, lh=0)
 
-    set_identity(4, 70, 0x80)
-    set_slot(data, E, 4, level=101, jobrank=generic_job_rank(MIME), joblevel=8, job=70,
-             secondary=GEOMANCY, brave=72, faith=84,
-             reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MV2,
-             head=MAGE_HAT, body=BLACK_ROBE, acc=MAGEPOWER_GLOVES, rh=SHOP_ROD, lh=LH_EMPTY)
-
-    for s in (5, 6):
+    # The former s4 Mystic exceeded the observed sprite budget. All three guards now
+    # share the same Undead Knight identity and complete Martial Arts build.
+    for s in (4, 5, 6):
         set_identity(s, 61, 0x20)
         set_slot(data, E, s, level=101, jobrank=generic_job_rank(MONK), joblevel=8, job=61,
                  secondary=MARTIAL_ARTS, brave=88, faith=40,
