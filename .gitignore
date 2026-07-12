@@ -15,6 +15,7 @@ tools/*
 !tools/patch_event140_zaland.py
 !tools/patch_event167_goug.py
 !tools/patch_event176_balias_swale.py
+!tools/sidequest_level_patch.py
 
 # === Unpacked game data (copyrighted, regenerated) ===
 work/modded_unpack/
