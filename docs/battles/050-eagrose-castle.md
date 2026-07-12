@@ -25,13 +25,15 @@ File: `battle_entd4_ent.bin`
 ```text
 DATA REALITY (verified from current embedded entd4 dump, entry 459):
   slot 0 = allied story guest record
-           name/job 8, level 103, JobLevel 8, full gear (Runeblade/Crystal Shield-class loadout).
+           name/job 8, level 103, JobLevel 8, Ragnarok, Venetian Shield, Grand Helm,
+           Lordly Robe, and Bracers.
            Must be player-controlled in NG++ if active. Do not use guest AI as difficulty.
 
   slot 1 = Dycedarg
-           name/job 9, level 104, JobLevel 8, complete setup:
+           name/job 9, level 103, JobLevel 8, complete setup:
            secondary 71, reaction 450, support 479, movement 486.
-           gear includes Grand Helm (156), Maximillian-tier body (181), Defender (33), Aegis Shield (136).
+           gear includes Defender (33), Venetian Shield (142), Grand Helm (156), Maximillian (185),
+           and Bracers (218).
            Spoils payload = 0xB9 (Maximillian).
 
   slots 2-4 = three Knight stair-wall bodies (two Martial Artists + one Samurai).
@@ -75,17 +77,17 @@ LEVELS:
   s7 Adrammelech: 105.
 
 s0 ZALBAAG — complete equipment locked:
-  Right hand: Chaos Blade
-  Left hand: Venetian Shield
-  Head: Grand Helm
-  Body: Maximillian
-  Accessory: Bracers
-
-s1 DYCEDARG — complete equipment locked:
-  Right hand: Chaos Blade
+  Right hand: Ragnarok
   Left hand: Venetian Shield
   Head: Grand Helm
   Body: Lordly Robe
+  Accessory: Bracers
+
+s1 DYCEDARG — complete equipment locked:
+  Right hand: Defender
+  Left hand: Venetian Shield
+  Head: Grand Helm
+  Body: Maximillian
   Accessory: Bracers
 
 BRAVE/FAITH:
@@ -229,8 +231,8 @@ Guaranteed spoils for entry 459: MAXIMILLIAN + GRAND HELM + VENETIAN SHIELD.
 These are delivered by the Spoils of War reward channel; the player must never be required to Steal.
 
 COMBAT ROLE:
-  - V3 Zalbaag visibly carries Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
-  - V3 Dycedarg visibly carries Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
+  - V3 Zalbaag visibly carries Ragnarok, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
+  - V3 Dycedarg visibly carries Defender, Venetian Shield, Grand Helm, Maximillian, and Bracers.
   - The armor set is still guaranteed through spoils, not dependent on stealing from him.
   - These active equipment decisions do not change the guaranteed-spoils ledger.
 
@@ -248,8 +250,8 @@ jobs/buckets, abilities, equipment, and final combat positions below are locked.
 
 | Slot | Role | Unit type | Level | Br/Fa | Purpose |
 | ------ | ------ | ----------- | ------- | --- | --------- |
-| s0 | Allied guest/story unit | Zalbaag | `103` | `70/65` | Player-controlled; Chaos Blade/Maximillian build locked. |
-| s1 | Boss / phase trigger | Dycedarg | `103` | `88/60` | Chaos Blade/Lordly Robe build locked; defeat triggers Lucavi phase. |
+| s0 | Allied guest/story unit | Zalbaag | `103` | `70/65` | Player-controlled; Ragnarok/Lordly Robe build locked. |
+| s1 | Boss / phase trigger | Dycedarg | `103` | `88/60` | Defender/Maximillian build locked; defeat triggers Lucavi phase. |
 | s2 | Knight Martial Artist / reward payload | Knight body; Monk bucket Lv8 | `100` | `88/42` | Shielded Counter bruiser at final event tile `(8,4)`; Grand Helm spoil remains current baseline. |
 | s3 | Knight Martial Artist / reward payload | Knight body; Monk bucket Lv8 | `100` | `86/44` | Shielded Counter bruiser at final event tile `(9,5)`; Venetian Shield spoil remains current baseline. |
 | s4 | Knight Samurai | Knight body; Samurai bucket Lv8 | `101` | `88/58` | Doublehand/Iaido central threat at final event tile `(7,7)`. |
@@ -296,19 +298,19 @@ Rejected variants:
 ```text
 Zalbaag — guest ally slot 0:
   - Level: 103.
-  - Right hand: Chaos Blade.
+  - Right hand: Ragnarok.
   - Left hand: Venetian Shield.
   - Head: Grand Helm.
-  - Body: Maximillian.
+  - Body: Lordly Robe.
   - Accessory: Bracers.
   - Must be player-controlled if active.
 
 Dycedarg:
   - Level: 103.
-  - Right hand: Chaos Blade.
+  - Right hand: Defender.
   - Left hand: Venetian Shield.
   - Head: Grand Helm.
-  - Body: Lordly Robe.
+  - Body: Maximillian.
   - Accessory: Bracers.
   - Preserve the transform trigger.
 
@@ -441,8 +443,8 @@ three-source Rend pressure or Javelin "II" Dragoon damage.
 - [x] Set Zalbaag and Dycedarg to `103`; s2/s3/s6 to `100`; s4/s5 to `101`; Adrammelech to `105`.
 - [x] Set Br/Fa: s0 `70/65`, s1 `88/60`, s2 `88/42`, s3 `86/44`, s4 `88/58`,
       s5 `88/52`, and s6 `86/56`.
-- [x] Equip Zalbaag with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers.
-- [x] Equip Dycedarg with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
+- [x] Equip Zalbaag with Ragnarok, Venetian Shield, Grand Helm, Lordly Robe, and Bracers.
+- [x] Equip Dycedarg with Defender, Venetian Shield, Grand Helm, Maximillian, and Bracers.
 - [x] Define s2/s3 Monk-bucket Knight Martial Artists and s4 Samurai-bucket Knight.
 - [x] Convert s5/s6 to Dragoon bucket Lv8 with no secondary, Reflexes, Doublehand, Ignore Elevation,
       and Javelin "II".
@@ -455,8 +457,8 @@ three-source Rend pressure or Javelin "II" Dragoon damage.
 ## Test Questions
 
 - Is slot 0 player-controlled if active, and does the battle avoid guest-AI failure?
-- Does Zalbaag appear at level 103 with Chaos Blade, Venetian Shield, Grand Helm, Maximillian, and Bracers?
-- Does Dycedarg appear at level 103 with Chaos Blade, Venetian Shield, Grand Helm, Lordly Robe, and Bracers?
+- Does Zalbaag appear at level 103 with Ragnarok, Venetian Shield, Grand Helm, Lordly Robe, and Bracers?
+- Does Dycedarg appear at level 103 with Defender, Venetian Shield, Grand Helm, Maximillian, and Bracers?
 - Do s5/s6 appear as Dragoons with Dragoon bucket Lv8, no secondary, and the exact Javelin "II" build?
 - Do both Dragoon sprites load correctly without corrupting named-unit or Lucavi sprites?
 - Does the three-source Arts of War wall remain answerable through Safeguard, disarm, status, range,

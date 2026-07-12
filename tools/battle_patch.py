@@ -243,8 +243,16 @@ def set_control_flags(data, global_entry, slot, flags):
 
 
 def set_gender(data, global_entry, slot, gender_flags):
-    """Set the generic-human gender/appearance byte at slot offset 0x01."""
+    """Set a generic unit's coherent sprite identity (+0x00) and gender flags (+0x01)."""
     b = (global_entry % 128) * ENTRY + slot * SLOT
+    sprite_by_gender = {
+        GENDER_MALE: 0x80,
+        GENDER_FEMALE: 0x81,
+        0x20: 0x82,
+    }
+    if gender_flags not in sprite_by_gender:
+        raise ValueError(f"unsupported generic gender flags: 0x{gender_flags:02X}")
+    data[b + 0x00] = sprite_by_gender[gender_flags]
     data[b + 0x01] = gender_flags
 
 
@@ -1843,12 +1851,12 @@ def eagrose(data):
     # existing registration/choreography and final combat positions.
     E = 459
     set_slot(data, E, 0, level=103, brave=70, faith=65,
-             head=GRAND_HELM, body=MAXIMILLIAN, acc=BRACERS,
-             rh=CHAOS_BLADE, lh=VENETIAN_SHIELD)  # Zalbaag guest ally - direct-level scale
+             head=GRAND_HELM, body=ROBE_OF_LORDS, acc=BRACERS,
+             rh=RAGNAROK, lh=VENETIAN_SHIELD)  # Zalbaag guest ally - direct-level scale
     set_player_control(data, E, 0)
     set_slot(data, E, 1, level=103, brave=88, faith=60,
-             head=GRAND_HELM, body=ROBE_OF_LORDS, acc=BRACERS,
-             rh=CHAOS_BLADE, lh=VENETIAN_SHIELD)  # Dycedarg; preserve existing abilities/transform
+             head=GRAND_HELM, body=MAXIMILLIAN, acc=BRACERS,
+             rh=DEFENDER, lh=VENETIAN_SHIELD)  # Dycedarg; preserve existing abilities/transform
 
     set_slot(data, E, 2, level=100, jobrank=generic_job_rank(MONK), joblevel=8,
              job=KNIGHT, secondary=MARTIAL_ARTS, brave=88, faith=42,
@@ -1914,13 +1922,20 @@ def mullonde_exterior(data):
                  head=MAGE_HAT, body=POWER_GARB, acc=GEMS_108,
                  rh=RUNEBLADE, lh=LH_EMPTY)
 
-    for s in (4, 5):
-        set_gender(data, E, s, GENDER_FEMALE)
-        set_slot(data, E, s, level=101, joblevel=8, job=ORATOR, secondary=0,
-                 brave=68, faith=78,
-                 reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MOVE_MP_UP,
-                 head=MAGE_HAT, body=WIZARD_ROBE, acc=SEPTIEME_SENS,
-                 rh=STONESHOOTER, lh=LH_TWOHAND)
+    set_gender(data, E, 4, GENDER_FEMALE)
+    set_slot(data, E, 4, level=101, joblevel=8, job=ORATOR, secondary=0,
+             brave=68, faith=78,
+             reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MOVE_MP_UP,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=SEPTIEME_SENS,
+             rh=STONESHOOTER, lh=LH_TWOHAND)
+
+    # Mime is only s5's skill/JP bucket; main job remains Orator, so Speechcraft stays primary.
+    set_gender(data, E, 5, GENDER_FEMALE)
+    set_slot(data, E, 5, level=101, jobrank=generic_job_rank(MIME), joblevel=8,
+             job=ORATOR, secondary=ITEMS, brave=68, faith=78,
+             reaction=MANA_SHIELD, support=MAGICK_BOOST, movement=MOVE_MP_UP,
+             head=MAGE_HAT, body=WIZARD_ROBE, acc=SEPTIEME_SENS,
+             rh=MYTHRIL_GUN, lh=LH_TWOHAND)
     return [E]
 
 
@@ -1966,7 +1981,7 @@ def mullonde_sanctuary(data):
     E = 462
     set_slot(data, E, 1, level=105, brave=90, faith=78,
              head=GRAND_HELM, body=MAXIMILLIAN, acc=BRACERS,
-             rh=CHAOS_BLADE, lh=VENETIAN_SHIELD)
+             rh=RAGNAROK, lh=VENETIAN_SHIELD)
     for s in (2, 3, 4):                           # 2 Archaeodaemon (undead) + 1 Ultima Demon
         set_slot(data, E, s, level=103, brave=88, faith=76)
     return [E]

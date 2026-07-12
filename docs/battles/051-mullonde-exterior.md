@@ -11,9 +11,10 @@ File: `battle_entd4_ent.bin`
 > guaranteed Spoils of War (`0x1e`), NG+ only, within the 3-item cap, no stealing required. Dragon Rod
 > remains optional steal flavor only. Canonical map: `chapter-4-rewards-implementation.md`.
 
-> **V3 implementation (2026-07-11):** entry 460 patched in the embedded ENTD and deployed through a
-> successful Release build. Gender uses ENTD `0x01`: s0 male `0x80`, s1-s5 female `0x40`. All 352
-> Chapter-4 validation checks pass; positions, UnitIDs, control flags, and Spoils remain preserved.
+> **V3 gender correction (2026-07-12):** the original implementation changed only gender flags at
+> ENTD `0x01`, leaving the generic sprite identity at male `0x80`. The corrected pair is s0 male
+> `0x80/0x80` and s1-s5 female `0x81/0x40` at `0x00/0x01`. Positions, UnitIDs, control flags, jobs,
+> equipment, and Spoils remain preserved.
 
 ## Current Implementation / Data Reality
 
@@ -215,13 +216,14 @@ the Summoner and Orators sit at `101`, while the two Geomancers form the level-`
 | s2 | Female terrain bruiser / reward payload | Geomancer | `100` | `68/78` | Martial Arts secondary; Faerie Harp spoil payload. |
 | s3 | Female terrain bruiser | Geomancer | `100` | `68/78` | Second copy of the same Geomancer build. |
 | s4 | Female ranged disruptor | Orator | `101` | `68/78` | Stoneshooter + Mana Shield/Manafont pressure. |
-| s5 | Female ranged disruptor | Orator | `101` | `68/78` | Second copy of the same Orator build. |
+| s5 | Female ranged utility | Orator; Mime bucket Lv8 | `101` | `68/78` | Mythril Gun + Items utility; Speechcraft remains primary. |
 
 Reasoning:
 
 V3 preserves the reachable hidden-healer screen while making every caste distinct. The White Mage is
 a protected fast sustain anchor; the Summoner is a Rod-of-Faith AoE threat; the Geomancers combine
-Geomancy with Martial Arts; and the Orators become Mana-Shield Stoneshooter batteries. The unchanged
+Geomancy with Martial Arts; s4 is the Mana-Shield Stoneshooter battery, while s5 uses Mythril Gun and
+Items through a Mime Lv8 bucket. The unchanged
 six-body roster and low `100-102` band keep this as the chain opener rather than the Mullonde spike.
 
 Rejected variants:
@@ -275,7 +277,7 @@ Geomancers s2/s3 — female, identical builds:
   - Right hand: Rune Blade.  Left hand: None.
   - Head: Lambent Hat.  Body: Power Garb.  Accessory: Japa Mala.
 
-Orators s4/s5 — female, identical builds:
+Orator s4 — female Stoneshooter disruptor:
   - Level: 101.  Brave/Faith: 68/78.
   - Job bucket: Orator; JobLevel: 8.
   - Primary: Speechcraft.
@@ -284,6 +286,17 @@ Orators s4/s5 — female, identical builds:
   - Support: Arcane Strength (Magic Attack Boost).
   - Movement: Manafont.
   - Right hand: Stoneshooter.  Left hand: None.
+  - Head: Lambent Hat.  Body: Wizard's Robe.  Accessory: Septième Sens.
+
+Orator s5 — female Items utility:
+  - Level: 101.  Brave/Faith: 68/78.
+  - Main job: Orator; primary Speechcraft.
+  - Job bucket: Mime; JobLevel: 8.
+  - Secondary: Items.
+  - Reaction: Mana Shield.
+  - Support: Arcane Strength (Magic Attack Boost).
+  - Movement: Manafont.
+  - Right hand: Mythril Gun.  Left hand: None.
   - Head: Lambent Hat.  Body: Wizard's Robe.  Accessory: Septième Sens.
 ```
 
@@ -309,7 +322,7 @@ the roof, stop the sustain, and save strength for the altar."
 
 The results below describe the historical v2 caster screen. They do not validate v3's gender changes,
 Rod-of-Faith Summoner, Martial Arts Geomancers, or the two
-Stoneshooter/Mana-Shield Orators. No new simulation is requested; direct in-game validation follows
+distinct Stoneshooter and Mythril-Gun/Items Orators. No new simulation is requested; direct in-game validation follows
 implementation.
 
 Simulation artifact:
@@ -357,7 +370,8 @@ guaranteed Staff/Faerie spoils.
 
 - [x] Re-dump entry 460 and verify slot order, rewards, and rooftop placement.
 - [x] Preserve split deployment, positions, control flags, UnitIDs, and roof/height puzzle data.
-- [x] Set genders at ENTD `0x01`: s0 male `0x80`; s1-s5 female `0x40`.
+- [x] Set coherent sprite/gender pairs at ENTD `0x00/0x01`: s0 male `0x80/0x80`; s1-s5 female
+      `0x81/0x40`.
 - [x] Set levels: s0 `102`; s1/s4/s5 `101`; s2/s3 `100`.
 - [x] Preserve Br/Fa targets: s0/s1 `60/84`; s2-s5 `68/78`.
 - [x] Apply the complete v3 abilities and equipment documented for every slot.
@@ -366,6 +380,7 @@ guaranteed Staff/Faerie spoils.
 - [ ] Keep Summoner charge times intact.
 - [x] Verify spoils: Staff of the Magi + Faerie Harp + minor spoil.
 - [x] Equip s1 with Rod of Faith, removing the old Dragon Rod active steal flavor.
+- [x] Keep s4 with Stoneshooter; give s5 Mythril Gun, Items secondary, and Mime bucket JobLevel 8.
 - [x] Preserve buried map treasure by leaving map/event data untouched.
 - [ ] Test as Mullonde chain 1/3 with resources carried into `052` and `053`.
 
@@ -375,7 +390,8 @@ guaranteed Staff/Faerie spoils.
 - Are s1-s5 female while s0 remains male?
 - Does the caster band fold once the healer is stopped?
 - Does split deployment create route pressure without isolating one group into hard status?
-- Are the two Mana-Shield/Manafont Stoneshooter Orators answerable without becoming a ranged sustain lock?
+- Does s4 retain Stoneshooter while s5 uses Mythril Gun, Items, and Mime bucket Lv8?
+- Are both Mana-Shield/Manafont Orators answerable without becoming a ranged sustain lock?
 - Does the Rod-of-Faith Summoner remain raceable with normal Summon charge times?
 - Do Staff of the Magi + Faerie Harp appear as guaranteed spoils?
 - Does the party enter Nave taxed but not drained?

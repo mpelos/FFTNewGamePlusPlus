@@ -109,11 +109,19 @@ Confirmed ENTD values:
 0x20 = monster
 ```
 
-Entry 460 (Mullonde Exterior) v3 is the first deliberate battle-wide gender recast in this project:
-s0 remains male (`0x80`), while s1-s5 change from male (`0x80`) to female (`0x40`). Jobs, UnitIDs,
-control flags (`0x18`), positions, and event delivery remain unchanged. The existing `entd_tool.py`
-decoder and Chapter-4 validator both use these same masks. Do not confuse this ENTD byte with the
-live actor table's gender flags at actor offset `+0x06`; the values match, but the structures do not.
+Gender recasts must update a coherent two-byte pair, not only `0x01`:
+
+```text
+generic male    : +0x00 sprite/CharId 0x80, +0x01 gender 0x80
+generic female  : +0x00 sprite/CharId 0x81, +0x01 gender 0x40
+generic monster : +0x00 sprite/CharId 0x82, +0x01 gender 0x20
+```
+
+Entry 460 (Mullonde Exterior) exposed this distinction in game: changing only `0x01` made s1-s5
+female internally but left their visual sprite identity at male `0x80`. The corrected implementation
+keeps s0 as `0x80/0x80` and changes s1-s5 to `0x81/0x40`. Jobs, UnitIDs, control flags (`0x18`),
+positions, and event delivery remain unchanged. Do not confuse ENTD `0x01` with the live actor table's
+gender flags at actor offset `+0x06`; the flag values match, but the structures do not.
 
 ### CharId vs SpriteSet at offset `0x00`
 
