@@ -1,6 +1,6 @@
 # 058 - Airship Graveyard (Final Battle: Hashmal -> Ultima)
 
-Status: redesigned (documentation only; not implemented in game data by this task)
+Status: v3 implemented/deployed - direct playtest pending
 Chapter: 4 - "In the Name of Love"
 Battle order: Battle 53 (ENDGAME GAUNTLET 5 of 5 - final campaign battle)
 Target version: Enhanced v1.5.0
@@ -9,10 +9,30 @@ ENTD phase 2: `entd4` global entry `441`
 Local slots: `056` and `057`
 Simulation artifact: `tmp/fft-level-design-058-airship-graveyard/`
 
-> Docs-only redesign note: this document is the intended NG++ finale design. It does not change the
-> embedded ENTD, scripts, binaries, or patch code. Implementation must later patch entries `440` and
-> `441` only after verifying which records are active combatants, transform records, dormant script
-> records, targetable, and stealable.
+> V3 locked revision: preserve the complete v2 finale and change levels only. Boss/form records cap at
+> 105, phase-1 job-44 support records become 103, and all four Ultima Demons become 103. No script,
+> objective, restore, position, build, equipment, Brave/Faith or reward changes.
+
+> **V3 implementation (2026-07-11):** entries 440/441 patched in the embedded ENTD and deployed through
+> a successful Release build. The installed DLL resource matches the source binary byte-for-byte; all
+> levels, jobs, positions, equipment and zero-spoil bytes were read back from the deployed artifact.
+
+## V3 Locked Levels
+
+```text
+ENTRY 440:
+  s0 Folmarv/Hashmal host: 105.
+  s1 named job-44 support: 103.
+  s2 Hashmal/Lucavi boss: 105.
+  s3/s4/s5 job-44 support/script records: 103.
+
+ENTRY 441:
+  s0/s1 job-49 boss/form records: 105.
+  s2 active Ultima boss: 105.
+  s3/s4/s5/s6 Ultima Demons: 103.
+  s7 job-65 boss/form record: 105.
+  s8 job-73 boss/form record: 105.
+```
 
 ## Gate Answers / Constraints
 
@@ -88,7 +108,7 @@ Entry `441` confirmed active/scripted data:
 |---:|---|---:|---:|---:|---:|---:|---:|---:|---|---|
 | 0 | Scripted/form record | 49 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Lucavi/form record. |
 | 1 | Scripted/form record | 49 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Lucavi/form record. |
-| 2 | Active boss record | 20 | 105 | 8 | 0 | 430 | 0 | 0 | 171,206,234,61,255 | Ultima-related record; v2 target active final boss to level 106 after script verification. |
+| 2 | Active boss record | 20 | 105 | 8 | 0 | 430 | 0 | 0 | 171,206,234,61,255 | Ultima-related record; v3 keeps the boss cap at 105. |
 | 3 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
 | 4 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
 | 5 | Active monster | 154 | 105 | 0 | 0 | 0 | 0 | 0 | 255,255,255,255,255 | Ultima Demon. |
@@ -100,8 +120,7 @@ Data implications:
 
 ```text
 - The finale is definitely two ENTD entries: 440 then 441.
-- Current dump has all major finale records at 105. v2 design raises the active Ultima/final-form boss
-  record(s) to 106 only after confirming which records drive the real boss/transform.
+- V3 keeps verified boss/form records at 105 and lowers only support/demon records to 103.
 - Support records stay capped at 105. Do not overlevel supports above the final boss cap.
 - Entry 440 slot 0 carries Save the Queen `34` and shield `141`. If that slot is targetable/stealable,
   implementation must swap those to non-reward gear or prove the items cannot leak.
@@ -125,28 +144,27 @@ peaked at `057`; this fight earns its climax by changing demands without deletin
 
 ## Enemy Party Escalation
 
-Accepted redesign: **v2 no-reward two-phase Ultima capstone**.
+Accepted redesign: **v3 boss-105 / demon-103 two-phase capstone**.
 
 ### Phase 1 - Hashmal / Lucavi entry 440
 
 | Slot group | Role | Level target | Br/Fa | Purpose |
 | --- | --- | ---: | --- | --- |
 | Hashmal/Folmarv/Lucavi active record(s) | Phase boss | 105 | `92/86` | Wide-area pressure; defeat triggers phase transition. |
-| Demon/support records | Screen / script support | 104-105 | `88/76` | Pressure and positioning, not hard lock. |
+| Job-44 support records | Screen / script support | 103 | `88/76` | Pressure and positioning, not hard lock. |
 
 ### Phase 2 - Ultima entry 441
 
 | Slot group | Role | Level target | Br/Fa | Purpose |
 | --- | --- | ---: | --- | --- |
-| Active Ultima / final-form record(s) | Final boss | 106 | `92/90` | Single highest active boss in the mod. |
-| Ultima Demon x4 | Surround | 105 | `88/76` | Positional/status pressure with Ribbon/spacing answers. |
+| Active Ultima / final-form record(s) | Final boss | 105 | `92/90` | Shares the global boss cap. |
+| Ultima Demon x4 | Surround | 103 | `88/76` | Positional/status pressure with Ribbon/spacing answers. |
 | Lucavi/form records | Scripted transform/support records | 105 | `92/86` | Preserve transformation and win sequence. |
 
 Why this works:
 
 ```text
-- Ultima at 106 gives the finale the single-highest-boss identity.
-- Supports stay 105 so the fight does not become raw level inflation.
+- Bosses cap at 105; support and demons stay at 103 so the finale avoids raw level inflation.
 - The full restore between phases is mandatory fairness after 057.
 - Almagest is allowed only if telegraphed and sublethal.
 - Dispelja is a soft reset answered by rebuffing.
@@ -171,7 +189,7 @@ the second ENTD entry.
 ### Ultima / final form
 
 ```text
-Level: 106 for the verified active final boss / final-form record(s).
+Level: 105 for the verified active final boss / final-form record(s).
 Primary: Dispelja + Almagest + final Lucavi magic.
 Almagest: telegraphed, sublethal, healable.
 Dispelja: buff strip, answered by rebuffing.
@@ -185,7 +203,7 @@ before implementation.
 ### Ultima Demon surround and Lucavi/form support
 
 ```text
-Level: 105 cap.
+Level: 103 for Ultima Demons; 105 for boss/form records.
 Ultima Demon jobs: 154 x4 in the dump.
 Lucavi/form records: jobs 49/65/73 plus any script form records.
 Pressure: positional surround, status/demon pressure, and support magic.
@@ -206,7 +224,10 @@ or partial surround. The surround should force immediate decisions without trapp
 The player read should be: spend enough to beat Hashmal, accept the restore, rebuff after Dispelja,
 break the demon circle, heal through Almagest, and end Ultima's final form.
 
-## Simulation Plan and Results
+## Historical v2 Simulation / v3 Test Plan
+
+The simulation below is historical v2 context. The v3 level-only reduction will be validated directly
+in-game; no new simulation is requested.
 
 Artifact:
 
@@ -245,7 +266,7 @@ Residual risks:
 - Confirm exactly which 440/441 slots are active, targetable, stealable, transform records, or dormant
   script records.
 - Confirm the full HP/MP restore fires between phase 1 and phase 2.
-- Confirm raising Ultima/form records to 106 does not break the low-HP transform or final win trigger.
+- Confirm the level-only revision does not break the low-HP transform or final win trigger.
 - Confirm any equipped unique-looking items on scripted slots cannot leak as steals; otherwise swap them out.
 ```
 
@@ -260,24 +281,25 @@ Excalibur stays with Orlandeau and never appears on an enemy.
 
 ## Implementation Checklist
 
-- [ ] Preserve the two-entry script: `440` phase 1 -> restore -> `441` phase 2.
+- [x] Preserve the two-entry data path: `440` phase 1 -> restore -> `441` phase 2.
 - [ ] Verify which records are active combatants, targetable, stealable, dormant, or transform-only.
-- [ ] Raise only the verified active Ultima/final-form boss record(s) to `106`.
-- [ ] Keep active support records capped at `105`; do not overlevel support above Ultima.
+- [x] Keep all verified boss/form records capped at `105`.
+- [x] Set entry-440 job-44 support records to `103`.
+- [x] Set all four Ultima Demons to `103`.
 - [ ] Preserve full HP/MP restore between phases.
 - [ ] Preserve low-HP transformation and final win trigger.
 - [ ] Keep Almagest telegraphed/sublethal and Dispelja rebuff-answerable.
 - [ ] Keep demon surround answerable with Ribbon/status prep, spacing, and burst.
-- [ ] Remove or prove non-leaking any unique-looking active/stealable equipment, especially Save the
+- [x] Preserve v2 removal of unique-looking active/stealable equipment, especially Save the
       Queen `34` on entry `440` slot `0`.
-- [ ] Add no usable reward, no Ragnarok, and no steal-dependent rare.
-- [ ] Re-dump entries `440` and `441` after implementation and verify only intended level/gear/kit changes.
+- [x] Add no usable reward, no Ragnarok, and no steal-dependent rare.
+- [x] Re-dump entries `440` and `441` after implementation and verify only intended level changes.
 - [ ] Playtest `057 -> 058` and the full `054 -> 058` gauntlet.
 
 ## Test Questions
 
 - Does the final still play as Hashmal -> restore -> Ultima -> final form?
-- Is Ultima the only active level-106 enemy?
+- Are bosses/forms the only level-105 records, with Ultima Demons at 103?
 - Does the restore fire and make Phase 2 fair after the 057 peak?
 - Are Almagest, Dispelja, and the demon surround scary but answerable?
 - Are no usable NG++ rewards or unique steal payloads present?

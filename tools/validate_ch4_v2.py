@@ -1201,7 +1201,7 @@ def run() -> int:
     e = 440
     active = [0, 1, 2, 3, 4, 5]
     check("440 active/script jobs", roster(entd, e, active, 0x0A) == [36, 44, 64, 44, 44, 44])
-    check("440 phase levels", roster(entd, e, active, 0x03) == [105, 105, 105, 104, 104, 104])
+    check("440 phase levels", roster(entd, e, active, 0x03) == [105, 103, 105, 103, 103, 103])
     check("440 Brave targets", roster(entd, e, active, 0x06) == [92, 88, 92, 88, 88, 88])
     check("440 Faith targets", roster(entd, e, active, 0x07) == [86, 76, 86, 76, 76, 76])
     check("440 host no Save the Queen leak",
@@ -1219,11 +1219,11 @@ def run() -> int:
     check("440 no usable gauntlet spoils", roster(entd, e, active, 0x1E) == [0, 0, 0, 0, 0, 0])
 
     # 058 - Airship Graveyard, phase 2 Ultima, entry 441.
-    # Ultima is the only level-106 unit; support/form records stay capped at 105.
+    # Boss/form records cap at 105; all four Ultima Demons stay at 103.
     e = 441
     active = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     check("441 active/script jobs", roster(entd, e, active, 0x0A) == [49, 49, 20, 154, 154, 154, 154, 65, 73])
-    check("441 phase levels", roster(entd, e, active, 0x03) == [105, 105, 106, 105, 105, 105, 105, 105, 105])
+    check("441 phase levels", roster(entd, e, active, 0x03) == [105, 105, 105, 103, 103, 103, 103, 105, 105])
     check("441 Brave targets", roster(entd, e, active, 0x06) == [92, 92, 92, 88, 88, 88, 88, 92, 92])
     check("441 Faith targets", roster(entd, e, active, 0x07) == [86, 86, 90, 76, 76, 76, 76, 86, 86])
     check("441 Ultima capstone kit preserved",

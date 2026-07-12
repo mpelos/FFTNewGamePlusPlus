@@ -52,7 +52,7 @@ structural pressures.
 | 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** + 2 female Black Mage + 2 female Summoner + female Time Mage) | v3 implemented/deployed; level-102 caster crossfire; active Zeus Mace exception; playtest pending | wide vault | ▅ hard |
 | 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** + 2 true **Samurai** + 2 Ninja + 2 female Time Mage) | v3 implemented/deployed; generics 102-103; no special spoil; playtest pending | dead city | ▆ harder |
 | 52 | Lost Halidom | `057` | 6 (**Barich** + Monk + King Behemoth + Greater Hydra + Tiamat + Dark Behemoth) | v3 implemented/deployed; monsters 102-103; copied Stoneshooter Barich; playtest pending | holy ground | █ 5★ PEAK |
-| 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** (L106) + Ultima Demons/Lucavi support | two-phase Lucavi FINALE; no usable gauntlet reward | airship | █ FINALE |
+| 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** + Ultima Demons/Lucavi support | v3 implemented/deployed; bosses/forms 105, support/demons 103; playtest pending | airship | █ FINALE |
 
 Reading: Chapter 4 is a **long rising arc broken into three no-resupply chains, with two mid-chapter
 Lucavi spikes and a five-fight gauntlet to the finale**. The open battles (33-41) escalate the elite
@@ -75,7 +75,7 @@ The back five (the endgame gauntlet) in one line each:
 ### Curve verdict
 
 ```text
-PASS (on paper). The campaign's highest overall, capped by the apex levels (Ultima L106 — the single
+PASS (on paper). The campaign's highest overall, capped by level-105 bosses, with finale support at 103. The
 highest in the mod) and the three no-resupply chains. Two mid-chapter Lucavi spikes (Zalera 049,
 Adrammelech 050) and the 5★ Lost Halidom (057) are the peaks; deliberate valleys (Finnath 035,
 Besselat Wall 038, Mullonde Exterior 051, Vaults-4th 054) keep the long arc from being a flat climb and
@@ -93,7 +93,7 @@ at 100-101 and cap their few anchors at 102; their objective/terrain and complet
 Elite/sub-bosses: 103-104 (Samurai, Ultima Demons, Hydra).
 Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletienne, Zalbaag, Dycedarg).
 LUCAVI: normally 105 (Adrammelech, Hashmal); Zalera is the low-band exception at 102 because it closes
-the three-battle Limberry chain. FINAL ULTIMA: 106 — the single highest band in the mod (+6).
+the three-battle Limberry chain. FINAL ULTIMA: 105, sharing the global boss cap.
 Apex monsters: the final Lost Halidom monster pit reaches 105 across four monster slots; pressure comes
 from overlapping breath lanes, sustain, and Barich control, with elemental/disable answers preserved.
 
@@ -174,7 +174,7 @@ Vaults 5th   (055) : LOFFREY + caster crossfire; gauntlet 2/5              -> di
 Sluice       (044) : SAMURAI PREVIEW in the floodgate screen                -> race or clear the charged guard line
 Necrohol     (056) : SAMURAI SHOWCASE + Cletienne Magick Surge; gauntlet 3/5 -> Silence/burst the surge
 Lost Halidom (057) : APEX MONSTER PIT (4 monster/dragon slots) + Barich; gauntlet 4/5 -> disable + elemental resist
-Airship      (058) : HASHMAL -> ULTIMA two-phase FINALE (L106); gauntlet 5/5 -> spread, re-buff, end it
+Airship      (058) : HASHMAL -> ULTIMA two-phase FINALE (bosses 105); gauntlet 5/5 -> spread, re-buff, end it
 
 New content first seen in Chapter 4: the SAMURAI caste (056, canonical), the ULTIMA-DEMON caste (048),
 APEX MONSTERS / monster-dragon slots (057), the vampire Ark Knight (053), the triple-boss "one
@@ -261,7 +261,7 @@ No conflicts found on paper.
 ```text
 Consistent. Generics normally 100-103; Sluice through Limberry Undercroft use low-band 100-102 distributions;
 elite/sub-bosses 103-104; later human bosses 104-105; later Lucavi 105; FINAL ULTIMA
-106 (the mod's single highest, +6 — one above Ch3's Belias +5, the intended capstone escalation).
+105 (the global boss cap; finale distinction comes from its two-phase scripting rather than +6 scaling).
 Summons kept MID-TIER with intact charge times; Draw Out (new) race-able; apex monster breath elemental/
 resistable. Every Lucavi/finale ultimate telegraphed + sub-lethal.
 ```
@@ -304,7 +304,7 @@ CHAIN 3 — ENDGAME GAUNTLET (49-53 / 054-058), 5 battles, one loadout — THE L
    (Ribbon).
 5. **The FINALE (058)**: the most important fairness check — Almagest telegraphed/sub-100%/survivable;
    the demon surround broken by Ribbon + spacing; both Ultima forms beatable; the full HP/MP restore and
-   second-form transform fire correctly. Ultima L106 must be hard but FAIR — no unavoidable wipe.
+   second-form transform fire correctly. Ultima L105 must be hard but FAIR — no unavoidable wipe.
 6. **Win-on-one-falls integrity (Nave 052)**: verify defeating ONE of the three Templars ends the fight
    and the other two RETREAT, while the guaranteed spoils still pay the documented Nave reward set.
 7. **Break-pressure stacking**: confirm the normal ≤2-source fights remain fair, and separately verify
@@ -343,7 +343,7 @@ are the chapter's defining balance problem, and the endgame gauntlet is the whol
 ```text
 Design phase: COMPLETE for all 21 Chapter 4 battles (038-058 designed; this pass changed docs only).
 Consistency: audited; exceptions logged; job-escalation and split Tier-A/Tier-S ledgers extended.
-Curve: passes on paper; the campaign's highest, capped by Ultima L106 and the three no-resupply chains;
+Curve: passes on paper; the campaign is capped by level-105 bosses and the three no-resupply chains;
   two Lucavi spikes + a 5★ peak + a two-phase finale; deliberate valleys seat the spikes.
 Job escalation: one headline puzzle engine per fight; the Samurai caste debuts cleanly (canon), plus
   Ultima Demons, apex monsters, the vampire Ark Knight, the triple-boss structure, Magick Surge, and

@@ -2113,23 +2113,22 @@ def airship_hashmal(data):
     E = 440
     set_slot(data, E, 0, level=105, joblevel=8, brave=92, faith=86,
              rh=RUNEBLADE, lh=SHOP_SHIELD)  # Folmarv/Hashmal host; preserve transform script tail.
-    set_slot(data, E, 1, level=105, joblevel=8, brave=88, faith=76)
+    set_slot(data, E, 1, level=103, joblevel=8, brave=88, faith=76)
     set_slot(data, E, 2, level=105, brave=92, faith=86)              # Lucavi (job64, eq255)
-    for s in (3, 4, 5):                          # transform/clone forms (eq255)
-        set_slot(data, E, s, level=104, brave=88, faith=76)
+    for s in (3, 4, 5):                          # support/script records (eq255)
+        set_slot(data, E, s, level=103, brave=88, faith=76)
     return [E]
 
 
 def airship_ultima(data):
     # Battle 53 / PHASE 2 - Airship Graveyard, Ultima (entry 441).
-    # Ultima is the single level-106 capstone. Lucavi/form records and Ultima Demons stay capped at
-    # 105 so the finale reads as adaptation, not raw support overleveling. No reward payload.
+    # V3 caps boss/form records at 105 and lowers all four Ultima Demons to 103.
     E = 441
     set_slot(data, E, 0, level=105, brave=92, faith=86)              # Lucavi (job49, eq255)
     set_slot(data, E, 1, level=105, brave=92, faith=86)              # Lucavi (job49, eq255)
-    set_slot(data, E, 2, level=106, joblevel=8, brave=92, faith=90)  # Ultima final boss
+    set_slot(data, E, 2, level=105, joblevel=8, brave=92, faith=90)  # Ultima final boss
     for s in (3, 4, 5, 6):                       # 4 Ultima Demons (job154)
-        set_slot(data, E, s, level=105, brave=88, faith=76)
+        set_slot(data, E, s, level=103, brave=88, faith=76)
     set_slot(data, E, 7, level=105, brave=92, faith=86)              # Lucavi (job65, eq255)
     set_slot(data, E, 8, level=105, brave=92, faith=86)              # Lucavi (job73, eq255)
     return [E]

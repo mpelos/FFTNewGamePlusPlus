@@ -62,7 +62,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `055` | 50 | Monastery Vaults 5th Floor | ENDGAME 2/5; **Loffrey** + 2 female Black Mage/2 female Summoner/female Time Mage | v3 implemented/deployed; Zeus Mace equipped; Loffrey objective | 🧪 Test |
 | `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** + 2 true Samurai/2 Ninja/2 female Time Mage | v3 implemented/deployed; generics 102-103; Cletienne objective | 🧪 Test |
 | `057` | 52 | Lost Halidom / Lost Sacred Precincts | ENDGAME 4/5; **Barich** + Monk + King Behemoth/Greater Hydra/Tiamat/Dark Behemoth | v3 implemented/deployed; monsters 102-103; copied Stoneshooter Barich | 🧪 Test |
-| `058` | 53 | Airship Graveyard | ENDGAME 5/5; **Hashmal -> Ultima** (FINAL, L106) + Ultima Demons | two-phase Lucavi finale; full restore between; Dispelja/Almagest + 2nd form; no usable gauntlet reward | ✅ Done |
+| `058` | 53 | Airship Graveyard | ENDGAME 5/5; **Hashmal -> Ultima** + Ultima Demons | v3 implemented/deployed: bosses/forms 105, supports/demons 103; full restore preserved | 🧪 Test |
 | `059` | — | Chapter 4 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
 
 ## Carried-over rules (from Chapters 1–3)
@@ -180,7 +180,7 @@ Chapter 4 may use high Brave/Faith, but the values must still explain the battle
 
 Bands reach their ceiling; the Lucavi and the final demon are the spikes. Generics `100–103`,
 Ultima-Demon bodies `103`, sub-bosses `103–104`, human bosses `104–105`, Lucavi `105`, the FINAL
-Ultima `106` (the single highest band in the game).
+Final bosses cap at `105`; finale support and Ultima Demons stay at `103`.
 
 | Battle | Target feel | Level band | New wrinkle / boss loot |
 |--------|-------------|------------|--------------------------|
@@ -205,7 +205,7 @@ Ultima `106` (the single highest band in the game).
 | Vaults 5th (50) | ENDGAME 2/5; **Loffrey** | boss 105, casters 103 | caster crossfire; no usable gauntlet reward |
 | Necrohol (51) | ENDGAME 3/5; **Cletienne** | boss 105, elite screen 104 | **Samurai** debut; surge race; no usable gauntlet reward |
 | Lost Halidom (52) | ENDGAME 4/5; **Barich** + apex monsters | Barich 105, monsters 105 | 4-monster breath pit + control; no usable gauntlet reward |
-| Airship Graveyard (53) | ENDGAME 5/5; **Hashmal -> Ultima** | Hashmal 105, **Ultima 106** | two-phase FINAL; no usable gauntlet reward |
+| Airship Graveyard (53) | ENDGAME 5/5; **Hashmal -> Ultima** | bosses/forms 105, support/demons 103 | two-phase FINAL; no usable gauntlet reward |
 
 **Consecutive chains to test back-to-back:** Limberry (42→43→44), Mullonde (46→47→48), and the
 five-battle **endgame gauntlet** (49→50→51→52→53). These are the chapter's defining structural test —
