@@ -61,7 +61,7 @@ at `036`; this overview is `037`, so Battle 33 = doc `038`, i.e. **doc = battle 
 | `054` | 49 | Monastery Vaults 4th Floor | ENDGAME 1/5; 2 Eagrose Knight Martial Artists + Eagrose Knight Samurai + 2 South Wall Monks + South Wall Ninja | v3 implemented/deployed; Loffrey exits; no reward | 🧪 Test |
 | `055` | 50 | Monastery Vaults 5th Floor | ENDGAME 2/5; **Loffrey** + 2 female Black Mage/2 female Summoner/female Time Mage | v3 implemented/deployed; Zeus Mace equipped; Loffrey objective | 🧪 Test |
 | `056` | 51 | Necrohol of Mullonde | ENDGAME 3/5; **Cletienne** + 2 true Samurai/2 Ninja/2 female Time Mage | v3 implemented/deployed; generics 102-103; Cletienne objective | 🧪 Test |
-| `057` | 52 | Lost Halidom / Lost Sacred Precincts | ENDGAME 4/5; **Barich** + Monk + King Behemoth/Greater Hydra/Tiamat/Dark Behemoth | v3 implemented/deployed; monsters 102-103; copied Stoneshooter Barich | 🧪 Test |
+| `057` | 52 | Lost Halidom / Lost Sacred Precincts | ENDGAME 4/5; **Barich** + 2 Monks + Greater Hydra/Tiamat/Dark Behemoth | v3 implemented/deployed; copied Stoneshooter Barich; playtest pending | 🧪 Test |
 | `058` | 53 | Airship Graveyard | ENDGAME 5/5; **Hashmal -> Ultima** + Ultima Demons | v3 implemented/deployed: bosses/forms 105, supports/demons 103; full restore preserved | 🧪 Test |
 | `059` | — | Chapter 4 Balance Review | Cross-battle curve + consistency audit | — | ✅ Done |
 

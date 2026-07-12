@@ -51,7 +51,7 @@ structural pressures.
 | 49 | Monastery Vaults — 4th | `054` | 6 (2 Eagrose Knight Martial Artists + Eagrose Knight Samurai + 2 South Wall Monks + South Wall Ninja) | v3 implemented/deployed; no reward; gauntlet 1/5; playtest pending | vault | ▂ light (opener) |
 | 50 | Monastery Vaults — 5th | `055` | 6 (**Loffrey** + 2 female Black Mage + 2 female Summoner + female Time Mage) | v3 implemented/deployed; level-102 caster crossfire; active Zeus Mace exception; playtest pending | wide vault | ▅ hard |
 | 51 | Necrohol of Mullonde | `056` | 7 (**Cletienne** + 2 true **Samurai** + 2 Ninja + 2 female Time Mage) | v3 implemented/deployed; generics 102-103; no special spoil; playtest pending | dead city | ▆ harder |
-| 52 | Lost Halidom | `057` | 6 (**Barich** + Monk + King Behemoth + Greater Hydra + Tiamat + Dark Behemoth) | v3 implemented/deployed; monsters 102-103; copied Stoneshooter Barich; playtest pending | holy ground | █ 5★ PEAK |
+| 52 | Lost Halidom | `057` | 6 (**Barich** + 2 Monks + Greater Hydra + Tiamat + Dark Behemoth) | v3 implemented/deployed; copied Stoneshooter Barich; playtest pending | holy ground | █ 5★ PEAK |
 | 53 | Airship Graveyard | `058` | P1 **Hashmal** → P2 **Ultima** + Ultima Demons/Lucavi support | v3 implemented/deployed; bosses/forms 105, support/demons 103; playtest pending | airship | █ FINALE |
 
 Reading: Chapter 4 is a **long rising arc broken into three no-resupply chains, with two mid-chapter
@@ -94,7 +94,7 @@ Elite/sub-bosses: 103-104 (Samurai, Ultima Demons, Hydra).
 Human bosses: 104-105 (Meliadoul, Zalmo, Barich, Elmdore, Folmarv/Loffrey/Cletienne, Zalbaag, Dycedarg).
 LUCAVI: normally 105 (Adrammelech, Hashmal); Zalera is the low-band exception at 102 because it closes
 the three-battle Limberry chain. FINAL ULTIMA: 105, sharing the global boss cap.
-Apex monsters: the final Lost Halidom monster pit reaches 105 across four monster slots; pressure comes
+Apex monsters: the final Lost Halidom monster pit uses three level-102/103 monster slots; pressure comes
 from overlapping breath lanes, sustain, and Barich control, with elemental/disable answers preserved.
 
 Boss-loot policy (Chapter 4): the long-promised payoff. Bosses that DIE carry ONE named rare highlight;

@@ -8,9 +8,9 @@ ENTD: `entd4` global entry `439`
 Local slot: `055`
 Simulation artifact: `tmp/fft-level-design-057-lost-halidom/`
 
-> V3 docs-only revision: preserve entry 439, positions and win-on-Barich behavior. Copy Barich's first
-> battle build, replace the Chemist with a Monk, replace Hydra with King Behemoth, and lower every
-> monster into the 102-103 band.
+> V3 revision: preserve entry 439 and win-on-Barich behavior. Copy Barich's first
+> battle build, replace the Chemist and Hydra with two identical Monks, and keep every remaining
+> monster in the 102-103 band.
 
 > **V3 implementation (2026-07-11):** entry 439 patched in the embedded ENTD and deployed through a
 > successful Release build. The installed DLL resource matches the source binary byte-for-byte; jobs,
@@ -24,19 +24,19 @@ s0 BARICH - copy Beddha Sandwaste s0:
   Machinist primary; secondary None; Reflexes; Defense Boost; Jump +3.
   Stoneshooter / two-hand marker / Thief's Cap / Black Garb / Featherweave Cloak.
 
-s1 MONK - replaces Chemist:
-  Level 102; main job Monk; Mime bucket JL8; Brave/Faith 88/38.
+s1/s2 MONKS - replace Chemist and Hydra; identical builds:
+  Level 102; main job Monk; Monk bucket JL8; Brave/Faith 88/38.
   Primary Martial Arts; secondary Items; Counter; Dual Wield; Movement +3.
   Both hands empty / Barrette / Power Garb / Bracers.
 
-s2 KING BEHEMOTH - replaces Hydra: level 103.
 s3 GREATER HYDRA: level 102.
 s4 TIAMAT: level 103.
 s5 DARK BEHEMOTH: level 102.
 All monsters retain Brave/Faith 90/30 and their innate fixed-body kits.
 
 PRESERVE:
-  Defeat-Barich objective, all positions and zero special-spoil bytes.
+  Defeat-Barich objective, all non-Barich positions and zero special-spoil bytes. Barich moves from
+  `(5,3)` to `(6,3)`.
 ```
 
 ## Gate Answers / Constraints
@@ -124,13 +124,13 @@ hardest fight before Ultima, but every pressure point must be visible and answer
 
 ## Enemy Party Escalation
 
-Accepted redesign: **v3 Behemoth/Hydra apex pit**.
+Accepted redesign: **v3 dual-Monk/Hydra apex pit**.
 
 | Slot | Role | Job / Unit | Level | Br/Fa | Purpose |
 | ---: | --- | --- | ---: | --- | --- |
 | 0 | Boss objective | Barich / Machinist | 104 | `84/55` | Exact first-battle Stoneshooter build; defeat ends fight. |
-| 1 | Martial body | Monk, Mime bucket Lv8 | 102 | `88/38` | Items utility plus Counter/Dual Wield martial pressure. |
-| 2 | Apex body | King Behemoth, job 134 | 103 | `90/30` | Replaces Hydra at `(7,2)`. |
+| 1 | Martial body | Monk, Monk bucket Lv8 | 102 | `88/38` | Items utility plus Counter/Dual Wield martial pressure. |
+| 2 | Martial body | Monk, Monk bucket Lv8 | 102 | `88/38` | Identical s1 build on the former Hydra tile `(7,2)`. |
 | 3 | Breath lane | Greater Hydra, job 140 | 102 | `90/30` | Hydra-family lane at `(5,1)`. |
 | 4 | Breath lane | Tiamat, job 141 | 103 | `90/30` | Strongest breath lane at `(3,1)`. |
 | 5 | Apex body | Dark Behemoth, job 135 | 102 | `90/30` | Behemoth lane at `(1,1)`. |
@@ -138,11 +138,11 @@ Accepted redesign: **v3 Behemoth/Hydra apex pit**.
 Why this works:
 
 ```text
-- Four distinct level-102/103 apex monsters make this the true peak through composition over raw levels.
+- Three distinct level-102/103 apex monsters plus two identical Monks make this the true peak through composition over raw levels.
 - Overlapping breath lanes create the 5-star pressure, but elemental resistance/absorb and monster
   disable/break must remain valid answers.
 - Barich reproduces his answerable first-battle Stoneshooter package.
-- The Monk adds martial pressure, but the player can bypass it by focusing Barich.
+- The two Monks add martial pressure, but the player can bypass them by focusing Barich.
 - The boss-focus lane is mandatory: defeating Barich must be a real plan before full cleanup.
 - No usable reward appears here; Materia Blade stays outside this gauntlet battle.
 ```
@@ -167,13 +167,13 @@ Reward: none
 Guardrail: Barich may pressure movement and actions, but he must remain one source of resistable or
 cleansable control. No party-wide chain-lock.
 
-### Monk - Mime-bucket martial body
+### Monks x2 - identical Monk-bucket martial bodies
 
 ```text
 Level: 102
 JobLevel: 8
 Main job: Monk
-Job bucket: Mime, JobLevel 8
+Job bucket: Monk, JobLevel 8
 Primary: Martial Arts
 Secondary: Items
 Reaction: Counter
@@ -189,7 +189,7 @@ Guardrail: sustain must be raceable. It should force priority decisions, not cre
 ### Apex monsters x4
 
 ```text
-Levels: King Behemoth 103; Greater Hydra 102; Tiamat 103; Dark Behemoth 102
+Levels: Greater Hydra 102; Tiamat 103; Dark Behemoth 102
 Jobs: 134, 140, 141, 135
 Primary: monster breath / apex physical pressure
 Gear: none
@@ -207,9 +207,10 @@ Guardrails:
 ## Positioning Plan
 
 ```text
-Use the Lost Halidom as a desecrated holy arena. Put Barich at range with a real but contested lane to
-him. Spread the four monsters so their threat lanes overlap across obvious rush paths. Keep the Monk
-on the former Chemist tile, where killing it is not mandatory before any boss
+Use the Lost Halidom as a desecrated holy arena. Barich starts at `(6,3)`, one tile east of his vanilla
+`(5,3)` position, with a real but contested lane to
+him. Spread the three monsters so their threat lanes overlap across obvious rush paths. Keep both Monks
+on the former Chemist/Hydra tiles, where killing them is not mandatory before any boss
 pressure is possible.
 ```
 
@@ -219,7 +220,7 @@ route to Barich, and end the control source before the breath pit drains the run
 ## Historical v2 Simulation / v3 Test Plan
 
 The simulation below is historical v2 context. It does not validate the lower monster levels, the
-King Behemoth substitution, copied Barich build, or new Monk; those require direct playtest.
+copied Barich build or the two new Monks; those require direct playtest.
 
 Artifact:
 
@@ -280,14 +281,14 @@ Keep standard/vanilla loot and buried Elixirs only.
 
 - [x] Preserve entry `439` and the "Defeat Barich" objective data.
 - [x] Copy first-battle Barich exactly at level `104`.
-- [x] Replace Chemist with the locked level-102 Monk/Mime-bucket build.
-- [x] Replace Hydra job `139` with King Behemoth job `134`.
+- [x] Replace Chemist and Hydra with two identical level-102 Monk/Monk-bucket builds.
 - [x] Set monster levels to `103/102/103/102` for s2-s5.
 - [ ] Create overlapping breath lanes through placement without sealing Barich behind mandatory cleanup.
 - [ ] Ensure monster breath has real elemental/disable/break counterplay.
 - [ ] Preserve Barich's copied Stoneshooter/Reflexes/Defense Boost/Jump +3 package.
-- [x] Verify the Monk's complete secondary/reaction/support/move and empty hands.
+- [x] Verify both Monks' identical secondary/reaction/support/move and empty hands.
 - [x] Equip Barich with Stoneshooter and document its active Steal exposure.
+- [x] Move Barich from `(5,3)` to `(6,3)` while preserving Y, facing, UnitID, and control flags.
 - [x] Add no special spoil or Materia Blade; Stoneshooter exposure is intentional active equipment.
 - [x] Re-dump entry `439` after implementation and verify only intended kit/ability/positioning changes.
 - [ ] Playtest `056 -> 057 -> 058` as a no-resupply unit.
